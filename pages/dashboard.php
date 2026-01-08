@@ -562,7 +562,7 @@
                 <div class="card-body">
                     <!-- <h5 class="card-title">Card title</h5> -->
                     <span class="badge rounded-pill text-bg-primary" style="font-size: 15px; padding: 10px;">
-                        On Hold&nbsp;&nbsp;<span class="badge rounded-pill text-bg-danger">1</span>
+                        On Hold&nbsp;&nbsp;&nbsp;<span class="badge rounded-pill text-bg-danger">1</span>
                     </span>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
                     <a href="#" class="btn btn-primary">Go somewhere</a>
