@@ -50,7 +50,7 @@
         color: white;
     }
     .new-btn:hover {
-        background-color: rgba(21, 66, 73);
+        background-color: rgba(15, 62, 69, 0.8);
         color: white;
     }
   </style>
