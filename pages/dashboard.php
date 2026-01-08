@@ -88,9 +88,9 @@
             <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Total Engagements</h6>
             <!-- Big Number -->
             <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
-            <div style="margin-right: -150px !important;">
-                <i class="bi bi-graph-up-arrow"></i>
-            </div>
+       
+                <i class="bi bi-graph-up-arrow" style="margin-right: -150px !important;"></i>
+   
           </div>
         </div>
       </div>
