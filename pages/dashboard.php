@@ -106,12 +106,12 @@
                 <div class="card-body">
 
                     <!-- Small icon -->
-                    <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(2525,92,0); color: white; font-size: 1.5rem; border-radius: 15px;">
+                    <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,92,0); color: white; font-size: 1.5rem; border-radius: 15px;">
                         <i class="bi bi-clock"></i>
                     </div>
 
                     <!-- Title -->
-                    <h6 class="card-title mb-2" style="color: rgb(255,241,224);">Total Engagements</h6>
+                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Total Engagements</h6>
 
                     <!-- Big Number -->
                     <h2 class="fw-bold" style="color: rgb(255,92,0);">1,250</h2>
