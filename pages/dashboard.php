@@ -251,7 +251,7 @@
                   <!-- Header -->
                   <div class="d-flex align-items-center mb-3">
                     <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
-                      <strong><i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i></strong>
+                      <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i>
                     </div>
                     <h6 class="fw-semibold mb-0">Overdue</h6>
                   </div>
@@ -566,6 +566,14 @@
                       On Hold
                       <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(149,156,166) !important;">1</span>
                     </span>
+
+                    <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
+                        <div class="card-body">
+                            <i class="bi bi-grip-horizontal"></i>
+
+                    
+                        </div>
+                    </div>
 
                     
                 </div>
