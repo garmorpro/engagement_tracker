@@ -616,9 +616,11 @@
 
       <!-- Row 2 -->
         <div class="row align-items-start mt-4 g-4" style="margin-left: 200px; margin-right: 200px;">
-          <div class="col-md-4">
+            
+          <!-- Column 1 -->
+            <div class="col-md-4">
 
-          <div class="card" style="border-radius: 15px; border: 2px solid rgb(154,196,254); background-color: rgb(233,241,254) !important;">
+              <div class="card" style="border-radius: 15px; border: 2px solid rgb(154,196,254); background-color: rgb(233,241,254) !important;">
                 <div class="card-body">
                     <!-- <h5 class="card-title">Card title</h5> -->
                     <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
@@ -657,98 +659,103 @@
 
                     
                 </div>
-            </div>
-          </div> <!-- end col 1 -->
+              </div>
+            </div> 
+          <!-- end col 1 -->
 
-          <div class="col-md-4">
+          <!-- Column 2 -->
+            <div class="col-md-4">
 
-          <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
+              <div class="card" style="border-radius: 15px; border: 2px solid rgb(247,187,118); background-color: rgb(253,244,229) !important;">
                 <div class="card-body">
                     <!-- <h5 class="card-title">Card title</h5> -->
                     <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
-                          style="font-size: 15px; padding: 10px 14px; background-color: rgb(105,114,129) !important;">
-                      On Hold
-                      <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(149,156,166) !important;">1</span>
+                          style="font-size: 15px; padding: 10px 14px; background-color: rgb(241,115,19) !important;">
+                      In Progress
+                      <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(243,155,89) !important;">1</span>
                     </span>
 
 
-                    <div class="card" style="border-radius: 15px; border: 1px solid rgb(208,213,219);">
-                      <div class="card-body d-flex align-items-center justify-content-between">
+                    <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); border-radius: 15px; cursor: move;">
+                    <div class="card-body" style="margin-bottom: -15px !important;">
 
-                        <!-- LEFT -->
-                        <div class="left d-flex align-items-center gap-3">
-                          <i class="bi bi-grip-horizontal text-secondary"></i>
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
+                      </div>
 
-                          
-                            <h5 class="mb-0">Retain Chain Assessment</h5>
-                            <span class="text-muted" style="font-size: 14px;">ENG-2025-006</span>
-                         
-                        </div>
-
-                        <!-- RIGHT -->
-                        <div class="right d-flex align-items-center gap-3 text-secondary">
-                          <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;Jane Brown</span>
-                          <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;Apr 30</span>
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130); font-size: 14px !important;">ENG-2024-001</span><br><div class="pb-2"></div>
+                        <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;Jane Brown</span><br>
+                        <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;Apr 30, 2025</span><br>
+                        <div class="tags pt-2">
                           <span class="badge text-bg-secondary" style="background-color: rgba(235, 236, 237, 1) !important; color: rgb(57,69,85) !important; font-weight: 500 !important;">SOC 2 Type 2</span>
                           <span class="badge text-bg-danger" style="background-color: rgb(255,226,226) !important; color: rgb(201,0,18) !important;font-weight: 500 !important;">Overdue</span>
                         </div>
+                        
+                      </p>
 
-                      </div>
                     </div>
+                  </div>
 
 
                     
                 </div>
-            </div>
-          </div> <!-- end col 2 -->
+              </div>
+            </div> 
+          <!-- end col 2 -->
 
-          <div class="col-md-4">
+          <!-- Column 3 -->
+            <div class="col-md-4">
 
-          <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
+              <div class="card" style="border-radius: 15px; border: 2px solid rgb(212,179,254); background-color: rgb(247,241,254) !important;">
                 <div class="card-body">
                     <!-- <h5 class="card-title">Card title</h5> -->
                     <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
-                          style="font-size: 15px; padding: 10px 14px; background-color: rgb(105,114,129) !important;">
-                      On Hold
-                      <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(149,156,166) !important;">1</span>
+                          style="font-size: 15px; padding: 10px 14px; background-color: rgb(160,77,253) !important;">
+                      In Review
+                      <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(188,129,251) !important;">1</span>
                     </span>
 
 
-                    <div class="card" style="border-radius: 15px; border: 1px solid rgb(208,213,219);">
-                      <div class="card-body d-flex align-items-center justify-content-between">
+                    <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); border-radius: 15px; cursor: move;">
+                    <div class="card-body" style="margin-bottom: -15px !important;">
 
-                        <!-- LEFT -->
-                        <div class="left d-flex align-items-center gap-3">
-                          <i class="bi bi-grip-horizontal text-secondary"></i>
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
+                      </div>
 
-                          
-                            <h5 class="mb-0">Retain Chain Assessment</h5>
-                            <span class="text-muted" style="font-size: 14px;">ENG-2025-006</span>
-                         
-                        </div>
-
-                        <!-- RIGHT -->
-                        <div class="right d-flex align-items-center gap-3 text-secondary">
-                          <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;Jane Brown</span>
-                          <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;Apr 30</span>
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130); font-size: 14px !important;">ENG-2024-001</span><br><div class="pb-2"></div>
+                        <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;Jane Brown</span><br>
+                        <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;Apr 30, 2025</span><br>
+                        <div class="tags pt-2">
                           <span class="badge text-bg-secondary" style="background-color: rgba(235, 236, 237, 1) !important; color: rgb(57,69,85) !important; font-weight: 500 !important;">SOC 2 Type 2</span>
                           <span class="badge text-bg-danger" style="background-color: rgb(255,226,226) !important; color: rgb(201,0,18) !important;font-weight: 500 !important;">Overdue</span>
                         </div>
+                        
+                      </p>
 
-                      </div>
                     </div>
+                  </div>
 
 
                     
                 </div>
-            </div>
-          </div> <!-- end col 3 -->
-
-
+              </div>
+            </div> 
+          <!-- end col 3 -->
 
         </div>
-
-
       <!-- end row 2 -->
 
     <!-- end board sections -->
