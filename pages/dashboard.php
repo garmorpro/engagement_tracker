@@ -203,11 +203,11 @@
 
 
         <!-- <div class="container "> -->
-  <div class="row align-items-center " style="margin-left: 150px; margin-right: 150px; box-shadow: 8px 8px 20px rgba(0,0,0,0.15);">
+  <div class="row align-items-center " style="margin-left: 150px; margin-right: 150px; ">
 
     <!-- Search bar -->
     <div class="container my-4">
-  <div class="p-3 border rounded d-flex align-items-center">
+  <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 8px 8px 20px rgba(0,0,0,0.15);">
     
     <!-- Search bar (flex-grow takes all available space) -->
     <input type="text" class="form-control me-3" placeholder="Search...">
