@@ -55,32 +55,35 @@
     }
 
 
-
-    /* Card hover effect */
-/* .custom-card {
+/* Card shadow on hover */
+.custom-card {
   transition: all 0.3s ease;
 }
 
-.custom-card:hover {m 
+.custom-card:hover {
   box-shadow: 8px 8px 20px rgba(0,0,0,0.15);
 }
 
-.icon-box {
+/* Small icon box */
+/* .icon-box {
   width: 60px;
   height: 60px;
   background-color: rgb(172,63,255);
   color: white;
   font-size: 1.5rem;
   border-radius: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.3s ease;
-}
-
-
-.custom-card:hover .icon-box {
-  width: 70px !important;
-  height: 70px !important;
-
+  position: relative; 
+  z-index: 1;
 } */
+
+/* Enlarge icon box on hover without affecting card */
+.custom-card:hover .icon-box {
+  transform: scale(1.2); /* grows the box smoothly */
+}
 
   </style>
 </head>
@@ -193,82 +196,25 @@
             </div>
         </div>
 
-        <!-- <div class="col">
-            <div class="card custom-card position-relative" style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
-                <div class="card-body">
-
-                    
-                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(172,63,255); color: white; font-size: 1.5rem; border-radius: 15px;">
-                        <i class="bi bi-calendar2"></i>
-                    </div>
-
-                  
-                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Due This Week</h6>
-
-                  
-                    <h2 class="fw-bold" style="color: rgb(172,63,255);">1,250</h2>
-
-                    
-                    <i class="bi bi-calendar2 position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
-                </div>
-            </div>
-        </div> -->
 
         <div class="col">
-  <div class="card custom-card position-relative" 
-       style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
-    <div class="card-body position-relative text-center">
+            <div class="card custom-card position-relative" 
+                 style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
+              <div class="card-body position-relative text-center">
 
-      <!-- Small icon -->
-      <div class="icon-box mb-3 d-flex align-items-center justify-content-center">
-        <i class="bi bi-calendar2"></i>
-      </div>
+                <div class="icon-box mb-3 d-flex align-items-center justify-content-center">
+                  <i class="bi bi-calendar2"></i>
+                </div>
 
-      <!-- Title -->
-      <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Due This Week</h6>
+                <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Due This Week</h6>
 
-      <!-- Big Number -->
-      <h2 class="fw-bold" style="color: rgb(172,63,255);">1,250</h2>
+                <h2 class="fw-bold" style="color: rgb(172,63,255);">1,250</h2>
 
-      <!-- Decorative Icon behind -->
-      <i class="bi bi-calendar2 position-absolute" 
-         style="font-size: 5rem; top: 100px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
+                <i class="bi bi-calendar2 position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
 
-    </div>
-  </div>
-</div>
-
-<style>
-/* Card shadow on hover */
-.custom-card {
-  transition: all 0.3s ease;
-}
-
-.custom-card:hover {
-  box-shadow: 8px 8px 20px rgba(0,0,0,0.15);
-}
-
-/* Small icon box */
-.icon-box {
-  width: 60px;
-  height: 60px;
-  background-color: rgb(172,63,255);
-  color: white;
-  font-size: 1.5rem;
-  border-radius: 15px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  position: relative; /* important to scale without moving other content */
-  z-index: 1;
-}
-
-/* Enlarge icon box on hover without affecting card */
-.custom-card:hover .icon-box {
-  transform: scale(1.2); /* grows the box smoothly */
-}
-</style>
+              </div>
+            </div>
+        </div>
 
 
 
