@@ -247,7 +247,7 @@
           <h6 class="fw-semibold mb-0">Overdue</h6>
         </div>
 
-        <div class="card engagement-card-updates" style="background-color: rgb(249,250,251);">
+        <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
           <div class="card-body">
             <h6 class="card-title fw-bold">Acme Corportation Audit</h6>
             <p class="text-secondary" style="font-size: 14px;">
