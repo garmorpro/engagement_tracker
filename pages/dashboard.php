@@ -80,9 +80,9 @@
       <div class="col">
         <div class="card h-100" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232);">
           <div class="card-body">
-            <div class="background-color: rgb(30,117,255); padding: 10px;">
+            <span class="background-color: rgb(30,117,255); padding: 10px;">
                 <i class="bi bi-graph-up-arrow"></i>
-            </div>
+</span>
           </div>
         </div>
       </div>
