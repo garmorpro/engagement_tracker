@@ -614,29 +614,25 @@
                     </span>
 
 
-                    <div class="card" style="border-radius: 15px; border: 1px solid rgb(208,213,219);">
-                      <div class="card-body d-flex align-items-center justify-content-between">
+                    <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
 
-                        <!-- LEFT -->
-                        <div class="left d-flex align-items-center gap-3">
-                          <i class="bi bi-grip-horizontal text-secondary"></i>
-
-                          
-                            <h5 class="mb-0">Retain Chain Assessment</h5>
-                            <span class="text-muted" style="font-size: 14px;">ENG-2025-006</span>
-                         
-                        </div>
-
-                        <!-- RIGHT -->
-                        <div class="right d-flex align-items-center gap-3 text-secondary">
-                          <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;Jane Brown</span>
-                          <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;Apr 30</span>
-                          <span class="badge text-bg-secondary" style="background-color: rgba(235, 236, 237, 1) !important; color: rgb(57,69,85) !important; font-weight: 500 !important;">SOC 2 Type 2</span>
-                          <span class="badge text-bg-danger" style="background-color: rgb(255,226,226) !important; color: rgb(201,0,18) !important;font-weight: 500 !important;">Overdue</span>
-                        </div>
-
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
                       </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
                     </div>
+                  </div>
 
 
                     
