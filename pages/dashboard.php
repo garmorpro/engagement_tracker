@@ -569,17 +569,17 @@
 
                     <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
                       <div class="card-body d-flex align-items-center justify-content-between">
-                    
+
                         <!-- LEFT -->
                         <div class="left d-flex align-items-center gap-3">
                           <i class="bi bi-grip-horizontal text-secondary"></i>
-                    
-                          <div>
+
+                          
                             <h5 class="mb-0">Retain Chain Assessment</h5>
                             <span class="text-muted" style="font-size: 14px;">ENG-2025-006</span>
-                          </div>
+                         
                         </div>
-                    
+
                         <!-- RIGHT -->
                         <div class="right d-flex align-items-center gap-3 text-secondary">
                           <span><i class="bi bi-people"></i>&nbsp;Jane Brown</span>
@@ -587,7 +587,7 @@
                           <span class="badge text-bg-secondary">SOC 2 Type 2</span>
                           <span class="badge text-bg-danger">Overdue</span>
                         </div>
-                    
+
                       </div>
                     </div>
 
