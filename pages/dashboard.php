@@ -149,7 +149,7 @@
 
                     <!-- Small icon -->
                     <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,35,52); color: white; font-size: 1.5rem; border-radius: 15px;">
-                        <i class="bi bi-clock"></i>
+                        <i class="bi bi-exclamation-triangle"></i>
                     </div>
 
                     <!-- Title -->
@@ -159,7 +159,7 @@
                     <h2 class="fw-bold" style="color: rgb(252,35,52);">1,250</h2>
 
                     <!-- Decorative Icon behind -->
-                    <i class="bi bi-clock position-absolute" style="font-size: 5rem; top: 50px; right: -10px; color: rgba(255,35,52,0.15); z-index: 0;"></i>
+                    <i class="bi bi-exclamation-triangle position-absolute" style="font-size: 5rem; top: 50px; right: -10px; color: rgba(255,35,52,0.15); z-index: 0;"></i>
                 </div>
             </div>
         </div>
@@ -170,7 +170,7 @@
 
                     <!-- Small icon -->
                     <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(172,63,255); color: white; font-size: 1.5rem; border-radius: 15px;">
-                        <i class="bi bi-clock"></i>
+                        <i class="bi bi-calendar2"></i>
                     </div>
 
                     <!-- Title -->
@@ -180,7 +180,7 @@
                     <h2 class="fw-bold" style="color: rgb(172,63,255);">1,250</h2>
 
                     <!-- Decorative Icon behind -->
-                    <i class="bi bi-clock position-absolute" style="font-size: 5rem; top: 50px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
+                    <i class="bi bi-calendar2 position-absolute" style="font-size: 5rem; top: 50px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
                 </div>
             </div>
         </div>
