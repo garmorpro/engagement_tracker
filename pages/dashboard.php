@@ -102,7 +102,7 @@
         </div>
 
         <div class="col">
-            <div class="card position-relative" style="background-color: rgb(255,241,224; border-color: rgb(225,228,232); overflow: hidden;">
+            <div class="card position-relative" style="background-color: rgb(255,241,224); border-color: rgb(225,228,232); overflow: hidden;">
                 <div class="card-body">
 
                     <!-- Small icon -->
