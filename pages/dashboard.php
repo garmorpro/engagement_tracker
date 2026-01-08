@@ -29,46 +29,7 @@
       color: #6c757d;
       margin-top: 2px;
     }
-    .btn-new-engagement {
-      background-color: #0d6efd;
-      color: #fff;
-      font-weight: 500;
-    }
-    .btn-new-engagement:hover {
-      background-color: #0b5ed7;
-      color: #fff;
-    }
-    .header-actions .btn {
-      margin-left: 8px;
-    }
-    /* Container for the tabs */
-    .custom-tabs {
-      display: flex;
-      gap: 1rem;
-      border-bottom: 2px solid #e0e0e0;
-      margin-bottom: 1rem;
-    }
-
-    /* Each tab */
-    .custom-tab {
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      border-radius: 0.5rem 0.5rem 0 0;
-      transition: all 0.2s;
-      font-weight: 500;
-    }
-
-    /* Active tab */
-    .custom-tab.active {
-      background-color: #0d6efd; /* Bootstrap primary color */
-      color: white;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    /* Hover effect */
-    .custom-tab:hover {
-      background-color: #e7f1ff;
-    }
+    
   </style>
 </head>
 <body>
