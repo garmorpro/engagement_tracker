@@ -53,6 +53,36 @@
         background-color: rgba(15, 62, 69, 0.9);
         color: white;
     }
+
+
+
+    /* Card hover effect */
+.custom-card {
+  transition: all 0.3s ease;
+}
+
+.custom-card:hover {
+  box-shadow: 8px 8px 20px rgba(0,0,0,0.15); /* bottom & right spotlight */
+}
+
+/* Small icon box */
+.icon-box {
+  width: 60px;
+  height: 60px;
+  background-color: rgb(172,63,255);
+  color: white;
+  font-size: 1.5rem;
+  border-radius: 15px;
+  transition: all 0.3s ease;
+}
+
+/* Enlarge the icon box on hover */
+.custom-card:hover .icon-box {
+  width: 70px;
+  height: 70px;
+  font-size: 1.8rem;
+}
+
   </style>
 </head>
 <body>
@@ -165,7 +195,7 @@
         </div>
 
         <div class="col">
-            <div class="card position-relative" style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
+            <div class="card custom-card position-relative" style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
                 <div class="card-body">
 
                     <!-- Small icon -->
