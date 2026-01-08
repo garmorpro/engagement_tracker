@@ -561,7 +561,7 @@
             <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
                 <div class="card-body">
                     <!-- <h5 class="card-title">Card title</h5> -->
-                    <span class="badge rounded-pill d-inline-flex align-items-center"
+                    <span class="badge rounded-pill d-inline-flex align-items-center mb-2"
                           style="font-size: 15px; padding: 10px 14px; background-color: rgb(105,114,129) !important;">
                       On Hold
                       <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(149,156,166) !important;">1</span>
