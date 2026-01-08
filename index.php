@@ -1,6 +1,6 @@
-<!-- <?php
+<?php
 require_once '../includes/auth.php';
-?> -->
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -19,9 +19,9 @@ require_once '../includes/auth.php';
         <p class="text-center text-muted">Sign in to access your engagement tracker</p>
 
         <!-- Show error alert only if error is not empty -->
-        <!-- <?php if (!empty($error)): ?> -->
-            <!-- <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div> -->
-        <!-- <?php endif; ?> -->
+        <?php if (!empty($error)): ?>
+            <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
+        <?php endif; ?>
 
         <form class="p-4" method="POST" action="">
             <div class="mb-3">
