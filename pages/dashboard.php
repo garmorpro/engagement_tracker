@@ -45,7 +45,12 @@
         background-color: rgb(225,228,232);
         border: none !important;
     }
-    
+    .new-btn {
+        background-color: rgb(15,62,69);
+    }
+    .new-btn:hover {
+        background-color: white;
+    }
   </style>
 </head>
 <body>
@@ -62,7 +67,7 @@
             <button type="button" class="btn btn-sm me-2 tab-btn"><i class="bi bi-calendar2"></i>&nbsp;&nbsp;Timeline</button>
             <button type="button" class="btn btn-sm tab-btn"><i class="bi bi-graph-up"></i>&nbsp;&nbsp;Analytics</button>
         </div>
-        <button type="button" class="btn btn-new-engagement btn-sm ms-3">+ New Engagement</button>
+        <button type="button" class="btn new-btn btn-sm ms-3">+ New Engagement</button>
     </div>
   </div>
 
