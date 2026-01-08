@@ -76,10 +76,7 @@
   <div class="mt-5"></div>
 
 
-
-  <div class="container" style="margin-left: 100px;">
-
-  <div class="row row-cols-1 row-cols-md-5 g-4">
+  <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 150px; margin-right: 150px;">
       <div class="col">
         <div class="card h-100">
           <div class="card-body">
@@ -128,8 +125,6 @@
     </div>
 
 
-  
-  </div>
   
 
 
