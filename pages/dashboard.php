@@ -234,7 +234,7 @@
 
   <!-- Overdue -->
   <div class="col-md-3">
-    <div class="card h-100 border-danger">
+    <div class="card h-100" style="border-color: rgb(255,201,202);">
       <div class="card-body">
 
         <!-- Header -->
@@ -258,14 +258,14 @@
 
   <!-- Due This Week -->
   <div class="col-md-3">
-    <div class="card h-100 border-primary">
+    <div class="card h-100" style="border-color: rgb(255,214,171);">
       <div class="card-body">
 
         <div class="d-flex align-items-center mb-3">
-          <div class="icon-square bg-primary text-white me-2">
-            <i class="bi bi-calendar-week"></i>
+          <div class="icon-square me-2" style="background-color: rgb(255,247,238);">
+            <i class="bi bi-calendar-week" style="color: rgb(255,71,0);"></i>
           </div>
-          <h6 class="fw-semibold text-primary mb-0">Due This Week</h6>
+          <h6 class="fw-semibold mb-0">Due This Week</h6>
         </div>
 
         <ul class="list-unstyled mb-0">
@@ -280,14 +280,14 @@
 
   <!-- High Priority -->
   <div class="col-md-3">
-    <div class="card h-100 border-warning">
+    <div class="card h-100" style="border-color: rgb(236,213,254);">
       <div class="card-body">
 
         <div class="d-flex align-items-center mb-3">
-          <div class="icon-square bg-warning text-white me-2">
-            <i class="bi bi-flag-fill"></i>
+          <div class="icon-square me-2" style="background-color: rgb(251,245,254);">
+            <i class="bi bi-flag-fill" style="color: rgb(162,27,244);"></i>
           </div>
-          <h6 class="fw-semibold text-warning mb-0">High Priority</h6>
+          <h6 class="fw-semibold mb-0">High Priority</h6>
         </div>
 
         <ul class="list-unstyled mb-0">
@@ -302,14 +302,14 @@
 
   <!-- Recent Updates -->
   <div class="col-md-3">
-    <div class="card h-100 border-success">
+    <div class="card h-100" style="border-color: rgb(187,219,253);">
       <div class="card-body">
 
         <div class="d-flex align-items-center mb-3">
-          <div class="icon-square bg-success text-white me-2">
-            <i class="bi bi-clock-history"></i>
+          <div class="icon-square me-2" style="background-color: rgb(238,246,254);">
+            <i class="bi bi-clock-history" style="color: rgb(20,95,245);"></i>
           </div>
-          <h6 class="fw-semibold text-success mb-0">Recent Updates</h6>
+          <h6 class="fw-semibold mb-0">Recent Updates</h6>
         </div>
 
         <ul class="list-unstyled mb-0">
