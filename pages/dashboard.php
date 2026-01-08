@@ -560,7 +560,12 @@
         <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
             <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219);">
                 <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
+                    <!-- <h5 class="card-title">Card title</h5> -->
+                     <span class="badge rounded-pill text-bg-primary">
+                        <h6>
+                            On Hold
+                        </h6>
+                    </span>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
                     <a href="#" class="btn btn-primary">Go somewhere</a>
                 </div>
