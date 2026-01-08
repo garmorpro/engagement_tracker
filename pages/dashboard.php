@@ -65,20 +65,11 @@
 }
 
 /* Small icon box */
-/* .icon-box {
-  width: 60px;
-  height: 60px;
-  background-color: rgb(172,63,255);
-  color: white;
-  font-size: 1.5rem;
-  border-radius: 15px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.icon-box {
+
   transition: all 0.3s ease;
-  position: relative; 
-  z-index: 1;
-} */
+
+}
 
 /* Enlarge icon box on hover without affecting card */
 .custom-card:hover .icon-box {
@@ -202,7 +193,7 @@
                  style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
               <div class="card-body position-relative text-center">
 
-                <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,35,52); color: white; font-size: 1.5rem; border-radius: 15px;">
+                <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(172,63,255); color: white; font-size: 1.5rem; border-radius: 15px;">
                   <i class="bi bi-calendar2"></i>
                 </div>
 
