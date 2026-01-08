@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
     body {
-      background-color: #f8f9fa; /* Light background like your screenshot */
+      /* background-color: #f8f9fa;  */
       font-family: 'Arial', sans-serif;
     }
     .header-container {
