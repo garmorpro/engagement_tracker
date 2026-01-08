@@ -96,7 +96,7 @@
                     <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
 
                     <!-- Decorative Icon behind -->
-                    <i class="bi bi-graph-up-arrow position-absolute" style="font-size: 5rem; top: 70px; right: -10px; color: rgba(30,117,255,0.15); z-index: 0;"></i>
+                    <i class="bi bi-graph-up-arrow position-absolute" style="font-size: 5rem; top: 90px; right: -10px; color: rgba(30,117,255,0.15); z-index: 0;"></i>
                 </div>
             </div>
         </div>
