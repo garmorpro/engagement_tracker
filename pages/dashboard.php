@@ -234,7 +234,7 @@
 
   <!-- Overdue -->
   <div class="col-md-3">
-    <div class="card h-100" style="border-color: rgb(255,201,202);">
+    <div class="card h-100" style="border-color: rgb(255,201,202); border-radius: 15px;">
       <div class="card-body">
 
         <!-- Header -->
