@@ -245,7 +245,7 @@
           <h6 class="fw-semibold mb-0">Overdue</h6>
         </div>
 
-        <div class="card" style="width: 18rem;">
+        <div class="card" >
           <div class="card-body">
             <h5 class="card-title">Acme Corportation Audit</h5>
             <p class="card-text">ENG-2024-001</p>
