@@ -204,7 +204,7 @@
   <div class="row align-items-center g-2">
 
     <!-- Search bar -->
-    <div class="col-md-8">
+    <div class="col">
       <div class="input-group">
         <span class="input-group-text bg-white border-end-0">
           <i class="bi bi-search"></i>
