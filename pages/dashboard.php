@@ -109,7 +109,7 @@
     <!-- Status Cards -->
         <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 150px; margin-right: 150px;">
             <div class="col">
-                <div class="card custom-card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
+                <div class="card custom-card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;  border-radius: 15px;  border-radius: 15px;">
                     <div class="card-body">
 
                         <!-- Small icon -->
@@ -129,7 +129,7 @@
                 </div>
             </div>
             <div class="col">
-                <div class="card custom-card position-relative" style="background-color: rgb(255,241,224); border-color: rgb(225,228,232); overflow: hidden;">
+                <div class="card custom-card position-relative" style="background-color: rgb(255,241,224); border-color: rgb(225,228,232); overflow: hidden;  border-radius: 15px;">
                     <div class="card-body">
 
                         <!-- Small icon -->
@@ -149,7 +149,7 @@
                 </div>
             </div>
             <div class="col">
-                <div class="card custom-card position-relative" style="background-color: rgb(226,253,237); border-color: rgb(225,228,232); overflow: hidden;">
+                <div class="card custom-card position-relative" style="background-color: rgb(226,253,237); border-color: rgb(225,228,232); overflow: hidden;  border-radius: 15px;">
                     <div class="card-body">
 
                         <!-- Small icon -->
@@ -169,7 +169,7 @@
                 </div>
             </div>
             <div class="col">
-                <div class="card custom-card position-relative" style="background-color: rgb(255,231,231); border-color: rgb(225,228,232); overflow: hidden;">
+                <div class="card custom-card position-relative" style="background-color: rgb(255,231,231); border-color: rgb(225,228,232); overflow: hidden;  border-radius: 15px;">
                     <div class="card-body">
 
                         <!-- Small icon -->
@@ -189,7 +189,7 @@
                 </div>
             </div>
             <div class="col">
-                <div class="card custom-card position-relative" style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
+                <div class="card custom-card position-relative" style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;  border-radius: 15px;">
                   <div class="card-body position-relative">
 
                     <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(172,63, 255); color: white; font-size: 1.5rem; border-radius: 15px;">
@@ -211,7 +211,7 @@
 
 
     <!-- Search bar -->
-        <div class="row align-items-center mt-4" style="margin-left: 162.5px; margin-right: 162.5px; ">
+        <div class="row align-items-center mt-4" style="margin-left: 162.5px; margin-right: 162.5px;  border-radius: 15px; ">
             <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15);">
                 <div class="input-group flex-grow-1 me-3">
                     <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
@@ -258,7 +258,7 @@
 
   <!-- Due This Week -->
   <div class="col-md-3">
-    <div class="card h-100" style="border-color: rgb(255,214,171);">
+    <div class="card h-100" style="border-color: rgb(255,214,171);  border-radius: 15px;">
       <div class="card-body">
 
         <div class="d-flex align-items-center mb-3">
@@ -280,7 +280,7 @@
 
   <!-- High Priority -->
   <div class="col-md-3">
-    <div class="card h-100" style="border-color: rgb(236,213,254);">
+    <div class="card h-100" style="border-color: rgb(236,213,254);  border-radius: 15px;">
       <div class="card-body">
 
         <div class="d-flex align-items-center mb-3">
@@ -302,7 +302,7 @@
 
   <!-- Recent Updates -->
   <div class="col-md-3">
-    <div class="card h-100" style="border-color: rgb(187,219,253);">
+    <div class="card h-100" style="border-color: rgb(187,219,253);  border-radius: 15px;">
       <div class="card-body">
 
         <div class="d-flex align-items-center mb-3">
