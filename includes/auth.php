@@ -3,17 +3,17 @@ require_once 'db.php';
 session_start();
 
 // LOG ACTIVITY FUNCTION
-// function logActivity($conn, $eventType, $user_id, $account_name, $title, $description) {
-//     $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
-//     $stmt = $conn->prepare($sql);
-//     if ($stmt) {
-//         // For service accounts, email and full_name may not apply, so we'll pass blanks
-//         $blank = '';
-//         $stmt->bind_param("sissss", $eventType, $user_id, $blank, $blank, $title, $description);
-//         $stmt->execute();
-//         $stmt->close();
-//     }
-// }
+function logActivity($conn, $eventType, $user_id, $account_name, $title, $description) {
+    $sql = "INSERT INTO system_activity_log (event_type, user_id, email, full_name, title, description) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    if ($stmt) {
+        // For service accounts, email and full_name may not apply, so we'll pass blanks
+        $blank = '';
+        $stmt->bind_param("sissss", $eventType, $user_id, $blank, $blank, $title, $description);
+        $stmt->execute();
+        $stmt->close();
+    }
+}
 
 $error = '';
 
