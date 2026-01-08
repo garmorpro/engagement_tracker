@@ -66,16 +66,13 @@
 
 /* Small icon box */
 .icon-box {
-
   transition: all 0.3s ease;
-
 }
 
 /* Enlarge icon box on hover without affecting card */
 .custom-card:hover .icon-box {
   transform: scale(1.2); /* grows the box smoothly */
 }
-
   </style>
 </head>
 <body>
@@ -104,11 +101,11 @@
 
         <div class="col">
         
-            <div class="card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
+            <div class="card custom-card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
                 <div class="card-body">
 
                     <!-- Small icon -->
-                    <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(30,117,255); color: white; font-size: 1.5rem; border-radius: 15px;">
+                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(30,117,255); color: white; font-size: 1.5rem; border-radius: 15px;">
                         <i class="bi bi-graph-up-arrow"></i>
                     </div>
 
@@ -125,11 +122,11 @@
         </div>
 
         <div class="col">
-            <div class="card position-relative" style="background-color: rgb(255,241,224); border-color: rgb(225,228,232); overflow: hidden;">
+            <div class="card custom-card position-relative" style="background-color: rgb(255,241,224); border-color: rgb(225,228,232); overflow: hidden;">
                 <div class="card-body">
 
                     <!-- Small icon -->
-                    <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,92,0); color: white; font-size: 1.5rem; border-radius: 15px;">
+                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,92,0); color: white; font-size: 1.5rem; border-radius: 15px;">
                         <i class="bi bi-clock"></i>
                     </div>
 
@@ -146,11 +143,11 @@
         </div>
 
         <div class="col">
-            <div class="card position-relative" style="background-color: rgb(226,253,237); border-color: rgb(225,228,232); overflow: hidden;">
+            <div class="card custom-card position-relative" style="background-color: rgb(226,253,237); border-color: rgb(225,228,232); overflow: hidden;">
                 <div class="card-body">
 
                     <!-- Small icon -->
-                    <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(0,194,81); color: white; font-size: 1.5rem; border-radius: 15px;">
+                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(0,194,81); color: white; font-size: 1.5rem; border-radius: 15px;">
                         <i class="bi bi-check2-circle"></i>
                     </div>
 
@@ -167,11 +164,11 @@
         </div>
 
         <div class="col">
-            <div class="card position-relative" style="background-color: rgb(255,231,231); border-color: rgb(225,228,232); overflow: hidden;">
+            <div class="card custom-card position-relative" style="background-color: rgb(255,231,231); border-color: rgb(225,228,232); overflow: hidden;">
                 <div class="card-body">
 
                     <!-- Small icon -->
-                    <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,35,52); color: white; font-size: 1.5rem; border-radius: 15px;">
+                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,35,52); color: white; font-size: 1.5rem; border-radius: 15px;">
                         <i class="bi bi-exclamation-triangle"></i>
                     </div>
 
@@ -189,9 +186,8 @@
 
 
         <div class="col">
-            <div class="card custom-card position-relative" 
-                 style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
-              <div class="card-body position-relative text-center">
+            <div class="card custom-card position-relative" style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
+              <div class="card-body position-relative">
 
                 <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(172,63,255); color: white; font-size: 1.5rem; border-radius: 15px;">
                   <i class="bi bi-calendar2"></i>
