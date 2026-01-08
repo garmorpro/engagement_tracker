@@ -57,15 +57,14 @@
 
 
     /* Card hover effect */
-.custom-card {
+/* .custom-card {
   transition: all 0.3s ease;
 }
 
-.custom-card:hover {
-  box-shadow: 8px 8px 20px rgba(0,0,0,0.15); /* bottom & right spotlight */
+.custom-card:hover {m 
+  box-shadow: 8px 8px 20px rgba(0,0,0,0.15);
 }
 
-/* Small icon box */
 .icon-box {
   width: 60px;
   height: 60px;
@@ -76,12 +75,12 @@
   transition: all 0.3s ease;
 }
 
-/* Enlarge the icon box on hover */
+
 .custom-card:hover .icon-box {
   width: 70px !important;
   height: 70px !important;
-  /* font-size: 1.8rem !important; */
-}
+
+} */
 
   </style>
 </head>
