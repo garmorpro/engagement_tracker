@@ -241,323 +241,331 @@
 
     <!-- status updates -->
 
- 
-    <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
+        <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
 
-  <!-- Overdue -->
-  <div class="col-md-3">
-    <div class="card h-100" style="border-color: rgb(255,201,202); border-radius: 15px;">
-      <div class="card-body p-4">
+            <!-- Overdue -->
+            <div class="col-md-3">
+              <div class="card h-100" style="border-color: rgb(255,201,202); border-radius: 15px;">
+                <div class="card-body p-4">
 
-        <!-- Header -->
-        <div class="d-flex align-items-center mb-3">
-          <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
-            <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i>
-          </div>
-          <h6 class="fw-semibold mb-0">Overdue</h6>
-        </div>
+                  <!-- Header -->
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
+                      <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i>
+                    </div>
+                    <h6 class="fw-semibold mb-0">Overdue</h6>
+                  </div>
 
-        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
+                  <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
 
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                  <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
+
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                  <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
+
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+
+
+
+                </div>
+              </div>
             </div>
 
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
+            <!-- Due This Week -->
+            <div class="col-md-3">
+              <div class="card h-100" style="border-color: rgb(255,214,171);  border-radius: 15px;">
+                <div class="card-body">
 
-          </div>
-        </div>
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="icon-square me-2" style="background-color: rgb(255,247,238);">
+                      <i class="bi bi-calendar-week" style="color: rgb(255,71,0);"></i>
+                    </div>
+                    <h6 class="fw-semibold mb-0">Due This Week</h6>
+                  </div>
 
-        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
+                  <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
 
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                  <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
+
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                  <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
+
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
             </div>
 
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
+            <!-- High Priority -->
+            <div class="col-md-3">
+              <div class="card h-100" style="border-color: rgb(236,213,254);  border-radius: 15px;">
+                <div class="card-body">
 
-          </div>
-        </div>
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="icon-square me-2" style="background-color: rgb(251,245,254);">
+                      <i class="bi bi-flag-fill" style="color: rgb(162,27,244);"></i>
+                    </div>
+                    <h6 class="fw-semibold mb-0">High Priority</h6>
+                  </div>
 
-        <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
+                  <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
 
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                  <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
+
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                  <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
+
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
             </div>
 
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
+            <!-- Recent Updates -->
+            <div class="col-md-3">
+              <div class="card h-100" style="border-color: rgb(187,219,253);  border-radius: 15px;">
+                <div class="card-body">
 
-          </div>
+                  <div class="d-flex align-items-center mb-3">
+                    <div class="icon-square me-2" style="background-color: rgb(238,246,254);">
+                      <i class="bi bi-clock-history" style="color: rgb(20,95,245);"></i>
+                    </div>
+                    <h6 class="fw-semibold mb-0">Recent Updates</h6>
+                  </div>
+
+                  <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
+
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                  <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
+
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                  <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
+                    <div class="card-body">
+
+                      <!-- Title row -->
+                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                        <h6 class="card-title fw-bold mb-0" >
+                          Acme Corportation Audit
+                        </h6>
+                        <i class="bi bi-arrow-right text-secondary"></i>
+                      </div>
+
+                      <!-- Subtext -->
+                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                        <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                      </p>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
         </div>
-
-
     
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Due This Week -->
-  <div class="col-md-3">
-    <div class="card h-100" style="border-color: rgb(255,214,171);  border-radius: 15px;">
-      <div class="card-body">
-
-        <div class="d-flex align-items-center mb-3">
-          <div class="icon-square me-2" style="background-color: rgb(255,247,238);">
-            <i class="bi bi-calendar-week" style="color: rgb(255,71,0);"></i>
-          </div>
-          <h6 class="fw-semibold mb-0">Due This Week</h6>
-        </div>
-
-        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
-
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
-            </div>
-
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
-
-          </div>
-        </div>
-
-        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
-
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
-            </div>
-
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
-
-          </div>
-        </div>
-
-        <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
-
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
-            </div>
-
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- High Priority -->
-  <div class="col-md-3">
-    <div class="card h-100" style="border-color: rgb(236,213,254);  border-radius: 15px;">
-      <div class="card-body">
-
-        <div class="d-flex align-items-center mb-3">
-          <div class="icon-square me-2" style="background-color: rgb(251,245,254);">
-            <i class="bi bi-flag-fill" style="color: rgb(162,27,244);"></i>
-          </div>
-          <h6 class="fw-semibold mb-0">High Priority</h6>
-        </div>
-
-        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
-
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
-            </div>
-
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
-
-          </div>
-        </div>
-
-        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
-
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
-            </div>
-
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
-
-          </div>
-        </div>
-
-        <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
-
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
-            </div>
-
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- Recent Updates -->
-  <div class="col-md-3">
-    <div class="card h-100" style="border-color: rgb(187,219,253);  border-radius: 15px;">
-      <div class="card-body">
-
-        <div class="d-flex align-items-center mb-3">
-          <div class="icon-square me-2" style="background-color: rgb(238,246,254);">
-            <i class="bi bi-clock-history" style="color: rgb(20,95,245);"></i>
-          </div>
-          <h6 class="fw-semibold mb-0">Recent Updates</h6>
-        </div>
-
-        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
-
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
-            </div>
-
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
-
-          </div>
-        </div>
-
-        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
-
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
-            </div>
-
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
-
-          </div>
-        </div>
-
-        <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
-          <div class="card-body">
-
-            <!-- Title row -->
-            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-              <h6 class="card-title fw-bold mb-0" >
-                Acme Corportation Audit
-              </h6>
-              <i class="bi bi-arrow-right text-secondary"></i>
-            </div>
-
-            <!-- Subtext -->
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-              <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-              <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-            </p>
-
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-</div>
-
-
-
-
     <!-- end status updates -->
+
+    <!-- Board sections -->
+
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+
+    <!-- end board sections -->
 
 
 
