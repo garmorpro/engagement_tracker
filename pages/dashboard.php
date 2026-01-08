@@ -96,6 +96,9 @@
   transform: translateX(6px);
   color: rgb(74,86,101);
 }
+.engagement-card-kanban:hover {
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+}
   </style>
 </head>
 <body>
@@ -614,7 +617,7 @@
                     </span>
 
 
-                    <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none; cursor: move;">
+                    <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: none; cursor: move;">
                     <div class="card-body">
 
                       <!-- Title row -->
