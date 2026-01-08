@@ -564,7 +564,7 @@
                     <span class="badge rounded-pill text-bg-primary d-inline-flex align-items-center"
                           style="font-size: 15px; padding: 10px 14px;">
                       On Hold
-                      <span class="badge rounded-pill text-bg-secondary ms-2">1</span>
+                      <span class="badge rounded-pill text-bg-secondary ms-2" style="color: pink !important; background-color: blue !important;">1</span>
                     </span>
 
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
