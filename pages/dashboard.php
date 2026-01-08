@@ -581,7 +581,7 @@
                         </div>
 
                         <!-- RIGHT -->
-                        <div class="right d-flex align-items-center gap-3 text-secondary">
+                        <div class="right d-flex align-items-center gap-3 text-secondary" style="font-size: 14px;">
                           <span><i class="bi bi-people"></i>&nbsp;Jane Brown</span>
                           <span><i class="bi bi-calendar2"></i>&nbsp;Apr 30</span>
                           <span class="badge text-bg-secondary">SOC 2 Type 2</span>
