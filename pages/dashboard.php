@@ -239,10 +239,10 @@
 
         <!-- Header -->
         <div class="d-flex align-items-center mb-3">
-          <div class="icon-square bg-danger text-white me-2">
-            <i class="bi bi-exclamation-circle"></i>
+          <div class="icon-square bg-danger me-2">
+            <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24); background-color: rgb(255,241,242);"></i>
           </div>
-          <h6 class="fw-semibold text-danger mb-0">Overdue</h6>
+          <h6 class="fw-semibold mb-0">Overdue</h6>
         </div>
 
         <!-- List -->
