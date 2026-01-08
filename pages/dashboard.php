@@ -604,13 +604,13 @@
         <div class="row align-items-start mt-4 g-4" style="margin-left: 200px; margin-right: 200px;">
           <div class="col-md-4">
 
-          <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
+          <div class="card" style="border-radius: 15px; border: 2px solid rgb(154,196,254); background-color: rgb(233,241,254) !important;">
                 <div class="card-body">
                     <!-- <h5 class="card-title">Card title</h5> -->
                     <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
-                          style="font-size: 15px; padding: 10px 14px; background-color: rgb(105,114,129) !important;">
-                      On Hold
-                      <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(149,156,166) !important;">1</span>
+                          style="font-size: 15px; padding: 10px 14px; background-color: rgb(68, 125,252) !important;">
+                      Planning
+                      <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(123,162,249) !important;">1</span>
                     </span>
 
 
