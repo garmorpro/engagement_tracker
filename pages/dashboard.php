@@ -200,28 +200,37 @@
 
 
     <!-- Search bar -->
+
+
+    <style>
+        .form-control {
+  border-radius: 0.5rem 0 0 0.5rem; /* round left corners */
+}
+
+.btn {
+  border-radius: 0 0.5rem 0.5rem 0; /* round right corners */
+}
+
+    </style>
+
         <div class="container my-4">
   <div class="row align-items-center g-2">
 
     <!-- Search bar -->
-    <div class="col">
-      <div class="input-group">
-        <span class="input-group-text bg-white border-end-0">
-          <i class="bi bi-search"></i>
-        </span>
-        <input type="text" class="form-control border-start-0" placeholder="Search...">
-      </div>
-    </div>
+    <div class="container my-4">
+  <div class="p-3 border rounded d-flex align-items-center">
+    
+    <!-- Search bar (flex-grow takes all available space) -->
+    <input type="text" class="form-control me-3" placeholder="Search...">
 
     <!-- Filter button -->
-    <div class="col-md-4 text-md-end">
-      <button class="btn btn-outline-primary">
-        <i class="bi bi-funnel-fill me-1"></i> Filter
-      </button>
-    </div>
+    <button class="btn btn-outline-primary">
+      <i class="bi bi-funnel-fill me-1"></i> Filter
+    </button>
 
   </div>
 </div>
+
 
 
 
