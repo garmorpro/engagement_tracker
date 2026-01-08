@@ -209,8 +209,8 @@
     <div class="container my-4">
   <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15);">
     
-    <div class="input-group flex-grow-1 me-3" style="background-color: pink;">
-      <span class="input-group-text bg-white border-end-0" style="background-color: pink;">
+    <div class="input-group flex-grow-1 me-3">
+      <span class="input-group-text border-end-0" style="background-color: pink;">
         <i class="bi bi-search"></i>
       </span>
       <input type="text" class="form-control border-start-0" style="background-color: pink;" placeholder="Search...">
