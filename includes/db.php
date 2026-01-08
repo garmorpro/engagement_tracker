@@ -9,7 +9,7 @@ use Dotenv\Dotenv;
 /**
  * Resolve project root
  */
-$root = realpath(__DIR__ . '/var/www/engagement_tracker/public_html/engagement_tracker/');
+$root = realpath(__DIR__ . '../../');
 if ($root === false) {
     die('❌ Failed to resolve project root');
 }
