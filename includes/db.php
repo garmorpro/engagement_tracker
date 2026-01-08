@@ -1,105 +1,57 @@
 <?php
-
-
 declare(strict_types=1);
-
-date_default_timezone_set('America/Chicago');
 
 use Dotenv\Dotenv;
 
-// ---------------- LOAD .ENV -------------------
-$dotenvPath = '/var/www/engagement_tracker';
-
-if (!file_exists($dotenvPath . '/.env')) {
-    die(json_encode([
-        'error' => 'Missing .env file',
-        'path'  => $dotenvPath . '/.env'
-    ]));
+/**
+ * Resolve project root:
+ * includes → engagement_tracker → public_html → project root
+ */
+$rootPath = realpath(__DIR__ . '/../../../');
+if ($rootPath === false) {
+    die('Failed to resolve project root');
 }
 
-// ✅ FIXED PATH
-require_once __DIR__ . '/../../vendor/autoload.php';
+/**
+ * Load Composer
+ */
+$autoload = $rootPath . '/vendor/autoload.php';
+if (!file_exists($autoload)) {
+    die('Missing vendor/autoload.php at ' . $autoload);
+}
 
-$dotenv = Dotenv::createImmutable($dotenvPath);
-$dotenv->safeLoad();
+require_once $autoload;
 
-// ---------------- READ ENV VARIABLES -------------------
+/**
+ * Load .env
+ */
+$envFile = $rootPath . '/.env';
+if (!file_exists($envFile)) {
+    die('Missing .env file at ' . $envFile);
+}
+
+$dotenv = Dotenv::createImmutable($rootPath);
+$dotenv->load();
+
+/**
+ * Read ENV
+ */
 $host   = $_ENV['DB_HOST'] ?? null;
 $user   = $_ENV['DB_USER'] ?? null;
 $pass   = $_ENV['DB_PASSWORD'] ?? null;
 $dbname = $_ENV['DB_NAME'] ?? null;
 
 if (!$host || !$user || !$pass || !$dbname) {
-    die(json_encode([
-        'error'   => 'Database credentials are missing',
-        'DB_HOST' => $host,
-        'DB_USER' => $user,
-        'DB_NAME' => $dbname
-    ]));
+    die('Database ENV variables missing');
 }
 
-// ---------------- CONNECT -------------------
+/**
+ * Connect
+ */
 $conn = new mysqli($host, $user, $pass, $dbname);
+
 if ($conn->connect_error) {
-    die(json_encode([
-        'error'   => 'Database connection failed',
-        'message' => $conn->connect_error
-    ]));
+    die('Database connection failed: ' . $conn->connect_error);
 }
 
 $conn->set_charset('utf8mb4');
-
-
-// // date_default_timezone_set('America/Chicago');
-
-// // $host = getenv('DB_HOST');
-// // $user = getenv('DB_USER');
-// // $pass = getenv('DB_PASSWORD');
-// // $dbname = getenv('DB_NAME');
-
-// // $conn = new mysqli($host, $user, $pass, $dbname);
-// // if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
-
-// declare(strict_types=1);
-
-// date_default_timezone_set('America/Chicago');
-
-// use Dotenv\Dotenv;
-
-// // ---------------- LOAD .ENV -------------------
-// $dotenvPath = '/var/www/engagement_tracker';
-// if (!file_exists($dotenvPath . '/.env')) {
-//     die(json_encode(['error' => 'Missing .env file', 'path' => $dotenvPath . '/.env']));
-// }
-
-// require_once __DIR__ . '/../../vendor/autoload.php';
-// $dotenv = Dotenv::createImmutable($dotenvPath);
-// $dotenv->safeLoad();
-
-// // ---------------- READ ENV VARIABLES -------------------
-// $host = $_ENV['DB_HOST'] ?? getenv('DB_HOST') ?? null;
-// $user = $_ENV['DB_USER'] ?? getenv('DB_USER') ?? null;
-// $pass = $_ENV['DB_PASSWORD'] ?? getenv('DB_PASSWORD') ?? null;
-// $dbname = $_ENV['DB_NAME'] ?? getenv('DB_NAME') ?? null;
-
-// // Validate DB credentials
-// if (!$host || !$user || !$pass || !$dbname) {
-//     die(json_encode([
-//         'error' => 'Database credentials are missing or invalid',
-//         'DB_HOST' => $host,
-//         'DB_USER' => $user,
-//         'DB_NAME' => $dbname
-//     ]));
-// }
-
-// // ---------------- CONNECT TO DATABASE -------------------
-// $conn = new mysqli($host, $user, $pass, $dbname);
-// if ($conn->connect_error) {
-//     die(json_encode([
-//         'error' => 'Database connection failed',
-//         'message' => $conn->connect_error
-//     ]));
-// }
-
-// // Optional: set charset
-// $conn->set_charset('utf8mb4');
