@@ -214,7 +214,7 @@
     </style>
 
         <div class="container ">
-  <div class="row align-items-center g-2">
+  <div class="row align-items-center ">
 
     <!-- Search bar -->
     <div class="container my-4">
