@@ -78,9 +78,9 @@
 
 /* Enlarge the icon box on hover */
 .custom-card:hover .icon-box {
-  width: 70px;
-  height: 70px;
-  font-size: 1.8rem;
+  width: 70px !important;
+  height: 70px !important;
+  font-size: 1.8rem !important;
 }
 
   </style>
