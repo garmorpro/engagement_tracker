@@ -199,7 +199,7 @@
                 <div class="card-body">
 
                     <!-- Small icon -->
-                    <div class="mb-3 d-flex align-items-center justify-content-center icon-box" style="width: 60px; height: 60px; background-color: rgb(172,63,255); color: white; font-size: 1.5rem; border-radius: 15px;">
+                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(172,63,255); color: white; font-size: 1.5rem; border-radius: 15px;">
                         <i class="bi bi-calendar2"></i>
                     </div>
 
