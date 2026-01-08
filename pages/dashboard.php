@@ -251,7 +251,7 @@
                   <!-- Header -->
                   <div class="d-flex align-items-center mb-3">
                     <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
-                      <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i>
+                      <i class="bi bi-exclamation-circle fw-bold" style="color: rgb(241,0,24);"></i>
                     </div>
                     <h6 class="fw-semibold mb-0">Overdue</h6>
                   </div>
@@ -567,8 +567,7 @@
                       <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(149,156,166) !important;">1</span>
                     </span>
 
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    
                 </div>
             </div>
         </div>
