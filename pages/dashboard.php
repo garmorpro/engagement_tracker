@@ -40,11 +40,11 @@
       <div class="header-subtitle">Manage your audit engagements</div>
     </div>
     <div class="header-actions d-flex align-items-center">
-        <div class="view-options" style="background-color: pink;">
+        <div class="view-options p-3" style="background-color: pink;">
             <button type="button" class="btn btn-outline-secondary btn-sm me-2">Board</button>
             <button type="button" class="btn btn-outline-secondary btn-sm me-2">List</button>
             <button type="button" class="btn btn-outline-secondary btn-sm me-2">Timeline</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm me-2">Analytics</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm">Analytics</button>
         </div>
         <button type="button" class="btn btn-new-engagement btn-sm ms-3">+ New Engagement</button>
     </div>
