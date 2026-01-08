@@ -248,7 +248,7 @@
         <div class="card" >
           <div class="card-body">
             <h6 class="card-title fw-bold">Acme Corportation Audit</h6>
-            <p class="text-secondary">
+            <p class="text-secondary" style="font-size: 14px;">
                 ENG-2024-001
                 <br>
                 Due: Feb 15, 2025
