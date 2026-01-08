@@ -77,7 +77,7 @@
 
 
 
-  <div class="container" style="margin-left: 150px; margin-right: 150px;">
+  <div class="container" style="margin-left: 150px; margin-right: 100px;">
 
   <div class="row row-cols-1 row-cols-md-5 g-4">
       <div class="col">
