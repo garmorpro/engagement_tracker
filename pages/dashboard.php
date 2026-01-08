@@ -78,7 +78,7 @@
 
   <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 150px; margin-right: 150px;">
       <div class="col">
-        <div class="card h-100" style="background-color: rgb(225,238,253);">
+        <div class="card h-100" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232);">
           <div class="card-body">
             <h5 class="card-title">Card 1</h5>
             <p class="card-text">Some example text for card 1.</p>
