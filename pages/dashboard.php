@@ -583,7 +583,7 @@
                     </span>
 
 
-                    <div class="card" style="border-radius: 15px; border: 1px solid rgb(208,213,219);">
+                    <div class="card" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
                       <div class="card-body d-flex align-items-center justify-content-between">
 
                         <!-- LEFT -->
@@ -628,7 +628,7 @@
                     </span>
 
 
-                    <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); cursor: move;">
+                    <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); border-radius: 15px; cursor: move;">
                     <div class="card-body" style="margin-bottom: -15px !important;">
 
                       <!-- Title row -->
