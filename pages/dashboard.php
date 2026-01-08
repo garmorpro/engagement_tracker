@@ -618,7 +618,7 @@
 
 
                     <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: none; cursor: move;">
-                    <div class="card-body" style="padding-bottom: -15px !important;">
+                    <div class="card-body" style="margin-bottom: -15px !important;">
 
                       <!-- Title row -->
                       <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
