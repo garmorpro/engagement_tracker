@@ -203,7 +203,7 @@
 
 
         <!-- <div class="container "> -->
-  <div class="row align-items-center " style="margin-left: 150px; margin-right: 150px;">
+  <div class="row align-items-center " style="margin-left: 150px; margin-right: 150px; box-shadow: 8px 8px 20px rgba(0,0,0,0.15);">
 
     <!-- Search bar -->
     <div class="container my-4">
