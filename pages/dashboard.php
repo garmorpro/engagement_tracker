@@ -53,10 +53,10 @@
     </div>
     <div class="header-actions d-flex align-items-center">
         <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;">
-            <button type="button" class="btn btn-sm me-2 tab-btn active">Board</button>
-            <button type="button" class="btn btn-sm me-2 tab-btn">List</button>
-            <button type="button" class="btn btn-sm me-2 tab-btn">Timeline</button>
-            <button type="button" class="btn btn-sm tab-btn">Analytics</button>
+            <button type="button" class="btn btn-sm me-2 tab-btn active"><i class="bi bi-grid"></i> Board</button>
+            <button type="button" class="btn btn-sm me-2 tab-btn"><i class="bi bi-list-ul"></i> List</button>
+            <button type="button" class="btn btn-sm me-2 tab-btn"><i class="bi bi-calendar2"></i> Timeline</button>
+            <button type="button" class="btn btn-sm tab-btn"><i class="bi bi-graph-up"></i> Analytics</button>
         </div>
         <button type="button" class="btn btn-new-engagement btn-sm ms-3">+ New Engagement</button>
     </div>
