@@ -202,7 +202,7 @@
     <!-- Search bar -->
         <div class="row align-items-center " style="margin-left: 150px; margin-right: 150px; ">
 
-            <div class="container my-4">
+            <!-- <div class="container my-4"> -->
                 <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15);">
     
                     <div class="input-group flex-grow-1 me-3">
