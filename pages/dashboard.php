@@ -239,7 +239,7 @@
 
         <!-- Header -->
         <div class="d-flex align-items-center mb-3">
-          <div class="icon-square bg-danger me-2" style="background-color: rgb(255,241,242);">
+          <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
             <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i>
           </div>
           <h6 class="fw-semibold mb-0">Overdue</h6>
