@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Log successful login
             logActivity($conn, "successful_login", $user_id, $account_name, "Service Account Login", "Successful login");
             $error = "Success!";
-            // header("Location: ../pages/service-settings.php");
+            header("Location: success.php");
             exit;
         } else {
             logActivity($conn, "failed_login", $user_id, $account_name, "Failed Login", "Incorrect password");
