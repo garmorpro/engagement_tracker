@@ -614,7 +614,7 @@
                     </span>
 
 
-                    <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none; cursor: crosshair;">
+                    <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none; cursor: move;">
                     <div class="card-body">
 
                       <!-- Title row -->
