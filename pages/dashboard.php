@@ -77,31 +77,33 @@
 
 
   <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 150px; margin-right: 150px;">
-      <div class="col">
+
+
+        <div class="col">
         
-        <div class="card position-relative text-center" 
-     style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
-  <div class="card-body">
+            <div class="card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
+                <div class="card-body">
 
-    <!-- Small icon -->
-    <div class="mb-3 d-flex align-items-center justify-content-center" 
-         style="width: 60px; height: 60px; background-color: rgb(30,117,255); color: white; font-size: 1.5rem; border-radius: 15px;">
-      <i class="bi bi-graph-up-arrow"></i>
-    </div>
+                    <!-- Small icon -->
+                    <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(30,117,255); color: white; font-size: 1.5rem; border-radius: 15px;">
+                        <i class="bi bi-graph-up-arrow"></i>
+                    </div>
 
-    <!-- Title -->
-    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Revenue</h6>
+                    <!-- Title -->
+                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Revenue</h6>
 
-    <!-- Big Number -->
-    <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
+                    <!-- Big Number -->
+                    <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
 
-    <!-- Decorative Icon behind -->
-    <i class="bi bi-graph-up-arrow position-absolute" 
-       style="font-size: 5rem; top: -20px; right: -40px; color: rgba(30,117,255,0.15); z-index: 0;"></i>
+                    <!-- Decorative Icon behind -->
+                    <i class="bi bi-graph-up-arrow position-absolute" style="font-size: 5rem; top: -20px; right: -40px; color: rgba(30,117,255,0.15); z-index: 0;"></i>
+                </div>
+            </div>
+        </div>
 
-  </div>
-</div>
 
+
+        
 
       <div class="col">
         <div class="card h-100">
