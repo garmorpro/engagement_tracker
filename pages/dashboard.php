@@ -96,7 +96,7 @@
                     <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
 
                     <!-- Decorative Icon behind -->
-                    <i class="bi bi-graph-up-arrow position-absolute" style="font-size: 5rem; top: 90px; right: -10px; color: rgba(30,117,255,0.15); z-index: 0;"></i>
+                    <i class="bi bi-graph-up-arrow position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(30,117,255,0.15); z-index: 0;"></i>
                 </div>
             </div>
         </div>
@@ -117,7 +117,7 @@
                     <h2 class="fw-bold" style="color: rgb(255,92,0);">1,250</h2>
 
                     <!-- Decorative Icon behind -->
-                    <i class="bi bi-clock position-absolute" style="font-size: 5rem; top: 90px; right: -10px; color: rgba(255,92,0,0.15); z-index: 0;"></i>
+                    <i class="bi bi-clock position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,92,0,0.15); z-index: 0;"></i>
                 </div>
             </div>
         </div>
@@ -138,7 +138,7 @@
                     <h2 class="fw-bold" style="color: rgb(0,194,81);">1,250</h2>
 
                     <!-- Decorative Icon behind -->
-                    <i class="bi bi-check2-circle position-absolute" style="font-size: 5rem; top: 90px; right: -10px; color: rgba(0,194,81,0.15); z-index: 0;"></i>
+                    <i class="bi bi-check2-circle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(0,194,81,0.15); z-index: 0;"></i>
                 </div>
             </div>
         </div>
@@ -159,7 +159,7 @@
                     <h2 class="fw-bold" style="color: rgb(252,35,52);">1,250</h2>
 
                     <!-- Decorative Icon behind -->
-                    <i class="bi bi-exclamation-triangle position-absolute" style="font-size: 5rem; top: 90px; right: -10px; color: rgba(255,35,52,0.15); z-index: 0;"></i>
+                    <i class="bi bi-exclamation-triangle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,35,52,0.15); z-index: 0;"></i>
                 </div>
             </div>
         </div>
@@ -180,7 +180,7 @@
                     <h2 class="fw-bold" style="color: rgb(172,63,255);">1,250</h2>
 
                     <!-- Decorative Icon behind -->
-                    <i class="bi bi-calendar2 position-absolute" style="font-size: 5rem; top: 90px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
+                    <i class="bi bi-calendar2 position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
                 </div>
             </div>
         </div>
