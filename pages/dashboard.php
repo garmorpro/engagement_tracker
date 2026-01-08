@@ -562,7 +562,7 @@
                 <div class="card-body">
                     <!-- <h5 class="card-title">Card title</h5> -->
                     <span class="badge rounded-pill text-bg-primary d-inline-flex align-items-center"
-                          style="font-size: 15px; padding: 10px 14px;">
+                          style="font-size: 15px; padding: 10px 14px; background-color: rgb(105,114,129);">
                       On Hold
                       <span class="badge rounded-pill text-bg-secondary ms-2" style="color: white !important; background-color: rgb(149,156,166) !important;">1</span>
                     </span>
