@@ -250,7 +250,7 @@
         <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
           <div class="card-body">
             <h6 class="card-title fw-bold">Acme Corportation Audit</h6>
-            <p class="text-secondary" style="font-size: 14px; margin-bottom: none !important; padding-bottom: none !important;">
+            <p class="text-secondary" style="font-size: 14px; margin-bottom: -15px !important; padding-bottom: none !important;">
                 <span style="color: rgb(106,115,130);">ENG-2024-001</span>
                 <br>
                 <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
