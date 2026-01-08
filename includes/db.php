@@ -21,7 +21,7 @@ if (!file_exists($dotenvPath . '/.env')) {
     die(json_encode(['error' => 'Missing .env file', 'path' => $dotenvPath . '/.env']));
 }
 
-require_once __DIR__ . '/../vendor/autoload.php'; // Composer autoload
+require_once __DIR__ . '/../../vendor/autoload.php';
 $dotenv = Dotenv::createImmutable($dotenvPath);
 $dotenv->safeLoad();
 
