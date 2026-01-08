@@ -39,6 +39,7 @@
       <div class="header-title">Engagement Tracker</div>
       <div class="header-subtitle">Manage your audit engagements</div>
     </div>
+    <div class="header-actions">
     <div class="header-actions d-flex align-items-center" style="background-color: pink;">
       <button type="button" class="btn btn-outline-secondary btn-sm me-2">Board</button>
       <button type="button" class="btn btn-outline-secondary btn-sm me-2">List</button>
@@ -47,6 +48,7 @@
       
     </div>
     <button type="button" class="btn btn-new-engagement btn-sm ms-3">+ New Engagement</button>
+</div>
   </div>
 
 
