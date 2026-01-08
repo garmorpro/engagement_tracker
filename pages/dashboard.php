@@ -202,7 +202,7 @@
                  style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
               <div class="card-body position-relative text-center">
 
-                <div class="icon-box mb-3 d-flex align-items-center justify-content-center">
+                <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,35,52); color: white; font-size: 1.5rem; border-radius: 15px;">
                   <i class="bi bi-calendar2"></i>
                 </div>
 
