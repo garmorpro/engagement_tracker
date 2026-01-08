@@ -78,7 +78,7 @@
 
   <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 150px; margin-right: 150px;">
       <div class="col">
-        <div class="card h-100" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232);">
+        <div class="card h-100 position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232);">
           <div class="card-body">
             <!-- Icon with background -->
             <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(30,117,255); color: white; font-size: 1.5rem; border-radius: 15px;">
@@ -90,7 +90,7 @@
             <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
        
                 <i class="bi bi-graph-up-arrow position-absolute" 
-       style="font-size: 5rem; top: 40px; right: -40px; color: rgba(30,117,255,0.15); z-index: 0;"></i>
+       style="font-size: 5rem; top: 10px; right: 10px; color: rgba(30,117,255,0.15); z-index: 0;"></i>
    
           </div>
         </div>
