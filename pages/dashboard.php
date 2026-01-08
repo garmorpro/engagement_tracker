@@ -245,12 +245,15 @@
           <h6 class="fw-semibold mb-0">Overdue</h6>
         </div>
 
-        <!-- List -->
-        <ul class="list-unstyled mb-0">
-          <li class="mb-2">Client A – Audit Review</li>
-          <li class="mb-2">Client B – Risk Assessment</li>
-          <li>Client C – Policy Update</li>
-        </ul>
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">Acme Corportation Audit</h5>
+            <p class="card-text">ENG-2024-001</p>
+            <p class="card-text">Due: Feb 15, 2025</p>
+          </div>
+        </div>
+
+    
 
       </div>
     </div>
