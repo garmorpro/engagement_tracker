@@ -221,7 +221,7 @@
   <div class="p-3 border rounded d-flex align-items-center">
     
     <!-- Search bar (flex-grow takes all available space) -->
-    <input type="text" class="form-control me-3" placeholder="Search...">
+    <input type="text" class="form-control" placeholder="Search...">
 
     <!-- Filter button -->
     <button class="btn btn-outline-primary">
