@@ -41,10 +41,10 @@
     </div>
     <div class="header-actions d-flex align-items-center">
         <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;">
-            <button type="button" class="btn btn-outline-secondary btn-sm me-2">Board</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm me-2">List</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm me-2">Timeline</button>
-            <button type="button" class="btn btn-outline-secondary btn-sm">Analytics</button>
+            <button type="button" class="btn btn-sm me-2">Board</button>
+            <button type="button" class="btn btn-sm me-2">List</button>
+            <button type="button" class="btn btn-sm me-2">Timeline</button>
+            <button type="button" class="btn btn-sm">Analytics</button>
         </div>
         <button type="button" class="btn btn-new-engagement btn-sm ms-3">+ New Engagement</button>
     </div>
