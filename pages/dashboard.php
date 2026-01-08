@@ -251,8 +251,8 @@
   <div class="card-body">
 
     <!-- Title row -->
-    <div class="d-flex align-items-center justify-content-between">
-      <h6 class="card-title fw-bold mb-0" style="margin-top: -5px !important;">
+    <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+      <h6 class="card-title fw-bold mb-0" >
         Acme Corportation Audit
       </h6>
       <i class="bi bi-chevron-right text-secondary"></i>
