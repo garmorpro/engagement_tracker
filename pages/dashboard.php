@@ -44,8 +44,9 @@
       <button type="button" class="btn btn-outline-secondary btn-sm me-2">List</button>
       <button type="button" class="btn btn-outline-secondary btn-sm me-2">Timeline</button>
       <button type="button" class="btn btn-outline-secondary btn-sm me-2">Analytics</button>
-      <button type="button" class="btn btn-new-engagement btn-sm ms-3">+ New Engagement</button>
+      
     </div>
+    <button type="button" class="btn btn-new-engagement btn-sm ms-3">+ New Engagement</button>
   </div>
 
 
