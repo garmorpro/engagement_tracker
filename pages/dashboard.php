@@ -247,9 +247,9 @@
 
         <div class="card" >
           <div class="card-body">
-            <h6 class="card-title">Acme Corportation Audit</h6>
-            <p class="card-text">ENG-2024-001</p>
-            <p class="card-text">Due: Feb 15, 2025</p>
+            <h6 class="card-title fw-bold">Acme Corportation Audit</h6>
+            <p class="text-secondary">ENG-2024-001</p>
+            <p class="text-secondary">Due: Feb 15, 2025</p>
           </div>
         </div>
 
