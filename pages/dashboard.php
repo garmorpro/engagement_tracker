@@ -99,6 +99,17 @@
 .engagement-card-kanban:hover {
   box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
 }
+
+.engagement-card-kanban .card-actions {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.engagement-card-kanban:hover .card-actions {
+  opacity: 1;
+  visibility: visible;
+}
   </style>
 </head>
 <body>
@@ -625,7 +636,7 @@
                         <h6 class="card-title fw-bold mb-0" >
                           Acme Corportation Audit
                         </h6>
-                        <i class="bi bi-three-dots-vertical text-secondary"></i>
+                        <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
                       </div>
 
                       <!-- Subtext -->
