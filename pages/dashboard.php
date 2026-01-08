@@ -47,9 +47,11 @@
     }
     .new-btn {
         background-color: rgb(15,62,69);
+        color: white;
     }
     .new-btn:hover {
-        background-color: white;
+        background-color: rgba(21, 66, 73);
+        color: white;
     }
   </style>
 </head>
