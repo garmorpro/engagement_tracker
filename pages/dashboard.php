@@ -213,7 +213,7 @@
 
     </style>
 
-        <div class="container ">
+        <!-- <div class="container "> -->
   <div class="row align-items-center ">
 
     <!-- Search bar -->
@@ -229,7 +229,7 @@
     </button>
 
   </div>
-</div>
+<!-- </div> -->
 
 
 
