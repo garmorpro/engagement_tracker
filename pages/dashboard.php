@@ -57,7 +57,7 @@
 </head>
 <body>
 
-    <div class="header-container w-75">
+    <div class="header-container ps-5 ps-5">
     <div>
       <div class="header-title">Engagement Tracker</div>
       <div class="header-subtitle">Manage your audit engagements</div>
