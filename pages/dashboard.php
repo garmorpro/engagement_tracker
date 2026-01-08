@@ -39,11 +39,11 @@
       <div class="header-title">Engagement Tracker</div>
       <div class="header-subtitle">Manage your audit engagements</div>
     </div>
-    <div class="header-actions d-flex align-items-center">
-      <button type="button" class="btn btn-outline-secondary btn-sm">Board</button>
-      <button type="button" class="btn btn-outline-secondary btn-sm">List</button>
-      <button type="button" class="btn btn-outline-secondary btn-sm">Timeline</button>
-      <button type="button" class="btn btn-outline-secondary btn-sm">Analytics</button>
+    <div class="header-actions d-flex align-items-center" style="background-color: pink;">
+      <button type="button" class="btn btn-outline-secondary btn-sm me-2">Board</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm me-2">List</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm me-2">Timeline</button>
+      <button type="button" class="btn btn-outline-secondary btn-sm me-2">Analytics</button>
       <button type="button" class="btn btn-new-engagement btn-sm ms-3">+ New Engagement</button>
     </div>
   </div>
