@@ -207,7 +207,7 @@
 
     <!-- Search bar -->
     <div class="container my-4">
-  <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 6px 6px 10px rgba(0,0,0,0.15);">
+  <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 4px 4px 5px rgba(0,0,0,0.15);">
     
     <!-- Search bar (flex-grow takes all available space) -->
     <input type="text" class="form-control me-3" placeholder="Search...">
