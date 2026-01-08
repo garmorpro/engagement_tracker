@@ -29,10 +29,10 @@
       color: #6c757d;
       margin-top: 2px;
     }
-    .tab-btn .active {
+    .tab-btn.active {
         background-color: white;
     }
-    .tab-btn :hover {
+    .tab-btn:hover {
         background-color: rgb(225,228,232);
     }
     
