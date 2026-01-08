@@ -561,7 +561,7 @@
             <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219);">
                 <div class="card-body">
                     <!-- <h5 class="card-title">Card title</h5> -->
-                    <span class="badge rounded-pill text-bg-primary" style="font-size: 14px; padding: 15px;">
+                    <span class="badge rounded-pill text-bg-primary" style="font-size: 15px; padding: 5px;">
                         On Hold
                     </span>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
