@@ -583,7 +583,7 @@
                     </span>
 
 
-                    <div class="card" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
+                    <div class="card engagement-card-kanban" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
                       <div class="card-body d-flex align-items-center justify-content-between">
 
                         <!-- LEFT -->
