@@ -201,29 +201,88 @@
 
     <!-- Search bar -->
         <div class="row align-items-center " style="margin-left: 150px; margin-right: 150px; ">
-
-            <!-- <div class="container my-4"> -->
-                <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15);">
-    
-                    <div class="input-group flex-grow-1 me-3">
-                        <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);;" placeholder="Search...">
-                    </div>
-
-                    <!-- Filter button -->
-                    <button class="btn btn-outline-primary">
-                      <i class="bi bi-funnel-fill me-1"></i> Filter
-                    </button>
-
+            <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15);">
+                <div class="input-group flex-grow-1 me-3">
+                    <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);;" placeholder="Search...">
+                </div>
+                <!-- Filter button -->
+                <button class="btn btn-outline-primary">
+                  <i class="bi bi-funnel-fill me-1"></i> Filter
+                </button>
+            </div>
         </div>
-</div>
-
-
-
-
     <!-- end search bar -->
+
+    <!-- status updates -->
+
+ 
+  <div class="row g-4">
+
+    <!-- Overdue -->
+    <div class="col-md-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h6 class="fw-semibold text-danger mb-3">Overdue</h6>
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">Client A – Audit Review</li>
+            <li class="mb-2">Client B – Risk Assessment</li>
+            <li>Client C – Policy Update</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Due This Week -->
+    <div class="col-md-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h6 class="fw-semibold text-primary mb-3">Due This Week</h6>
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">Client D – PCI Scan</li>
+            <li class="mb-2">Client E – Vulnerability Test</li>
+            <li>Client F – Documentation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- High Priority -->
+    <div class="col-md-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h6 class="fw-semibold text-warning mb-3">High Priority</h6>
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">Client G – Incident Response</li>
+            <li class="mb-2">Client H – Critical Fix</li>
+            <li>Client I – Compliance Review</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Updates -->
+    <div class="col-md-3">
+      <div class="card h-100">
+        <div class="card-body">
+          <h6 class="fw-semibold text-success mb-3">Recent Updates</h6>
+          <ul class="list-unstyled mb-0">
+            <li class="mb-2">Client J – Status Updated</li>
+            <li class="mb-2">Client K – Notes Added</li>
+            <li>Client L – Files Uploaded</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+    <!-- end status updates -->
+
 
 
 
