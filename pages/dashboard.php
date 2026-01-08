@@ -204,11 +204,11 @@
 
     <style>
         .form-control {
-  border-radius: 0.5rem 0 0 0.5rem; /* round left corners */
+  /* border-radius: 0.5rem 0 0 0.5rem; round left corners */
 }
 
 .btn {
-  border-radius: 0 0.5rem 0.5rem 0; /* round right corners */
+  /* border-radius: 0 0.5rem 0.5rem 0; round right corners */
 }
 
     </style>
@@ -221,7 +221,7 @@
   <div class="p-3 border rounded d-flex align-items-center">
     
     <!-- Search bar (flex-grow takes all available space) -->
-    <input type="text" class="form-control" placeholder="Search...">
+    <input type="text" class="form-control me-3" placeholder="Search...">
 
     <!-- Filter button -->
     <button class="btn btn-outline-primary">
