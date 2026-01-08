@@ -628,7 +628,7 @@
                     </span>
 
 
-                    <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: none; cursor: move;">
+                    <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); cursor: move;">
                     <div class="card-body" style="margin-bottom: -15px !important;">
 
                       <!-- Title row -->
