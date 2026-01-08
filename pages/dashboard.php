@@ -567,7 +567,8 @@
                       <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(149,156,166) !important;">1</span>
                     </span>
 
-                    <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219);">
+
+                    <div class="card" style="border-radius: 15px; border: 1px solid rgb(208,213,219);">
                       <div class="card-body d-flex align-items-center justify-content-between">
 
                         <!-- LEFT -->
