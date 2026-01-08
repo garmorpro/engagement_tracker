@@ -583,9 +583,9 @@
                         <!-- RIGHT -->
                         <div class="right d-flex align-items-center gap-3 text-secondary">
                           <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;Jane Brown</span>
-                          <span style="font-size: 14px;"><i class="bi bi-calendar2"></i>&nbsp;Apr 30</span>
-                          <span class="badge text-bg-secondary">SOC 2 Type 2</span>
-                          <span class="badge text-bg-danger">Overdue</span>
+                          <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;Apr 30</span>
+                          <span class="badge text-bg-secondary" style="color: rgb(57,69,85); background-color: rgb(57,69,85);">SOC 2 Type 2</span>
+                          <span class="badge text-bg-danger" style="color: rgb(255,226,226); background-color: rgb(201,0,18);">Overdue</span>
                         </div>
 
                       </div>
