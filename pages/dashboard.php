@@ -277,7 +277,7 @@
           </div>
         </div>
 
-        <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
+        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
           <div class="card-body">
 
             <!-- Title row -->
@@ -297,7 +297,7 @@
           </div>
         </div>
 
-        <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
+        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
           <div class="card-body">
 
             <!-- Title row -->
