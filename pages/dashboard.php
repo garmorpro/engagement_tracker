@@ -249,9 +249,9 @@
           <div class="card-body">
             <h6 class="card-title fw-bold">Acme Corportation Audit</h6>
             <p class="text-secondary" style="font-size: 14px;">
-                ENG-2024-001
+                <span style="color: rgb(106,115,130);">ENG-2024-001</span>
                 <br>
-                Due: Feb 15, 2025
+                <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
             </p>
           </div>
         </div>
