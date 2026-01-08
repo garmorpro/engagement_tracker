@@ -36,10 +36,14 @@
 
     .tab-btn.active:hover {
         background-color: white;
+        border: none !important;
     }
-
+    .tab-btn {
+        border: none !important;
+    }
     .tab-btn:hover {
         background-color: rgb(225,228,232);
+        border: none !important;
     }
     
   </style>
