@@ -102,7 +102,7 @@
         </div>
 
         <div class="col">
-            <div class="card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
+            <div class="card position-relative" style="background-color: rgb(255,241,224; border-color: rgb(225,228,232); overflow: hidden;">
                 <div class="card-body">
 
                     <!-- Small icon -->
@@ -123,7 +123,7 @@
         </div>
 
         <div class="col">
-            <div class="card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
+            <div class="card position-relative" style="background-color: rgb(226,253,237); border-color: rgb(225,228,232); overflow: hidden;">
                 <div class="card-body">
 
                     <!-- Small icon -->
@@ -135,7 +135,7 @@
                     <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Completed</h6>
 
                     <!-- Big Number -->
-                    <h2 class="fw-bold" style="color: rgb(226,253,237);">1,250</h2>
+                    <h2 class="fw-bold" style="color: rgb(0,194,81);">1,250</h2>
 
                     <!-- Decorative Icon behind -->
                     <i class="bi bi-check2-circle position-absolute" style="font-size: 5rem; top: 50px; right: -10px; color: rgba(0,194,81,0.15); z-index: 0;"></i>
@@ -144,7 +144,7 @@
         </div>
 
         <div class="col">
-            <div class="card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
+            <div class="card position-relative" style="background-color: rgb(255,231,231); border-color: rgb(225,228,232); overflow: hidden;">
                 <div class="card-body">
 
                     <!-- Small icon -->
@@ -164,7 +164,26 @@
             </div>
         </div>
 
+        <div class="col">
+            <div class="card position-relative" style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
+                <div class="card-body">
 
+                    <!-- Small icon -->
+                    <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(172,63,255); color: white; font-size: 1.5rem; border-radius: 15px;">
+                        <i class="bi bi-clock"></i>
+                    </div>
+
+                    <!-- Title -->
+                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Due This Week</h6>
+
+                    <!-- Big Number -->
+                    <h2 class="fw-bold" style="color: rgb(172,63,255);">1,250</h2>
+
+                    <!-- Decorative Icon behind -->
+                    <i class="bi bi-clock position-absolute" style="font-size: 5rem; top: 50px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
+                </div>
+            </div>
+        </div>
 
 
 
