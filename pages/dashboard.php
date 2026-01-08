@@ -558,7 +558,7 @@
     <!-- Board sections -->
 
         <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px; border-radius: 15px;">
-            <div class="card" style="border: 2px solid rgb(247,248,250);">
+            <div class="card" style="border: 24px solid rgb(247,248,250);">
                 <div class="card-body">
                     <h5 class="card-title">Card title</h5>
                     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
