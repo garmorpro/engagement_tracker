@@ -572,7 +572,7 @@
     <!-- Board sections -->
 
       <!-- Row 1 -->
-        <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
+        <div class="row align-items-center" style="margin-top:15px; margin-left: 210px; margin-right: 210px;">
             <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
                 <div class="card-body">
                     <!-- <h5 class="card-title">Card title</h5> -->
