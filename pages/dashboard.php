@@ -81,7 +81,7 @@
         <div class="card h-100" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232);">
           <div class="card-body">
             <!-- Icon with background -->
-            <div class="mb-3 d-flex align-items-center justify-content-center rounded-circle" style="width: 60px; height: 60px; background-color: rgb(30,117,255); color: white; font-size: 1.5rem;">
+            <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(30,117,255); color: white; font-size: 1.5rem;">
                 <i class="bi bi-graph-up-arrow"></i>
             </div>
             <!-- Title -->
