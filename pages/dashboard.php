@@ -209,8 +209,12 @@
     <div class="container my-4">
   <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15);">
     
-    <!-- Search bar (flex-grow takes all available space) -->
-    <input type="text" class="form-control me-3" placeholder="Search...">
+    <div class="input-group flex-grow-1 me-3">
+      <span class="input-group-text bg-white border-end-0">
+        <i class="bi bi-search"></i>
+      </span>
+      <input type="text" class="form-control border-start-0" placeholder="Search...">
+    </div>
 
     <!-- Filter button -->
     <button class="btn btn-outline-primary">
