@@ -601,8 +601,8 @@
       <!-- end row 1 -->
 
       <!-- Row 2 -->
-        <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
-          <div class="col">
+        <div class="row align-items-start mt-4 g-4" style="margin-left: 210px; margin-right: 210px;">
+          <div class="col-md-4">
 
           <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
                 <div class="card-body">
@@ -644,7 +644,7 @@
             </div>
           </div> <!-- end col 1 -->
 
-          <div class="col">
+          <div class="col-md-4">
 
           <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
                 <div class="card-body">
@@ -686,7 +686,7 @@
             </div>
           </div> <!-- end col 2 -->
 
-          <div class="col">
+          <div class="col-md-4">
 
           <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
                 <div class="card-body">
