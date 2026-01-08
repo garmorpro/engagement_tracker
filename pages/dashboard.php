@@ -78,14 +78,24 @@
 
   <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 150px; margin-right: 150px;">
       <div class="col">
-        <div class="card h-100" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232);">
-          <div class="card-body">
-            <span class="background-color: rgb(30,117,255); padding: 10px;">
-                <i class="bi bi-graph-up-arrow"></i>
-</span>
-          </div>
-        </div>
-      </div>
+        <div class="card h-100 text-center" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232);">
+  <div class="card-body d-flex flex-column align-items-center justify-content-center">
+    
+    <!-- Icon with background -->
+    <div class="mb-3 d-flex align-items-center justify-content-center rounded-circle" 
+         style="width: 60px; height: 60px; background-color: rgb(30,117,255); color: white; font-size: 1.5rem;">
+      <i class="bi bi-graph-up-arrow"></i>
+    </div>
+
+    <!-- Title -->
+    <h6 class="card-title mb-2">Revenue</h6>
+
+    <!-- Big Number -->
+    <h2 class="fw-bold">1,250</h2>
+
+  </div>
+</div>
+
       <div class="col">
         <div class="card h-100">
           <div class="card-body">
