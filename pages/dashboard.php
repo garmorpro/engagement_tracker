@@ -73,6 +73,17 @@
 .custom-card:hover .icon-box {
   transform: scale(1.1); /* grows the box smoothly */
 }
+
+.icon-square {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
   </style>
 </head>
 <body>
@@ -219,65 +230,100 @@
     <!-- status updates -->
 
  
-    <div class="row g-4 mt-2" style="margin-left: 150px; margin-right: 150px; ">
+    <div class="row g-4 mt-2" style="margin-left: 150px; margin-right: 150px;">
 
-    <!-- Overdue -->
-    <div class="col-md-3">
-      <div class="card h-100">
-        <div class="card-body">
-          <h6 class="fw-semibold text-danger mb-3">Overdue</h6>
-          <ul class="list-unstyled mb-0">
-            <li class="mb-2">Client A – Audit Review</li>
-            <li class="mb-2">Client B – Risk Assessment</li>
-            <li>Client C – Policy Update</li>
-          </ul>
+  <!-- Overdue -->
+  <div class="col-md-3">
+    <div class="card h-100 border-danger">
+      <div class="card-body">
+
+        <!-- Header -->
+        <div class="d-flex align-items-center mb-3">
+          <div class="icon-square bg-danger text-white me-2">
+            <i class="bi bi-exclamation-circle"></i>
+          </div>
+          <h6 class="fw-semibold text-danger mb-0">Overdue</h6>
         </div>
+
+        <!-- List -->
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2">Client A – Audit Review</li>
+          <li class="mb-2">Client B – Risk Assessment</li>
+          <li>Client C – Policy Update</li>
+        </ul>
+
       </div>
     </div>
-
-    <!-- Due This Week -->
-    <div class="col-md-3">
-      <div class="card h-100">
-        <div class="card-body">
-          <h6 class="fw-semibold text-primary mb-3">Due This Week</h6>
-          <ul class="list-unstyled mb-0">
-            <li class="mb-2">Client D – PCI Scan</li>
-            <li class="mb-2">Client E – Vulnerability Test</li>
-            <li>Client F – Documentation</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- High Priority -->
-    <div class="col-md-3">
-      <div class="card h-100">
-        <div class="card-body">
-          <h6 class="fw-semibold text-warning mb-3">High Priority</h6>
-          <ul class="list-unstyled mb-0">
-            <li class="mb-2">Client G – Incident Response</li>
-            <li class="mb-2">Client H – Critical Fix</li>
-            <li>Client I – Compliance Review</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Updates -->
-    <div class="col-md-3">
-      <div class="card h-100">
-        <div class="card-body">
-          <h6 class="fw-semibold text-success mb-3">Recent Updates</h6>
-          <ul class="list-unstyled mb-0">
-            <li class="mb-2">Client J – Status Updated</li>
-            <li class="mb-2">Client K – Notes Added</li>
-            <li>Client L – Files Uploaded</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
   </div>
+
+  <!-- Due This Week -->
+  <div class="col-md-3">
+    <div class="card h-100 border-primary">
+      <div class="card-body">
+
+        <div class="d-flex align-items-center mb-3">
+          <div class="icon-square bg-primary text-white me-2">
+            <i class="bi bi-calendar-week"></i>
+          </div>
+          <h6 class="fw-semibold text-primary mb-0">Due This Week</h6>
+        </div>
+
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2">Client D – PCI Scan</li>
+          <li class="mb-2">Client E – Vulnerability Test</li>
+          <li>Client F – Documentation</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- High Priority -->
+  <div class="col-md-3">
+    <div class="card h-100 border-warning">
+      <div class="card-body">
+
+        <div class="d-flex align-items-center mb-3">
+          <div class="icon-square bg-warning text-white me-2">
+            <i class="bi bi-flag-fill"></i>
+          </div>
+          <h6 class="fw-semibold text-warning mb-0">High Priority</h6>
+        </div>
+
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2">Client G – Incident Response</li>
+          <li class="mb-2">Client H – Critical Fix</li>
+          <li>Client I – Compliance Review</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Updates -->
+  <div class="col-md-3">
+    <div class="card h-100 border-success">
+      <div class="card-body">
+
+        <div class="d-flex align-items-center mb-3">
+          <div class="icon-square bg-success text-white me-2">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <h6 class="fw-semibold text-success mb-0">Recent Updates</h6>
+        </div>
+
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2">Client J – Status Updated</li>
+          <li class="mb-2">Client K – Notes Added</li>
+          <li>Client L – Files Uploaded</li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
 
 
 
