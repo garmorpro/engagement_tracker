@@ -615,7 +615,7 @@
       <!-- end row 1 -->
 
       <!-- Row 2 -->
-        <div class="row align-items-start g-4" style="margin-top: 20px; margin-left: 200px; margin-right: 200px;">
+        <div class="row align-items-start g-4" style="margin-top: 15px; margin-left: 200px; margin-right: 200px;">
             
           <!-- Column 1 -->
             <div class="col-md-4">
