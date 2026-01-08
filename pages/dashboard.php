@@ -89,7 +89,7 @@
             <!-- Big Number -->
             <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
        
-                <i class="bi bi-graph-up-arrow" style="margin-right: -150px !important;"></i>
+                <i class="bi bi-graph-up-arrow" style="right: -150px !important;"></i>
    
           </div>
         </div>
