@@ -625,7 +625,7 @@
                         <h6 class="card-title fw-bold mb-0" >
                           Acme Corportation Audit
                         </h6>
-                        <i class="bi bi-arrow-right text-secondary"></i>
+                        <i class="bi bi-three-dots-vertical text-secondary"></i>
                       </div>
 
                       <!-- Subtext -->
