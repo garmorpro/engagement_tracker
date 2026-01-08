@@ -101,11 +101,11 @@
 <body>
 
     <div class="header-container">
-    <div style="margin-left: 150px;">
+    <div style="margin-left: 200px;">
       <div class="header-title">Engagement Tracker</div>
       <div class="header-subtitle">Manage your audit engagements</div>
     </div>
-    <div class="header-actions d-flex align-items-center" style="margin-right: 150px;">
+    <div class="header-actions d-flex align-items-center" style="margin-right: 200px;">
         <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;">
             <button type="button" class="btn btn-sm me-2 tab-btn active"><i class="bi bi-grid"></i>&nbsp;&nbsp;Board</button>
             <button type="button" class="btn btn-sm me-2 tab-btn"><i class="bi bi-list-ul"></i>&nbsp;&nbsp;List</button>
