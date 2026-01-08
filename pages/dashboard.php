@@ -71,7 +71,7 @@
 
 /* Enlarge icon box on hover without affecting card */
 .custom-card:hover .icon-box {
-  transform: scale(1.2); /* grows the box smoothly */
+  transform: scale(1.1); /* grows the box smoothly */
 }
   </style>
 </head>
