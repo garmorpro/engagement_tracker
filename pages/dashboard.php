@@ -631,7 +631,9 @@
                       <!-- Subtext -->
                       <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
                         <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
+                        <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span><br>
+                        <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;Jane Brown</span><br>
+                          <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;Apr 30</span>
                       </p>
 
                     </div>
