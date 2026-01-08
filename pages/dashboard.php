@@ -200,7 +200,7 @@
 
 
     <!-- Search bar -->
-        <div class="row align-items-center mt-5" style="margin-left: 150px; margin-right: 150px; ">
+        <div class="row align-items-center mt-3" style="margin-left: 150px; margin-right: 150px; ">
             <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15);">
                 <div class="input-group flex-grow-1 me-3">
                     <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
@@ -219,7 +219,7 @@
     <!-- status updates -->
 
  
-    <div class="row g-4 mt-5" style="margin-left: 150px; margin-right: 150px; ">
+    <div class="row g-4 mt-2" style="margin-left: 150px; margin-right: 150px; ">
 
     <!-- Overdue -->
     <div class="col-md-3">
