@@ -202,19 +202,8 @@
     <!-- Search bar -->
 
 
-    <style>
-        .form-control {
-  /* border-radius: 0.5rem 0 0 0.5rem; round left corners */
-}
-
-.btn {
-  /* border-radius: 0 0.5rem 0.5rem 0; round right corners */
-}
-
-    </style>
-
         <!-- <div class="container "> -->
-  <div class="row align-items-center ">
+  <div class="row align-items-center " style="margin-left: 150px; margin-right: 150px;">
 
     <!-- Search bar -->
     <div class="container my-4">
