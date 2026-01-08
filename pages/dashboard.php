@@ -31,7 +31,13 @@
     }
     .tab-btn.active {
         background-color: white;
+        border: none !important;
     }
+
+    .tab-btn.active:hover {
+        background-color: white;
+    }
+
     .tab-btn:hover {
         background-color: rgb(225,228,232);
     }
