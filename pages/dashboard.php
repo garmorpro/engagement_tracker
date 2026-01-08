@@ -95,123 +95,137 @@
 
   <div class="mt-5"></div>
 
+    <!-- Status Cards -->
+        <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 150px; margin-right: 150px;">
+            <div class="col">
+                <div class="card custom-card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
+                    <div class="card-body">
 
-  <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 150px; margin-right: 150px;">
+                        <!-- Small icon -->
+                        <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(30,117, 255); color: white; font-size: 1.5rem; border-radius: 15px;">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
 
+                        <!-- Title -->
+                        <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Total Engagements</h6>
 
-        <div class="col">
-        
-            <div class="card custom-card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
-                <div class="card-body">
+                        <!-- Big Number -->
+                        <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
 
-                    <!-- Small icon -->
-                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(30,117,255); color: white; font-size: 1.5rem; border-radius: 15px;">
-                        <i class="bi bi-graph-up-arrow"></i>
+                        <!-- Decorative Icon behind -->
+                        <i class="bi bi-graph-up-arrow position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(30,117,255,0.15); z-index:  0;"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card custom-card position-relative" style="background-color: rgb(255,241,224); border-color: rgb(225,228,232); overflow: hidden;">
+                    <div class="card-body">
+
+                        <!-- Small icon -->
+                        <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,92, 0); color: white; font-size: 1.5rem; border-radius: 15px;">
+                            <i class="bi bi-clock"></i>
+                        </div>
+
+                        <!-- Title -->
+                        <h6 class="card-title mb-2" style="color: rgb(104,115,128);">In Progress</h6>
+
+                        <!-- Big Number -->
+                        <h2 class="fw-bold" style="color: rgb(255,92,0);">1,250</h2>
+
+                        <!-- Decorative Icon behind -->
+                        <i class="bi bi-clock position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,92,0,0.15); z-index: 0;"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card custom-card position-relative" style="background-color: rgb(226,253,237); border-color: rgb(225,228,232); overflow: hidden;">
+                    <div class="card-body">
+
+                        <!-- Small icon -->
+                        <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(0,194,  81); color: white; font-size: 1.5rem; border-radius: 15px;">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+
+                        <!-- Title -->
+                        <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Completed</h6>
+
+                        <!-- Big Number -->
+                        <h2 class="fw-bold" style="color: rgb(0,194,81);">1,250</h2>
+
+                        <!-- Decorative Icon behind -->
+                        <i class="bi bi-check2-circle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(0,194,81,0.15); z-index: 0;  "></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card custom-card position-relative" style="background-color: rgb(255,231,231); border-color: rgb(225,228,232); overflow: hidden;">
+                    <div class="card-body">
+
+                        <!-- Small icon -->
+                        <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,35, 52); color: white; font-size: 1.5rem; border-radius: 15px;">
+                            <i class="bi bi-exclamation-triangle"></i>
+                        </div>
+
+                        <!-- Title -->
+                        <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Overdue</h6>
+
+                        <!-- Big Number -->
+                        <h2 class="fw-bold" style="color: rgb(252,35,52);">1,250</h2>
+
+                        <!-- Decorative Icon behind -->
+                        <i class="bi bi-exclamation-triangle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,35,52,0.15);  z-index: 0;"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card custom-card position-relative" style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
+                  <div class="card-body position-relative">
+
+                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(172,63, 255); color: white; font-size: 1.5rem; border-radius: 15px;">
+                      <i class="bi bi-calendar2"></i>
                     </div>
 
-                    <!-- Title -->
-                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Total Engagements</h6>
+                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Due This Week</h6>
 
-                    <!-- Big Number -->
-                    <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
+                    <h2 class="fw-bold" style="color: rgb(172,63,255);">1,250</h2>
 
-                    <!-- Decorative Icon behind -->
-                    <i class="bi bi-graph-up-arrow position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(30,117,255,0.15); z-index: 0;"></i>
+                    <i class="bi bi-calendar2 position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
+
+                  </div>
                 </div>
             </div>
+    
         </div>
-
-        <div class="col">
-            <div class="card custom-card position-relative" style="background-color: rgb(255,241,224); border-color: rgb(225,228,232); overflow: hidden;">
-                <div class="card-body">
-
-                    <!-- Small icon -->
-                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,92,0); color: white; font-size: 1.5rem; border-radius: 15px;">
-                        <i class="bi bi-clock"></i>
-                    </div>
-
-                    <!-- Title -->
-                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">In Progress</h6>
-
-                    <!-- Big Number -->
-                    <h2 class="fw-bold" style="color: rgb(255,92,0);">1,250</h2>
-
-                    <!-- Decorative Icon behind -->
-                    <i class="bi bi-clock position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,92,0,0.15); z-index: 0;"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card custom-card position-relative" style="background-color: rgb(226,253,237); border-color: rgb(225,228,232); overflow: hidden;">
-                <div class="card-body">
-
-                    <!-- Small icon -->
-                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(0,194,81); color: white; font-size: 1.5rem; border-radius: 15px;">
-                        <i class="bi bi-check2-circle"></i>
-                    </div>
-
-                    <!-- Title -->
-                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Completed</h6>
-
-                    <!-- Big Number -->
-                    <h2 class="fw-bold" style="color: rgb(0,194,81);">1,250</h2>
-
-                    <!-- Decorative Icon behind -->
-                    <i class="bi bi-check2-circle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(0,194,81,0.15); z-index: 0;"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="col">
-            <div class="card custom-card position-relative" style="background-color: rgb(255,231,231); border-color: rgb(225,228,232); overflow: hidden;">
-                <div class="card-body">
-
-                    <!-- Small icon -->
-                    <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(255,35,52); color: white; font-size: 1.5rem; border-radius: 15px;">
-                        <i class="bi bi-exclamation-triangle"></i>
-                    </div>
-
-                    <!-- Title -->
-                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Overdue</h6>
-
-                    <!-- Big Number -->
-                    <h2 class="fw-bold" style="color: rgb(252,35,52);">1,250</h2>
-
-                    <!-- Decorative Icon behind -->
-                    <i class="bi bi-exclamation-triangle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,35,52,0.15); z-index: 0;"></i>
-                </div>
-            </div>
-        </div>
+    <!-- end status cards -->
 
 
-        <div class="col">
-            <div class="card custom-card position-relative" style="background-color: rgb(247,236,254); border-color: rgb(225,228,232); overflow: hidden;">
-              <div class="card-body position-relative">
+    <!-- Search bar -->
+        <div class="container my-4">
+  <div class="row align-items-center g-2">
 
-                <div class="icon-box mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(172,63,255); color: white; font-size: 1.5rem; border-radius: 15px;">
-                  <i class="bi bi-calendar2"></i>
-                </div>
-
-                <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Due This Week</h6>
-
-                <h2 class="fw-bold" style="color: rgb(172,63,255);">1,250</h2>
-
-                <i class="bi bi-calendar2 position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
-
-              </div>
-            </div>
-        </div>
-
-
-
-
-
-      
+    <!-- Search bar -->
+    <div class="col-md-8">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="text" class="form-control border-start-0" placeholder="Search...">
+      </div>
     </div>
 
+    <!-- Filter button -->
+    <div class="col-md-4 text-md-end">
+      <button class="btn btn-outline-primary">
+        <i class="bi bi-funnel-fill me-1"></i> Filter
+      </button>
+    </div>
 
-  
+  </div>
+</div>
+
+
+
+    <!-- end search bar -->
 
 
 
