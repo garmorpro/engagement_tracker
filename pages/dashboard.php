@@ -210,7 +210,7 @@
   <div class="p-3 border rounded d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15);">
     
     <div class="input-group flex-grow-1 me-3">
-      <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251);">
+      <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
         <i class="bi bi-search"></i>
       </span>
       <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);;" placeholder="Search...">
