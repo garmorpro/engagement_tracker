@@ -601,7 +601,7 @@
       <!-- end row 1 -->
 
       <!-- Row 2 -->
-        <div class="row align-items-start mt-4 g-4" style="margin-left: 210px; margin-right: 210px;">
+        <div class="row align-items-start mt-4 g-4" style="margin-left: 200px; margin-right: 200px;">
           <div class="col-md-4">
 
           <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
