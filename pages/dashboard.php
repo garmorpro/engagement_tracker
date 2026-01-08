@@ -90,7 +90,7 @@
                     </div>
 
                     <!-- Title -->
-                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Revenue</h6>
+                    <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Total Engagements</h6>
 
                     <!-- Big Number -->
                     <h2 class="fw-bold" style="color: rgb(30,117,225);">1,250</h2>
@@ -101,46 +101,34 @@
             </div>
         </div>
 
+        <div class="col">
+            <div class="card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;">
+                <div class="card-body">
+
+                    <!-- Small icon -->
+                    <div class="mb-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgb(2525,92,0); color: white; font-size: 1.5rem; border-radius: 15px;">
+                        <i class="bi bi-clock"></i>
+                    </div>
+
+                    <!-- Title -->
+                    <h6 class="card-title mb-2" style="color: rgb(255,241,224);">Total Engagements</h6>
+
+                    <!-- Big Number -->
+                    <h2 class="fw-bold" style="color: rgb(255,92,0);">1,250</h2>
+
+                    <!-- Decorative Icon behind -->
+                    <i class="bi bi-clock position-absolute" style="font-size: 5rem; top: 50px; right: -10px; color: rgba(255,92,0,0.15); z-index: 0;"></i>
+                </div>
+            </div>
+        </div>
 
 
 
 
-      <div class="col">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title">Card 2</h5>
-            <p class="card-text">Some example text for card 2.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title">Card 3</h5>
-            <p class="card-text">Some example text for card 3.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title">Card 4</h5>
-            <p class="card-text">Some example text for card 4.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card h-100">
-          <div class="card-body">
-            <h5 class="card-title">Card 5</h5>
-            <p class="card-text">Some example text for card 5.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
-        </div>
-      </div>
+
+
+
+      
     </div>
 
 
