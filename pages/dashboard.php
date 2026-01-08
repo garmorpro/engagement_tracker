@@ -29,7 +29,7 @@
       color: #6c757d;
       margin-top: 2px;
     }
-    button.active {
+    button.selected {
         background-color: white;
     }
     
@@ -44,7 +44,7 @@
     </div>
     <div class="header-actions d-flex align-items-center">
         <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;">
-            <button type="button" class="btn btn-sm me-2 active">Board</button>
+            <button type="button" class="btn btn-sm me-2 selected">Board</button>
             <button type="button" class="btn btn-sm me-2">List</button>
             <button type="button" class="btn btn-sm me-2">Timeline</button>
             <button type="button" class="btn btn-sm">Analytics</button>
