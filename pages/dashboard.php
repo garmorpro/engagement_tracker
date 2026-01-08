@@ -219,7 +219,7 @@
     <!-- status updates -->
 
  
-  <div class="row g-4">
+  <div class="row g-4" style="margin-left: 150px; margin-right: 150px; ">
 
     <!-- Overdue -->
     <div class="col-md-3">
