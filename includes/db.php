@@ -9,7 +9,7 @@ use Dotenv\Dotenv;
 /**
  * Resolve project root
  */
-$root = realpath(__DIR__ . '../../');
+$root = realpath(__DIR__ . '/../../../');
 if ($root === false) {
     die('❌ Failed to resolve project root');
 }
