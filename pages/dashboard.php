@@ -40,7 +40,7 @@
       <div class="header-subtitle">Manage your audit engagements</div>
     </div>
     <div class="header-actions d-flex align-items-center">
-        <div class="view-options p-1" style="background-color: gray; border-radius: 15px;">
+        <div class="view-options p-1" style="background-color: gray; border-radius: 10px;">
             <button type="button" class="btn btn-outline-secondary btn-sm me-2">Board</button>
             <button type="button" class="btn btn-outline-secondary btn-sm me-2">List</button>
             <button type="button" class="btn btn-outline-secondary btn-sm me-2">Timeline</button>
