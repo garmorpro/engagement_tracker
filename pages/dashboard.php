@@ -1094,6 +1094,11 @@ require_once '../includes/functions.php';
                       </div>
                       <h6 class="fw-semibold mb-0">Status Distribution</h6>
                     </div>
+
+                      <div style="width: 400px; height: 400px;">
+                        <canvas id="status_distribution"></canvas>
+                      </div>
+
   
                     
   
@@ -1103,7 +1108,7 @@ require_once '../includes/functions.php';
   
               <!-- Manager Workload -->
               <div class="col-md-6">
-                <div class="card h-100" style="border-color: rgb(187,219,253);  border-radius: 15px;">
+                <div class="card h-100" style="border-color: rgb(229,231,235);  border-radius: 15px;">
                   <div class="card-body">
   
                     <div class="d-flex align-items-center mb-3">
@@ -1138,6 +1143,47 @@ require_once '../includes/functions.php';
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+  <script>
+const ctx = document.getElementById('myChart').getContext('2d');
+
+const myDoughnutChart = new Chart(ctx, {
+    type: 'doughnut', // 'pie' for a pie chart
+    data: {
+        labels: ['Completed', 'In Progress', 'Overdue'], // sections
+        datasets: [{
+            label: 'Engagement Status',
+            data: [12, 7, 3], // values for each section
+            backgroundColor: [
+                'rgba(55, 182, 38, 0.8)',  // Completed
+                'rgba(195, 119, 38, 0.8)', // In Progress
+                'rgba(243, 36, 57, 0.8)'   // Overdue
+            ],
+            borderColor: [
+                'rgba(55, 182, 38, 1)',
+                'rgba(195, 119, 38, 1)',
+                'rgba(243, 36, 57, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            },
+            tooltip: {
+                enabled: true
+            }
+        }
+    }
+});
+</script>
+
+
 
   
 
