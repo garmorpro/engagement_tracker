@@ -267,7 +267,7 @@ require_once '../includes/functions.php';
                 <?php endforeach; else: ?>
 
                     <!-- Empty state -->
-                    <div class="text-center text-muted py-4"
+                    <div class="text-center text-muted py-4 empty-placeholder"
                          style="border: 1px dashed rgb(208,213,219); border-radius: 15px;">
                         Drop engagements here
                     </div>
