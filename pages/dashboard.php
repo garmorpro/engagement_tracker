@@ -741,13 +741,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Transform card to match On-Hold template
     const transformToOnHold = (card) => {
-        const engId = card.dataset.id;
-        const name = card.querySelector('.d-flex.align-items-center.gap-3 > div > h5')?.textContent || '';
-        const engNo = card.querySelector('.text-muted')?.textContent || '';
-        const manager = card.querySelector('.bi-people')?.parentElement.textContent.trim() || '';
-        const fieldwork = card.querySelector('.bi-calendar2')?.parentElement.textContent.trim() || '';
-        const auditBadge = card.querySelector('.badge')?.textContent || '';
-        const finalDue = card.dataset.finalDue || '';
+      const engId = card.dataset.id;
+      const name = card.querySelector('.d-flex.align-items-center.gap-3 > div > h5')?.textContent || '';
+      const engNo = card.querySelector('.d-flex.align-items-center.gap-3 > div > span')?.textContent || '';
+      const manager = card.querySelector('.bi-people')?.parentElement.textContent.trim() || '';
+      const fieldwork = card.querySelector('.bi-calendar2')?.parentElement.textContent.trim() || '';
+      const auditBadge = card.querySelector('.badge')?.textContent || '';
+      const finalDue = card.dataset.finalDue || '';
 
         // Create wrapper <a>
         const wrapper = document.createElement('a');
