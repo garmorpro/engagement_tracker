@@ -1078,7 +1078,7 @@ require_once '../includes/functions.php';
           </div>
       
       <!-- end status updates -->
-                                        </div>
+    
     
   </div>
 </div>
