@@ -255,8 +255,8 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               </div>
               <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
             </div>
-            <p>
-              <?php echo htmlspecialchars($eng['eng_tsc'] ?? ''); ?>
+            <p style="color: rgb(0,0,123);">
+              <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
             </p>
           </div>
         </div>
