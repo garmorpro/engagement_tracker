@@ -67,6 +67,11 @@
         color: white;
         border-radius: 10px !important;
     }
+    .menu-btn {
+      background-color: rgb(241,242,245);
+      color: white;
+      border-radius: 10px;
+    }
     .new-btn:hover {
         background-color: rgba(15, 62, 69, 0.9);
         color: white;
