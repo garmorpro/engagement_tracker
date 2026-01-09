@@ -511,22 +511,20 @@ require_once '../includes/functions.php';
         <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(255,224,192); background-color: rgb(255,248,236);">
           <div class="card-body p-4">
             <!-- Icon (left) + Badge (right) -->
-            <div class="d-flex align-items-center justify-content-between mb-3">
+            <!-- <div class="d-flex align-items-center justify-content-between mb-3"> -->
               <div class="icon-square d-flex align-items-center justify-content-center"
                    style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(255,141,64);">
                 <i class="bi bi-gear" style="color: rgb(255,255,255);"></i>
               </div>
-              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
-                Coming Soon
-              </span>
-            </div>
+              
+            <!-- </div> -->
             <!-- Title -->
-            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
-              System Settings
+            <div class="fw-bold" style="font-size: 14px; color: rgb(27,58,139);">
+              More Tools Coming Soon
             </div>
             <!-- Description -->
-            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
-              Configure application preferences
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(52,83,189);">
+              We're actively developing new tools to help streamline your audit engagement workflow. Check back regularly for updates and new features!
             </div>
           </div>
         </div>
