@@ -800,7 +800,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Transform card helpers (horizontal / vertical)
     const transformCard = (card, status) => {
         const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
         const wrapper = document.createElement('a');
@@ -912,11 +911,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const cardData = draggedWrapper.querySelector('.engagement-card-kanban');
             const newWrapper = transformCard(cardData, newStatus);
 
-            // 🔹 Remove from original parent first
+            // 🔹 Remove from original parent immediately
             draggedWrapper.remove();
 
-            // 🔹 Update placeholders immediately
-            [column, originalParent].forEach(col => updateBadge(col));
+            // 🔹 Update placeholders dynamically BEFORE appending
+            updateBadge(originalParent);
+            updateBadge(column);
 
             // Append to new column
             column.appendChild(newWrapper);
