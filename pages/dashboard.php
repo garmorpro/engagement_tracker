@@ -159,7 +159,7 @@
 
 .table-wrapper table.table-hover tbody tr:hover > td,
 .table-wrapper table.table-hover tbody tr:hover > th {
-  background-color: rgba(246, 246, 247, 0.6) !important;
+  background-color: rgba(255, 255, 255, 1) !important;
 }
 
   </style>
