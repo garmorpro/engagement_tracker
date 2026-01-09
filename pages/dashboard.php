@@ -757,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'planning': 'vertical',
         'in-progress': 'vertical',
         'in-review': 'vertical',
-        'complete': 'horizontal'
+        'complete': 'horizontal' // Treat complete like on-hold
     };
 
     const updateBadge = (column) => {
@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const applyLayoutStyles = (card, status) => {
         const body = card.querySelector('.card-body');
-        if (status === 'on-hold') {
+        if (status === 'on-hold' || status === 'complete') {
             card.style.width = 'auto';
             body.classList.add('d-flex', 'align-items-center', 'justify-content-between');
             body.style.marginBottom = '';
@@ -797,8 +797,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Horizontal card for On-Hold
-    const transformToOnHold = (card) => {
+    const transformToHorizontal = (card) => {
         const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
 
         const wrapper = document.createElement('a');
@@ -863,8 +862,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return wrapper;
     };
 
-    // Vertical card for Planning, In-Progress, In-Review, Complete
     const transformToVertical = (card) => {
+        // unchanged vertical transform logic for other columns
         const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
 
         const wrapper = document.createElement('a');
@@ -927,8 +926,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return wrapper;
     };
 
+    // Attach drag events to existing cards
     document.querySelectorAll('.kanban-column a').forEach(a => attachDragEvents(a));
 
+    // Drag and drop logic
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => { e.preventDefault(); column.classList.add('drag-over'); });
         column.addEventListener('dragleave', () => column.classList.remove('drag-over'));
@@ -941,9 +942,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const newStatus = column.dataset.status;
 
             const cardData = draggedWrapper.querySelector('.engagement-card-kanban');
-            let newWrapper = draggedWrapper;
+            let newWrapper;
 
-            newWrapper = newStatus === 'on-hold' ? transformToOnHold(cardData) : transformToVertical(cardData);
+            if (newStatus === 'on-hold' || newStatus === 'complete') {
+                newWrapper = transformToHorizontal(cardData);
+            } else {
+                newWrapper = transformToVertical(cardData);
+            }
 
             if (newWrapper !== draggedWrapper) draggedWrapper.remove();
             column.appendChild(newWrapper);
@@ -979,6 +984,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBadge(column);
     });
 });
+
 </script>
 
 
