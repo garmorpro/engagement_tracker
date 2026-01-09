@@ -580,7 +580,7 @@
         Showing 6 of 6 engagements
 
         <div class="table-wrapper">
-  <table class="table table-hover mb-0">
+  <table class="table table-hover align-middle mb-0">
     <thead>
       <tr style="background-color: rgb(236,236,240) !important;">
         <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
