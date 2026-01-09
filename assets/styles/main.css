@@ -37,12 +37,12 @@ body {
       color: #6c757d;
       margin-top: 2px;
     }
-    .tab-btn.active, .menu-btn.active {
+    .tab-btn.active {
         background-color: white;
         border: none !important;
     }
 
-    .tab-btn.active:hover, .menu-btn.active:hover {
+    .tab-btn.active:hover {
         background-color: white;
         border: none !important;
     }
@@ -63,6 +63,15 @@ body {
       border-radius: 10px !important;
       padding: 8px 10px !important;
       border: none !important;
+    }
+    .tool-btn {
+      background-color: rgb(241,242,245) !important;
+      border-radius: 10px !important;
+      padding: 8px 10px !important;
+      border: none !important;
+    }
+    .tool-btn.active {
+      background-color: pink !important;
     }
     .menu-btn:hover, .filter-btn:hover {
       background-color: rgb(225,228,232) !important;
