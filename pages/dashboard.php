@@ -722,10 +722,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!draggedCard) return;
 
+            // Remove empty placeholder if it exists
+            const emptyPlaceholder = column.querySelector('.empty-placeholder');
+            if (emptyPlaceholder) {
+                emptyPlaceholder.remove();
+            }
+
             // Append the card to the new column
             column.appendChild(draggedCard);
 
-            // Optional: update DB via AJAX
+            // Update DB via AJAX
             const engId = draggedCard.dataset.id;
             const newStatus = column.dataset.status;
 
