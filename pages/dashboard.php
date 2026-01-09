@@ -515,19 +515,19 @@ $engagements = getAllEngagements($conn);
   <!-- <script src="../assets/js/sortable.js"></script> -->
 
   <script>
- document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const columns = document.querySelectorAll('.kanban-column');
 
   columns.forEach(column => {
     new Sortable(column, {
-      group: 'kanban',
-      animation: 150,
-      ghostClass: 'kanban-ghost',
-      handle: '.engagement-card-kanban', // Only the card itself is draggable
-      draggable: '.engagement-card-wrapper', // Ensures the wrapper is treated as draggable item
-      filter: '.engagement-card-wrapper .engagement-card-kanban', // Prevents dropping inside another card
+      group: 'kanban',               // Enables dragging between columns
+      animation: 150,                // Smooth animation
+      ghostClass: 'kanban-ghost',    // Class applied to the dragged element
+      handle: '.engagement-card-kanban',   // Only the card body is draggable
+      draggable: '.engagement-card-wrapper', // The wrapper is treated as the draggable item
+      filter: '.engagement-card-wrapper .engagement-card-kanban *', // Prevent nested dropping
       onEnd: function(evt) {
-        // Always get the wrapper with data-eng-id
+        // Always use the wrapper to get the ID
         const wrapper = evt.item.closest('.engagement-card-wrapper');
         const engId = wrapper?.dataset.engId;
         const newStatus = evt.to.closest('.kanban-column')?.dataset?.status;
@@ -537,6 +537,7 @@ $engagements = getAllEngagements($conn);
           return;
         }
 
+        // Send updated status to the server
         fetch('includes/update-engagement-status.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -549,12 +550,8 @@ $engagements = getAllEngagements($conn);
     });
   });
 });
+</script>
 
-
-
-
-
-  </script>
 
 </body>
 </html>
