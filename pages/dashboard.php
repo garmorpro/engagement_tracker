@@ -651,10 +651,10 @@ require_once '../includes/functions.php';
           $engagements = getAllEngagements($conn);
           $totalEngagements = count($engagements);
           ?>
-
+          
           <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
               Showing <?php echo $totalEngagements; ?> of <?php echo $totalEngagements; ?> engagements
-
+                                  
               <div class="table-wrapper mt-3">
                   <table class="table align-middle mb-0">
                       <thead>
@@ -1091,22 +1091,22 @@ require_once '../includes/functions.php';
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-//const engagements = [
-//  {
-//    id: 1,
-//    name: "Global Finance Hold Co",
-//    finalDueDate: "2026-04-05",
-//    type: "Final Due",
-//  },
-//  {
-//    id: 2,
-//  name: "Acme Corporation Audit",
-//   finalDueDate: "2026-02-18",
-// type: "Draft Due",
-// }
-//];
+const engagements = [
+<?php foreach ($engagements as $index => $eng): ?>
+{
+    id: <?php echo $eng['eng_id']; ?>,
+    name: "<?php echo addslashes($eng['eng_name']); ?>",
+    planningCall: "<?php echo $eng['eng_client_planning_call']; ?>",
+    fieldworkStart: "<?php echo $eng['eng_fieldwork']; ?>",
+    draftDue: "<?php echo $eng['eng_draft_due']; ?>",
+    finalDue: "<?php echo $eng['eng_final_due']; ?>"
+}<?php echo ($index < count($engagements) - 1) ? ',' : ''; ?>
+<?php endforeach; ?>
+];
+</script>
 
-// Start month (current month)
+  <script>
+// Start with current month
 let currentDate = new Date();
 
 function renderCalendar() {
@@ -1116,7 +1116,6 @@ function renderCalendar() {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
-    // Update calendar title
     document.getElementById("calendar-title").textContent =
         currentDate.toLocaleString("default", { month: "long", year: "numeric" });
 
@@ -1124,12 +1123,12 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const todayStr = new Date().toISOString().split("T")[0];
 
-    // Empty placeholders for the first week
+    // Empty placeholders for days before the first of the month
     for (let i = 0; i < firstDay; i++) {
         daysContainer.appendChild(document.createElement("div"));
     }
 
-    // Loop through each day
+    // Generate each day
     for (let day = 1; day <= daysInMonth; day++) {
         const dayEl = document.createElement("div");
         dayEl.className = "calendar-day";
@@ -1142,7 +1141,7 @@ function renderCalendar() {
 
         dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
 
-        // Loop through engagements and append events
+        // Loop through all engagements
         engagements.forEach(e => {
             const eventMap = [
                 { date: e.planningCall, type: "Planning Call" },
@@ -1155,12 +1154,12 @@ function renderCalendar() {
                 if (ev.date === dateStr) {
                     const eventEl = document.createElement("div");
 
-                    // CSS class per type
+                    // Map CSS classes for colors
                     const typeClassMap = {
-                        "Planning Call": "planning-call",
-                        "Fieldwork Start": "fieldwork-start",
-                        "Draft Due": "draft-due",
-                        "Final Due": "final-due"
+                        "Planning Call": "planning_call",
+                        "Fieldwork Start": "fieldwork_start",
+                        "Draft Due": "draft_due",
+                        "Final Due": "final_due"
                     };
 
                     eventEl.className = `event ${typeClassMap[ev.type]}`;
@@ -1175,7 +1174,7 @@ function renderCalendar() {
     }
 }
 
-// Previous/Next month buttons
+// Navigation buttons
 document.getElementById("prevMonth").onclick = () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
     renderCalendar();
@@ -1186,8 +1185,8 @@ document.getElementById("nextMonth").onclick = () => {
     renderCalendar();
 };
 
-// Initial render
 renderCalendar();
+
 </script>
 
 </body>
