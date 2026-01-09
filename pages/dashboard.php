@@ -32,9 +32,9 @@ require_once '../includes/functions.php';
             <button class="btn btn-sm me-2 tab-btn active" a-href="dashboard.php" type="button" role="tab">
               <i class="bi bi-grid"></i> Board
             </button>
-            <button class="btn btn-sm me-2 tab-btn" a-href="engagement-list.php" type="button" role="tab">
+            <a class="btn btn-sm me-2 tab-btn" a-href="engagement-list.php" type="button" role="tab">
               <i class="bi bi-list-ul"></i> List
-            </button>
+            </a>
             <button class="btn btn-sm me-2 tab-btn" id="tab-timeline" data-bs-toggle="tab" data-bs-target="#content-timeline" type="button" role="tab">
               <i class="bi bi-calendar2"></i> Timeline
             </button>
