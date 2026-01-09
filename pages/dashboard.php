@@ -211,7 +211,7 @@ require_once '../includes/functions.php';
                                   $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d', strtotime($eng['eng_fieldwork'])) : '';
                           ?>
                           <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
-                              <div class="card engagement-card-kanban mb-2" draggable="true" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
+                              <div class="card engagement-card-kanban mb-2" draggable="true" data-id="<?php echo $eng['eng_idno']; ?>" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
                                   <div class="card-body d-flex align-items-center justify-content-between">
                               
                                       <!-- LEFT -->
@@ -308,6 +308,7 @@ require_once '../includes/functions.php';
 
                                   <div class="card engagement-card-kanban mb-2"
                                        draggable="true"
+                                       data-id="<?php echo $eng['eng_idno']; ?>"
                                        style="background-color: rgb(249,250,251);
                                               border: 1px solid rgb(208,213,219);
                                               border-radius: 15px;
