@@ -183,7 +183,7 @@ require_once '../includes/functions.php';
             <!-- Icon (left) + Badge (right) -->
             <div class="d-flex align-items-center justify-content-between mb-3">
               <div class="icon-square d-flex align-items-center justify-content-center"
-                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(86,151,255);">
                 <i class="bi bi-download" style="color: rgb(255,255,255);"></i>
               </div>
               <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
