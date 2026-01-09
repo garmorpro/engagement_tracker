@@ -757,6 +757,7 @@ require_once '../includes/functions.php';
           </div>
         </div>
       <!-- end calendar -->
+                                        </div>
     
     </div>
 
