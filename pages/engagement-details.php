@@ -60,7 +60,7 @@ require_once '../includes/functions.php';
           <div class="icon-square me-2" style="background-color: rgb(255,255,255);">
             <i class="bi bi-arrow-left" style="color: rgb(84,96,110);"></i>
           </div>
-          <p class="fw-semibold mb-0">Overdue</p>
+          <p class="mb-0" style="font-size: 14px;">Overdue</p>
         </div>
       </div>
       <div class="right">
