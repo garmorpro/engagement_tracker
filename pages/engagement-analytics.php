@@ -623,145 +623,131 @@ $engagements = getAllEngagements($conn);
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
- <?php
-// ----------------- Manager Workload -----------------
-$managerCounts = [];
-foreach ($engagements as $eng) {
-    if (!empty($eng['archived'])) continue; // Skip archived
-    $manager = $eng['eng_manager'];
-    if (!empty($manager)) {
-        if (!isset($managerCounts[$manager])) $managerCounts[$manager] = 0;
-        $managerCounts[$manager]++;
+ <script>
+// ----------------- Prepare engagement data -----------------
+const engagements = <?php echo json_encode(array_map(function($eng) {
+    return [
+        'id' => (int)$eng['eng_id'],
+        'idno' => $eng['eng_idno'],
+        'name' => $eng['eng_name'],
+        'manager' => $eng['eng_manager'] ?: 'Unassigned',
+        'status' => strtolower($eng['eng_status']) ?: 'unknown',
+        'planningCall' => $eng['eng_client_planning_call'] ?: null,
+        'fieldworkStart' => $eng['eng_fieldwork'] ?: null,
+        'draftDue' => $eng['eng_draft_due'] ?: null,
+        'finalDue' => $eng['eng_final_due'] ?: null,
+        'archived' => !empty($eng['eng_archive'])
+    ];
+}, $engagements), JSON_HEX_TAG | JSON_HEX_QUOT | JSON_HEX_APOS); ?>;
+
+console.log("Loaded engagements:", engagements);
+
+// ----------------- Compute manager workload -----------------
+const managerCounts = {};
+engagements.forEach(e => {
+    if (e.archived) return;
+    if (!managerCounts[e.manager]) managerCounts[e.manager] = 0;
+    managerCounts[e.manager]++;
+});
+const managerLabels = Object.keys(managerCounts);
+const managerData = Object.values(managerCounts);
+
+// ----------------- Compute status counts -----------------
+const statusCategories = ['on-hold','planning','in-progress','in-review','complete'];
+const statusCounts = statusCategories.reduce((acc, s) => {
+    acc[s] = 0;
+    return acc;
+}, {});
+
+engagements.forEach(e => {
+    if (statusCounts.hasOwnProperty(e.status)) statusCounts[e.status]++;
+});
+
+const statusLabels = ['On-Hold','Planning','In-Progress','In-Review','Complete'];
+const statusData = Object.values(statusCounts);
+
+// ----------------- Generate colors for manager chart -----------------
+function randomColorArray(count, alpha=0.8) {
+    const arr = [];
+    for(let i=0;i<count;i++){
+        const r=Math.floor(Math.random()*200+50);
+        const g=Math.floor(Math.random()*200+50);
+        const b=Math.floor(Math.random()*200+50);
+        arr.push(`rgba(${r},${g},${b},${alpha})`);
     }
+    return arr;
 }
-$managerLabels = array_keys($managerCounts);
-$managerData   = array_values($managerCounts);
+const managerColors = randomColorArray(managerLabels.length,0.2);
+const managerBorders = randomColorArray(managerLabels.length,1);
 
-// ----------------- Status Counts -----------------
-$statusCounts = [
-    'on-hold' => 0,
-    'planning' => 0,
-    'in-progress' => 0,
-    'in-review' => 0,
-    'complete' => 0
-];
-foreach ($engagements as $eng) {
-    $status = strtolower($eng['eng_status']);
-    if (isset($statusCounts[$status])) $statusCounts[$status]++;
-}
-$statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
-$statusData = array_values($statusCounts);
-?>
+// ----------------- Render Charts -----------------
+let statusChart, managerChart;
 
-<?php
-// Generate a single random RGB color
-$red = rand(50, 250);
-$green = rand(50, 250);
-$blue = rand(50, 250);
-
-// Fill arrays with the same color
-$colors = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,0.2)");
-$borders = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,1)");
-?>
-
-
-<script>
-let statusChart;
-let managerChart;
-
-// ----------------- Status Pie Chart -----------------
 function renderStatusChart() {
     const ctx = document.getElementById('status_distribution').getContext('2d');
-
-    if (statusChart) statusChart.destroy();
-
+    if(statusChart) statusChart.destroy();
     statusChart = new Chart(ctx, {
-        type: 'pie',
+        type:'pie',
         data: {
-            labels: <?php echo json_encode($statusLabels); ?>,
-            datasets: [{
-                label: 'Engagement Status',
-                data: <?php echo json_encode($statusData); ?>,
-                backgroundColor: [
-                    'rgba(107,114,128,0.8)',   // On-Hold
-                    'rgba(68,125,252,0.8)',    // Planning
-                    'rgba(241,115,19,0.8)',    // In-Progress
-                    'rgba(160,77,253,0.8)',    // In-Review
-                    'rgba(79,198,95,0.8)'      // Complete
+            labels: statusLabels,
+            datasets:[{
+                data: statusData,
+                backgroundColor:[
+                    'rgba(107,114,128,0.8)',
+                    'rgba(68,125,252,0.8)',
+                    'rgba(241,115,19,0.8)',
+                    'rgba(160,77,253,0.8)',
+                    'rgba(79,198,95,0.8)'
                 ],
-                borderColor: [
+                borderColor:[
                     'rgba(107,114,128,1)',
                     'rgba(68,125,252,1)',
                     'rgba(241,115,19,1)',
                     'rgba(160,77,253,1)',
                     'rgba(79,198,95,1)'
                 ],
-                borderWidth: 1
+                borderWidth:1
             }]
         },
         options: {
-            responsive: true,
+            responsive:true,
             plugins: {
-                legend: { position: 'bottom' },
-                tooltip: { enabled: true }
+                legend:{position:'bottom'},
+                tooltip:{enabled:true}
             }
         }
     });
 }
 
-// ----------------- Manager Workload Bar Chart -----------------
 function renderManagerChart() {
     const ctx = document.getElementById('manager_workload').getContext('2d');
-
-    if (managerChart) managerChart.destroy();
-
-    // Generate multi-color bars
-    const colors = <?php echo json_encode($colors); ?>;
-    const borders = <?php echo json_encode($borders); ?>;
-
-    // Find max value in the data
-    const dataValues = <?php echo json_encode($managerData); ?>;
-    const maxValue = Math.max(...dataValues);
-
+    if(managerChart) managerChart.destroy();
+    const maxValue = Math.max(...managerData);
     managerChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: <?php echo json_encode($managerLabels); ?>,
-            datasets: [{
-                label: 'Active Engagements',
-                data: dataValues,
-                backgroundColor: colors,
-                borderColor: borders,
-                borderWidth: 1,
-                borderRadius: { topLeft: 15, topRight: 15 } // top two corners rounded
+        type:'bar',
+        data:{
+            labels: managerLabels,
+            datasets:[{
+                label:'Active Engagements',
+                data: managerData,
+                backgroundColor: managerColors,
+                borderColor: managerBorders,
+                borderWidth:1,
+                borderRadius:{topLeft:15,topRight:15}
             }]
         },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: { enabled: true }
-            },
-            scales: {
-                y: { 
-                    beginAtZero: true, 
-                    max: maxValue + 2, // top value + 2
-                    ticks: { stepSize: 1 } 
-                }
-            }
+        options:{
+            responsive:true,
+            plugins:{legend:{display:false}, tooltip:{enabled:true}},
+            scales:{y:{beginAtZero:true, max:maxValue+2, ticks:{stepSize:1}}}
         }
     });
 }
 
-
-// ----------------- Only render charts when Analytics tab is active -----------------
-document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
-    tabBtn.addEventListener('shown.bs.tab', (e) => {
-        if (e.target.getAttribute('data-bs-target') === '#content-analytics') {
-            renderStatusChart();
-            renderManagerChart();
-        }
-    });
+// ----------------- Render on load -----------------
+document.addEventListener('DOMContentLoaded', () => {
+    renderStatusChart();
+    renderManagerChart();
 });
 </script>
 
