@@ -46,27 +46,22 @@
       color: #6c757d;
       margin-top: 2px;
     }
+    .tab-btn.active {
+        background-color: white;
+        border: none !important;
+    }
+
+    .tab-btn.active:hover {
+        background-color: white;
+        border: none !important;
+    }
     .tab-btn {
-  border: none !important;
-  background-color: rgb(241,242,245);
-  color: #495057;
-  transition: background-color 0.2s;
-}
-
-.tab-btn:hover {
-  background-color: rgb(225,228,232);
-}
-
-.tab-btn.active {
-  background-color: white !important;  /* overrides Bootstrap */
-  color: #000 !important;
-  font-weight: 600;
-}
-
-.tab-btn.active:hover {
-  background-color: white !important;
-  color: #000 !important;
-}
+        border: none !important;
+    }
+    .tab-btn:hover {
+        background-color: rgb(225,228,232);
+        border: none !important;
+    }
     .new-btn {
         background-color: rgb(15,62,69);
         color: white;
@@ -144,7 +139,7 @@
     </div>
 
     <div class="header-actions d-flex align-items-center">
-      <div class="view-options p-1">
+      <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;">
         <button class="btn btn-sm me-2 tab-btn active">
           <i class="bi bi-grid"></i> Board
         </button>
