@@ -37,12 +37,12 @@ body {
       color: #6c757d;
       margin-top: 2px;
     }
-    .tab-btn.active {
+    .tab-btn.active, .menu-btn.active {
         background-color: white;
         border: none !important;
     }
 
-    .tab-btn.active:hover {
+    .tab-btn.active:hover, .menu-btn.active:hover {
         background-color: white;
         border: none !important;
     }
