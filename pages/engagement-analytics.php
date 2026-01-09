@@ -622,8 +622,6 @@ $engagements = getAllEngagements($conn);
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  
-
 
  <script>
 // ----------------- Prepare engagement data -----------------
@@ -732,8 +730,8 @@ function renderManagerChart() {
             datasets:[{
                 label:'Active Engagements',
                 data: managerData,
-                backgroundColor: colors,
-                borderColor: borders,
+                backgroundColor: managerColors,
+                borderColor: managerBorders,
                 borderWidth:1,
                 borderRadius:{topLeft:15,topRight:15}
             }]
@@ -752,8 +750,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderManagerChart();
 });
 </script>
-
-
 
 
 
