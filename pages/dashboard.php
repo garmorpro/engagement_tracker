@@ -329,7 +329,19 @@ require_once '../includes/functions.php';
                         <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
                               style="font-size: 15px; padding: 10px 14px; background-color: rgb(241,115,19) !important;">
                           In Progress
-                          <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(243,155,89) !important;">1</span>
+                          <?php
+$engagements = getAllEngagements($conn);
+
+// Count in-progress engagements
+$inProgressCount = count(array_filter($engagements, function($eng) {
+    return $eng['eng_status'] === 'in-progress';
+}));
+?>
+
+<!-- Badge showing the number -->
+<span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(188,129,251) !important;">
+    <?php echo $inProgressCount; ?>
+</span>
                         </span>
   
                         <!-- PHP Kanban card -->
