@@ -150,20 +150,21 @@
         </div>
 
         <div class="header-actions d-flex align-items-center">
-          <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;">
-            <button class="btn btn-sm me-2 tab-btn active">
-              <i class="bi bi-grid"></i> Board
-            </button>
-            <button class="btn btn-sm me-2 tab-btn">
-              <i class="bi bi-list-ul"></i> List
-            </button>
-            <button class="btn btn-sm me-2 tab-btn">
-              <i class="bi bi-calendar2"></i> Timeline
-            </button>
-            <button class="btn btn-sm tab-btn">
-              <i class="bi bi-graph-up"></i> Analytics
-            </button>
-          </div>
+          <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;" role="tablist">
+  <button class="btn btn-sm me-2 tab-btn active" id="tab-board" data-bs-toggle="tab" data-bs-target="#content-board" type="button" role="tab">
+    <i class="bi bi-grid"></i> Board
+  </button>
+  <button class="btn btn-sm me-2 tab-btn" id="tab-list" data-bs-toggle="tab" data-bs-target="#content-list" type="button" role="tab">
+    <i class="bi bi-list-ul"></i> List
+  </button>
+  <button class="btn btn-sm me-2 tab-btn" id="tab-timeline" data-bs-toggle="tab" data-bs-target="#content-timeline" type="button" role="tab">
+    <i class="bi bi-calendar2"></i> Timeline
+  </button>
+  <button class="btn btn-sm tab-btn" id="tab-analytics" data-bs-toggle="tab" data-bs-target="#content-analytics" type="button" role="tab">
+    <i class="bi bi-graph-up"></i> Analytics
+  </button>
+</div>
+
           <button class="btn menu-btn btn-sm ms-3"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</button>
           <button class="btn menu-btn btn-sm ms-3"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</button>
           <button class="btn new-btn btn-sm ms-3"><i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement</button>
@@ -174,6 +175,29 @@
 
 
   <div class="mt-5"></div>
+
+  <div class="tab-content mt-3">
+  <div class="tab-pane fade show active" id="content-board" role="tabpanel">
+    <!-- Board content here -->
+    <p>Board view of engagements...</p>
+  </div>
+
+  <div class="tab-pane fade" id="content-list" role="tabpanel">
+    <!-- List content here -->
+    <p>List view of engagements...</p>
+  </div>
+
+  <div class="tab-pane fade" id="content-timeline" role="tabpanel">
+    <!-- Timeline content here -->
+    <p>Timeline view of engagements...</p>
+  </div>
+
+  <div class="tab-pane fade" id="content-analytics" role="tabpanel">
+    <!-- Analytics content here -->
+    <p>Analytics view of engagements...</p>
+  </div>
+</div>
+
 
   <div class="page-content">
 
