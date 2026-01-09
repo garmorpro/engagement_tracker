@@ -240,13 +240,15 @@ $engagements = getAllEngagements($conn);
 const engagements = <?php echo json_encode(array_map(function($eng) {
     return [
         'id' => $eng['eng_id'],
-        'name' => $eng['eng_name'],
+        'name' => addslashes($eng['eng_name']),
         'planningCall' => date('Y-m-d', strtotime($eng['eng_client_planning_call'])),
         'fieldworkStart' => date('Y-m-d', strtotime($eng['eng_fieldwork'])),
         'draftDue' => date('Y-m-d', strtotime($eng['eng_draft_due'])),
         'finalDue' => date('Y-m-d', strtotime($eng['eng_final_due']))
     ];
 }, $engagements)); ?>;
+
+console.log(engagements); // Optional: verify data in browser
 
 let currentDate = new Date();
 
@@ -278,13 +280,10 @@ function renderCalendar() {
 
         const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-        if (dateStr === todayStr) {
-            dayEl.classList.add("today");
-        }
+        if (dateStr === todayStr) dayEl.classList.add("today");
 
         dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
 
-        // Add engagements
         engagements.forEach(e => {
             const eventMap = [
                 { date: e.planningCall, type: "Planning Call" },
@@ -324,8 +323,8 @@ document.getElementById("nextMonth").onclick = () => {
 };
 
 renderCalendar();
-
 </script>
+
 
 
 
