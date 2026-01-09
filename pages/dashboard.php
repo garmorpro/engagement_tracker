@@ -1089,9 +1089,9 @@ require_once '../includes/functions.php';
   
                     <!-- Header -->
                     <div class="d-flex align-items-center mb-3">
-                      <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
+                      <!-- <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
                         <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i>
-                      </div>
+                      </div> -->
                       <h6 class="fw-semibold mb-0">Status Distribution</h6>
                     </div>
 
@@ -1112,12 +1112,15 @@ require_once '../includes/functions.php';
                   <div class="card-body">
   
                     <div class="d-flex align-items-center mb-3">
-                      <div class="icon-square me-2" style="background-color: rgb(238,246,254);">
+                      <!-- <div class="icon-square me-2" style="background-color: rgb(238,246,254);">
                         <i class="bi bi-clock-history" style="color: rgb(20,95,245);"></i>
-                      </div>
+                      </div> -->
                       <h6 class="fw-semibold mb-0">Manager Workload</h6>
                     </div>
-  
+
+                    <canvas id="manager_workload" width="600" height="400"></canvas>
+
+                      
                   
   
                   </div>
@@ -1144,6 +1147,62 @@ require_once '../includes/functions.php';
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+  <?php
+// Initialize array
+$managerCounts = [];
+
+// Loop through active engagements
+foreach ($engagements as $eng) {
+    // Skip archived ones
+    if ($eng['archived'] ?? 0) continue;
+
+    $manager = $eng['eng_manager'];
+
+    if (!empty($manager)) {
+        if (!isset($managerCounts[$manager])) {
+            $managerCounts[$manager] = 0;
+        }
+        $managerCounts[$manager]++;
+    }
+}
+
+// Separate labels and data for Chart.js
+$managerLabels = array_keys($managerCounts);
+$managerData = array_values($managerCounts);
+?>
+
+<?php
+// Initialize array
+$managerCounts = [];
+
+// Loop through active engagements
+foreach ($engagements as $eng) {
+    // Skip archived ones
+    if ($eng['archived'] ?? 0) continue;
+
+    $manager = $eng['eng_manager'];
+
+    if (!empty($manager)) {
+        if (!isset($managerCounts[$manager])) {
+            $managerCounts[$manager] = 0;
+        }
+        $managerCounts[$manager]++;
+    }
+}
+
+// Separate labels and data for Chart.js
+$managerLabels = array_keys($managerCounts);
+$managerData = array_values($managerCounts);
+?>
+
+
+
+
+
+
+
 
   <?php
 $statusCounts = [
