@@ -114,7 +114,7 @@
 </head>
 <body>
 
-    <div class="header-container" style="position:fixed !important;">
+    <div class="header-container" style="position:fixed !important; z-index:9999 !important;">
     <div style="margin-left: 200px;">
       <div class="header-title">Engagement Tracker</div>
       <div class="header-subtitle">Manage your audit engagements</div>
