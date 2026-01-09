@@ -479,3 +479,10 @@ body {
 .dragging {
     opacity: 0.6;
 }
+
+.engagement-card-kanban * {
+  pointer-events: none;
+}
+.engagement-card-kanban a {
+  pointer-events: auto;
+}
