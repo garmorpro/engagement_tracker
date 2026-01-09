@@ -653,7 +653,9 @@ require_once '../includes/functions.php';
 
                 if (count($completeEngagements) > 0):
                     foreach ($completeEngagements as $eng):
-                        $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d', strtotime($eng['eng_fieldwork'])) : '';
+                        $fieldworkDate = !empty($eng['eng_fieldwork'])
+                            ? date('M d', strtotime($eng['eng_fieldwork']))
+                            : '';
                 ?>
 
                 <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
@@ -734,6 +736,7 @@ require_once '../includes/functions.php';
     </div>
 </div>
 <!-- end row 3 -->
+
 
   
         <!-- end board sections -->
