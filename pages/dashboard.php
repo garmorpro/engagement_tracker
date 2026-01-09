@@ -594,8 +594,8 @@
     </thead>
     <tbody>
       <tr>
-        <th scope="row">ENG-2024-001</th>
-        <td>Acme Corporation Audit</td>
+        <td>ENG-2024-001</td>
+        <td><strong>Acme Corporation Audit</strong><br><span class="text-muted">SOC 2 Type 2</span></td>
         <td>John Smith</td>
         <td>In Progress</td>
         <td>FY 2024</td>
