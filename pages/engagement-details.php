@@ -28,6 +28,8 @@ if (isset($_GET['eng_id'])) {
     echo "<div class='alert alert-danger'>No engagement specified.</div>";
     exit;
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -111,11 +113,50 @@ if (isset($_GET['eng_id'])) {
       </div>
     <!-- end top buttons -->
 
+    <!-- php color change for status -->
+     <?php
+// Map engagement status to background, border, and pill colors
+$statusColors = [
+    'on_hold' => [
+        'bg' => 'rgb(249,250,251)',
+        'border' => 'rgb(229,231,235)',
+        'pill' => 'rgb(105,114,129)',
+    ],
+    'planning' => [
+        'bg' => 'rgb(238,246,254)',
+        'border' => 'rgb(187,219,253)',
+        'pill' => 'rgb(33,128,255)',
+    ],
+    'in_progress' => [
+        'bg' => 'rgb(255,247,238)',
+        'border' => 'rgb(255,214,171)',
+        'pill' => 'rgb(255,103,0)',
+    ],
+    'in_review' => [
+        'bg' => 'rgb(251,245,254)',
+        'border' => 'rgb(236,213,254)',
+        'pill' => 'rgb(181,72,255)',
+    ],
+    'complete' => [
+        'bg' => 'rgb(239,253,245)',
+        'border' => 'rgb(176,248,209)',
+        'pill' => 'rgb(0,201,92)',
+    ],
+];
+
+// Fallback in case status is unexpected
+$status = $eng['eng_status'];
+$bgColor = $statusColors[$status]['bg'] ?? '#fff';
+$borderColor = $statusColors[$status]['border'] ?? '#ccc';
+$pillColor = $statusColors[$status]['pill'] ?? '#000';
+?>
+    <!-- end php color change for status -->
+
   <!-- upper bay -->
     <div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
   <div class="col-md-12">
     <div class="card h-100"
-         style="border-radius: 15px; border: 1px solid rgb(187,219,253); background-color: rgb(238,246,254);">
+         style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
       <div class="card-body p-4">
 
         <div class="d-flex justify-content-between align-items-start mb-5 mt-2">
@@ -130,7 +171,7 @@ if (isset($_GET['eng_id'])) {
 
               <!-- Status -->
               <span class="badge rounded-pill" 
-                    style="background-color: <?php echo $eng['eng_status'] === 'planning' ? '#68a6ff' : '#ccc'; ?>; color: white;">
+                    style="background-color: <?php echo $pillColor; ?>; color: white;">
                 <?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?>
               </span>
 
@@ -194,6 +235,7 @@ if (isset($_GET['eng_id'])) {
     </div>
   </div>
 </div>
+
 
   <!-- end upper bay -->
 
