@@ -236,8 +236,9 @@ $engagements = getAllEngagements($conn);
       <div class="engagement-card-wrapper mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
         
           <div class="card engagement-card-kanban" style="border-radius:15px; border:1px solid rgb(208,213,219); cursor: grab;">
-            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
+            
             <div class="card-body d-flex justify-content-between align-items-center">
+              <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
               <div>
                 <h5 class="mb-0" style="font-size:18px;"><?php echo htmlspecialchars($eng['eng_name']); ?></h5>
                 <span style="font-size:14px; color:#6a7382;"><?php echo htmlspecialchars($eng['eng_idno']); ?></span>
@@ -251,8 +252,9 @@ $engagements = getAllEngagements($conn);
                   </span>
                 <?php endif; ?>
               </div>
+              </a>
             </div>
-            </a>
+            
           </div>
         
       </div>
