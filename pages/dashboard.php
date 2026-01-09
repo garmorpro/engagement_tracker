@@ -691,7 +691,35 @@ require_once '../includes/functions.php';
 document.addEventListener('DOMContentLoaded', () => {
     let draggedCard = null;
 
-    // DRAG START
+    // Utility: update badge count for a column
+    const updateBadge = (column) => {
+        const status = column.dataset.status;
+        const badge = column.closest('.card').querySelector('.badge + .badge');
+        const count = column.querySelectorAll('.engagement-card-kanban').length;
+        if (badge) badge.textContent = count;
+
+        // Handle empty placeholder
+        const placeholder = column.querySelector('.empty-placeholder');
+        if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
+    };
+
+    // Apply layout styles depending on column
+    const applyLayoutStyles = (card, column) => {
+        const status = column.dataset.status;
+
+        if (status === 'on-hold') {
+            // Horizontal layout
+            card.style.width = 'auto';
+            card.querySelector('.card-body').classList.add('d-flex', 'align-items-center', 'justify-content-between');
+        } else {
+            // Vertical layout (stacked)
+            card.style.width = '100%';
+            const body = card.querySelector('.card-body');
+            body.classList.remove('d-flex', 'align-items-center', 'justify-content-between');
+        }
+    };
+
+    // DRAG START / END
     document.querySelectorAll('.engagement-card-kanban').forEach(card => {
         card.addEventListener('dragstart', e => {
             draggedCard = card;
@@ -705,38 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // HELPER: update empty placeholders
-    function updateEmptyPlaceholders() {
-        document.querySelectorAll('.kanban-column').forEach(column => {
-            const cards = column.querySelectorAll('.engagement-card-kanban');
-            let placeholder = column.querySelector('.empty-placeholder');
-
-            if (cards.length === 0) {
-                if (!placeholder) {
-                    placeholder = document.createElement('div');
-                    placeholder.classList.add('text-center', 'text-muted', 'py-4', 'empty-placeholder');
-                    placeholder.style.cssText = "border: 1px dashed rgb(208,213,219); border-radius: 15px;";
-                    placeholder.textContent = "Drop engagements here";
-                    column.appendChild(placeholder);
-                }
-            } else {
-                if (placeholder) placeholder.remove();
-            }
-        });
-    }
-
-    // HELPER: update header counts
-    function updateHeaderCounts() {
-        document.querySelectorAll('.kanban-column').forEach(column => {
-            const countSpan = column.closest('.card').querySelector('.badge + .badge');
-            if (countSpan) {
-                const cards = column.querySelectorAll('.engagement-card-kanban');
-                countSpan.textContent = cards.length;
-            }
-        });
-    }
-
-    // DROP HANDLING
+    // COLUMN DROP HANDLING
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
@@ -753,54 +750,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!draggedCard) return;
 
-            // Remove placeholder if exists
-            const placeholder = column.querySelector('.empty-placeholder');
-            if (placeholder) placeholder.remove();
-
-            // Append card to column
+            // Append the card to the new column
             column.appendChild(draggedCard);
 
-            const status = column.dataset.status;
+            // Apply layout style dynamically
+            applyLayoutStyles(draggedCard, column);
 
-            // Apply layout-specific styles
-            if (status === 'on-hold') {
-                // Horizontal layout
-                column.style.display = 'flex';
-                column.style.flexDirection = 'row';
-                column.style.gap = '10px';
-                draggedCard.style.width = 'auto'; // fit content
-                draggedCard.querySelector('.card-body').classList.add('d-flex', 'align-items-center', 'justify-content-between');
-            } else {
-                // Vertical layout
-                column.style.display = 'flex';
-                column.style.flexDirection = 'column';
-                column.style.gap = '10px';
-                draggedCard.style.width = '100%';
-                draggedCard.querySelector('.card-body').classList.remove('d-flex', 'align-items-center', 'justify-content-between');
-            }
+            // Update counts for both source and target columns
+            const allColumns = document.querySelectorAll('.kanban-column');
+            allColumns.forEach(col => updateBadge(col));
 
-            // Update counts and placeholders
-            updateEmptyPlaceholders();
-            updateHeaderCounts();
-
-            // Update DB via AJAX
+            // Optional: update DB via AJAX
             const engId = draggedCard.dataset.id;
+            const newStatus = column.dataset.status;
+
             fetch('../includes/update-engagement-status.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ eng_id: engId, status: status })
+                body: JSON.stringify({ eng_id: engId, status: newStatus })
             })
             .then(res => res.json())
             .then(data => {
-                if (!data.success) console.error('DB update failed:', data.message);
+                if (!data.success) {
+                    console.error('DB update failed:', data.message);
+                }
             })
             .catch(err => console.error('Update error:', err));
         });
     });
 
-    // INITIAL
-    updateEmptyPlaceholders();
-    updateHeaderCounts();
+    // Initial style application on page load
+    document.querySelectorAll('.kanban-column').forEach(column => {
+        column.querySelectorAll('.engagement-card-kanban').forEach(card => applyLayoutStyles(card, column));
+        updateBadge(column);
+    });
 });
 
 
