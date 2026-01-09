@@ -145,6 +145,12 @@
   background: #fff;
 }
 
+.table-wrapper thead th {
+  background-color: rgb(236,236,240);
+  color: #111;
+  border-bottom: 1px solid #dee2e6;
+}
+
   </style>
 </head>
 <body>
