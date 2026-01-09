@@ -183,7 +183,7 @@ require_once '../includes/functions.php';
         <i class="bi bi-database" style="color: rgb(75,85,99);"></i>
       </div>
 
-      <h5 class="fw-semibold">
+      <h5 class="fw-semibold mb-0">
         Data Management
       </h5>
     </div>
