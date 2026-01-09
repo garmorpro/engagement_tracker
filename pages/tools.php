@@ -203,24 +203,24 @@ require_once '../includes/functions.php';
       </div>
 
       <div class="col-md-4">
-        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(198,224,254); background-color: rgb(233,243,254);">
           <div class="card-body p-4">
             <!-- Icon (left) + Badge (right) -->
             <div class="d-flex align-items-center justify-content-between mb-3">
               <div class="icon-square d-flex align-items-center justify-content-center"
-                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
-                <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(86,151,255);">
+                <i class="bi bi-download" style="color: rgb(255,255,255);"></i>
               </div>
-              <span class="badge bg-secondary bg-opacity-25 text-secondary">
+              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
                 Coming Soon
               </span>
             </div>
             <!-- Title -->
-            <div class="fw-bold" style="font-size: 14px;">
+            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
               Export Data
             </div>
             <!-- Description -->
-            <div class="text-secondary" style="font-size: 14px;">
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
               Export engagements to CSV or Excel
             </div>
           </div>
@@ -228,29 +228,29 @@ require_once '../includes/functions.php';
       </div>
 
       <div class="col-md-4">
-        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(198,224,254); background-color: rgb(233,243,254);">
           <div class="card-body p-4">
             <!-- Icon (left) + Badge (right) -->
             <div class="d-flex align-items-center justify-content-between mb-3">
               <div class="icon-square d-flex align-items-center justify-content-center"
-                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
-                <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(86,151,255);">
+                <i class="bi bi-download" style="color: rgb(255,255,255);"></i>
               </div>
-              <span class="badge bg-secondary bg-opacity-25 text-secondary">
+              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
                 Coming Soon
               </span>
             </div>
             <!-- Title -->
-            <div class="fw-bold" style="font-size: 14px;">
+            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
               Export Data
             </div>
             <!-- Description -->
-            <div class="text-secondary" style="font-size: 14px;">
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
               Export engagements to CSV or Excel
             </div>
           </div>
         </div>
-      </div>
+      </div>      
 
     </div>
   <!-- end status updates -->
