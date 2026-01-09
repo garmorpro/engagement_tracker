@@ -53,6 +53,17 @@ require_once '../includes/functions.php';
 
   <div class="mt-4"></div>
 
+  <div style="margin-left: 200px; margin-right: 200px;">
+    <div class="d-flex justify-content-between">
+      <div class="left">
+        Back to Dashboard
+      </div>
+      <div class="right">
+        endswitch
+      </div>
+    </div>
+  </div>
+
 
 
     <div class="mt-5"></div>
