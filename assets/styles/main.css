@@ -420,7 +420,8 @@ body {
 }
 
 .btn-delete:hover {
-  background-color: #c53030; /* darker red on hover */
+  background-color: #c53030;
+  color: #fff;
 }
 
 /* Optional: icon spacing */
