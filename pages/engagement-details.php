@@ -88,41 +88,88 @@ require_once '../includes/functions.php';
 
   <!-- upper bay -->
     <div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
+  <div class="col-md-12">
+    <div class="card h-100"
+         style="border-radius: 15px; border: 1px solid rgb(187,219,253); background-color: rgb(238,246,254);">
+      <div class="card-body p-4">
 
-      <div class="col-md-12">
-        <div class="card h-100"
-             style="border-radius: 15px; border: 1px solid rgb(187,219,253); background-color: rgb(238,246,254);">
-          <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start">
 
-            <div class="d-flex align-items-start">
+          <!-- Left Side -->
+          <div class="d-flex flex-column">
 
-              <!-- Icon -->
-              <div class="icon-square d-flex align-items-center justify-content-center me-3"
-                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(33,128,255); flex-shrink: 0;">
-                <i class="bi bi-tools" style="color: rgb(255,255,255);"></i>
-              </div>
+            <!-- Top badges row -->
+            <div class="mb-2 d-flex align-items-center flex-wrap gap-2">
+              <!-- Engagement ID -->
+              <span class="badge text-bg-secondary"><?php echo htmlspecialchars($eng['eng_idno']); ?></span>
 
-              <!-- Text Content -->
-              <div>
-                <div class="fw-bold" style="font-size: 14px; color: rgb(27,58,139);">
-                  More Tools Coming Soon
-                </div>
+              <!-- Status -->
+              <span class="badge rounded-pill" 
+                    style="background-color: <?php echo $eng['eng_status'] === 'planning' ? '#68a6ff' : '#ccc'; ?>; color: white;">
+                <?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?>
+              </span>
 
-                <div class="mt-1"
-                     style="font-size: 14px; color: rgb(52,83,189);">
-                  We're actively developing new tools to help streamline your audit engagement workflow.
-                  Check back regularly for updates and new features!
-                </div>
-              </div>
+              <!-- Overdue badge -->
+              <?php
+              $today = new DateTime();
+              if (!empty($eng['eng_final_due']) && new DateTime($eng['eng_final_due']) < $today): ?>
+                <span class="badge rounded-pill badge-overdue">Overdue</span>
+              <?php endif; ?>
 
+              <!-- Repeat Client badge -->
+              <?php if (!empty($eng['eng_repeat']) && $eng['eng_repeat'] === 'Y'): ?>
+                <span class="badge rounded-pill text-white" style="background-color: #2563eb;">Repeat Client</span>
+              <?php endif; ?>
+            </div>
+
+            <!-- Engagement Name -->
+            <h5 class="fw-bold mb-2" style="color: rgb(27,58,139);"><?php echo htmlspecialchars($eng['eng_name']); ?></h5>
+
+            <!-- Meta row: Audit Type, Location, Period -->
+            <div class="d-flex gap-3 text-secondary" style="font-size: 14px;">
+              <?php if(!empty($eng['eng_audit_type'])): ?>
+                <div><i class="bi bi-file-earmark-text me-1"></i><?php echo htmlspecialchars($eng['eng_audit_type']); ?></div>
+              <?php endif; ?>
+
+              <?php if(!empty($eng['eng_location'])): ?>
+                <div><i class="bi bi-geo-alt me-1"></i><?php echo htmlspecialchars($eng['eng_location']); ?></div>
+              <?php endif; ?>
+
+              <?php if(!empty($eng['eng_period'])): ?>
+                <div><i class="bi bi-calendar2 me-1"></i><?php echo htmlspecialchars($eng['eng_period']); ?></div>
+              <?php endif; ?>
             </div>
 
           </div>
+
+          <!-- Right Side: Due Box -->
+          <div class="d-flex flex-column align-items-center justify-content-center"
+               style="width: 120px; height: 80px; border-radius: 10px; background-color: #fff; text-align: center;">
+            
+            <?php
+              if (!empty($eng['eng_final_due'])) {
+                  $finalDue = new DateTime($eng['eng_final_due']);
+                  $diff = $today->diff($finalDue);
+                  $days = (int)$diff->format('%r%a'); // negative if past
+                  if ($days < 0) {
+                      echo "<div style='font-size: 20px; font-weight: bold; color: #e53e3e;'>" . abs($days) . "</div>";
+                      echo "<div style='font-size: 12px; color: #e53e3e;'>Days Overdue</div>";
+                  } else {
+                      echo "<div style='font-size: 20px; font-weight: bold; color: #000;'>" . $days . "</div>";
+                      echo "<div style='font-size: 12px; color: #000;'>Days Until Due</div>";
+                  }
+              }
+            ?>
+
+          </div>
+
         </div>
+
       </div>
-
-
     </div>
+  </div>
+</div>
+
   <!-- end upper bay -->
 
 
