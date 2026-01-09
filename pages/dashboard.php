@@ -4,8 +4,11 @@
 require_once '../includes/functions.php';
 // require_once '../includes/update-engagement-status.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
+// Read raw POST data
+$raw = file_get_contents('php://input');
+$data = json_decode($raw, true);
 
+// DEBUG: include raw input in response for JS
 if (!empty($data['eng_id']) && !empty($data['new_status'])) {
     $eng_id = $data['eng_id'];
     $new_status = $data['new_status'];
@@ -14,12 +17,28 @@ if (!empty($data['eng_id']) && !empty($data['new_status'])) {
     $stmt->bind_param("ss", $new_status, $eng_id);
 
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'eng_id' => $eng_id, 'new_status' => $new_status]);
+        echo json_encode([
+            'success' => true,
+            'eng_id' => $eng_id,
+            'new_status' => $new_status,
+            'raw_input' => $raw
+        ]);
     } else {
-        echo json_encode(['success' => false, 'error' => 'DB execute failed', 'db_error' => $stmt->error]);
+        echo json_encode([
+            'success' => false,
+            'error' => 'DB execute failed',
+            'db_error' => $stmt->error,
+            'raw_input' => $raw
+        ]);
     }
 } else {
-    echo json_encode(['success' => false, 'error' => 'Missing eng_id or new_status', 'raw_input' => $data]);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Missing eng_id or new_status',
+        'raw_input' => $raw,
+        'decoded_data' => $data
+    ]);
+
 }
 
 $engagements = getAllEngagements($conn);
