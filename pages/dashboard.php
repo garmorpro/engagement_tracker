@@ -1168,7 +1168,7 @@ if (!empty($engagements)) {
   <script>
 let statusChart; // We'll store the chart instance
 
-const statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
+const statusLabels = ['on-hold', 'planning', 'in-progress', 'in-review', 'complete'];
 const statusData = <?php echo json_encode(array_values($statusCounts)); ?>;
 
 // Function to render chart
@@ -1181,7 +1181,7 @@ function renderStatusChart() {
     }
 
     statusChart = new Chart(ctx, {
-        type: 'doughnut', // can also be 'pie'
+        type: 'pie', // can also be 'pie'
         data: {
             labels: statusLabels,
             datasets: [{
