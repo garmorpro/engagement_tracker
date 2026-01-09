@@ -860,19 +860,19 @@
 
   <div class="table-key" style="display: flex; gap: 20px; align-items: center;">
   <div class="final_due" style="display: flex; align-items: center; gap: 5px;">
-    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(40, 139, 27, 1);"></span>
+    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(55, 182, 38, 1);"></span>
     Final Due
   </div>
   <div class="draft_due" style="display: flex; align-items: center; gap: 5px;">
-    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(145, 88, 27, 1);"></span>
+    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(195, 119, 38, 1);"></span>
     Draft Due
   </div>
   <div class="fieldwork_start" style="display: flex; align-items: center; gap: 5px;">
-    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(33, 105, 154, 1);"></span>
+    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(41, 133, 193, 1);"></span>
     Fieldwork Start
   </div>
   <div class="planning_call" style="display: flex; align-items: center; gap: 5px;">
-    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(129, 27, 138, 1);"></span>
+    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(131, 38, 193, 1);"></span>
     Planning Call
   </div>
 </div>
