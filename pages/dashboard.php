@@ -137,6 +137,14 @@
   opacity: 1;
   visibility: visible;
 }
+
+.table-wrapper {
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  overflow: hidden;   /* CRITICAL for rounded corners */
+  background: #fff;
+}
+
   </style>
 </head>
 <body>
