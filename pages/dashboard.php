@@ -1080,7 +1080,7 @@ require_once '../includes/functions.php';
     
     </div>
 
-    
+
   </div>
 
 
@@ -1188,7 +1188,7 @@ document.getElementById("nextMonth").onclick = () => {
     renderCalendar();
 };
 
-renderCalendar();
+// renderCalendar();
 
 </script>
 
