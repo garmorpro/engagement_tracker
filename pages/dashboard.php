@@ -1147,7 +1147,7 @@ require_once '../includes/functions.php';
 
 
   <script>
-const ctx = document.getElementById('myChart').getContext('2d');
+const ctx = document.getElementById('status_distribution').getContext('2d');
 
 const myDoughnutChart = new Chart(ctx, {
     type: 'doughnut', // 'pie' for a pie chart
