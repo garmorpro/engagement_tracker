@@ -635,31 +635,41 @@ $engagements = getAllEngagements($conn);
   <!-- <script src="../assets/js/sortable.js"></script> -->
 
   <script>
- const columns = document.querySelectorAll('.kanban-column');
-columns.forEach(column => {
-  new Sortable(column, {
-    group: 'kanban',
-    animation: 150,
-    ghostClass: 'kanban-ghost',
-    handle: '.engagement-card-kanban',
-    onEnd: function(evt) {
-      const card = evt.item;
-      const engId = card.dataset.engId;
-      const newStatus = evt.to.closest('.kanban-column')?.dataset?.status;
+ document.addEventListener('DOMContentLoaded', () => {
+  const columns = document.querySelectorAll('.kanban-column');
 
-      if (!engId || !newStatus) return;
+  columns.forEach(column => {
+    new Sortable(column, {
+      group: 'kanban',
+      animation: 150,
+      ghostClass: 'kanban-ghost',
+      handle: '.engagement-card-kanban', // Only the card itself is draggable
+      draggable: '.engagement-card-wrapper', // Ensures the wrapper is treated as draggable item
+      filter: '.engagement-card-wrapper .engagement-card-kanban', // Prevents dropping inside another card
+      onEnd: function(evt) {
+        // Always get the wrapper with data-eng-id
+        const wrapper = evt.item.closest('.engagement-card-wrapper');
+        const engId = wrapper?.dataset.engId;
+        const newStatus = evt.to.closest('.kanban-column')?.dataset?.status;
 
-      fetch('includes/update-engagement-status.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eng_id: engId, new_status: newStatus })
-      })
-      .then(res => res.json())
-      .then(data => console.log('Server response:', data))
-      .catch(err => console.error('Fetch error:', err));
-    }
+        if (!engId || !newStatus) {
+          console.warn('Missing engId or newStatus', { engId, newStatus });
+          return;
+        }
+
+        fetch('includes/update-engagement-status.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eng_id: engId, new_status: newStatus })
+        })
+        .then(res => res.json())
+        .then(data => console.log('Server response:', data))
+        .catch(err => console.error('Fetch error:', err));
+      }
+    });
   });
 });
+
 
 
 
