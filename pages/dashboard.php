@@ -292,7 +292,7 @@
                 </div>
                 <!-- Filter button -->
                 <button class="btn filter-btn d-flex" >
-                  <i class="bi bi-funnel-fill me-1"></i> Filter
+                  <i class="bi bi-funnel me-1"></i> Filter
                 </button>
             </div>
         </div>
