@@ -666,5 +666,59 @@ require_once '../includes/functions.php';
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.engagement-card-kanban');
+    const columns = document.querySelectorAll('.kanban-column');
+
+    let draggedCard = null;
+
+    // Start dragging
+    cards.forEach(card => {
+        card.addEventListener('dragstart', e => {
+            draggedCard = card;
+            e.dataTransfer.effectAllowed = 'move';
+            card.style.opacity = '0.5';
+        });
+
+        card.addEventListener('dragend', e => {
+            draggedCard = null;
+            card.style.opacity = '1';
+        });
+    });
+
+    // Allow drop
+    columns.forEach(column => {
+        column.addEventListener('dragover', e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            column.classList.add('drag-over');
+        });
+
+        column.addEventListener('dragleave', e => {
+            column.classList.remove('drag-over');
+        });
+
+        column.addEventListener('drop', e => {
+            e.preventDefault();
+            if (draggedCard) {
+                column.appendChild(draggedCard);
+                column.classList.remove('drag-over');
+
+                // Optional: update backend via AJAX
+                const newStatus = column.dataset.status;
+                const engId = draggedCard.querySelector('h5, h6').innerText; // or hidden input with id
+                fetch('update-engagement-status.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({eng_id: engId, status: newStatus})
+                });
+            }
+        });
+    });
+});
+</script>
+
+
 </body>
 </html>
