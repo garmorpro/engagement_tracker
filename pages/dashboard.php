@@ -691,32 +691,21 @@ require_once '../includes/functions.php';
 document.addEventListener('DOMContentLoaded', () => {
     let draggedCard = null;
 
-    // DRAG START / END
-    document.addEventListener('dragstart', e => {
-        const card = e.target.closest('.engagement-card-kanban');
-        if (!card) return;
+    // DRAG START
+    document.querySelectorAll('.engagement-card-kanban').forEach(card => {
+        card.addEventListener('dragstart', e => {
+            draggedCard = card;
+            card.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
 
-        draggedCard = card;
-        e.dataTransfer.effectAllowed = 'move';
-        card.classList.add('dragging');
-    });
-
-    document.addEventListener('dragend', () => {
-        if (draggedCard) {
+        card.addEventListener('dragend', () => {
             draggedCard.classList.remove('dragging');
             draggedCard = null;
-        }
+        });
     });
 
-    // PREVENT CARDS FROM BEING DROP TARGETS
-    document.addEventListener('dragover', e => {
-        if (e.target.closest('.engagement-card-kanban')) {
-            e.preventDefault();
-            return;
-        }
-    });
-
-    // HANDLE COLUMN DROPS
+    // COLUMN DROP HANDLING
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
@@ -733,19 +722,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!draggedCard) return;
 
-            // ✅ Move card permanently in DOM
+            // Append the card to the new column
             column.appendChild(draggedCard);
 
+            // Optional: update DB via AJAX
             const engId = draggedCard.dataset.id;
             const newStatus = column.dataset.status;
 
             fetch('../includes/update-engagement-status.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    eng_id: engId,
-                    status: newStatus
-                })
+                body: JSON.stringify({ eng_id: engId, status: newStatus })
             })
             .then(res => res.json())
             .then(data => {
@@ -757,6 +744,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
 </script>
 
 
