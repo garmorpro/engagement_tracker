@@ -807,16 +807,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newCard = document.createElement('div');
         newCard.className = 'card engagement-card-kanban mb-2';
-        newCard.dataset.id = id;
-        newCard.dataset.name = name;
-        newCard.dataset.engno = engno;
-        newCard.dataset.manager = manager;
-        newCard.dataset.fieldwork = fieldwork;
-        newCard.dataset.audit = audit;
-        newCard.dataset.finalDue = finalDue;
-        newCard.style.borderRadius = '15px';
-        newCard.style.border = '1px solid rgb(208,213,219)';
-        newCard.style.cursor = 'move';
+        Object.assign(newCard.dataset, { id, name, engno, manager, fieldwork, audit, finalDue });
+        newCard.style.cssText = 'border-radius:15px; border:1px solid rgb(208,213,219); cursor:move;';
 
         const body = document.createElement('div');
         body.className = 'card-body d-flex align-items-center justify-content-between';
@@ -863,7 +855,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const transformToVertical = (card) => {
-        // unchanged vertical transform logic for other columns
         const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
 
         const wrapper = document.createElement('a');
@@ -873,17 +864,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newCard = document.createElement('div');
         newCard.className = 'card engagement-card-kanban mb-2';
-        newCard.dataset.id = id;
-        newCard.dataset.name = name;
-        newCard.dataset.engno = engno;
-        newCard.dataset.manager = manager;
-        newCard.dataset.fieldwork = fieldwork;
-        newCard.dataset.audit = audit;
-        newCard.dataset.finalDue = finalDue;
-        newCard.style.backgroundColor = 'rgb(249,250,251)';
-        newCard.style.border = '1px solid rgb(208,213,219)';
-        newCard.style.borderRadius = '15px';
-        newCard.style.cursor = 'move';
+        Object.assign(newCard.dataset, { id, name, engno, manager, fieldwork, audit, finalDue });
+        newCard.style.cssText = 'background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); border-radius: 15px; cursor: move;';
 
         const body = document.createElement('div');
         body.className = 'card-body';
@@ -942,19 +924,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const newStatus = column.dataset.status;
 
             const cardData = draggedWrapper.querySelector('.engagement-card-kanban');
-            let newWrapper;
-
-            if (newStatus === 'on-hold' || newStatus === 'complete') {
-                newWrapper = transformToHorizontal(cardData);
-            } else {
-                newWrapper = transformToVertical(cardData);
-            }
+            let newWrapper = (newStatus === 'on-hold' || newStatus === 'complete')
+                ? transformToHorizontal(cardData)
+                : transformToVertical(cardData);
 
             if (newWrapper !== draggedWrapper) draggedWrapper.remove();
             column.appendChild(newWrapper);
 
             applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), newStatus);
-            document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
+
+            // ✅ Update both original and new column to ensure empty placeholders show/hide
+            [column, originalParent].forEach(col => updateBadge(col));
 
             const engId = newWrapper.querySelector('.engagement-card-kanban').dataset.id;
             fetch('../includes/update-engagement-status.php', {
@@ -965,13 +945,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!data.success) {
                     originalParent.appendChild(newWrapper);
                     applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
-                    document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
+                    [column, originalParent].forEach(col => updateBadge(col));
                     alert('Failed to update DB. Reverted.');
                 }
             }).catch(err => {
                 originalParent.appendChild(newWrapper);
                 applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
-                document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
+                [column, originalParent].forEach(col => updateBadge(col));
                 alert('Failed to update DB. Reverted.');
             });
 
@@ -979,13 +959,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Initialize badges and styles
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.querySelectorAll('a > .engagement-card-kanban').forEach(card => applyLayoutStyles(card, column.dataset.status));
         updateBadge(column);
     });
 });
-
 </script>
+
 
 
 
