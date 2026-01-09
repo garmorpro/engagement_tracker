@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/db_connection.php';
+require_once __DIR__ . '/db.php';
 
 // Read JSON body
 $input = json_decode(file_get_contents('php://input'), true);
