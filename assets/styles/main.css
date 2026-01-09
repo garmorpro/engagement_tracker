@@ -511,6 +511,9 @@ body {
 .empty-placeholder {
     display: none;
     opacity: 0;
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
     transition: opacity 0.2s ease;
 }
 
