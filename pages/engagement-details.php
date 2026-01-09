@@ -167,7 +167,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                 <!-- Top badges row -->
                 <div class="mb-2 d-flex align-items-center flex-wrap gap-2">
                   <!-- Engagement ID -->
-                  <span class="badge text-bg-secondary"><?php echo htmlspecialchars($eng['eng_idno']); ?></span>
+                  <span class="badge text-bg-secondary"><?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?></span>
 
                   <!-- Status -->
                   <span class="badge rounded-pill" style="background-color: <?php echo $pillColor; ?>; color: white;">
@@ -253,9 +253,11 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
                 <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
               </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trusted Security Criteria</h6>
+              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
             </div>
-            
+            <p>
+              <?php echo htmlspecialchars($eng['eng_tsc'] ?? ''); ?>
+            </p>
           </div>
         </div>
       </div>
