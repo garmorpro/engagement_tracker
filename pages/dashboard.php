@@ -705,18 +705,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // HELPER: Update empty placeholders in all columns
+    // HELPER: update empty placeholders
     function updateEmptyPlaceholders() {
         document.querySelectorAll('.kanban-column').forEach(column => {
             const cards = column.querySelectorAll('.engagement-card-kanban');
-            const placeholder = column.querySelector('.empty-placeholder');
+            let placeholder = column.querySelector('.empty-placeholder');
+
             if (cards.length === 0) {
                 if (!placeholder) {
-                    const div = document.createElement('div');
-                    div.classList.add('text-center', 'text-muted', 'py-4', 'empty-placeholder');
-                    div.style.cssText = "border: 1px dashed rgb(208,213,219); border-radius: 15px;";
-                    div.textContent = "Drop engagements here";
-                    column.appendChild(div);
+                    placeholder = document.createElement('div');
+                    placeholder.classList.add('text-center', 'text-muted', 'py-4', 'empty-placeholder');
+                    placeholder.style.cssText = "border: 1px dashed rgb(208,213,219); border-radius: 15px;";
+                    placeholder.textContent = "Drop engagements here";
+                    column.appendChild(placeholder);
                 }
             } else {
                 if (placeholder) placeholder.remove();
@@ -724,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // HELPER: Update header counts
+    // HELPER: update header counts
     function updateHeaderCounts() {
         document.querySelectorAll('.kanban-column').forEach(column => {
             const countSpan = column.closest('.card').querySelector('.badge + .badge');
@@ -735,7 +736,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // COLUMN DROP HANDLING
+    // DROP HANDLING
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
@@ -752,37 +753,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!draggedCard) return;
 
-            // Remove any existing placeholder in the column
+            // Remove placeholder if exists
             const placeholder = column.querySelector('.empty-placeholder');
             if (placeholder) placeholder.remove();
 
-            // Append card to new column
+            // Append card to column
             column.appendChild(draggedCard);
 
-            // Adjust styles based on column
             const status = column.dataset.status;
 
+            // Apply layout-specific styles
             if (status === 'on-hold') {
-                // Horizontal style
-                draggedCard.style.border = "1px solid rgb(208,213,219)";
-                draggedCard.style.borderRadius = "15px";
-                draggedCard.style.cursor = "move";
-                draggedCard.style.backgroundColor = ""; // optional: inherit
+                // Horizontal layout
+                column.style.display = 'flex';
+                column.style.flexDirection = 'row';
+                column.style.gap = '10px';
+                draggedCard.style.width = 'auto'; // fit content
                 draggedCard.querySelector('.card-body').classList.add('d-flex', 'align-items-center', 'justify-content-between');
-            } else if (status === 'planning') {
-                // Vertical style
-                draggedCard.style.border = "1px solid rgb(208,213,219)";
-                draggedCard.style.borderRadius = "15px";
-                draggedCard.style.cursor = "move";
-                draggedCard.style.backgroundColor = "rgb(249,250,251)";
+            } else {
+                // Vertical layout
+                column.style.display = 'flex';
+                column.style.flexDirection = 'column';
+                column.style.gap = '10px';
+                draggedCard.style.width = '100%';
                 draggedCard.querySelector('.card-body').classList.remove('d-flex', 'align-items-center', 'justify-content-between');
             }
 
-            // Update header counts and empty placeholders
+            // Update counts and placeholders
             updateEmptyPlaceholders();
             updateHeaderCounts();
 
-            // Optional: update DB via AJAX
+            // Update DB via AJAX
             const engId = draggedCard.dataset.id;
             fetch('../includes/update-engagement-status.php', {
                 method: 'POST',
@@ -791,15 +792,13 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(res => res.json())
             .then(data => {
-                if (!data.success) {
-                    console.error('DB update failed:', data.message);
-                }
+                if (!data.success) console.error('DB update failed:', data.message);
             })
             .catch(err => console.error('Update error:', err));
         });
     });
 
-    // INITIAL placeholder & counts
+    // INITIAL
     updateEmptyPlaceholders();
     updateHeaderCounts();
 });
