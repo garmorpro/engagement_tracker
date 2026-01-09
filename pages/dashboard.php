@@ -1103,88 +1103,90 @@ const engagements = [
 }<?php echo ($index < count($engagements) - 1) ? ',' : ''; ?>
 <?php endforeach; ?>
 ];
+</script>
 
-// Start with current month
+  <script>
+const engagements = [
+  {
+    id: 1,
+    name: "Global Finance Hold Co",
+    finalDueDate: "2026-04-05",
+    type: "Final Due",
+  },
+  {
+    id: 2,
+    name: "Acme Corporation Audit",
+    finalDueDate: "2026-02-18",
+    type: "Draft Due",
+  }
+];
+
+// Start month (February 2026 for testing)
 let currentDate = new Date();
 
+
 function renderCalendar() {
-    const daysContainer = document.getElementById("calendar-days");
-    daysContainer.innerHTML = "";
+  const daysContainer = document.getElementById("calendar-days");
+  daysContainer.innerHTML = "";
 
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
 
-    document.getElementById("calendar-title").textContent =
-        currentDate.toLocaleString("default", { month: "long", year: "numeric" });
+  document.getElementById("calendar-title").textContent =
+    currentDate.toLocaleString("default", { month: "long", year: "numeric" });
 
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const todayStr = new Date().toISOString().split("T")[0];
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayStr = new Date().toISOString().split("T")[0];
 
-    // Empty placeholders for days before the first of the month
-    for (let i = 0; i < firstDay; i++) {
-        daysContainer.appendChild(document.createElement("div"));
+  // Empty placeholders
+  for (let i = 0; i < firstDay; i++) {
+    daysContainer.appendChild(document.createElement("div"));
+  }
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayEl = document.createElement("div");
+    dayEl.className = "calendar-day";
+
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+    if (dateStr === todayStr) {
+      dayEl.classList.add("today");
     }
 
-    // Generate each day
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dayEl = document.createElement("div");
-        dayEl.className = "calendar-day";
+    dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
 
-        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    engagements
+      .filter(e => e.finalDueDate === dateStr)
+      .forEach(e => {
+        const eventEl = document.createElement("div");
 
-        if (dateStr === todayStr) {
-            dayEl.classList.add("today");
-        }
+        const typeClassMap = {
+          "Final Due": "final-due",
+          "Draft Due": "draft-due"
+        };
 
-        dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+        eventEl.className = `event ${typeClassMap[e.type]}`;
+        eventEl.textContent = e.name;
 
-        // Loop through all engagements
-        engagements.forEach(e => {
-            const eventMap = [
-                { date: e.planningCall, type: "Planning Call" },
-                { date: e.fieldworkStart, type: "Fieldwork Start" },
-                { date: e.draftDue, type: "Draft Due" },
-                { date: e.finalDue, type: "Final Due" }
-            ];
+        dayEl.appendChild(eventEl);
+      });
 
-            eventMap.forEach(ev => {
-                if (ev.date === dateStr) {
-                    const eventEl = document.createElement("div");
-
-                    // Map CSS classes for colors
-                    const typeClassMap = {
-                        "Planning Call": "planning_call",
-                        "Fieldwork Start": "fieldwork_start",
-                        "Draft Due": "draft_due",
-                        "Final Due": "final_due"
-                    };
-
-                    eventEl.className = `event ${typeClassMap[ev.type]}`;
-                    eventEl.textContent = `${e.name} (${ev.type})`;
-
-                    dayEl.appendChild(eventEl);
-                }
-            });
-        });
-
-        daysContainer.appendChild(dayEl);
-    }
+    daysContainer.appendChild(dayEl);
+  }
 }
 
-// Navigation buttons
 document.getElementById("prevMonth").onclick = () => {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
 };
 
 document.getElementById("nextMonth").onclick = () => {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
 };
 
 renderCalendar();
-
 </script>
 
 </body>
