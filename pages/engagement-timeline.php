@@ -3,7 +3,7 @@
 
 require_once '../includes/functions.php';
 
-
+$engagements = getAllEngagements($conn);
 
 ?>
 
