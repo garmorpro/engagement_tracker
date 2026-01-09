@@ -177,7 +177,7 @@ require_once '../includes/functions.php';
   <!-- status updates -->
     <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
 
-    <div class="d-flex align-items-center mb-3" class="margin-bottom: -10px;">
+    <div class="d-flex align-items-center mb-3" class="margin-bottom: -10px !important;">
       <div class="icon-square d-flex align-items-center justify-content-center me-2"
            style="width: 36px; height: 36px; border-radius: 8px; background-color: rgb(243,244,246);">
         <i class="bi bi-database" style="color: rgb(75,85,99);"></i>
