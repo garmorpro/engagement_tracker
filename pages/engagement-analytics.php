@@ -741,8 +741,8 @@ function renderManagerChart() {
             datasets:[{
                 label:'Active Engagements',
                 data: managerData,
-                backgroundColor: managerColors,
-                borderColor: managerBorders,
+                backgroundColor: colors,
+                borderColor: borders,
                 borderWidth:1,
                 borderRadius:{topLeft:15,topRight:15}
             }]
