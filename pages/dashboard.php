@@ -1103,9 +1103,7 @@ const engagements = [
 }<?php echo ($index < count($engagements) - 1) ? ',' : ''; ?>
 <?php endforeach; ?>
 ];
-</script>
 
-  <script>
 // Start with current month
 let currentDate = new Date();
 
