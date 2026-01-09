@@ -757,14 +757,16 @@ document.addEventListener('DOMContentLoaded', () => {
         'planning': 'vertical',
         'in-progress': 'vertical',
         'in-review': 'vertical',
-        'complete': 'horizontal' // Treat complete like on-hold
+        'complete': 'horizontal'
     };
 
     const updateBadge = (column) => {
-        const count = column.querySelectorAll('a > .engagement-card-kanban').length;
+        const cards = column.querySelectorAll('a > .engagement-card-kanban');
+        const count = cards.length;
         const badge = column.closest('.card').querySelector('.count-badge');
         if (badge) badge.textContent = count;
 
+        // Show placeholder if no cards
         const placeholder = column.querySelector('.empty-placeholder');
         if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
     };
@@ -799,7 +801,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const transformToHorizontal = (card) => {
         const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
-
         const wrapper = document.createElement('a');
         wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
         wrapper.className = 'text-decoration-none text-reset d-block';
@@ -856,7 +857,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const transformToVertical = (card) => {
         const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
-
         const wrapper = document.createElement('a');
         wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
         wrapper.className = 'text-decoration-none text-reset d-block';
@@ -865,7 +865,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newCard = document.createElement('div');
         newCard.className = 'card engagement-card-kanban mb-2';
         Object.assign(newCard.dataset, { id, name, engno, manager, fieldwork, audit, finalDue });
-        newCard.style.cssText = 'background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); border-radius: 15px; cursor: move;';
+        newCard.style.cssText = 'background-color: rgb(249,250,251); border:1px solid rgb(208,213,219); border-radius:15px; cursor:move;';
 
         const body = document.createElement('div');
         body.className = 'card-body';
@@ -875,11 +875,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 <h6 class="card-title fw-bold mb-0">${name}</h6>
                 <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
             </div>
-            <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px;">
+            <p class="text-secondary" style="font-size:16px; margin-bottom:-5px;">
                 <span style="color: rgb(106,115,130); font-size: 14px;">${engno}</span><br>
                 <div class="pb-2"></div>
                 <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span><br>
-                <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;${fieldwork}</span><br>
+                <span style="font-size:14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;${fieldwork}</span><br>
                 <div class="tags pt-2"></div>
             </p>
         `;
@@ -888,7 +888,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const badgeDiv = body.querySelector('.tags');
             const badge = document.createElement('span');
             badge.className = 'badge';
-            badge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;';
+            badge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight:500;';
             badge.textContent = audit;
             badgeDiv.appendChild(badge);
         }
@@ -897,7 +897,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const badgeDiv = body.querySelector('.tags');
             const overdue = document.createElement('span');
             overdue.className = 'badge';
-            overdue.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500; margin-left: 5px;';
+            overdue.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight:500; margin-left:5px;';
             overdue.textContent = 'Overdue';
             badgeDiv.appendChild(overdue);
         }
@@ -930,10 +930,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (newWrapper !== draggedWrapper) draggedWrapper.remove();
             column.appendChild(newWrapper);
-
             applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), newStatus);
 
-            // ✅ Update both original and new column to ensure empty placeholders show/hide
+            // 🔹 Dynamically update placeholders and badge counts
             [column, originalParent].forEach(col => updateBadge(col));
 
             const engId = newWrapper.querySelector('.engagement-card-kanban').dataset.id;
@@ -959,7 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Initialize badges and styles
+    // Initialize badges and empty placeholders on page load
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.querySelectorAll('a > .engagement-card-kanban').forEach(card => applyLayoutStyles(card, column.dataset.status));
         updateBadge(column);
