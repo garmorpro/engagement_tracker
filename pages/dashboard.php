@@ -11,9 +11,9 @@
       /* background-color: #f8f9fa;  */
       font-family: 'Arial', sans-serif;
     }
-    .page-content {
-  padding-top: 80px; /* same as header height */
-}
+    /* .page-content {
+  padding-top: 80px; 
+} */
 
     
     .header-container {
