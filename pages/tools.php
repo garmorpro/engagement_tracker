@@ -177,9 +177,17 @@ require_once '../includes/functions.php';
   <!-- status updates -->
     <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
 
-    <h5 class="fw-semibold" style="margin-bottom: -10px;">
-      Data Management
-    </h5>
+    <div class="d-flex align-items-center mb-3">
+  <div class="icon-square d-flex align-items-center justify-content-center me-2"
+       style="width: 36px; height: 36px; border-radius: 8px; background-color: rgb(243,244,246);">
+    <i class="bi bi-database" style="color: rgb(75,85,99);"></i>
+  </div>
+
+  <h5 class="fw-semibold mb-0">
+    Data Management
+  </h5>
+</div>
+
 
       <div class="col-md-4">
         <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(198,224,254); background-color: rgb(233,243,254);">
