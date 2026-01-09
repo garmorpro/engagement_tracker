@@ -267,6 +267,192 @@ require_once '../includes/functions.php';
     </div>
   <!-- end status updates -->
 
+  <!-- status updates -->
+    <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
+
+      <div class="d-flex align-items-center" class="margin-bottom: -12px !important;">
+        <div class="icon-square d-flex align-items-center justify-content-center me-2"
+             style="width: 36px; height: 36px; border-radius: 8px; background-color: rgb(86,151,255);">
+          <i class="bi bi-file-earmark-text" style="color: rgb(255,255,255);"></i>
+        </div>
+
+        <h5 class="fw-semibold mb-0">
+          Reports & Analytics
+        </h5>
+      </div>
+
+
+      <div class="col-md-4">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(241,223,254); background-color: rgb(251,245,254);">
+          <div class="card-body p-4">
+            <!-- Icon (left) + Badge (right) -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="icon-square d-flex align-items-center justify-content-center"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(199,118,255);">
+                <i class="bi bi-file-earmark-text" style="color: rgb(255,255,255);"></i>
+              </div>
+              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
+                Coming Soon
+              </span>
+            </div>
+            <!-- Title -->
+            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
+              Generate Reports
+            </div>
+            <!-- Description -->
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
+              Create custom engagement reports
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(241,223,254); background-color: rgb(251,245,254);">
+          <div class="card-body p-4">
+            <!-- Icon (left) + Badge (right) -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="icon-square d-flex align-items-center justify-content-center"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(199,118,255);">
+                <i class="bi bi-calculator" style="color: rgb(255,255,255);"></i>
+              </div>
+              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
+                Coming Soon
+              </span>
+            </div>
+            <!-- Title -->
+            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
+              Resource Calculator
+            </div>
+            <!-- Description -->
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
+              Calculate team capacity and allocation
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(241,223,254); background-color: rgb(251,245,254);">
+          <div class="card-body p-4">
+            <!-- Icon (left) + Badge (right) -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="icon-square d-flex align-items-center justify-content-center"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(199,118,255);">
+                <i class="bi bi-calculator" style="color: rgb(255,255,255);"></i>
+              </div>
+              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
+                Coming Soon
+              </span>
+            </div>
+            <!-- Title -->
+            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
+              Performance Metrics
+            </div>
+            <!-- Description -->
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
+              View team and engagement metrics
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  <!-- end status updates -->
+
+  <!-- status updates -->
+    <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
+
+      <div class="d-flex align-items-center" class="margin-bottom: -12px !important;">
+        <div class="icon-square d-flex align-items-center justify-content-center me-2"
+             style="width: 36px; height: 36px; border-radius: 8px; background-color: rgb(86,151,255);">
+          <i class="bi bi-file-earmark-text" style="color: rgb(255,255,255);"></i>
+        </div>
+
+        <h5 class="fw-semibold mb-0">
+          Reports & Analytics
+        </h5>
+      </div>
+
+
+      <div class="col-md-4">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(241,223,254); background-color: rgb(251,245,254);">
+          <div class="card-body p-4">
+            <!-- Icon (left) + Badge (right) -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="icon-square d-flex align-items-center justify-content-center"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(199,118,255);">
+                <i class="bi bi-file-earmark-text" style="color: rgb(255,255,255);"></i>
+              </div>
+              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
+                Coming Soon
+              </span>
+            </div>
+            <!-- Title -->
+            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
+              Generate Reports
+            </div>
+            <!-- Description -->
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
+              Create custom engagement reports
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(241,223,254); background-color: rgb(251,245,254);">
+          <div class="card-body p-4">
+            <!-- Icon (left) + Badge (right) -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="icon-square d-flex align-items-center justify-content-center"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(199,118,255);">
+                <i class="bi bi-calculator" style="color: rgb(255,255,255);"></i>
+              </div>
+              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
+                Coming Soon
+              </span>
+            </div>
+            <!-- Title -->
+            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
+              Resource Calculator
+            </div>
+            <!-- Description -->
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
+              Calculate team capacity and allocation
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4 hidden">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(241,223,254); background-color: rgb(251,245,254);">
+          <div class="card-body p-4">
+            <!-- Icon (left) + Badge (right) -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="icon-square d-flex align-items-center justify-content-center"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(199,118,255);">
+                <i class="bi bi-calculator" style="color: rgb(255,255,255);"></i>
+              </div>
+              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
+                Coming Soon
+              </span>
+            </div>
+            <!-- Title -->
+            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
+              Performance Metrics
+            </div>
+            <!-- Description -->
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
+              View team and engagement metrics
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  <!-- end status updates -->
+
 
   <div class="mt-5"></div>
 
