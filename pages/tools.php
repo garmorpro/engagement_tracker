@@ -196,7 +196,7 @@ require_once '../includes/functions.php';
             <div class="d-flex align-items-center justify-content-between mb-3">
               <div class="icon-square d-flex align-items-center justify-content-center"
                    style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(86,151,255);">
-                <i class="bi bi-download" style="color: rgb(255,255,255);"></i>
+                <i class="bi bi-file-earmark-arrow-down" style="color: rgb(255,255,255);"></i>
               </div>
               <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
                 Coming Soon
@@ -221,7 +221,7 @@ require_once '../includes/functions.php';
             <div class="d-flex align-items-center justify-content-between mb-3">
               <div class="icon-square d-flex align-items-center justify-content-center"
                    style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(86,151,255);">
-                <i class="bi bi-download" style="color: rgb(255,255,255);"></i>
+                <i class="bi bi-file-earmark-arrow-up" style="color: rgb(255,255,255);"></i>
               </div>
               <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
                 Coming Soon
@@ -229,11 +229,11 @@ require_once '../includes/functions.php';
             </div>
             <!-- Title -->
             <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
-              Export Data
+              Import Data
             </div>
             <!-- Description -->
             <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
-              Export engagements to CSV or Excel
+              Bulk import engagements from file
             </div>
           </div>
         </div>
@@ -246,7 +246,7 @@ require_once '../includes/functions.php';
             <div class="d-flex align-items-center justify-content-between mb-3">
               <div class="icon-square d-flex align-items-center justify-content-center"
                    style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(86,151,255);">
-                <i class="bi bi-download" style="color: rgb(255,255,255);"></i>
+                <i class="bi bi-database" style="color: rgb(255,255,255);"></i>
               </div>
               <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
                 Coming Soon
@@ -254,11 +254,11 @@ require_once '../includes/functions.php';
             </div>
             <!-- Title -->
             <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
-              Export Data
+              Backup & Restore
             </div>
             <!-- Description -->
             <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
-              Export engagements to CSV or Excel
+              Create and restore data backups
             </div>
           </div>
         </div>
