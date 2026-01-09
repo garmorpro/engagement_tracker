@@ -57,11 +57,11 @@ require_once '../includes/functions.php';
     <div class="d-flex justify-content-between">
       <div class="left">
         <div class="d-flex align-items-center mb-3">
-                      <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
-                        <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i>
-                      </div>
-                      <h6 class="fw-semibold mb-0">Overdue</h6>
-                    </div>
+          <div class="icon-square me-2" style="background-color: rgb(255,255,255);">
+            <i class="bi bi-arrow-left" style="color: rgb(84,96,110);"></i>
+          </div>
+          <p class="fw-semibold mb-0">Overdue</p>
+        </div>
       </div>
       <div class="right">
         endswitch
