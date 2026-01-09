@@ -26,5 +26,4 @@ if(isset($data['eng_id'], $data['new_status'])){
     echo json_encode(['success' => false, 'error' => 'Missing eng_id or new_status']);
 }
 
-$conn->close();
 ?>
