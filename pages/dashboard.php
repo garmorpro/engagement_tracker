@@ -251,6 +251,7 @@ $engagements = getAllEngagements($conn);
               <?php endif; ?>
             </div>
           </div>
+          <!-- Card Link -->
           <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="stretched-link"></a>
         </div>
       </div>
@@ -530,8 +531,8 @@ document.addEventListener('DOMContentLoaded', () => {
       group: 'kanban',
       animation: 150,
       ghostClass: 'kanban-ghost',
-      handle: '.engagement-card-kanban',   // drag handle
-      draggable: '.engagement-card-wrapper', // drag wrapper
+      handle: '.engagement-card-kanban',       // drag handle
+      draggable: '.engagement-card-wrapper',   // wrapper is draggable
       onEnd: function(evt) {
         const wrapper = evt.item;
         const engId = wrapper.dataset.engId;
@@ -551,6 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
 
 
 </script>
