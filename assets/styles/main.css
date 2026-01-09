@@ -359,12 +359,6 @@ body {
 .back-link-inner {
   padding: 6px 10px;
   border-radius: 10px;
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.back-link-inner:hover {
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-  transform: translateY(-1px);
 }
 
 .back-link .icon-square {
@@ -373,6 +367,12 @@ body {
   background-color: #fff;
   border: 1px solid rgb(229,231,235);
   border-radius: 6px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.back-link .icon-square:hover {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
 }
 
 .back-link i {
