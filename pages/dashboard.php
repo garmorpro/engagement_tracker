@@ -291,7 +291,7 @@
                     <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);;" placeholder="Search...">
                 </div>
                 <!-- Filter button -->
-                <button class="btn btn-outline-primary">
+                <button class="btn btn-outline-primary d-flex">
                   <i class="bi bi-funnel-fill me-1"></i> Filter
                 </button>
             </div>
