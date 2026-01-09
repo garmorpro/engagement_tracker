@@ -259,7 +259,17 @@ require_once '../includes/functions.php';
                         <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
                               style="font-size: 15px; padding: 10px 14px; background-color: rgb(68, 125,252) !important;">
                           Planning
-                          <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(123,162,249) !important;">1</span>
+                          <?php
+                            $engagements = getAllEngagements($conn);
+
+                            // Count in-progress engagements
+                            $planningCount = count(array_filter($engagements, function($eng) {
+                                return $eng['eng_status'] === 'planning';
+                            }));
+                            ?>
+                          <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(123,162,249) !important;">
+                            <?php echo $planningCount; ?>
+                          </span>
                         </span>
   
   
@@ -330,18 +340,16 @@ require_once '../includes/functions.php';
                               style="font-size: 15px; padding: 10px 14px; background-color: rgb(241,115,19) !important;">
                           In Progress
                           <?php
-$engagements = getAllEngagements($conn);
+                            $engagements = getAllEngagements($conn);
 
-// Count in-progress engagements
-$inProgressCount = count(array_filter($engagements, function($eng) {
-    return $eng['eng_status'] === 'in-progress';
-}));
-?>
-
-<!-- Badge showing the number -->
-<span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(188,129,251) !important;">
-    <?php echo $inProgressCount; ?>
-</span>
+                            // Count in-progress engagements
+                            $inProgressCount = count(array_filter($engagements, function($eng) {
+                                return $eng['eng_status'] === 'in-progress';
+                            }));
+                            ?>
+                          <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(243,155,89) !important;">
+                            <?php echo $inProgressCount; ?>
+                          </span>
                         </span>
   
                         <!-- PHP Kanban card -->
@@ -409,7 +417,19 @@ $inProgressCount = count(array_filter($engagements, function($eng) {
                         <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
                               style="font-size: 15px; padding: 10px 14px; background-color: rgb(160,77,253) !important;">
                           In Review
-                          <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(188,129,251) !important;">1</span>
+                            <?php
+                            $engagements = getAllEngagements($conn);
+
+                            // Count in-progress engagements
+                            $inReviewCount = count(array_filter($engagements, function($eng) {
+                                return $eng['eng_status'] === 'in-review';
+                            }));
+                            ?>
+
+                            <!-- Badge showing the number -->
+                            <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(188,129,251) !important;">
+                                <?php echo $inReviewCount; ?>
+                            </span>
                         </span>
   
   
