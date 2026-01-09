@@ -3,7 +3,7 @@
 
 require_once '../includes/functions.php';
 
-$engagements = getAllEngagements();
+
 
 ?>
 
@@ -236,33 +236,147 @@ $engagements = getAllEngagements();
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
-  <?php
-echo '<pre>';
-print_r($engagements);
-echo '</pre>';
-exit;
+   <?php
+// ----------------- Manager Workload -----------------
+$managerCounts = [];
+foreach ($engagements as $eng) {
+    if (!empty($eng['archived'])) continue; // Skip archived
+    $manager = $eng['eng_manager'];
+    if (!empty($manager)) {
+        if (!isset($managerCounts[$manager])) $managerCounts[$manager] = 0;
+        $managerCounts[$manager]++;
+    }
+}
+$managerLabels = array_keys($managerCounts);
+$managerData   = array_values($managerCounts);
+
+// ----------------- Status Counts -----------------
+$statusCounts = [
+    'on-hold' => 0,
+    'planning' => 0,
+    'in-progress' => 0,
+    'in-review' => 0,
+    'complete' => 0
+];
+foreach ($engagements as $eng) {
+    $status = strtolower($eng['eng_status']);
+    if (isset($statusCounts[$status])) $statusCounts[$status]++;
+}
+$statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
+$statusData = array_values($statusCounts);
 ?>
 
-  <script>
-const engagements = <?php
-if (!empty($engagements)) {
-    echo json_encode(array_map(function($eng) {
-        return [
-            'id' => $eng['eng_id'],
-            'name' => $eng['eng_name'],
-            'planningCall' => $eng['eng_client_planning_call'] ? date('Y-m-d', strtotime($eng['eng_client_planning_call'])) : null,
-            'fieldworkStart' => $eng['eng_fieldwork'] ? date('Y-m-d', strtotime($eng['eng_fieldwork'])) : null,
-            'draftDue' => $eng['eng_draft_due'] ? date('Y-m-d', strtotime($eng['eng_draft_due'])) : null,
-            'finalDue' => $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : null
-        ];
-    }, $engagements));
-} else {
-    echo '[]';
-}
-?>;
-console.log(engagements); // <- check in browser console
-</script>
+<?php
+// Generate a single random RGB color
+$red = rand(50, 250);
+$green = rand(50, 250);
+$blue = rand(50, 250);
 
+// Fill arrays with the same color
+$colors = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,0.2)");
+$borders = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,1)");
+?>
+
+
+<script>
+let statusChart;
+let managerChart;
+
+// ----------------- Status Pie Chart -----------------
+function renderStatusChart() {
+    const ctx = document.getElementById('status_distribution').getContext('2d');
+
+    if (statusChart) statusChart.destroy();
+
+    statusChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: <?php echo json_encode($statusLabels); ?>,
+            datasets: [{
+                label: 'Engagement Status',
+                data: <?php echo json_encode($statusData); ?>,
+                backgroundColor: [
+                    'rgba(107,114,128,0.8)',   // On-Hold
+                    'rgba(68,125,252,0.8)',    // Planning
+                    'rgba(241,115,19,0.8)',    // In-Progress
+                    'rgba(160,77,253,0.8)',    // In-Review
+                    'rgba(79,198,95,0.8)'      // Complete
+                ],
+                borderColor: [
+                    'rgba(107,114,128,1)',
+                    'rgba(68,125,252,1)',
+                    'rgba(241,115,19,1)',
+                    'rgba(160,77,253,1)',
+                    'rgba(79,198,95,1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' },
+                tooltip: { enabled: true }
+            }
+        }
+    });
+}
+
+// ----------------- Manager Workload Bar Chart -----------------
+function renderManagerChart() {
+    const ctx = document.getElementById('manager_workload').getContext('2d');
+
+    if (managerChart) managerChart.destroy();
+
+    // Generate multi-color bars
+    const colors = <?php echo json_encode($colors); ?>;
+    const borders = <?php echo json_encode($borders); ?>;
+
+    // Find max value in the data
+    const dataValues = <?php echo json_encode($managerData); ?>;
+    const maxValue = Math.max(...dataValues);
+
+    managerChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($managerLabels); ?>,
+            datasets: [{
+                label: 'Active Engagements',
+                data: dataValues,
+                backgroundColor: colors,
+                borderColor: borders,
+                borderWidth: 1,
+                borderRadius: { topLeft: 15, topRight: 15 } // top two corners rounded
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: true }
+            },
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    max: maxValue + 2, // top value + 2
+                    ticks: { stepSize: 1 } 
+                }
+            }
+        }
+    });
+}
+
+
+// ----------------- Only render charts when Analytics tab is active -----------------
+document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
+    tabBtn.addEventListener('shown.bs.tab', (e) => {
+        if (e.target.getAttribute('data-bs-target') === '#content-analytics') {
+            renderStatusChart();
+            renderManagerChart();
+        }
+    });
+});
+</script>
 
   
 
