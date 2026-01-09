@@ -1,4 +1,3 @@
-// Select all Kanban columns
 const columns = document.querySelectorAll('.kanban-column .card-body');
 
 columns.forEach(column => {
@@ -7,23 +6,24 @@ columns.forEach(column => {
     animation: 150,
     ghostClass: 'kanban-ghost',
 
-    // Event fired when drag ends
+    // ONLY allow dragging by the grip icon (or any header)
+    handle: '.drag-handle',
+
+    // prevent inner cards from becoming draggable
+    filter: '.no-drag',
+    preventOnFilter: false,
+
     onEnd: function(evt) {
-      const card = evt.item; // dragged element
+      const card = evt.item;
       const newStatus = evt.to.closest('.kanban-column')?.dataset?.status;
       const engId = card.dataset.engId;
 
-      // --- DEBUG LOGGING ---
       console.log('Dragged card:', card);
-      console.log('Engagement ID (from data-eng-id):', engId);
-      console.log('New Status (from column data-status):', newStatus);
+      console.log('Engagement ID:', engId);
+      console.log('New Status:', newStatus);
 
-      if (!engId || !newStatus) {
-        console.warn('Missing eng_id or new_status — request will not be sent.');
-        return; // stop execution if data is missing
-      }
+      if (!engId || !newStatus) return;
 
-      // --- AJAX POST to update status ---
       fetch('update-engagement-status.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,18 +32,9 @@ columns.forEach(column => {
       .then(res => res.json())
       .then(data => {
         console.log('Server response:', data);
-
-        if (data.success) {
-          console.log(`✅ Engagement ${engId} successfully moved to ${newStatus}`);
-        } else {
-          console.error('❌ Failed to update status:', data.error || 'Unknown error');
-          alert('Failed to update status. Check console for details.');
-        }
+        if (!data.success) alert('Failed to update status.');
       })
-      .catch(err => {
-        console.error('Fetch error:', err);
-        alert('Network or server error. Check console for details.');
-      });
+      .catch(err => console.error('Fetch error:', err));
     }
   });
 });
