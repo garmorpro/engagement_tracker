@@ -295,7 +295,7 @@
           </div>
     <!-- end search bar -->
 
-  <div class="tab-content mt-2">
+  <div class="tab-content mt-2" style="margin-left: 200px; margin-right: 200px;">
     <div class="tab-pane fade show active" id="content-board" role="tabpanel">
   
         <!-- Board sections -->
@@ -561,8 +561,9 @@
     </div>
 
     <div class="tab-pane fade" id="content-list" role="tabpanel">
-      <!-- List content here -->
-      <p>List view of engagements...</p>
+      
+
+
     </div>
 
     <div class="tab-pane fade" id="content-timeline" role="tabpanel">
