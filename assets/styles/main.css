@@ -370,7 +370,8 @@ body {
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
-.back-link .icon-square:hover {
+/* Hover the parent link, but shadow only on the icon */
+.back-link:hover .icon-square {
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
   transform: translateY(-1px);
 }
