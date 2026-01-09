@@ -212,41 +212,57 @@ require_once '../includes/update-engagement-status.php';
                                   $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d', strtotime($eng['eng_fieldwork'])) : '';
                           ?>
                           <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
-                              <div class="card engagement-card-kanban mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
-                                  <div class="card-body d-flex align-items-center justify-content-between">
-                              
-                                      <!-- LEFT -->
-                                      <div class="left d-flex align-items-center gap-3">
-                                          <i class="bi bi-grip-horizontal text-secondary"></i>
-                                          <div>
-                                              <h5 class="mb-0" style="font-size: 18px; font-weight: 600;"><?php echo htmlspecialchars($eng['eng_name']); ?></h5>
-                                              <span class="text-muted" style="font-size: 14px;"><?php echo htmlspecialchars($eng['eng_idno']); ?></span>
-                                          </div>
-                                      </div>
-                              
-                                      <!-- RIGHT -->
-                                      <div class="right d-flex align-items-center gap-3 text-secondary">
-                                          <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?></span>
-                                          <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?></span>
-                              
-                                          <?php if (!empty($eng['eng_audit_type'])): ?>
-                                              <span class="badge text-bg-secondary" style="background-color: rgba(235, 236, 237, 1) !important; color: rgb(57,69,85) !important; font-weight:                           500 !important;">
-                                                  <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
-                                              </span>
-                                          <?php endif; ?>
-                                          
-                                          <?php
-                                          $today = date('Y-m-d');
-                                          if (!empty($eng['eng_final_due']) && $eng['eng_final_due'] < $today):
-                                          ?>
-                                              <span class="badge text-bg-danger" style="background-color: rgb(255,226,226) !important; color: rgb(201,0,18) !important; font-weight: 500                          !important;">
-                                                  Overdue
-                                              </span>
-                                          <?php endif; ?>
-                                      </div>
-                                          
-                                  </div>
-                              </div>
+                              <div class="engagement-card-kanban-container" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
+
+  <div class="card engagement-card-kanban mb-2" 
+       data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>" 
+       style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
+
+      <div class="card-body d-flex align-items-center justify-content-between">
+
+          <!-- LEFT: Grip + Name -->
+          <div class="left d-flex align-items-center gap-3 drag-handle" style="cursor: grab;">
+              <i class="bi bi-grip-horizontal text-secondary"></i>
+              <div>
+                  <h5 class="mb-0" style="font-size: 18px; font-weight: 600;">
+                      <?php echo htmlspecialchars($eng['eng_name']); ?>
+                  </h5>
+                  <span class="text-muted" style="font-size: 14px;">
+                      <?php echo htmlspecialchars($eng['eng_idno']); ?>
+                  </span>
+              </div>
+          </div>
+
+          <!-- RIGHT: Meta info -->
+          <div class="right d-flex align-items-center gap-3 text-secondary">
+              <span style="font-size: 14px;">
+                  <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
+              </span>
+              <span style="font-size: 14px; color: rgb(243,36,57);">
+                  <i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?>
+              </span>
+
+              <?php if (!empty($eng['eng_audit_type'])): ?>
+                  <span class="badge text-bg-secondary" 
+                        style="background-color: rgba(235, 236, 237, 1) !important; color: rgb(57,69,85) !important; font-weight: 500 !important;">
+                      <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
+                  </span>
+              <?php endif; ?>
+
+              <?php
+              $today = date('Y-m-d');
+              if (!empty($eng['eng_final_due']) && $eng['eng_final_due'] < $today):
+              ?>
+                  <span class="badge text-bg-danger" 
+                        style="background-color: rgb(255,226,226) !important; color: rgb(201,0,18) !important; font-weight: 500 !important;">
+                      Overdue
+                  </span>
+              <?php endif; ?>
+          </div>
+
+      </div>
+  </div>
+</div>
                             </a>
                           <?php
                               endforeach;
@@ -665,6 +681,19 @@ require_once '../includes/update-engagement-status.php';
     <div class="mt-5"></div>
 
 
+    <script>
+  // Optional: Click anywhere on card to go to details page
+  document.querySelectorAll('.engagement-card-kanban').forEach(card => {
+    card.addEventListener('click', function(e) {
+      // Ignore clicks on drag handle to prevent interfering with drag
+      if(e.target.closest('.drag-handle')) return;
+      const engId = this.dataset.engId;
+      if(engId) {
+        window.location.href = `engagement-details.php?eng_id=${encodeURIComponent(engId)}`;
+      }
+    });
+  });
+</script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
