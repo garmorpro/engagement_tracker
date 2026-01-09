@@ -763,12 +763,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateBadge = (column) => {
         const cards = column.querySelectorAll('a > .engagement-card-kanban');
         const count = cards.length;
+
+        // Update badge count
         const badge = column.closest('.card').querySelector('.count-badge');
         if (badge) badge.textContent = count;
 
-        // Show placeholder if no cards
+        // Show/hide empty placeholder
         const placeholder = column.querySelector('.empty-placeholder');
-        if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
+        if (placeholder) {
+            if (count === 0) {
+                placeholder.classList.add('show');
+            } else {
+                placeholder.classList.remove('show');
+            }
+        }
     };
 
     const applyLayoutStyles = (card, status) => {
@@ -799,6 +807,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // Transform card for horizontal layout
     const transformToHorizontal = (card) => {
         const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
         const wrapper = document.createElement('a');
@@ -855,6 +864,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return wrapper;
     };
 
+    // Transform card for vertical layout
     const transformToVertical = (card) => {
         const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
         const wrapper = document.createElement('a');
@@ -924,17 +934,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const newStatus = column.dataset.status;
 
             const cardData = draggedWrapper.querySelector('.engagement-card-kanban');
-            let newWrapper = (newStatus === 'on-hold' || newStatus === 'complete')
+            const newWrapper = (newStatus === 'on-hold' || newStatus === 'complete')
                 ? transformToHorizontal(cardData)
                 : transformToVertical(cardData);
 
-            if (newWrapper !== draggedWrapper) draggedWrapper.remove();
+            // 🔹 Remove from original parent immediately
+            draggedWrapper.remove();
+
+            // Append to new column
             column.appendChild(newWrapper);
             applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), newStatus);
 
-            // 🔹 Dynamically update placeholders and badge counts
+            // 🔹 Update badges & placeholders immediately
             [column, originalParent].forEach(col => updateBadge(col));
 
+            // Update DB
             const engId = newWrapper.querySelector('.engagement-card-kanban').dataset.id;
             fetch('../includes/update-engagement-status.php', {
                 method: 'POST',
@@ -942,6 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ eng_id: engId, status: newStatus })
             }).then(res => res.json()).then(data => {
                 if (!data.success) {
+                    // Revert if DB update fails
                     originalParent.appendChild(newWrapper);
                     applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
                     [column, originalParent].forEach(col => updateBadge(col));
@@ -958,7 +973,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Initialize badges and empty placeholders on page load
+    // Initialize badges and placeholders on page load
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.querySelectorAll('a > .engagement-card-kanban').forEach(card => applyLayoutStyles(card, column.dataset.status));
         updateBadge(column);
