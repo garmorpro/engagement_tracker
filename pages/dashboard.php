@@ -114,21 +114,33 @@
 </head>
 <body>
 
-    <div class="header-container" style="position:fixed !important; z-index:9999 !important;">
-    <div style="margin-left: 200px;">
+    <div class="header-container">
+  <div class="header-inner">
+    <div>
       <div class="header-title">Engagement Tracker</div>
       <div class="header-subtitle">Manage your audit engagements</div>
     </div>
-    <div class="header-actions d-flex align-items-center" style="margin-right: 200px;">
-        <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;">
-            <button type="button" class="btn btn-sm me-2 tab-btn active"><i class="bi bi-grid"></i>&nbsp;&nbsp;Board</button>
-            <button type="button" class="btn btn-sm me-2 tab-btn"><i class="bi bi-list-ul"></i>&nbsp;&nbsp;List</button>
-            <button type="button" class="btn btn-sm me-2 tab-btn"><i class="bi bi-calendar2"></i>&nbsp;&nbsp;Timeline</button>
-            <button type="button" class="btn btn-sm tab-btn"><i class="bi bi-graph-up"></i>&nbsp;&nbsp;Analytics</button>
-        </div>
-        <button type="button" class="btn new-btn btn-sm ms-3">+ New Engagement</button>
+
+    <div class="header-actions d-flex align-items-center">
+      <div class="view-options p-1">
+        <button class="btn btn-sm me-2 tab-btn active">
+          <i class="bi bi-grid"></i> Board
+        </button>
+        <button class="btn btn-sm me-2 tab-btn">
+          <i class="bi bi-list-ul"></i> List
+        </button>
+        <button class="btn btn-sm me-2 tab-btn">
+          <i class="bi bi-calendar2"></i> Timeline
+        </button>
+        <button class="btn btn-sm tab-btn">
+          <i class="bi bi-graph-up"></i> Analytics
+        </button>
+      </div>
+      <button class="btn new-btn btn-sm ms-3">+ New Engagement</button>
     </div>
   </div>
+</div>
+
 
   <div class="mt-5"></div>
 
