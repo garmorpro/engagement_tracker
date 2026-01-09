@@ -172,8 +172,10 @@
       </div>
     </div>
   <!-- Header -->
-<div class="mt-5"></div>
-        <!-- Status Cards -->
+
+  <div class="mt-4"></div>
+
+    <!-- Status Cards -->
           <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 200px; margin-right: 200px;">
               <div class="col">
                   <div class="card custom-card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;     border-radius: 15px;  border-radius: 15px;">
@@ -274,9 +276,9 @@
               </div>
       
           </div>
-        <!-- end status cards -->
-  
-        <!-- Search bar -->
+    <!-- end status cards -->
+
+    <!-- Search bar -->
           <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
               <div class="p-3 border d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15); border-radius: 15px;">
                   <div class="input-group flex-grow-1 me-3">
@@ -291,10 +293,7 @@
                   </button>
               </div>
           </div>
-        <!-- end search bar -->
-
-
-  <div class="mt-5"></div>
+    <!-- end search bar -->
 
   <div class="tab-content mt-3">
     <div class="tab-pane fade show active" id="content-board" role="tabpanel">
