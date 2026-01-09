@@ -828,7 +828,7 @@
 
     
 
-    <div class="calendar">
+    <div class="calendar" style="margin-left: 200px; margin-right: 200px;">
 
   <div class="calendar-header">
     <h5 id="calendar-title"></h5>
