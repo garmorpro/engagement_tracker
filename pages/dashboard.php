@@ -1166,46 +1166,65 @@ if (!empty($engagements)) {
 
 
   <script>
+let statusChart; // We'll store the chart instance
+
 const statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
 const statusData = <?php echo json_encode(array_values($statusCounts)); ?>;
 
-const ctx = document.getElementById('status_distribution').getContext('2d');
+// Function to render chart
+function renderStatusChart() {
+    const ctx = document.getElementById('status_distribution').getContext('2d');
 
-const myDoughnutChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-        labels: statusLabels,
-        datasets: [{
-            label: 'Engagement Status',
-            data: statusData,
-            backgroundColor: [
-                'rgba(243,36,57,0.8)',     // On-Hold
-                'rgba(131,38,193,0.8)',    // Planning
-                'rgba(195,119,38,0.8)',    // In-Progress
-                'rgba(41,133,193,0.8)',    // In-Review
-                'rgba(55,182,38,0.8)'      // Complete
-            ],
-            borderColor: [
-                'rgba(243,36,57,1)',
-                'rgba(131,38,193,1)',
-                'rgba(195,119,38,1)',
-                'rgba(41,133,193,1)',
-                'rgba(55,182,38,1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'bottom'
-            },
-            tooltip: {
-                enabled: true
+    // Destroy existing chart if re-rendering
+    if (statusChart) {
+        statusChart.destroy();
+    }
+
+    statusChart = new Chart(ctx, {
+        type: 'doughnut', // can also be 'pie'
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                label: 'Engagement Status',
+                data: statusData,
+                backgroundColor: [
+                    'rgba(243,36,57,0.8)',     // On-Hold
+                    'rgba(131,38,193,0.8)',    // Planning
+                    'rgba(195,119,38,0.8)',    // In-Progress
+                    'rgba(41,133,193,0.8)',    // In-Review
+                    'rgba(55,182,38,0.8)'      // Complete
+                ],
+                borderColor: [
+                    'rgba(243,36,57,1)',
+                    'rgba(131,38,193,1)',
+                    'rgba(195,119,38,1)',
+                    'rgba(41,133,193,1)',
+                    'rgba(55,182,38,1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    enabled: true
+                }
             }
         }
-    }
+    });
+}
+
+// Only render chart when Analytics tab is active
+document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
+    tabBtn.addEventListener('shown.bs.tab', (e) => {
+        if (e.target.getAttribute('data-bs-target') === '#content-analytics') {
+            renderStatusChart();
+        }
+    });
 });
 </script>
 
