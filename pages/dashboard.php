@@ -29,18 +29,18 @@ require_once '../includes/functions.php';
 
         <div class="header-actions d-flex align-items-center">
           <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;" role="tablist">
-            <button class="btn btn-sm me-2 tab-btn active" href="dashboard.php" type="button" role="tab">
+            <a class="btn btn-sm me-2 tab-btn active" href="dashboard.php">
               <i class="bi bi-grid"></i> Board
-            </button>
+            </a>
             <a class="btn btn-sm me-2 tab-btn" href="engagement-list.php">
               <i class="bi bi-list-ul"></i> List
             </a>
-            <button class="btn btn-sm me-2 tab-btn" id="tab-timeline" data-bs-toggle="tab" data-bs-target="#content-timeline" type="button" role="tab">
+            <a class="btn btn-sm me-2 tab-btn" href="engagement-timeline.php">
               <i class="bi bi-calendar2"></i> Timeline
-            </button>
-            <button class="btn btn-sm tab-btn" id="tab-analytics" data-bs-toggle="tab" data-bs-target="#content-analytics" type="button" role="tab">
+            </a>
+            <a class="btn btn-sm tab-btn" href="engagement-analytics.php">
               <i class="bi bi-graph-up"></i> Analytics
-            </button>
+            </a>
           </div>
 
           <button class="btn menu-btn btn-sm ms-3"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</button>
