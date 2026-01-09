@@ -509,14 +509,14 @@ require_once '../includes/functions.php';
 
       <div class="col-md-12">
   <div class="card h-100"
-       style="border-radius: 15px; border: 1px solid rgb(255,224,192); background-color: rgb(255,248,236);">
+       style="border-radius: 15px; border: 1px solid rgb(187,219,253); background-color: rgb(238,246,254);">
     <div class="card-body p-4">
 
       <div class="d-flex align-items-start">
 
         <!-- Icon -->
         <div class="icon-square d-flex align-items-center justify-content-center me-3"
-             style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(255,141,64); flex-shrink: 0;">
+             style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(33,128,255); flex-shrink: 0;">
           <i class="bi bi-gear" style="color: rgb(255,255,255);"></i>
         </div>
 
