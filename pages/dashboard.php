@@ -635,12 +635,13 @@ $engagements = getAllEngagements($conn);
   <!-- <script src="../assets/js/sortable.js"></script> -->
 
   <script>
- columns.forEach(column => {
+ const columns = document.querySelectorAll('.kanban-column');
+columns.forEach(column => {
   new Sortable(column, {
     group: 'kanban',
     animation: 150,
     ghostClass: 'kanban-ghost',
-    handle: '.engagement-card-kanban', // Only the card itself is draggable
+    handle: '.engagement-card-kanban',
     onEnd: function(evt) {
       const card = evt.item;
       const engId = card.dataset.engId;
@@ -648,21 +649,18 @@ $engagements = getAllEngagements($conn);
 
       if (!engId || !newStatus) return;
 
-      fetch('includes/update-engagement-status.php', {  // <-- Make sure path is correct
+      fetch('includes/update-engagement-status.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eng_id: engId, new_status: newStatus })
       })
       .then(res => res.json())
-      .then(data => {
-        console.log('Server response:', data);
-      })
+      .then(data => console.log('Server response:', data))
       .catch(err => console.error('Fetch error:', err));
     }
   });
 });
+
 
 
 
