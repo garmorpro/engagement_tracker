@@ -1118,7 +1118,10 @@ require_once '../includes/functions.php';
                       <h6 class="fw-semibold mb-0">Manager Workload</h6>
                     </div>
 
-                    <canvas id="manager_workload" width="600" height="400"></canvas>
+                    <div style="width: 400px; height: 400px;">
+                        <canvas id="manager_workload"></canvas>
+                      </div>
+                  
 
                       
                   
