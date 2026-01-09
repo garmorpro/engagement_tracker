@@ -1227,9 +1227,6 @@ function renderManagerChart() {
         return 'rgba(' . rand(50, 250) . ',' . rand(50, 250) . ',' . rand(50, 250) . ',0.8)';
     }, $managerLabels)); ?>;
 
-    const borders = <?php echo json_encode(array_map(function() {
-        return 'rgba(' . rand(50, 250) . ',' . rand(50, 250) . ',' . rand(50, 250) . ',1)';
-    }, $managerLabels)); ?>;
 
     managerChart = new Chart(ctx, {
         type: 'bar',
@@ -1239,7 +1236,7 @@ function renderManagerChart() {
                 label: 'Active Engagements',
                 data: <?php echo json_encode($managerData); ?>,
                 backgroundColor: colors,
-                borderColor: borders,
+                borderColor: colors,
                 borderWidth: 1
             }]
         },
