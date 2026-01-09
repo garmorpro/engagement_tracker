@@ -72,6 +72,7 @@ body {
     }
     .tools-btn.active {
       background-color: rgb(181,72,255) !important;
+      color: white !important;
     }
     .archive-btn {
       background-color: rgb(241,242,245) !important;
@@ -81,6 +82,7 @@ body {
     }
     .archive-btn.active {
       background-color: rgb(33,128,255) !important;
+      color: white !important;
     }
     .filter-btn:hover {
       background-color: rgb(225,228,232) !important;
