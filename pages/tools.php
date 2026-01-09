@@ -174,121 +174,89 @@ require_once '../includes/functions.php';
     <!-- end search bar -->
   
         
-          <!-- status updates -->
-  
-          <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
-  
-              <div class="col-md-4">
-  <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
-    <div class="card-body p-4">
+  <!-- status updates -->
+    <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
 
-      <!-- Icon (left) + Badge (right) -->
-      <div class="d-flex align-items-center justify-content-between mb-3">
-
-        <div class="icon-square d-flex align-items-center justify-content-center"
-             style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
-          <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
-        </div>
-
-        <span class="badge bg-secondary bg-opacity-25 text-secondary">
-          Coming Soon
-        </span>
-
-      </div>
-
-      <!-- Title -->
-      <div class="fw-bold" style="font-size: 14px;">
-        Export Data
-      </div>
-
-      <!-- Description -->
-      <div class="text-secondary" style="font-size: 14px;">
-        Export engagements to CSV or Excel
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-  
-              <div class="col-md-4">
-  <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
-    <div class="card-body p-4">
-
-      <!-- Icon (left) + Badge (right) -->
-      <div class="d-flex align-items-center justify-content-between mb-3">
-
-        <div class="icon-square d-flex align-items-center justify-content-center"
-             style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
-          <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
-        </div>
-
-        <span class="badge bg-secondary bg-opacity-25 text-secondary">
-          Coming Soon
-        </span>
-
-      </div>
-
-      <!-- Title -->
-      <div class="fw-bold" style="font-size: 14px;">
-        Export Data
-      </div>
-
-      <!-- Description -->
-      <div class="text-secondary" style="font-size: 14px;">
-        Export engagements to CSV or Excel
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-
-
-<div class="col-md-4">
-  <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
-    <div class="card-body p-4">
-
-      <!-- Icon (left) + Badge (right) -->
-      <div class="d-flex align-items-center justify-content-between mb-3">
-
-        <div class="icon-square d-flex align-items-center justify-content-center"
-             style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
-          <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
-        </div>
-
-        <span class="badge bg-secondary bg-opacity-25 text-secondary">
-          Coming Soon
-        </span>
-
-      </div>
-
-      <!-- Title -->
-      <div class="fw-bold" style="font-size: 14px;">
-        Export Data
-      </div>
-
-      <!-- Description -->
-      <div class="text-secondary" style="font-size: 14px;">
-        Export engagements to CSV or Excel
-      </div>
-
-    </div>
-  </div>
-</div>
-
-
-  
-              
-  
+      <div class="col-md-4">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(198,224,254); background-color: rgb(233,243,254);">
+          <div class="card-body p-4">
+            <!-- Icon (left) + Badge (right) -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="icon-square d-flex align-items-center justify-content-center"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
+                <i class="bi bi-download" style="color: rgb(255,255,255);"></i>
+              </div>
+              <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
+                Coming Soon
+              </span>
+            </div>
+            <!-- Title -->
+            <div class="fw-bold" style="font-size: 14px;">
+              Export Data
+            </div>
+            <!-- Description -->
+            <div class="text-secondary" style="font-size: 14px;">
+              Export engagements to CSV or Excel
+            </div>
           </div>
-      
-      <!-- end status updates -->
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
+          <div class="card-body p-4">
+            <!-- Icon (left) + Badge (right) -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="icon-square d-flex align-items-center justify-content-center"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
+                <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
+              </div>
+              <span class="badge bg-secondary bg-opacity-25 text-secondary">
+                Coming Soon
+              </span>
+            </div>
+            <!-- Title -->
+            <div class="fw-bold" style="font-size: 14px;">
+              Export Data
+            </div>
+            <!-- Description -->
+            <div class="text-secondary" style="font-size: 14px;">
+              Export engagements to CSV or Excel
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
+          <div class="card-body p-4">
+            <!-- Icon (left) + Badge (right) -->
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="icon-square d-flex align-items-center justify-content-center"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
+                <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
+              </div>
+              <span class="badge bg-secondary bg-opacity-25 text-secondary">
+                Coming Soon
+              </span>
+            </div>
+            <!-- Title -->
+            <div class="fw-bold" style="font-size: 14px;">
+              Export Data
+            </div>
+            <!-- Description -->
+            <div class="text-secondary" style="font-size: 14px;">
+              Export engagements to CSV or Excel
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  <!-- end status updates -->
 
 
-    <div class="mt-5"></div>
+  <div class="mt-5"></div>
 
 
 
