@@ -691,7 +691,7 @@ require_once '../includes/functions.php';
 document.addEventListener('DOMContentLoaded', () => {
     let draggedCardWrapper = null;
 
-    // Map column status to layout type
+    // Layout mapping: on-hold is horizontal, others vertical
     const layoutMap = {
         'on-hold': 'horizontal',
         'planning': 'vertical',
@@ -700,24 +700,23 @@ document.addEventListener('DOMContentLoaded', () => {
         'complete': 'vertical'
     };
 
-    // Update badge count & empty placeholder
+    // Update badge count and empty placeholder for a column
     const updateBadge = (column) => {
         const status = column.dataset.status;
+        const badge = column.querySelector(`.count-badge[data-status="${status}"]`);
         const count = column.querySelectorAll('a > .engagement-card-kanban').length;
 
-        // Badge (if you have one)
-        const badge = column.querySelector(`.count-badge[data-status="${status}"]`);
         if (badge) badge.textContent = count;
 
-        // Empty placeholder
         const placeholder = column.querySelector('.empty-placeholder');
         if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
     };
 
-    // Apply horizontal/vertical layout to the card
+    // Apply layout styles depending on column type
     const applyLayoutStyles = (card) => {
         const column = card.closest('.kanban-column');
-        const layout = layoutMap[column.dataset.status] || 'vertical';
+        const status = column.dataset.status;
+        const layout = layoutMap[status] || 'vertical';
         const body = card.querySelector('.card-body');
 
         if (layout === 'horizontal') {
@@ -729,10 +728,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // DRAG START / END on <a> wrapper
+    // Attach drag events to <a> wrapper
     document.querySelectorAll('.engagement-card-kanban').forEach(card => {
         const wrapper = card.closest('a');
-        wrapper.setAttribute('draggable', 'true');
 
         wrapper.addEventListener('dragstart', e => {
             draggedCardWrapper = wrapper;
@@ -748,7 +746,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // COLUMN DROP HANDLING
+    // Drag-over, leave, and drop for columns
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
@@ -765,16 +763,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = draggedCardWrapper.querySelector('.engagement-card-kanban');
             const originalParent = draggedCardWrapper.parentElement;
 
-            // Move the <a> wrapper to new column
+            // Move <a> wrapper to new column
             column.appendChild(draggedCardWrapper);
 
-            // Apply correct layout for new column
+            // Apply layout styles
             applyLayoutStyles(card);
 
-            // Update badges for all columns
+            // Update badge counts for all columns
             document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
 
-            // Update DB
+            // Update DB with new status
             const engId = card.dataset.id;
             const newStatus = column.dataset.status;
 
@@ -786,7 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 if (!data.success) {
-                    // Rollback
+                    // Rollback if DB update fails
                     originalParent.appendChild(draggedCardWrapper);
                     applyLayoutStyles(card);
                     document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
@@ -802,7 +800,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // INITIAL SETUP
+    // Initial setup: apply layout and badge counts
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.querySelectorAll('a > .engagement-card-kanban').forEach(card => applyLayoutStyles(card));
         updateBadge(column);
