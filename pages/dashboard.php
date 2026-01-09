@@ -1181,7 +1181,7 @@ function renderStatusChart() {
     }
 
     statusChart = new Chart(ctx, {
-        type: 'doughnut', // can also be 'pie'
+        type: 'pie', // can also be 'pie'
         data: {
             labels: statusLabels,
             datasets: [{
