@@ -30,8 +30,6 @@ if (isset($_GET['eng_id'])) {
 }
 ?>
 
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -150,7 +148,7 @@ if (isset($_GET['eng_id'])) {
             </div>
 
             <!-- Engagement Name -->
-            <h5 class="fw-bold mb-2" style="color: rgb(27,58,139);"><?php echo htmlspecialchars($eng['eng_name']); ?></h5>
+            <h3 class="fw-bold mb-2" style="color: rgb(27,58,139);"><?php echo htmlspecialchars($eng['eng_name']); ?></h3>
 
             <!-- Meta row: Audit Type, Location, Period -->
             <div class="d-flex gap-3 text-secondary" style="font-size: 14px;">
