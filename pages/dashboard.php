@@ -1152,87 +1152,21 @@ require_once '../includes/functions.php';
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
-  <?php
-// Initialize array
+ <?php
+// ----------------- Manager Workload -----------------
 $managerCounts = [];
-
-// Loop through active engagements
 foreach ($engagements as $eng) {
-    // Skip archived ones
-    if ($eng['archived'] ?? 0) continue;
-
+    if (!empty($eng['archived'])) continue; // Skip archived
     $manager = $eng['eng_manager'];
-
     if (!empty($manager)) {
-        if (!isset($managerCounts[$manager])) {
-            $managerCounts[$manager] = 0;
-        }
+        if (!isset($managerCounts[$manager])) $managerCounts[$manager] = 0;
         $managerCounts[$manager]++;
     }
 }
-
-// Separate labels and data for Chart.js
 $managerLabels = array_keys($managerCounts);
-$managerData = array_values($managerCounts);
-?>
+$managerData   = array_values($managerCounts);
 
-<script>
-let managerChart;
-
-function renderManagerChart() {
-    const ctx = document.getElementById('manager_workload').getContext('2d');
-
-    if (managerChart) {
-        managerChart.destroy();
-    }
-
-    managerChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: <?php echo json_encode($managerLabels); ?>,
-            datasets: [{
-                label: 'Active Engagements',
-                data: <?php echo json_encode($managerData); ?>,
-                backgroundColor: 'rgba(55,182,38,0.8)',
-                borderColor: 'rgba(55,182,38,1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: false },
-                tooltip: { enabled: true }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 } // count is integer
-                }
-            }
-        }
-    });
-}
-
-// Render chart only when tab is active
-document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
-    tabBtn.addEventListener('shown.bs.tab', (e) => {
-        if (e.target.getAttribute('data-bs-target') === '#content-manager-workload') {
-            renderManagerChart();
-        }
-    });
-});
-</script>
-
-
-
-
-
-
-
-
-
-  <?php
+// ----------------- Status Counts -----------------
 $statusCounts = [
     'on-hold' => 0,
     'planning' => 0,
@@ -1240,50 +1174,42 @@ $statusCounts = [
     'in-review' => 0,
     'complete' => 0
 ];
-
-if (!empty($engagements)) {
-    foreach ($engagements as $eng) {
-        $status = $eng['eng_status'];
-        if (isset($statusCounts[$status])) {
-            $statusCounts[$status]++;
-        }
-    }
+foreach ($engagements as $eng) {
+    $status = strtolower($eng['eng_status']);
+    if (isset($statusCounts[$status])) $statusCounts[$status]++;
 }
+$statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
+$statusData = array_values($statusCounts);
 ?>
 
 
-  <script>
-let statusChart; // We'll store the chart instance
+<script>
+let statusChart;
+let managerChart;
 
-const statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
-const statusData = <?php echo json_encode(array_values($statusCounts)); ?>;
-
-// Function to render chart
+// ----------------- Status Pie Chart -----------------
 function renderStatusChart() {
     const ctx = document.getElementById('status_distribution').getContext('2d');
 
-    // Destroy existing chart if re-rendering
-    if (statusChart) {
-        statusChart.destroy();
-    }
+    if (statusChart) statusChart.destroy();
 
     statusChart = new Chart(ctx, {
-        type: 'pie', // can also be 'pie'
+        type: 'pie',
         data: {
-            labels: statusLabels,
+            labels: <?php echo json_encode($statusLabels); ?>,
             datasets: [{
                 label: 'Engagement Status',
-                data: statusData,
+                data: <?php echo json_encode($statusData); ?>,
                 backgroundColor: [
-                    'rgba(107,114,128,0.8)',     // On-Hold
-                    'rgba(68, 125,252,0.8)',    // Planning
+                    'rgba(107,114,128,0.8)',   // On-Hold
+                    'rgba(68,125,252,0.8)',    // Planning
                     'rgba(241,115,19,0.8)',    // In-Progress
                     'rgba(160,77,253,0.8)',    // In-Review
                     'rgba(79,198,95,0.8)'      // Complete
                 ],
                 borderColor: [
                     'rgba(107,114,128,1)',
-                    'rgba(68, 125,252,1)',
+                    'rgba(68,125,252,1)',
                     'rgba(241,115,19,1)',
                     'rgba(160,77,253,1)',
                     'rgba(79,198,95,1)'
@@ -1294,26 +1220,64 @@ function renderStatusChart() {
         options: {
             responsive: true,
             plugins: {
-                legend: {
-                    position: 'bottom'
-                },
-                tooltip: {
-                    enabled: true
-                }
+                legend: { position: 'bottom' },
+                tooltip: { enabled: true }
             }
         }
     });
 }
 
-// Only render chart when Analytics tab is active
+// ----------------- Manager Workload Bar Chart -----------------
+function renderManagerChart() {
+    const ctx = document.getElementById('manager_workload').getContext('2d');
+
+    if (managerChart) managerChart.destroy();
+
+    // Generate multi-color bars
+    const colors = <?php echo json_encode(array_map(function() {
+        return 'rgba(' . rand(50, 250) . ',' . rand(50, 250) . ',' . rand(50, 250) . ',0.8)';
+    }, $managerLabels)); ?>;
+
+    const borders = <?php echo json_encode(array_map(function() {
+        return 'rgba(' . rand(50, 250) . ',' . rand(50, 250) . ',' . rand(50, 250) . ',1)';
+    }, $managerLabels)); ?>;
+
+    managerChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($managerLabels); ?>,
+            datasets: [{
+                label: 'Active Engagements',
+                data: <?php echo json_encode($managerData); ?>,
+                backgroundColor: colors,
+                borderColor: borders,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: true }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+}
+
+// ----------------- Only render charts when Analytics tab is active -----------------
 document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
     tabBtn.addEventListener('shown.bs.tab', (e) => {
         if (e.target.getAttribute('data-bs-target') === '#content-analytics') {
             renderStatusChart();
+            renderManagerChart();
         }
     });
 });
 </script>
+
 
 
 
