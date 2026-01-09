@@ -692,11 +692,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let draggedCard = null;
     let previousColumn = null;
 
+    // Define styles for each status
+    const statusStyles = {
+        'planning': { backgroundColor: 'rgb(249,250,251)', borderColor: 'rgb(208,213,219)' },
+        'on-hold': { backgroundColor: 'rgb(247,248,250)', borderColor: 'rgb(208,213,219)' },
+        // add other statuses here
+    };
+
     // DRAG START
     document.querySelectorAll('.engagement-card-kanban').forEach(card => {
         card.addEventListener('dragstart', e => {
             draggedCard = card;
-            previousColumn = card.parentElement; // store previous column
+            previousColumn = card.closest('.kanban-column'); // store previous column
             card.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
         });
@@ -708,7 +715,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // COLUMN DROP HANDLING
+    // COLUMN DROP
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
@@ -727,11 +734,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const newStatus = column.dataset.status;
 
-            // Remove empty placeholder in new column
+            // Remove empty placeholder in the target column
             const emptyPlaceholder = column.querySelector('.empty-placeholder');
             if (emptyPlaceholder) emptyPlaceholder.remove();
 
-            // Move card to new column
+            // Append card to new column
             column.appendChild(draggedCard);
 
             // Apply new styles dynamically
@@ -740,7 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 draggedCard.style.borderColor = statusStyles[newStatus].borderColor;
             }
 
-            // Update database
+            // Update DB
             const engId = draggedCard.dataset.id;
             fetch('../includes/update-engagement-status.php', {
                 method: 'POST',
@@ -753,7 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .catch(err => console.error('Update error:', err));
 
-            // Add empty placeholder back to previous column if it became empty
+            // Handle empty placeholder for previous column
             if (previousColumn && previousColumn.classList.contains('kanban-column') && previousColumn.children.length === 0) {
                 const placeholder = document.createElement('div');
                 placeholder.className = 'text-center text-muted py-4 empty-placeholder';
@@ -761,9 +768,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 placeholder.innerText = 'Drop engagements here';
                 previousColumn.appendChild(placeholder);
             }
+
+            // Adjust row layout if horizontal (Row 1)
+            const parentRow = column.closest('.row');
+            if (parentRow && parentRow.querySelectorAll('.kanban-column').length === 1) {
+                // single-column row, display cards horizontally
+                column.style.display = 'flex';
+                column.style.flexDirection = 'row';
+                column.style.gap = '10px';
+            } else {
+                // multi-column row (vertical cards)
+                column.style.display = 'block';
+            }
         });
     });
 });
+
 
 
 </script>
