@@ -520,24 +520,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   columns.forEach(column => {
     new Sortable(column, {
-      group: 'kanban',               // Enables dragging between columns
-      animation: 150,                // Smooth animation
-      ghostClass: 'kanban-ghost',    // Class applied to the dragged element
-      handle: '.engagement-card-kanban',   // Only the card body is draggable
-      draggable: '.engagement-card-wrapper', // The wrapper is treated as the draggable item
-      filter: '.engagement-card-wrapper .engagement-card-kanban *', // Prevent nested dropping
+      group: 'kanban',
+      animation: 150,
+      ghostClass: 'kanban-ghost',
+      handle: '.engagement-card-kanban',
+      draggable: '.engagement-card-wrapper',
       onEnd: function(evt) {
-        // Always use the wrapper to get the ID
-        const wrapper = evt.item.closest('.engagement-card-wrapper');
-        const engId = wrapper?.dataset.engId;
-        const newStatus = evt.to.closest('.kanban-column')?.dataset?.status;
+        const wrapper = evt.item;
+        const engId = wrapper.dataset.engId;
+        const newStatus = evt.to.dataset.status;
 
-        if (!engId || !newStatus) {
-          console.warn('Missing engId or newStatus', { engId, newStatus });
-          return;
-        }
+        if (!engId || !newStatus) return;
 
-        // Send updated status to the server
         fetch('includes/update-engagement-status.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -550,6 +544,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
 </script>
 
 
