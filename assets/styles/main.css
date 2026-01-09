@@ -64,13 +64,13 @@ body {
       padding: 8px 10px !important;
       border: none !important;
     }
-    .tool-btn {
+    .tools-btn {
       background-color: rgb(241,242,245) !important;
       border-radius: 10px !important;
       padding: 8px 10px !important;
       border: none !important;
     }
-    .tool-btn.active {
+    .tools-btn.active {
       background-color: pink !important;
     }
     .menu-btn:hover, .filter-btn:hover {
