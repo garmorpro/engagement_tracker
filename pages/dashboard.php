@@ -693,7 +693,6 @@ document.addEventListener('DOMContentLoaded', () => {
     columns.forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
             column.classList.add('drag-over');
         });
 
@@ -703,18 +702,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         column.addEventListener('drop', e => {
             e.preventDefault();
-            if (draggedCard) {
-                column.appendChild(draggedCard);
-                column.classList.remove('drag-over');
+            column.classList.remove('drag-over');
 
-                // Optional: update backend via AJAX
+            if (draggedCard) {
+                // Move card visually
+                column.appendChild(draggedCard);
+
+                // Send AJAX to update database
+                const engId = draggedCard.dataset.id;
                 const newStatus = column.dataset.status;
-                const engId = draggedCard.querySelector('h5, h6').innerText; // or hidden input with id
-                fetch('update-engagement-status.php', {
+
+                fetch('../includes/update-engagement-status.php', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({eng_id: engId, status: newStatus})
-                });
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success){
+                        console.log(`Engagement ${engId} updated to ${newStatus}`);
+                    } else {
+                        console.error('Failed to update status');
+                    }
+                })
+                .catch(err => console.error('Error updating status:', err));
             }
         });
     });
