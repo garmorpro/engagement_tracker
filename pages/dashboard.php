@@ -295,13 +295,13 @@
           </div>
     <!-- end search bar -->
 
-  <div class="tab-content mt-2" style="margin-left: 200px; margin-right: 200px;">
+  <div class="tab-content mt-2">
     <div class="tab-pane fade show active" id="content-board" role="tabpanel">
   
         <!-- Board sections -->
   
           <!-- Row 1 -->
-            <div class="row align-items-center" style="margin-top: 20px;">
+            <div class="row align-items-center" style="margin-top: 20px; margin-left: 210px; margin-right: 210px;">
                 <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
                     <div class="card-body">
                         <!-- <h5 class="card-title">Card title</h5> -->
@@ -370,7 +370,7 @@
           <!-- end row 1 -->
   
           <!-- Row 2 -->
-            <div class="row align-items-start g-4" style="margin-top: 1px;">
+            <div class="row align-items-start g-4" style="margin-top: 1px; margin-top: px; margin-left: 200px; margin-right: 200px;">
   
               <!-- Column 1 -->
                 <div class="col-md-4">
@@ -514,7 +514,7 @@
           <!-- end row 2 -->
   
           <!-- Row 3 -->
-            <div class="row align-items-center" style="margin-top: 20px;">
+            <div class="row align-items-center" style="margin-top: 20px; margin-left: 210px; margin-right: 210px;">
                 <div class="card" style="border-radius: 15px; border: 2px solid rgb(153,239,174); background-color: rgb(239,252,242) !important;">
                     <div class="card-body">
                         <!-- <h5 class="card-title">Card title</h5> -->
@@ -562,7 +562,7 @@
 
     <div class="tab-pane fade" id="content-list" role="tabpanel">
       
-
+      
 
     </div>
 
