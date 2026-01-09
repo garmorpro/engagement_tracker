@@ -117,7 +117,7 @@ if (isset($_GET['eng_id'])) {
      <?php
 // Map engagement status to background, border, and pill colors
 $statusColors = [
-    'on_hold' => [
+    'on-hold' => [
         'bg' => 'rgb(249,250,251)',
         'border' => 'rgb(229,231,235)',
         'pill' => 'rgb(105,114,129)',
@@ -127,12 +127,12 @@ $statusColors = [
         'border' => 'rgb(187,219,253)',
         'pill' => 'rgb(33,128,255)',
     ],
-    'in_progress' => [
+    'in-progress' => [
         'bg' => 'rgb(255,247,238)',
         'border' => 'rgb(255,214,171)',
         'pill' => 'rgb(255,103,0)',
     ],
-    'in_review' => [
+    'in-review' => [
         'bg' => 'rgb(251,245,254)',
         'border' => 'rgb(236,213,254)',
         'pill' => 'rgb(181,72,255)',
