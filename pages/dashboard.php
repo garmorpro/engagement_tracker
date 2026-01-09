@@ -4,6 +4,8 @@
 require_once '../includes/functions.php';
 require_once '../includes/update-engagement-status.php';
 
+$engagements = getAllEngagements($conn);
+
 ?>
 
 <!DOCTYPE html>
