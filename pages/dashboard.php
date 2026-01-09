@@ -648,53 +648,53 @@ require_once '../includes/functions.php';
 
       <!-- table -->
         <?php
-$engagements = getAllEngagements($conn);
-$totalEngagements = count($engagements);
-?>
+          $engagements = getAllEngagements($conn);
+          $totalEngagements = count($engagements);
+          ?>
 
-<div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
-    Showing <?php echo $totalEngagements; ?> of <?php echo $totalEngagements; ?> engagements
+          <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
+              Showing <?php echo $totalEngagements; ?> of <?php echo $totalEngagements; ?> engagements
 
-    <div class="table-wrapper mt-3">
-        <table class="table align-middle mb-0">
-            <thead>
-                <tr style="background-color: rgb(236,236,240) !important;">
-                    <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
-                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
-                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
-                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
-                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
-                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
-                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($engagements as $eng): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($eng['eng_idno']); ?></td>
-                        <td>
-                            <strong><?php echo htmlspecialchars($eng['eng_name']); ?></strong><br>
-                            <?php if (!empty($eng['eng_audit_type'])): ?>
-                                <span class="text-secondary" style="font-size: 12px;"><?php echo htmlspecialchars($eng['eng_audit_type']); ?></span>
-                            <?php endif; ?>
-                        </td>
-                        <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
-                        <td><?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?></td>
-                        <td><?php echo htmlspecialchars($eng['eng_period']); ?></td>
-                        <td>
-                            <?php
-                                if (!empty($eng['eng_draft_due'])) {
-                                    echo date('Y-m-d', strtotime($eng['eng_draft_due']));
-                                }
-                            ?>
-                        </td>
-                        <td><i class="bi bi-trash"></i></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
+              <div class="table-wrapper mt-3">
+                  <table class="table align-middle mb-0">
+                      <thead>
+                          <tr style="background-color: rgb(236,236,240) !important;">
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <?php foreach ($engagements as $eng): ?>
+                              <tr>
+                                  <td><?php echo htmlspecialchars($eng['eng_idno']); ?></td>
+                                  <td>
+                                      <strong><?php echo htmlspecialchars($eng['eng_name']); ?></strong><br>
+                                      <?php if (!empty($eng['eng_audit_type'])): ?>
+                                          <span class="text-secondary" style="font-size: 12px;"><?php echo htmlspecialchars($eng['eng_audit_type']); ?></span>
+                                      <?php endif; ?>
+                                  </td>
+                                  <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
+                                  <td><?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?></td>
+                                  <td><?php echo htmlspecialchars($eng['eng_period']); ?></td>
+                                  <td>
+                                      <?php
+                                          if (!empty($eng['eng_draft_due'])) {
+                                              echo date('Y-m-d', strtotime($eng['eng_draft_due']));
+                                          }
+                                      ?>
+                                  </td>
+                                  <td><i class="bi bi-trash"></i></td>
+                              </tr>
+                          <?php endforeach; ?>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
 
 
 
@@ -1091,86 +1091,102 @@ $totalEngagements = count($engagements);
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-const engagements = [
-  {
-    id: 1,
-    name: "Global Finance Hold Co",
-    finalDueDate: "2026-04-05",
-    type: "Final Due",
-  },
-  {
-    id: 2,
-    name: "Acme Corporation Audit",
-    finalDueDate: "2026-02-18",
-    type: "Draft Due",
-  }
-];
+//const engagements = [
+//  {
+//    id: 1,
+//    name: "Global Finance Hold Co",
+//    finalDueDate: "2026-04-05",
+//    type: "Final Due",
+//  },
+//  {
+//    id: 2,
+//  name: "Acme Corporation Audit",
+//   finalDueDate: "2026-02-18",
+// type: "Draft Due",
+// }
+//];
 
-// Start month (February 2026 for testing)
+// Start month (current month)
 let currentDate = new Date();
 
-
 function renderCalendar() {
-  const daysContainer = document.getElementById("calendar-days");
-  daysContainer.innerHTML = "";
+    const daysContainer = document.getElementById("calendar-days");
+    daysContainer.innerHTML = "";
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
 
-  document.getElementById("calendar-title").textContent =
-    currentDate.toLocaleString("default", { month: "long", year: "numeric" });
+    // Update calendar title
+    document.getElementById("calendar-title").textContent =
+        currentDate.toLocaleString("default", { month: "long", year: "numeric" });
 
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const todayStr = new Date().toISOString().split("T")[0];
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const todayStr = new Date().toISOString().split("T")[0];
 
-  // Empty placeholders
-  for (let i = 0; i < firstDay; i++) {
-    daysContainer.appendChild(document.createElement("div"));
-  }
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const dayEl = document.createElement("div");
-    dayEl.className = "calendar-day";
-
-    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-
-    if (dateStr === todayStr) {
-      dayEl.classList.add("today");
+    // Empty placeholders for the first week
+    for (let i = 0; i < firstDay; i++) {
+        daysContainer.appendChild(document.createElement("div"));
     }
 
-    dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+    // Loop through each day
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayEl = document.createElement("div");
+        dayEl.className = "calendar-day";
 
-    engagements
-      .filter(e => e.finalDueDate === dateStr)
-      .forEach(e => {
-        const eventEl = document.createElement("div");
+        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
-        const typeClassMap = {
-          "Final Due": "final-due",
-          "Draft Due": "draft-due"
-        };
+        if (dateStr === todayStr) {
+            dayEl.classList.add("today");
+        }
 
-        eventEl.className = `event ${typeClassMap[e.type]}`;
-        eventEl.textContent = e.name;
+        dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
 
-        dayEl.appendChild(eventEl);
-      });
+        // Loop through engagements and append events
+        engagements.forEach(e => {
+            const eventMap = [
+                { date: e.planningCall, type: "Planning Call" },
+                { date: e.fieldworkStart, type: "Fieldwork Start" },
+                { date: e.draftDue, type: "Draft Due" },
+                { date: e.finalDue, type: "Final Due" }
+            ];
 
-    daysContainer.appendChild(dayEl);
-  }
+            eventMap.forEach(ev => {
+                if (ev.date === dateStr) {
+                    const eventEl = document.createElement("div");
+
+                    // CSS class per type
+                    const typeClassMap = {
+                        "Planning Call": "planning-call",
+                        "Fieldwork Start": "fieldwork-start",
+                        "Draft Due": "draft-due",
+                        "Final Due": "final-due"
+                    };
+
+                    eventEl.className = `event ${typeClassMap[ev.type]}`;
+                    eventEl.textContent = `${e.name} (${ev.type})`;
+
+                    dayEl.appendChild(eventEl);
+                }
+            });
+        });
+
+        daysContainer.appendChild(dayEl);
+    }
 }
 
+// Previous/Next month buttons
 document.getElementById("prevMonth").onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() - 1);
-  renderCalendar();
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
 };
 
 document.getElementById("nextMonth").onclick = () => {
-  currentDate.setMonth(currentDate.getMonth() + 1);
-  renderCalendar();
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
 };
 
+// Initial render
 renderCalendar();
 </script>
 
