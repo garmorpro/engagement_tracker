@@ -517,7 +517,7 @@ require_once '../includes/functions.php';
         <!-- Icon -->
         <div class="icon-square d-flex align-items-center justify-content-center me-3"
              style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(33,128,255); flex-shrink: 0;">
-          <i class="bi bi-gear" style="color: rgb(255,255,255);"></i>
+          <i class="bi bi-tools" style="color: rgb(255,255,255);"></i>
         </div>
 
         <!-- Text Content -->
@@ -526,7 +526,7 @@ require_once '../includes/functions.php';
             More Tools Coming Soon
           </div>
 
-          <div class="text-secondary mt-1"
+          <div class="mt-1"
                style="font-size: 14px; color: rgb(52,83,189);">
             We're actively developing new tools to help streamline your audit engagement workflow.
             Check back regularly for updates and new features!
