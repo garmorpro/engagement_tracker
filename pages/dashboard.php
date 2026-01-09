@@ -73,7 +73,7 @@
       padding: 7px 10px;
     }
     .menu-btn:hover {
-      background-color: rgba(216, 216, 217, 1);
+      background-color: rgb(225,228,232);
     }
     .new-btn:hover {
         background-color: rgba(15, 62, 69, 0.9);
