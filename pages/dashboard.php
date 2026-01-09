@@ -600,7 +600,7 @@
         <td>In Progress</td>
         <td>FY 2024</td>
         <td>2025-02-01</td>
-        
+        <td><i class="bi bi-trash"></i></td>
       </tr>
       <tr>
         <th scope="row">2</th>
