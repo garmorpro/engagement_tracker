@@ -508,27 +508,37 @@ require_once '../includes/functions.php';
     <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
 
       <div class="col-md-12">
-        <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(255,224,192); background-color: rgb(255,248,236);">
-          <div class="card-body p-4">
-            <!-- Icon (left) + Badge (right) -->
-            <!-- <div class="d-flex align-items-center justify-content-between mb-3"> -->
-              <div class="icon-square d-flex align-items-center justify-content-center"
-                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(255,141,64);">
-                <i class="bi bi-gear" style="color: rgb(255,255,255);"></i>
-              </div>
-              
-            <!-- </div> -->
-            <!-- Title -->
-            <div class="fw-bold" style="font-size: 14px; color: rgb(27,58,139);">
-              More Tools Coming Soon
-            </div>
-            <!-- Description -->
-            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(52,83,189);">
-              We're actively developing new tools to help streamline your audit engagement workflow. Check back regularly for updates and new features!
-            </div>
+  <div class="card h-100"
+       style="border-radius: 15px; border: 1px solid rgb(255,224,192); background-color: rgb(255,248,236);">
+    <div class="card-body p-4">
+
+      <div class="d-flex align-items-start">
+
+        <!-- Icon -->
+        <div class="icon-square d-flex align-items-center justify-content-center me-3"
+             style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(255,141,64); flex-shrink: 0;">
+          <i class="bi bi-gear" style="color: rgb(255,255,255);"></i>
+        </div>
+
+        <!-- Text Content -->
+        <div>
+          <div class="fw-bold" style="font-size: 14px; color: rgb(27,58,139);">
+            More Tools Coming Soon
+          </div>
+
+          <div class="text-secondary mt-1"
+               style="font-size: 14px; color: rgb(52,83,189);">
+            We're actively developing new tools to help streamline your audit engagement workflow.
+            Check back regularly for updates and new features!
           </div>
         </div>
+
       </div>
+
+    </div>
+  </div>
+</div>
+
 
     </div>
   <!-- end status updates -->
