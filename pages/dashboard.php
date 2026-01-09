@@ -147,7 +147,7 @@
 
 .table-wrapper thead th {
   background-color: rgb(236,236,240);
-  color: #111;
+  color: rgb(113,113,129);
   border-bottom: 1px solid #dee2e6;
 }
 
