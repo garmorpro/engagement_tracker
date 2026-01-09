@@ -635,35 +635,35 @@ $engagements = getAllEngagements($conn);
   <!-- <script src="../assets/js/sortable.js"></script> -->
 
   <script>
-    const columns = document.querySelectorAll('.kanban-column .card-body');
-
-columns.forEach(column => {
+ columns.forEach(column => {
   new Sortable(column, {
-    group: 'kanban',                      // allows moving between columns
+    group: 'kanban',
     animation: 150,
     ghostClass: 'kanban-ghost',
-    handle: '.engagement-card-kanban',    // grab anywhere on the card
-    draggable: '.engagement-card-wrapper',// only move the wrapper
-    filter: 'a, .card-body',              // prevent inner links or card content from being draggable
-    preventOnFilter: false,
+    handle: '.engagement-card-kanban', // Only the card itself is draggable
     onEnd: function(evt) {
-      const wrapper = evt.item;
-      const engId = wrapper.dataset.engId;
+      const card = evt.item;
+      const engId = card.dataset.engId;
       const newStatus = evt.to.closest('.kanban-column')?.dataset?.status;
 
       if (!engId || !newStatus) return;
 
-      fetch('update-engagement-status.php', {
+      fetch('includes/update-engagement-status.php', {  // <-- Make sure path is correct
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ eng_id: engId, new_status: newStatus })
       })
       .then(res => res.json())
-      .then(data => console.log('Server response:', data))
+      .then(data => {
+        console.log('Server response:', data);
+      })
       .catch(err => console.error('Fetch error:', err));
     }
   });
 });
+
 
 
   </script>
