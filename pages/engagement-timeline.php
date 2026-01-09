@@ -240,16 +240,16 @@ $engagements = getAllEngagements($conn);
 <script>
 const engagements = <?php echo json_encode(array_map(function($eng) {
     return [
-        'id' => $eng['eng_id'],
-        'name' => addslashes($eng['eng_name']),
-        'planningCall' => date('Y-m-d', strtotime($eng['eng_client_planning_call'])),
-        'fieldworkStart' => date('Y-m-d', strtotime($eng['eng_fieldwork'])),
-        'draftDue' => date('Y-m-d', strtotime($eng['eng_draft_due'])),
-        'finalDue' => date('Y-m-d', strtotime($eng['eng_final_due']))
+        'id' => (int)$eng['eng_id'],
+        'name' => $eng['eng_name'],
+        'planningCall' => $eng['eng_client_planning_call'] ?: null,
+        'fieldworkStart' => $eng['eng_fieldwork'] ?: null,
+        'draftDue' => $eng['eng_draft_due'] ?: null,
+        'finalDue' => $eng['eng_final_due'] ?: null
     ];
-}, $engagements)); ?>;
+}, $engagements), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 
-console.log(engagements); // Optional: verify data in browser
+console.log("Engagements loaded:", engagements);
 
 let currentDate = new Date();
 
@@ -257,11 +257,12 @@ function renderCalendar() {
     const daysContainer = document.getElementById("calendar-days");
     if (!daysContainer) return;
 
-    daysContainer.innerHTML = "";
+    daysContainer.innerHTML = ""; // clear previous calendar
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();
 
+    // Set header
     document.getElementById("calendar-title").textContent =
         currentDate.toLocaleString("default", { month: "long", year: "numeric" });
 
@@ -269,12 +270,14 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const todayStr = new Date().toISOString().split("T")[0];
 
-    // Empty placeholders
+    // Empty placeholders for first week
     for (let i = 0; i < firstDay; i++) {
-        daysContainer.appendChild(document.createElement("div"));
+        const emptyEl = document.createElement("div");
+        emptyEl.className = "calendar-day empty-day";
+        daysContainer.appendChild(emptyEl);
     }
 
-    // Generate each day
+    // Generate days
     for (let day = 1; day <= daysInMonth; day++) {
         const dayEl = document.createElement("div");
         dayEl.className = "calendar-day";
@@ -285,6 +288,7 @@ function renderCalendar() {
 
         dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
 
+        // Add events
         engagements.forEach(e => {
             const eventMap = [
                 { date: e.planningCall, type: "Planning Call" },
@@ -294,6 +298,7 @@ function renderCalendar() {
             ];
 
             eventMap.forEach(ev => {
+                if (!ev.date) return; // skip empty/null
                 if (ev.date === dateStr) {
                     const eventEl = document.createElement("div");
                     const typeClassMap = {
@@ -323,8 +328,10 @@ document.getElementById("nextMonth").onclick = () => {
     renderCalendar();
 };
 
+// Initial render
 renderCalendar();
 </script>
+
 
 
 
