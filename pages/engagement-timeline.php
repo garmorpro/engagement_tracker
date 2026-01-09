@@ -234,6 +234,27 @@ require_once '../includes/functions.php';
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
+  <script>
+const engagements = <?php
+if (!empty($engagements)) {
+    echo json_encode(array_map(function($eng) {
+        return [
+            'id' => $eng['eng_id'],
+            'name' => $eng['eng_name'],
+            'planningCall' => $eng['eng_client_planning_call'] ? date('Y-m-d', strtotime($eng['eng_client_planning_call'])) : null,
+            'fieldworkStart' => $eng['eng_fieldwork'] ? date('Y-m-d', strtotime($eng['eng_fieldwork'])) : null,
+            'draftDue' => $eng['eng_draft_due'] ? date('Y-m-d', strtotime($eng['eng_draft_due'])) : null,
+            'finalDue' => $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : null
+        ];
+    }, $engagements));
+} else {
+    echo '[]';
+}
+?>;
+console.log(engagements); // <- check in browser console
+</script>
+
+
   
 
 
