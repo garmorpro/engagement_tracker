@@ -70,7 +70,7 @@
     .menu-btn {
       background-color: rgb(241,242,245);
       border-radius: 10px;
-      padding: 10px;
+      /* padding: 10px; */
     }
     .new-btn:hover {
         background-color: rgba(15, 62, 69, 0.9);
@@ -159,8 +159,8 @@
           <i class="bi bi-graph-up"></i> Analytics
         </button>
       </div>
-      <button class="btn menu-btn btn-sm ms-3">Archive</button>
-      <button class="btn menu-btn btn-sm ms-3">Tools</button>
+      <button class="btn menu-btn btn-sm ms-3 p-1">Archive</button>
+      <button class="btn menu-btn btn-sm ms-3 p-1">Tools</button>
       <button class="btn new-btn btn-sm ms-3"><i class="bi bi-plus"></i>&nbsp;&nbsp;&nbsp;New Engagement</button>
     </div>
   </div>
