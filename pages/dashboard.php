@@ -153,6 +153,10 @@
   padding: 15px 15px;
 }
 
+.table-wrapper thead td {
+  padding: 15px 15px;
+}
+
   </style>
 </head>
 <body>
