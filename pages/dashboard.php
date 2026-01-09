@@ -583,18 +583,24 @@
   <table class="table table-hover mb-0">
     <thead>
       <tr style="background-color: rgb(236,236,240) !important;">
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
+        <th scope="col">ID</th>
+        <th scope="col">Engagement Name</th>
+        <th scope="col">Manager</th>
+        <th scope="col">Status</th>
+        <th scope="col">Period</th>
+        <th scope="col">Draft Due</th>
+        <th scope="col">Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
+        <th scope="row">ENG-2024-001</th>
+        <td>Acme Corporation Audit</td>
+        <td>John Smith</td>
+        <td>In Progress</td>
+        <td>FY 2024</td>
+        <td>2025-02-01</td>
+        
       </tr>
       <tr>
         <th scope="row">2</th>
