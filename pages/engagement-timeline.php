@@ -329,10 +329,9 @@ document.getElementById("nextMonth").onclick = () => {
     renderCalendar();
 };
 
-// **Render calendar immediately on page load**
-document.addEventListener("DOMContentLoaded", () => {
+
     renderCalendar();
-});
+
 </script>
 
 
