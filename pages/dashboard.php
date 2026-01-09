@@ -574,8 +574,8 @@
 
         <div class="table-wrapper">
   <table class="table table-hover mb-0">
-    <thead style="background-color: rgb(236,236,240) !important;">
-      <tr>
+    <thead>
+      <tr style="background-color: rgb(236,236,240) !important;">
         <th scope="col">#</th>
         <th scope="col">First</th>
         <th scope="col">Last</th>
