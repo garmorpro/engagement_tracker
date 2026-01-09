@@ -561,8 +561,14 @@
     </div>
 
     <div class="tab-pane fade" id="content-list" role="tabpanel">
-      <div class="mt-3" style="margin-left: 210px; margin-right: 210px;">
+      <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
         Showing 6 of 6 engagements
+
+        <table class="table table-hover">
+          ...
+        </table>
+
+
       </div>
       
 
