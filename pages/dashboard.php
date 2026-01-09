@@ -758,6 +758,49 @@
         </div>
       <!-- end row 2 -->
 
+      <!-- Row 3 -->
+        <div class="row align-items-center" style="margin-top: 20px; margin-left: 210px; margin-right: 210px;">
+            <div class="card" style="border-radius: 15px; border: 2px solid rgb(153,239,174); background-color: rgb(239,252,242) !important;">
+                <div class="card-body">
+                    <!-- <h5 class="card-title">Card title</h5> -->
+                    <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
+                          style="font-size: 15px; padding: 10px 14px; background-color: rgb(79,198,95) !important;">
+                      Complete
+                      <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(130,212,141) !important;">1</span>
+                    </span>
+
+
+                    <div class="card engagement-card-kanban" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
+                      <div class="card-body d-flex align-items-center justify-content-between">
+
+                        <!-- LEFT -->
+                        <div class="left d-flex align-items-center gap-3">
+                          <i class="bi bi-grip-horizontal text-secondary"></i>
+
+                          
+                            <h5 class="mb-0">Retain Chain Assessment</h5>
+                            <span class="text-muted" style="font-size: 14px;">ENG-2025-006</span>
+                         
+                        </div>
+
+                        <!-- RIGHT -->
+                        <div class="right d-flex align-items-center gap-3 text-secondary">
+                          <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;Jane Brown</span>
+                          <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;Apr 30</span>
+                          <span class="badge text-bg-secondary" style="background-color: rgba(235, 236, 237, 1) !important; color: rgb(57,69,85) !important; font-weight: 500 !important;">SOC 2 Type 2</span>
+                          <span class="badge text-bg-danger" style="background-color: rgb(255,226,226) !important; color: rgb(201,0,18) !important;font-weight: 500 !important;">Overdue</span>
+                        </div>
+
+                      </div>
+                    </div>
+
+
+                    
+                </div>
+            </div>
+        </div>
+      <!-- end row 3 -->
+
     <!-- end board sections -->
 
 
