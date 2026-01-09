@@ -4,7 +4,7 @@ session_start();
 
 // get engagement details
 
-$engagements = getAllEngagements();
+// $engagements = getAllEngagements();
 
 // Function to get all engagements
 function getAllEngagements($conn) {

@@ -3,6 +3,8 @@
 
 require_once '../includes/functions.php';
 
+$engagements = getAllEngagements();
+
 ?>
 
 <!DOCTYPE html>
