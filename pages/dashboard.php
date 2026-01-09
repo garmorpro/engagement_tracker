@@ -1176,29 +1176,54 @@ $managerLabels = array_keys($managerCounts);
 $managerData = array_values($managerCounts);
 ?>
 
-<?php
-// Initialize array
-$managerCounts = [];
+<script>
+let managerChart;
 
-// Loop through active engagements
-foreach ($engagements as $eng) {
-    // Skip archived ones
-    if ($eng['archived'] ?? 0) continue;
+function renderManagerChart() {
+    const ctx = document.getElementById('manager_workload').getContext('2d');
 
-    $manager = $eng['eng_manager'];
-
-    if (!empty($manager)) {
-        if (!isset($managerCounts[$manager])) {
-            $managerCounts[$manager] = 0;
-        }
-        $managerCounts[$manager]++;
+    if (managerChart) {
+        managerChart.destroy();
     }
+
+    managerChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: <?php echo json_encode($managerLabels); ?>,
+            datasets: [{
+                label: 'Active Engagements',
+                data: <?php echo json_encode($managerData); ?>,
+                backgroundColor: 'rgba(55,182,38,0.8)',
+                borderColor: 'rgba(55,182,38,1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: { enabled: true }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 } // count is integer
+                }
+            }
+        }
+    });
 }
 
-// Separate labels and data for Chart.js
-$managerLabels = array_keys($managerCounts);
-$managerData = array_values($managerCounts);
-?>
+// Render chart only when tab is active
+document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
+    tabBtn.addEventListener('shown.bs.tab', (e) => {
+        if (e.target.getAttribute('data-bs-target') === '#content-manager-workload') {
+            renderManagerChart();
+        }
+    });
+});
+</script>
+
 
 
 
