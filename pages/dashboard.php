@@ -157,6 +157,48 @@
   padding: 15px 15px;
 }
 
+
+
+
+/* new */
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.calendar-day {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  min-height: 110px;
+  padding: 8px;
+  position: relative;
+  background: #fff;
+}
+
+.calendar-day-number {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.event {
+  margin-top: 6px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event.final { background: #ef4444; }
+.event.draft { background: #f97316; }
+.event.fieldwork { background: #3b82f6; }
+.event.planning { background: #a855f7; }
+
+
   </style>
 </head>
 <body>
@@ -581,64 +623,90 @@
     </div>
 
     <div class="tab-pane fade" id="content-list" role="tabpanel">
-      <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
-        Showing 6 of 6 engagements
 
-        <div class="table-wrapper mt-3">
-          <table class="table align-middle mb-0">
-            <thead>
-              <tr style="background-color: rgb(236,236,240) !important;">
-                <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
-                <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
-                <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
-                <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
-                <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
-                <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
-                <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>ENG-2024-001</td>
-                <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
-                <td>John Smith</td>
-                <td>In Progress</td>
-                <td>FY 2024</td>
-                <td>2025-02-01</td>
-                <td><i class="bi bi-trash"></i></td>
-              </tr>
-              <tr>
-                <td>ENG-2024-001</td>
-                <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
-                <td>John Smith</td>
-                <td>In Progress</td>
-                <td>FY 2024</td>
-                <td>2025-02-01</td>
-                <td><i class="bi bi-trash"></i></td>
-              </tr>
-              <tr>
-                <td>ENG-2024-001</td>
-                <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
-                <td>John Smith</td>
-                <td>In Progress</td>
-                <td>FY 2024</td>
-                <td>2025-02-01</td>
-                <td><i class="bi bi-trash"></i></td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- table -->
+        <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
+          Showing 6 of 6 engagements
+
+          <div class="table-wrapper mt-3">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr style="background-color: rgb(236,236,240) !important;">
+                  <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
+                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
+                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
+                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
+                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
+                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
+                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>ENG-2024-001</td>
+                  <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
+                  <td>John Smith</td>
+                  <td>In Progress</td>
+                  <td>FY 2024</td>
+                  <td>2025-02-01</td>
+                  <td><i class="bi bi-trash"></i></td>
+                </tr>
+                <tr>
+                  <td>ENG-2024-001</td>
+                  <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
+                  <td>John Smith</td>
+                  <td>In Progress</td>
+                  <td>FY 2024</td>
+                  <td>2025-02-01</td>
+                  <td><i class="bi bi-trash"></i></td>
+                </tr>
+                <tr>
+                  <td>ENG-2024-001</td>
+                  <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
+                  <td>John Smith</td>
+                  <td>In Progress</td>
+                  <td>FY 2024</td>
+                  <td>2025-02-01</td>
+                  <td><i class="bi bi-trash"></i></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+
+
         </div>
-
-
-
-      </div>
+      <!-- end table -->
       
-
     </div>
 
     <div class="tab-pane fade" id="content-timeline" role="tabpanel">
-      <!-- Timeline content here -->
-      <p>Timeline view of engagements...</p>
+
+    <div class="calendar">
+  <div class="calendar-header d-flex justify-content-between align-items-center">
+    <h5 id="calendar-title"></h5>
+    <div>
+      <button id="prevMonth">&lsaquo;</button>
+      <button id="nextMonth">&rsaquo;</button>
+    </div>
+  </div>
+
+  <div class="calendar-grid">
+    <div class="day-name">Sun</div>
+    <div class="day-name">Mon</div>
+    <div class="day-name">Tue</div>
+    <div class="day-name">Wed</div>
+    <div class="day-name">Thu</div>
+    <div class="day-name">Fri</div>
+    <div class="day-name">Sat</div>
+  </div>
+
+  <div id="calendar-days" class="calendar-days"></div>
+</div>
+
+
+
+    
     </div>
 
     <div class="tab-pane fade" id="content-analytics" role="tabpanel">
@@ -970,5 +1038,81 @@
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const engagements = [
+  {
+    id: 1,
+    name: "Global Finance Hold Co",
+    finalDueDate: "2026-04-05",
+    type: "Final Due", // for color
+  },
+  {
+    id: 2,
+    name: "Acme Corporation Audit",
+    finalDueDate: "2026-02-18",
+    type: "Draft Due",
+  }
+];
+  </script>
+
+  <script>
+    let currentDate = new Date();
+
+function renderCalendar() {
+  const daysContainer = document.getElementById("calendar-days");
+  daysContainer.innerHTML = "";
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  // Title
+  document.getElementById("calendar-title").textContent =
+    currentDate.toLocaleString("default", { month: "long", year: "numeric" });
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  // Empty cells before first day
+  for (let i = 0; i < firstDay; i++) {
+    daysContainer.appendChild(document.createElement("div"));
+  }
+
+  // Create days
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dayEl = document.createElement("div");
+    dayEl.className = "calendar-day";
+
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+    dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+
+    // Add engagements
+    engagements
+      .filter(e => e.finalDueDate === dateStr)
+      .forEach(e => {
+        const eventEl = document.createElement("div");
+        eventEl.className = `event ${e.type.toLowerCase().replace(" ", "")}`;
+        eventEl.textContent = e.name;
+        dayEl.appendChild(eventEl);
+      });
+
+    daysContainer.appendChild(dayEl);
+  }
+}
+
+document.getElementById("prevMonth").onclick = () => {
+  currentDate.setMonth(currentDate.getMonth() - 1);
+  renderCalendar();
+};
+
+document.getElementById("nextMonth").onclick = () => {
+  currentDate.setMonth(currentDate.getMonth() + 1);
+  renderCalendar();
+};
+
+renderCalendar();
+
+  </script>
 </body>
 </html>
