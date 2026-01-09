@@ -173,14 +173,6 @@
     </div>
   <!-- Header -->
 
-
-  <div class="mt-5"></div>
-
-  <div class="tab-content mt-3">
-    <div class="tab-pane fade show active" id="content-board" role="tabpanel">
-
-      <!-- <div class="page-content"> -->
-  
         <!-- Status Cards -->
           <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 200px; margin-right: 200px;">
               <div class="col">
@@ -300,6 +292,15 @@
               </div>
           </div>
         <!-- end search bar -->
+
+
+  <div class="mt-5"></div>
+
+  <div class="tab-content mt-3">
+    <div class="tab-pane fade show active" id="content-board" role="tabpanel">
+
+  
+  
   
         <!-- status updates -->
   
@@ -876,8 +877,6 @@
           <!-- end row 3 -->
   
         <!-- end board sections -->
-  
-      <!-- </div> -->
 
     </div>
 
