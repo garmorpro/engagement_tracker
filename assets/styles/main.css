@@ -486,3 +486,23 @@ body {
 .engagement-card-kanban a {
   pointer-events: auto;
 }
+
+.engagement-card-kanban.dragging {
+    opacity: 0.5;
+    transform: scale(1.02);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.kanban-column.drag-over {
+    border: 2px dashed #6c757d;
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+.kanban-column {
+    min-height: 80px;
+    padding: 10px;
+    margin-bottom: 15px;
+    transition: background-color 0.2s ease, border 0.2s ease;
+}
