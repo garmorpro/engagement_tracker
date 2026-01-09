@@ -703,7 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'complete': 'vertical'
     };
 
-    // Update badge counts
+    // Update badge counts and empty placeholders
     const updateBadge = (column) => {
         const count = column.querySelectorAll('a > .engagement-card-kanban').length;
         const badge = column.closest('.card').querySelector('.count-badge');
@@ -713,19 +713,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
     };
 
-    // Apply layout styles
+    // Apply layout styles dynamically
     const applyLayoutStyles = (card, status) => {
         const body = card.querySelector('.card-body');
         if (status === 'on-hold') {
             card.style.width = 'auto';
             body.classList.add('d-flex', 'align-items-center', 'justify-content-between');
+        } else if (status === 'planning') {
+            card.style.width = '100%';
+            body.style.marginBottom = '-15px';
         } else {
             card.style.width = '100%';
             body.classList.remove('d-flex', 'align-items-center', 'justify-content-between');
+            body.style.marginBottom = '';
         }
     };
 
-    // Attach drag events to a wrapper
+    // Attach drag events to <a> wrapper
     const attachDragEvents = (wrapper) => {
         wrapper.setAttribute('draggable', 'true');
 
@@ -743,26 +747,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Transform card to match On-Hold template
+    // Transform card to On-Hold template
     const transformToOnHold = (card) => {
         const engId = card.dataset.id;
         const name = card.dataset.name || '';
         const engNo = card.dataset.engno || '';
-        const manager = card.dataset.manager || card.querySelector('.bi-people')?.parentElement.textContent.trim() || '';
-        const fieldwork = card.dataset.fieldwork || card.querySelector('.bi-calendar2')?.parentElement.textContent.trim() || '';
-        const auditBadge = card.dataset.audit || card.querySelector('.badge')?.textContent || '';
+        const manager = card.dataset.manager || '';
+        const fieldwork = card.dataset.fieldwork || '';
+        const auditBadge = card.dataset.audit || '';
         const finalDue = card.dataset.finalDue || '';
 
-        // Create wrapper <a>
         const wrapper = document.createElement('a');
         wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(engId)}`;
         wrapper.className = 'text-decoration-none text-reset d-block';
         wrapper.setAttribute('draggable', 'true');
 
-        // Create card
         const newCard = document.createElement('div');
         newCard.className = 'card engagement-card-kanban mb-2';
         newCard.dataset.id = engId;
+        newCard.dataset.name = name;
+        newCard.dataset.engno = engNo;
+        newCard.dataset.manager = manager;
+        newCard.dataset.fieldwork = fieldwork;
+        newCard.dataset.audit = auditBadge;
         newCard.dataset.finalDue = finalDue;
         newCard.style.borderRadius = '15px';
         newCard.style.border = '1px solid rgb(208,213,219)';
@@ -815,13 +822,71 @@ document.addEventListener('DOMContentLoaded', () => {
         newCard.appendChild(body);
         wrapper.appendChild(newCard);
 
-        // Attach drag events
         attachDragEvents(wrapper);
-
         return wrapper;
     };
 
-    // Attach initial drag events to all existing cards
+    // Transform card to Planning template
+    const transformToPlanning = (card) => {
+        const engId = card.dataset.id;
+        const name = card.dataset.name || '';
+        const engNo = card.dataset.engno || '';
+        const manager = card.dataset.manager || '';
+        const fieldwork = card.dataset.fieldwork || '';
+        const auditBadge = card.dataset.audit || '';
+
+        const wrapper = document.createElement('a');
+        wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(engId)}`;
+        wrapper.className = 'text-decoration-none text-reset d-block';
+        wrapper.setAttribute('draggable', 'true');
+
+        const newCard = document.createElement('div');
+        newCard.className = 'card engagement-card-kanban mb-2';
+        newCard.dataset.id = engId;
+        newCard.dataset.name = name;
+        newCard.dataset.engno = engNo;
+        newCard.dataset.manager = manager;
+        newCard.dataset.fieldwork = fieldwork;
+        newCard.dataset.audit = auditBadge;
+        newCard.style.backgroundColor = 'rgb(249,250,251)';
+        newCard.style.border = '1px solid rgb(208,213,219)';
+        newCard.style.borderRadius = '15px';
+        newCard.style.cursor = 'move';
+
+        const body = document.createElement('div');
+        body.className = 'card-body';
+        body.style.marginBottom = '-15px';
+
+        body.innerHTML = `
+            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px;">
+                <h6 class="card-title fw-bold mb-0">${name}</h6>
+                <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
+            </div>
+            <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px;">
+                <span style="color: rgb(106,115,130); font-size: 14px;">${engNo}</span><br>
+                <div class="pb-2"></div>
+                <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span><br>
+                <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;${fieldwork}</span><br>
+                <div class="tags pt-2"></div>
+            </p>
+        `;
+
+        if (auditBadge) {
+            const badgeDiv = body.querySelector('.tags');
+            const badge = document.createElement('span');
+            badge.className = 'badge';
+            badge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;';
+            badge.textContent = auditBadge;
+            badgeDiv.appendChild(badge);
+        }
+
+        newCard.appendChild(body);
+        wrapper.appendChild(newCard);
+        attachDragEvents(wrapper);
+        return wrapper;
+    };
+
+    // Attach initial drag events
     document.querySelectorAll('.kanban-column a').forEach(a => attachDragEvents(a));
 
     // Column drop handling
@@ -841,10 +906,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const originalParent = draggedWrapper.parentElement;
             const newStatus = column.dataset.status;
 
-            // Transform to On-Hold template if needed
             let newWrapper = draggedWrapper;
             if (newStatus === 'on-hold') {
                 newWrapper = transformToOnHold(draggedWrapper.querySelector('.engagement-card-kanban'));
+                column.appendChild(newWrapper);
+                draggedWrapper.remove();
+            } else if (newStatus === 'planning') {
+                newWrapper = transformToPlanning(draggedWrapper.querySelector('.engagement-card-kanban'));
                 column.appendChild(newWrapper);
                 draggedWrapper.remove();
             } else {
@@ -891,6 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBadge(column);
     });
 });
+
 
 
 </script>
