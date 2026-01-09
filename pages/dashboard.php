@@ -1144,7 +1144,7 @@ require_once '../includes/functions.php';
                 <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; font-weight: bold;">
                   5
                 </div>
-                <div class="fw-semibold">SOC 2</div>
+                <div class="mt-2" style="font-size: 14px;">SOC 2</div>
               </div>
             </div>
           </div>
@@ -1156,7 +1156,7 @@ require_once '../includes/functions.php';
                 <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; font-weight: bold;">
                   3
                 </div>
-                <div class="fw-semibold">SOC 1</div>
+                <div class="mt-2" style="font-size: 14px;">SOC 1</div>
               </div>
             </div>
           </div>
@@ -1168,7 +1168,7 @@ require_once '../includes/functions.php';
                 <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; font-weight: bold;">
                   7
                 </div>
-                <div class="fw-semibold">PCI</div>
+                <div class="mt-2" style="font-size: 14px;">PCI</div>
               </div>
             </div>
           </div>
