@@ -690,11 +690,13 @@ require_once '../includes/functions.php';
   <script>
 document.addEventListener('DOMContentLoaded', () => {
     let draggedCard = null;
+    let previousColumn = null;
 
     // DRAG START
     document.querySelectorAll('.engagement-card-kanban').forEach(card => {
         card.addEventListener('dragstart', e => {
             draggedCard = card;
+            previousColumn = card.parentElement; // store previous column
             card.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
         });
@@ -702,6 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.addEventListener('dragend', () => {
             draggedCard.classList.remove('dragging');
             draggedCard = null;
+            previousColumn = null;
         });
     });
 
@@ -722,19 +725,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!draggedCard) return;
 
-            // Remove empty placeholder if it exists
-            const emptyPlaceholder = column.querySelector('.empty-placeholder');
-            if (emptyPlaceholder) {
-                emptyPlaceholder.remove();
-            }
-
-            // Append the card to the new column
-            column.appendChild(draggedCard);
-
-            // Update DB via AJAX
-            const engId = draggedCard.dataset.id;
             const newStatus = column.dataset.status;
 
+            // Remove empty placeholder in new column
+            const emptyPlaceholder = column.querySelector('.empty-placeholder');
+            if (emptyPlaceholder) emptyPlaceholder.remove();
+
+            // Move card to new column
+            column.appendChild(draggedCard);
+
+            // Apply new styles dynamically
+            if (statusStyles[newStatus]) {
+                draggedCard.style.backgroundColor = statusStyles[newStatus].backgroundColor;
+                draggedCard.style.borderColor = statusStyles[newStatus].borderColor;
+            }
+
+            // Update database
+            const engId = draggedCard.dataset.id;
             fetch('../includes/update-engagement-status.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -742,14 +749,22 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(res => res.json())
             .then(data => {
-                if (!data.success) {
-                    console.error('DB update failed:', data.message);
-                }
+                if (!data.success) console.error('DB update failed:', data.message);
             })
             .catch(err => console.error('Update error:', err));
+
+            // Add empty placeholder back to previous column if it became empty
+            if (previousColumn && previousColumn.classList.contains('kanban-column') && previousColumn.children.length === 0) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'text-center text-muted py-4 empty-placeholder';
+                placeholder.style.cssText = 'border: 1px dashed rgb(208,213,219); border-radius: 15px;';
+                placeholder.innerText = 'Drop engagements here';
+                previousColumn.appendChild(placeholder);
+            }
         });
     });
 });
+
 
 </script>
 
