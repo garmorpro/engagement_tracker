@@ -172,16 +172,8 @@
       </div>
     </div>
   <!-- Header -->
-
-
-  <div class="mt-5"></div>
-
-  <div class="tab-content mt-3">
-    <div class="tab-pane fade show active" id="content-board" role="tabpanel">
-
-      <div class="page-content">
-  
-        <!-- Status Cards -->
+   
+  <!-- Status Cards -->
           <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 200px; margin-right: 200px;">
               <div class="col">
                   <div class="card custom-card position-relative" style="background-color: rgb(225,238,253); border-color: rgb(225,228,232); overflow: hidden;     border-radius: 15px;  border-radius: 15px;">
@@ -300,6 +292,15 @@
               </div>
           </div>
         <!-- end search bar -->
+
+  <div class="mt-5"></div>
+
+  <div class="tab-content mt-3">
+    <div class="tab-pane fade show active" id="content-board" role="tabpanel">
+
+      <div class="page-content">
+  
+        
   
         <!-- status updates -->
   
