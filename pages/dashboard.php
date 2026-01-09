@@ -150,7 +150,7 @@
   color: rgb(113,113,129);
   font-weight: 400 !important;
   border-bottom: 1px solid #dee2e6;
-  padding: 5px 15px;
+  padding: 15px 15px;
 }
 
   </style>
