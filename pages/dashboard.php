@@ -778,7 +778,7 @@
                           <i class="bi bi-grip-horizontal text-secondary"></i>
 
                           
-                            <h6 class="mb-0">Retain Chain Assessment</h6>
+                            <h6 class="mb-0" style="font-size: 18px;">Retain Chain Assessment</h6>
                             <span class="text-muted" style="font-size: 14px;">ENG-2025-006</span>
                          
                         </div>
