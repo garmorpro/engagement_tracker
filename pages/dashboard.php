@@ -758,7 +758,6 @@ require_once '../includes/functions.php';
         </div>
       <!-- end calendar -->
        
-    
     </div>
 
     <div class="tab-pane fade" id="content-analytics" role="tabpanel">
@@ -1079,9 +1078,11 @@ require_once '../includes/functions.php';
       
       <!-- end status updates -->
     
+    </div>
+
     
   </div>
-</div>
+
 
 
 
