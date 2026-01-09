@@ -157,7 +157,7 @@
   padding: 15px 15px;
 }
 
-.table-wrapper tr:hover {
+.table-wrapper tbody tr:hover {
   background-color: pink !important;
 }
 
