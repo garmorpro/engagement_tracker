@@ -307,6 +307,7 @@ require_once '../includes/functions.php';
                                 <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
 
                                   <div class="card engagement-card-kanban mb-2"
+                                       draggable="true"
                                        style="background-color: rgb(249,250,251);
                                               border: 1px solid rgb(208,213,219);
                                               border-radius: 15px;
