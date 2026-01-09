@@ -29,10 +29,10 @@ require_once '../includes/functions.php';
 
         <div class="header-actions d-flex align-items-center">
           <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;" role="tablist">
-            <button class="btn btn-sm me-2 tab-btn" a-href="dashboard.php" type="button" role="tab">
+            <button class="btn btn-sm me-2 tab-btn" href="dashboard.php" type="button" role="tab">
               <i class="bi bi-grid"></i> Board
             </button>
-            <button class="btn btn-sm me-2 tab-btn active" a-href="engagement-list.php" type="button" role="tab">
+            <button class="btn btn-sm me-2 tab-btn active" href="engagement-list.php" type="button" role="tab">
               <i class="bi bi-list-ul"></i> List
             </button>
             <button class="btn btn-sm me-2 tab-btn" id="tab-timeline" data-bs-toggle="tab" data-bs-target="#content-timeline" type="button" role="tab">
