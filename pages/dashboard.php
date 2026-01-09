@@ -564,7 +564,7 @@
       <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
         Showing 6 of 6 engagements
 
-        <table class="table table-hover">
+        <table class="table table-hover" style="border: 1px solid blue;">
           <thead>
     <tr>
       <th scope="col">#</th>
