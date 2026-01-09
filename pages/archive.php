@@ -173,7 +173,61 @@ require_once '../includes/functions.php';
           </div>
     <!-- end search bar -->
   
-        
+    <!-- table -->
+        <?php
+          $engagements = getAllEngagements($conn);
+          $totalEngagements = count($engagements);
+          ?>
+          
+          <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
+              Showing <?php echo $totalEngagements; ?> of <?php echo $totalEngagements; ?> engagements
+                                  
+              <div class="table-wrapper mt-3">
+                  <table class="table align-middle mb-0">
+                      <thead>
+                          <tr style="background-color: rgb(236,236,240) !important;">
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
+                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <?php foreach ($engagements as $eng): ?>
+                              <tr>
+                                  <td><?php echo htmlspecialchars($eng['eng_idno']); ?></td>
+                                  <td>
+                                      <strong><?php echo htmlspecialchars($eng['eng_name']); ?></strong><br>
+                                      <?php if (!empty($eng['eng_audit_type'])): ?>
+                                          <span class="text-secondary" style="font-size: 12px;"><?php echo htmlspecialchars($eng['eng_audit_type']); ?></span>
+                                      <?php endif; ?>
+                                  </td>
+                                  <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
+                                  <td><?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?></td>
+                                  <td><?php echo htmlspecialchars($eng['eng_period']); ?></td>
+                                  <td>
+                                      <?php
+                                          if (!empty($eng['eng_draft_due'])) {
+                                              echo date('Y-m-d', strtotime($eng['eng_draft_due']));
+                                          }
+                                      ?>
+                                  </td>
+                                  <td><i class="bi bi-trash"></i></td>
+                              </tr>
+                          <?php endforeach; ?>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+
+
+
+
+        </div>
+    <!-- end table -->
 
 
     <div class="mt-5"></div>
