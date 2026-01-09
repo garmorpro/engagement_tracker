@@ -666,19 +666,25 @@ engagements.forEach(e => {
 const statusLabels = ['On-Hold','Planning','In-Progress','In-Review','Complete'];
 const statusData = Object.values(statusCounts);
 
-// ----------------- Generate colors for manager chart -----------------
-function randomColorArray(count, alpha=0.8) {
-    const arr = [];
-    for(let i=0;i<count;i++){
-        const r=Math.floor(Math.random()*200+50);
-        const g=Math.floor(Math.random()*200+50);
-        const b=Math.floor(Math.random()*200+50);
-        arr.push(`rgba(${r},${g},${b},${alpha})`);
+// ----------------- Generate colors for manager chart with matching border -----------------
+function randomColorPairs(count) {
+    const fills = [];
+    const borders = [];
+    for (let i = 0; i < count; i++) {
+        const r = Math.floor(Math.random() * 200 + 50);
+        const g = Math.floor(Math.random() * 200 + 50);
+        const b = Math.floor(Math.random() * 200 + 50);
+
+        fills.push(`rgba(${r},${g},${b},0.2)`);    // fill color with lower opacity
+        borders.push(`rgba(${r},${g},${b},1)`);    // border color with full opacity
     }
-    return arr;
+    return { fills, borders };
 }
-const managerColors = randomColorArray(managerLabels.length,0.2);
-const managerBorders = randomColorArray(managerLabels.length,1);
+
+const colorPairs = randomColorPairs(managerLabels.length);
+const managerColors = colorPairs.fills;
+const managerBorders = colorPairs.borders;
+
 
 // ----------------- Render Charts -----------------
 let statusChart, managerChart;
