@@ -234,8 +234,9 @@ $engagements = getAllEngagements($conn);
             $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d', strtotime($eng['eng_fieldwork'])) : '';
       ?>
       <div class="engagement-card-wrapper mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
-        <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
+        
           <div class="card engagement-card-kanban" style="border-radius:15px; border:1px solid rgb(208,213,219); cursor: grab;">
+            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
             <div class="card-body d-flex justify-content-between align-items-center">
               <div>
                 <h5 class="mb-0" style="font-size:18px;"><?php echo htmlspecialchars($eng['eng_name']); ?></h5>
@@ -251,8 +252,9 @@ $engagements = getAllEngagements($conn);
                 <?php endif; ?>
               </div>
             </div>
+            </a>
           </div>
-        </a>
+        
       </div>
       <?php
           endforeach;
@@ -288,8 +290,9 @@ $engagements = getAllEngagements($conn);
               $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d, Y', strtotime($eng['eng_fieldwork'])) : '';
         ?>
         <div class="engagement-card-wrapper mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
-          <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
+         
             <div class="card engagement-card-kanban" style="background-color: rgb(249,250,251); border:1px solid rgb(208,213,219); border-radius:15px; cursor: grab;">
+               <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
               <div class="card-body d-flex flex-column" style="margin-bottom:-15px !important;">
                 <div class="d-flex align-items-center justify-content-between" style="margin-top:-5px !important;">
                   <h6 class="card-title fw-bold mb-0"><?php echo htmlspecialchars($eng['eng_name']); ?></h6>
@@ -308,8 +311,9 @@ $engagements = getAllEngagements($conn);
                   <?php endif; ?>
                 </div>
               </div>
+              </a>
             </div>
-          </a>
+          
         </div>
         <?php
             endforeach;
@@ -401,8 +405,9 @@ $engagements = getAllEngagements($conn);
               $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d, Y', strtotime($eng['eng_fieldwork'])) : '';
         ?>
         <div class="engagement-card-wrapper mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
-          <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
+          
             <div class="card engagement-card-kanban" style="background-color: rgb(249,250,251); border:1px solid rgb(208,213,219); border-radius:15px; cursor: grab;">
+              <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
               <div class="card-body d-flex flex-column" style="margin-bottom:-15px !important;">
                 <div class="d-flex align-items-center justify-content-between" style="margin-top:-5px !important;">
                   <h6 class="card-title fw-bold mb-0"><?php echo htmlspecialchars($eng['eng_name']); ?></h6>
@@ -426,8 +431,9 @@ $engagements = getAllEngagements($conn);
                   <?php endif; ?>
                 </div>
               </div>
+              </a>
             </div>
-          </a>
+          
         </div>
         <?php
             endforeach;
@@ -462,8 +468,9 @@ $engagements = getAllEngagements($conn);
             $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d', strtotime($eng['eng_fieldwork'])) : '';
       ?>
       <div class="engagement-card-wrapper mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
-        <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
+        
           <div class="card engagement-card-kanban" style="border-radius:15px; border:1px solid rgb(208,213,219); cursor: grab;">
+            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
             <div class="card-body d-flex align-items-center justify-content-between">
               <div class="left d-flex align-items-center gap-3">
                 <i class="bi bi-grip-horizontal text-secondary"></i>
@@ -487,8 +494,9 @@ $engagements = getAllEngagements($conn);
                 <?php endif; ?>
               </div>
             </div>
+             </a>
           </div>
-        </a>
+       
       </div>
       <?php
           endforeach;
