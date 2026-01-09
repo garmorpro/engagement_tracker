@@ -329,25 +329,12 @@ document.getElementById("nextMonth").onclick = () => {
     renderCalendar();
 };
 
-// Show/hide calendar based on active tab
-const calendarContainer = document.querySelector(".calendar");
-document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
-    tabBtn.addEventListener('shown.bs.tab', (e) => {
-        const target = e.target.getAttribute('data-bs-target');
-        if (target === '#content-timeline') {
-            calendarContainer.style.display = "block"; // show
-            renderCalendar(); // render when tab is active
-        } else {
-            calendarContainer.style.display = "none"; // hide on other tabs
-        }
-    });
+// **Render calendar immediately on page load**
+document.addEventListener("DOMContentLoaded", () => {
+    renderCalendar();
 });
-
-// Hide calendar by default if timeline tab is not active
-if (!document.querySelector('#content-timeline').classList.contains('active')) {
-    calendarContainer.style.display = "none";
-}
 </script>
+
 
 
 
