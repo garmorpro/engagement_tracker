@@ -217,6 +217,10 @@ require_once '../includes/functions.php';
                          data-id="<?php echo $eng['eng_idno']; ?>"
                          data-name="<?php echo htmlspecialchars($eng['eng_name']); ?>"
                          data-engno="<?php echo htmlspecialchars($eng['eng_idno']); ?>"
+                         data-manager="<?php echo htmlspecialchars($eng['eng_manager']); ?>"
+                         data-fieldwork="<?php echo $fieldworkDate; ?>"
+                         data-audit="<?php echo htmlspecialchars($eng['eng_audit_type']); ?>"
+                         data-final-due="<?php echo htmlspecialchars($eng['eng_final_due']); ?>"
                          style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
 
                         <div class="card-body d-flex align-items-center justify-content-between">
@@ -330,6 +334,10 @@ require_once '../includes/functions.php';
                          data-id="<?php echo $eng['eng_idno']; ?>"
                          data-name="<?php echo htmlspecialchars($eng['eng_name']); ?>"
                          data-engno="<?php echo htmlspecialchars($eng['eng_idno']); ?>"
+                         data-manager="<?php echo htmlspecialchars($eng['eng_manager']); ?>"
+                         data-fieldwork="<?php echo $fieldworkDate; ?>"
+                         data-audit="<?php echo htmlspecialchars($eng['eng_audit_type']); ?>"
+                         data-final-due="<?php echo htmlspecialchars($eng['eng_final_due']); ?>"
                          style="background-color: rgb(249,250,251);
                                 border: 1px solid rgb(208,213,219);
                                 border-radius: 15px;
@@ -703,6 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'complete': 'vertical'
     };
 
+    // Update badge counts and placeholders
     const updateBadge = (column) => {
         const count = column.querySelectorAll('a > .engagement-card-kanban').length;
         const badge = column.closest('.card').querySelector('.count-badge');
@@ -712,13 +721,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
     };
 
+    // Apply layout depending on section
     const applyLayoutStyles = (card, status) => {
         const body = card.querySelector('.card-body');
         if (status === 'on-hold') {
             card.style.width = 'auto';
             body.classList.add('d-flex', 'align-items-center', 'justify-content-between');
+            body.style.marginBottom = '';
         } else if (status === 'planning') {
             card.style.width = '100%';
+            body.classList.remove('d-flex', 'align-items-center', 'justify-content-between');
             body.style.marginBottom = '-15px';
         } else {
             card.style.width = '100%';
@@ -727,46 +739,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Attach drag events
     const attachDragEvents = (wrapper) => {
         wrapper.setAttribute('draggable', 'true');
 
-        wrapper.addEventListener('dragstart', (e) => {
+        wrapper.addEventListener('dragstart', e => {
             draggedWrapper = wrapper;
             wrapper.querySelector('.engagement-card-kanban').classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
         });
 
         wrapper.addEventListener('dragend', () => {
-            if (draggedWrapper) {
-                draggedWrapper.querySelector('.engagement-card-kanban').classList.remove('dragging');
-            }
+            if (draggedWrapper) draggedWrapper.querySelector('.engagement-card-kanban').classList.remove('dragging');
             draggedWrapper = null;
         });
     };
 
     // TRANSFORM TO ON-HOLD
     const transformToOnHold = (card) => {
-        const engId = card.dataset.id;
-        const name = card.dataset.name || '';
-        const engNo = card.dataset.engno || '';
-        const manager = card.dataset.manager || '';
-        const fieldwork = card.dataset.fieldwork || '';
-        const auditBadge = card.dataset.audit || '';
-        const finalDue = card.dataset.finalDue || '';
+        const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
 
         const wrapper = document.createElement('a');
-        wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(engId)}`;
+        wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
         wrapper.className = 'text-decoration-none text-reset d-block';
         wrapper.setAttribute('draggable', 'true');
 
         const newCard = document.createElement('div');
         newCard.className = 'card engagement-card-kanban mb-2';
-        newCard.dataset.id = engId;
+        newCard.dataset.id = id;
         newCard.dataset.name = name;
-        newCard.dataset.engno = engNo;
+        newCard.dataset.engno = engno;
         newCard.dataset.manager = manager;
         newCard.dataset.fieldwork = fieldwork;
-        newCard.dataset.audit = auditBadge;
+        newCard.dataset.audit = audit;
         newCard.dataset.finalDue = finalDue;
         newCard.style.borderRadius = '15px';
         newCard.style.border = '1px solid rgb(208,213,219)';
@@ -775,34 +780,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const body = document.createElement('div');
         body.className = 'card-body d-flex align-items-center justify-content-between';
 
-        // LEFT
         const leftDiv = document.createElement('div');
         leftDiv.className = 'd-flex align-items-center gap-3';
         leftDiv.innerHTML = `
             <i class="bi bi-grip-horizontal text-secondary"></i>
             <div>
                 <h5 class="mb-0" style="font-size: 18px; font-weight: 600;">${name}</h5>
-                <span class="text-muted" style="font-size: 14px;">${engNo}</span>
+                <span class="text-muted" style="font-size: 14px;">${engno}</span>
             </div>
         `;
 
-        // RIGHT
         const rightDiv = document.createElement('div');
         rightDiv.className = 'd-flex align-items-center gap-3 text-secondary';
         rightDiv.innerHTML = `
-            <span style="font-size: 14px;">
-                <i class="bi bi-people"></i>&nbsp;${manager}
-            </span>
-            <span style="font-size: 14px; color: rgb(243,36,57);">
-                <i class="bi bi-calendar2"></i>&nbsp;${fieldwork}
-            </span>
+            <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span>
+            <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;${fieldwork}</span>
         `;
 
-        if (auditBadge) {
+        if (audit) {
             const badge = document.createElement('span');
             badge.className = 'badge';
             badge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;';
-            badge.textContent = auditBadge;
+            badge.textContent = audit;
             rightDiv.appendChild(badge);
         }
 
@@ -818,33 +817,28 @@ document.addEventListener('DOMContentLoaded', () => {
         body.appendChild(rightDiv);
         newCard.appendChild(body);
         wrapper.appendChild(newCard);
-
         attachDragEvents(wrapper);
         return wrapper;
     };
 
     // TRANSFORM TO PLANNING
     const transformToPlanning = (card) => {
-        const engId = card.dataset.id;
-        const name = card.dataset.name || '';
-        const engNo = card.dataset.engno || '';
-        const manager = card.dataset.manager || '';
-        const fieldwork = card.dataset.fieldwork || '';
-        const auditBadge = card.dataset.audit || '';
+        const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
 
         const wrapper = document.createElement('a');
-        wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(engId)}`;
+        wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
         wrapper.className = 'text-decoration-none text-reset d-block';
         wrapper.setAttribute('draggable', 'true');
 
         const newCard = document.createElement('div');
         newCard.className = 'card engagement-card-kanban mb-2';
-        newCard.dataset.id = engId;
+        newCard.dataset.id = id;
         newCard.dataset.name = name;
-        newCard.dataset.engno = engNo;
+        newCard.dataset.engno = engno;
         newCard.dataset.manager = manager;
         newCard.dataset.fieldwork = fieldwork;
-        newCard.dataset.audit = auditBadge;
+        newCard.dataset.audit = audit;
+        newCard.dataset.finalDue = finalDue;
         newCard.style.backgroundColor = 'rgb(249,250,251)';
         newCard.style.border = '1px solid rgb(208,213,219)';
         newCard.style.borderRadius = '15px';
@@ -853,14 +847,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const body = document.createElement('div');
         body.className = 'card-body';
         body.style.marginBottom = '-15px';
-
         body.innerHTML = `
             <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px;">
                 <h6 class="card-title fw-bold mb-0">${name}</h6>
                 <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
             </div>
             <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px;">
-                <span style="color: rgb(106,115,130); font-size: 14px;">${engNo}</span><br>
+                <span style="color: rgb(106,115,130); font-size: 14px;">${engno}</span><br>
                 <div class="pb-2"></div>
                 <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span><br>
                 <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;${fieldwork}</span><br>
@@ -868,13 +861,21 @@ document.addEventListener('DOMContentLoaded', () => {
             </p>
         `;
 
-        if (auditBadge) {
+        if (audit) {
             const badgeDiv = body.querySelector('.tags');
             const badge = document.createElement('span');
             badge.className = 'badge';
             badge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;';
-            badge.textContent = auditBadge;
+            badge.textContent = audit;
             badgeDiv.appendChild(badge);
+        }
+
+        if (finalDue && new Date(finalDue) < new Date()) {
+            const overdue = document.createElement('span');
+            overdue.className = 'badge';
+            overdue.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500;';
+            overdue.textContent = 'Overdue';
+            body.appendChild(overdue);
         }
 
         newCard.appendChild(body);
@@ -883,18 +884,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return wrapper;
     };
 
-    // Attach initial drag events
+    // Initial attach
     document.querySelectorAll('.kanban-column a').forEach(a => attachDragEvents(a));
 
-    // Drop handling
+    // Column drop
     document.querySelectorAll('.kanban-column').forEach(column => {
-        column.addEventListener('dragover', e => {
-            e.preventDefault();
-            column.classList.add('drag-over');
-        });
-
+        column.addEventListener('dragover', e => { e.preventDefault(); column.classList.add('drag-over'); });
         column.addEventListener('dragleave', () => column.classList.remove('drag-over'));
-
         column.addEventListener('drop', e => {
             e.preventDefault();
             column.classList.remove('drag-over');
@@ -903,7 +899,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const originalParent = draggedWrapper.parentElement;
             const newStatus = column.dataset.status;
 
-            // Transform according to section
             let newWrapper = draggedWrapper;
             const cardData = draggedWrapper.querySelector('.engagement-card-kanban');
             if (newStatus === 'on-hold') newWrapper = transformToOnHold(cardData);
@@ -944,10 +939,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateBadge(column);
     });
 });
-
-
-
 </script>
+
 
 
 </body>
