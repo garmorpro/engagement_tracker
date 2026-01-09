@@ -46,22 +46,27 @@
       color: #6c757d;
       margin-top: 2px;
     }
-    .header-inner.tab-btn.active {
-        background-color: white;
-        border: none !important;
-    }
-
-    .tab-btn.active:hover {
-        background-color: white;
-        border: none !important;
-    }
     .tab-btn {
-        border: none !important;
-    }
-    .tab-btn:hover {
-        background-color: rgb(225,228,232);
-        border: none !important;
-    }
+  border: none !important;
+  background-color: rgb(241,242,245);
+  color: #495057;
+  transition: background-color 0.2s;
+}
+
+.tab-btn:hover {
+  background-color: rgb(225,228,232);
+}
+
+.tab-btn.active {
+  background-color: white !important;  /* overrides Bootstrap */
+  color: #000 !important;
+  font-weight: 600;
+}
+
+.tab-btn.active:hover {
+  background-color: white !important;
+  color: #000 !important;
+}
     .new-btn {
         background-color: rgb(15,62,69);
         color: white;
