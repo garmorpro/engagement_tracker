@@ -647,53 +647,55 @@ require_once '../includes/functions.php';
     <div class="tab-pane fade" id="content-list" role="tabpanel">
 
       <!-- table -->
-        <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
-          Showing 6 of 6 engagements
+        <?php
+$engagements = getAllEngagements($conn);
+$totalEngagements = count($engagements);
+?>
 
-          <div class="table-wrapper mt-3">
-            <table class="table align-middle mb-0">
-              <thead>
+<div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
+    Showing <?php echo $totalEngagements; ?> of <?php echo $totalEngagements; ?> engagements
+
+    <div class="table-wrapper mt-3">
+        <table class="table align-middle mb-0">
+            <thead>
                 <tr style="background-color: rgb(236,236,240) !important;">
-                  <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
-                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
-                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
-                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
-                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
-                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
-                  <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
+                    <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
+                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
+                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
+                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
+                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
+                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
+                    <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
                 </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>ENG-2024-001</td>
-                  <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
-                  <td>John Smith</td>
-                  <td>In Progress</td>
-                  <td>FY 2024</td>
-                  <td>2025-02-01</td>
-                  <td><i class="bi bi-trash"></i></td>
-                </tr>
-                <tr>
-                  <td>ENG-2024-001</td>
-                  <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
-                  <td>John Smith</td>
-                  <td>In Progress</td>
-                  <td>FY 2024</td>
-                  <td>2025-02-01</td>
-                  <td><i class="bi bi-trash"></i></td>
-                </tr>
-                <tr>
-                  <td>ENG-2024-001</td>
-                  <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
-                  <td>John Smith</td>
-                  <td>In Progress</td>
-                  <td>FY 2024</td>
-                  <td>2025-02-01</td>
-                  <td><i class="bi bi-trash"></i></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+            </thead>
+            <tbody>
+                <?php foreach ($engagements as $eng): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($eng['eng_idno']); ?></td>
+                        <td>
+                            <strong><?php echo htmlspecialchars($eng['eng_name']); ?></strong><br>
+                            <?php if (!empty($eng['eng_audit_type'])): ?>
+                                <span class="text-secondary" style="font-size: 12px;"><?php echo htmlspecialchars($eng['eng_audit_type']); ?></span>
+                            <?php endif; ?>
+                        </td>
+                        <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
+                        <td><?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?></td>
+                        <td><?php echo htmlspecialchars($eng['eng_period']); ?></td>
+                        <td>
+                            <?php
+                                if (!empty($eng['eng_draft_due'])) {
+                                    echo date('Y-m-d', strtotime($eng['eng_draft_due']));
+                                }
+                            ?>
+                        </td>
+                        <td><i class="bi bi-trash"></i></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 
 
