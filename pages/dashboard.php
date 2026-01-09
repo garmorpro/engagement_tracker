@@ -4,8 +4,6 @@
 require_once '../includes/functions.php';
 // require_once '../includes/update-engagement-status.php';
 
-require 'db.php';
-
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (!empty($data['eng_id']) && !empty($data['new_status'])) {
