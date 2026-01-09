@@ -332,3 +332,8 @@ body {
 .draft-due {
   background-color: #2563eb;
 }
+
+.planning_call { background-color: rgba(131, 38, 193, 0.1); color: rgb(131,38,193); padding: 2px 5px; border-radius: 4px; margin-top: 2px; font-size: 12px; }
+.fieldwork_start { background-color: rgba(41, 133, 193, 0.1); color: rgb(41,133,193); padding: 2px 5px; border-radius: 4px; margin-top: 2px; font-size: 12px; }
+.draft_due { background-color: rgba(195, 119, 38, 0.1); color: rgb(195,119,38); padding: 2px 5px; border-radius: 4px; margin-top: 2px; font-size: 12px; }
+.final_due { background-color: rgba(55, 182, 38, 0.1); color: rgb(55,182,38); padding: 2px 5px; border-radius: 4px; margin-top: 2px; font-size: 12px; }
