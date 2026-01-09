@@ -446,3 +446,13 @@ body {
   opacity: 0.5;
   border: 2px dashed #ccc;
 }
+
+
+.kanban-column {
+    min-height: 150px; /* ensures you can drop on empty column */
+}
+
+.kanban-column.drag-over {
+    border: 2px dashed #999;
+    background-color: #f5f5f5;
+}
