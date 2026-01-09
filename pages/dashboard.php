@@ -302,55 +302,54 @@ require_once '../includes/functions.php';
                                     // Format date
                                     $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d, Y', strtotime($eng['eng_fieldwork'])) : '';
                             ?>
-                                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
-   class="text-decoration-none text-reset d-block">
+                                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
 
-  <div class="card engagement-card-kanban mb-2"
-       style="background-color: rgb(249,250,251);
-              border: 1px solid rgb(208,213,219);
-              border-radius: 15px;
-              cursor: pointer;">
+                                  <div class="card engagement-card-kanban mb-2"
+                                       style="background-color: rgb(249,250,251);
+                                              border: 1px solid rgb(208,213,219);
+                                              border-radius: 15px;
+                                              cursor: pointer;">                                
 
-    <div class="card-body" style="margin-bottom: -15px !important;">
-      <!-- Title row -->
-      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-        <h6 class="card-title fw-bold mb-0">
-          <?php echo htmlspecialchars($eng['eng_name']); ?>
-        </h6>
-        <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
-      </div>
+                                    <div class="card-body" style="margin-bottom: -15px !important;">
+                                      <!-- Title row -->
+                                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                                        <h6 class="card-title fw-bold mb-0">
+                                          <?php echo htmlspecialchars($eng['eng_name']); ?>
+                                        </h6>
+                                        <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
+                                      </div>                                
 
-      <!-- Subtext -->
-      <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px !important;">
-        <span style="color: rgb(106,115,130); font-size: 14px;">
-          <?php echo htmlspecialchars($eng['eng_idno']); ?>
-        </span><br>
+                                      <!-- Subtext -->
+                                      <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px !important;">
+                                        <span style="color: rgb(106,115,130); font-size: 14px;">
+                                          <?php echo htmlspecialchars($eng['eng_idno']); ?>
+                                        </span><br>                             
 
-        <div class="pb-2"></div>
+                                        <div class="pb-2"></div>                                
 
-        <span style="font-size: 14px;">
-          <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
-        </span><br>
+                                        <span style="font-size: 14px;">
+                                          <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
+                                        </span><br>                             
 
-        <span style="font-size: 14px; color: rgb(243,36,57);">
-          <i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?>
-        </span><br>
+                                        <span style="font-size: 14px; color: rgb(243,36,57);">
+                                          <i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?>
+                                        </span><br>                             
 
-        <div class="tags pt-2">
-          <?php if (!empty($eng['eng_audit_type'])): ?>
-            <span class="badge text-bg-secondary"
-                  style="background-color: rgba(235,236,237,1);
-                         color: rgb(57,69,85);
-                         font-weight: 500;">
-              <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
-            </span>
-          <?php endif; ?>
-        </div>
-      </p>
-    </div>
+                                        <div class="tags pt-2">
+                                          <?php if (!empty($eng['eng_audit_type'])): ?>
+                                            <span class="badge text-bg-secondary"
+                                                  style="background-color: rgba(235,236,237,1);
+                                                         color: rgb(57,69,85);
+                                                         font-weight: 500;">
+                                              <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
+                                            </span>
+                                          <?php endif; ?>
+                                        </div>
+                                      </p>
+                                    </div>                              
 
-  </div>
-</a>
+                                  </div>
+                                </a>
                             <?php
                                 endforeach;
                             else:
