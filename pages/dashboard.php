@@ -68,12 +68,12 @@
         border-radius: 10px !important;
     }
     .menu-btn {
-      background-color: rgb(241,242,245);
-      border-radius: 10px;
-      padding: 7px 10px;
+      background-color: rgb(241,242,245) !important;;
+      border-radius: 10px !important;;
+      padding: 7px 10px !important;;
     }
     .menu-btn:hover {
-      background-color: rgb(225,228,232);
+      background-color: rgb(225,228,232) !important;
     }
     .new-btn:hover {
         background-color: rgba(15, 62, 69, 0.9);
