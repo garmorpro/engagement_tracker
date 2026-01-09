@@ -408,6 +408,7 @@ require_once '../includes/functions.php';
                                     // Format date
                                     $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d, Y', strtotime($eng['eng_fieldwork'])) : '';
                             ?>
+                            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
                                 <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); border-radius: 15px; cursor: move;">
                                     <div class="card-body" style="margin-bottom: -15px !important;">
                                 
@@ -444,6 +445,7 @@ require_once '../includes/functions.php';
                                                 
                                     </div>
                                 </div>
+                              </a>
                             <?php
                                 endforeach;
                             else:
@@ -502,6 +504,7 @@ require_once '../includes/functions.php';
                                     // Format date
                                     $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d, Y', strtotime($eng['eng_fieldwork'])) : '';
                             ?>
+                            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
                                 <div class="card engagement-card-kanban mb-2" style="background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); border-radius: 15px; cursor: move;">
                                     <div class="card-body" style="margin-bottom: -15px !important;">
                                 
@@ -538,6 +541,7 @@ require_once '../includes/functions.php';
                                                 
                                     </div>
                                 </div>
+                              </a>
                             <?php
                                 endforeach;
                             else:
@@ -597,6 +601,7 @@ require_once '../includes/functions.php';
                                   // Format the fieldwork date nicely
                                   $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d', strtotime($eng['eng_fieldwork'])) : '';
                           ?>
+                          <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
                               <div class="card engagement-card-kanban mb-2" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
                                   <div class="card-body d-flex align-items-center justify-content-between">
                               
@@ -632,6 +637,7 @@ require_once '../includes/functions.php';
                                           
                                   </div>
                               </div>
+                            </a>
                           <?php
                               endforeach;
                           else:
