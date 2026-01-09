@@ -3,6 +3,33 @@
 
 require_once '../includes/functions.php';
 
+
+// Check if eng_idno is in the URL
+if (isset($_GET['eng_id'])) {
+    $eng_id = $_GET['eng_id'];
+
+    // Prepare SQL to prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM engagements WHERE eng_idno = ?");
+    $stmt->bind_param("s", $eng_id); // "s" = string
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $eng = $result->fetch_assoc();
+    } else {
+        // No engagement found
+        echo "<div class='alert alert-warning'>Engagement not found.</div>";
+        exit;
+    }
+
+    $stmt->close();
+} else {
+    // eng_id not provided
+    echo "<div class='alert alert-danger'>No engagement specified.</div>";
+    exit;
+}
+?>
+
 ?>
 
 <!DOCTYPE html>
