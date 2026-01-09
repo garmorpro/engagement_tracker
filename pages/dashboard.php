@@ -70,7 +70,7 @@
     .menu-btn {
       background-color: rgb(241,242,245) !important;
       border-radius: 10px !important;
-      padding: 7px 10px !important;
+      padding: 8px 10px !important;
       border: none !important;
     }
     .menu-btn:hover {
