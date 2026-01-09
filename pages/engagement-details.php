@@ -57,10 +57,10 @@ require_once '../includes/functions.php';
     <div class="d-flex justify-content-between">
       <div class="left">
         <div class="d-flex align-items-center mb-3">
-          <div class="icon-square me-2" style="height: 35px; width: 35px; background-color: rgb(255,255,255); border: 1px solid rgb(229,231,235);">
+          <div class="icon-square me-2" style="height: 30px; width: 30px; background-color: rgb(255,255,255); border: 1px solid rgb(229,231,235);">
             <i class="bi bi-arrow-left" style="color: rgb(84,96,110);"></i>
           </div>
-          <p class="mb-0" style="font-size: 14px;">Overdue</p>
+          <p class="mb-0" style="font-size: 14px;">Back to Dashboard</p>
         </div>
       </div>
       <div class="right">
