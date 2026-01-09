@@ -1080,7 +1080,7 @@ require_once '../includes/functions.php';
     
     </div>
 
-
+    
   </div>
 
 
@@ -1106,14 +1106,17 @@ const engagements = [
 }<?php echo ($index < count($engagements) - 1) ? ',' : ''; ?>
 <?php endforeach; ?>
 ];
-</script>
 
-  <script>
-// Start with current month
+// Track current month for calendar
 let currentDate = new Date();
+
+// Flag so we only render once
+let calendarRendered = false;
 
 function renderCalendar() {
     const daysContainer = document.getElementById("calendar-days");
+    if (!daysContainer) return; // safety check
+
     daysContainer.innerHTML = "";
 
     const year = currentDate.getFullYear();
@@ -1126,12 +1129,11 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const todayStr = new Date().toISOString().split("T")[0];
 
-    // Empty placeholders for days before the first of the month
+    // placeholders for empty days
     for (let i = 0; i < firstDay; i++) {
         daysContainer.appendChild(document.createElement("div"));
     }
 
-    // Generate each day
     for (let day = 1; day <= daysInMonth; day++) {
         const dayEl = document.createElement("div");
         dayEl.className = "calendar-day";
@@ -1144,7 +1146,6 @@ function renderCalendar() {
 
         dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
 
-        // Loop through all engagements
         engagements.forEach(e => {
             const eventMap = [
                 { date: e.planningCall, type: "Planning Call" },
@@ -1157,7 +1158,6 @@ function renderCalendar() {
                 if (ev.date === dateStr) {
                     const eventEl = document.createElement("div");
 
-                    // Map CSS classes for colors
                     const typeClassMap = {
                         "Planning Call": "planning_call",
                         "Fieldwork Start": "fieldwork_start",
@@ -1177,20 +1177,35 @@ function renderCalendar() {
     }
 }
 
-// Navigation buttons
+// Month navigation
 document.getElementById("prevMonth").onclick = () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
-    // renderCalendar();
+    renderCalendar();
 };
-
 document.getElementById("nextMonth").onclick = () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
-    // renderCalendar();
+    renderCalendar();
 };
 
-// renderCalendar();
+// Bootstrap tab event: only render calendar when the tab becomes visible
+document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
+    tabBtn.addEventListener('shown.bs.tab', (e) => {
+        if (e.target.getAttribute('data-bs-target') === '#content-timeline') {
+            if (!calendarRendered) {
+                renderCalendar();
+                calendarRendered = true;
+            }
+        }
+    });
+});
 
+// Optional: if the calendar tab is active on page load, render immediately
+if (document.querySelector('#content-timeline').classList.contains('show')) {
+    renderCalendar();
+    calendarRendered = true;
+}
 </script>
+
 
 </body>
 </html>
