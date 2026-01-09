@@ -17,7 +17,8 @@
 
     
     .header-container {
-  position: fixed;
+  position: sticky;
+ 
   top: 0;
   left: 0;
   width: 100%;
@@ -25,6 +26,7 @@
   background: #fff;
   z-index: 1000;
   border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 .header-inner {
