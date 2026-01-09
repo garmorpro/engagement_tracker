@@ -1147,11 +1147,11 @@ require_once '../includes/functions.php';
 
   <?php
 $statusCounts = [
-    'On-Hold' => 0,
-    'Planning' => 0,
-    'In-Progress' => 0,
-    'In-Review' => 0,
-    'Complete' => 0
+    'on-hold' => 0,
+    'planning' => 0,
+    'in-progress' => 0,
+    'in-review' => 0,
+    'complete' => 0
 ];
 
 if (!empty($engagements)) {
@@ -1168,7 +1168,7 @@ if (!empty($engagements)) {
   <script>
 let statusChart; // We'll store the chart instance
 
-const statusLabels = ['on-hold', 'planning', 'in-progress', 'in-review', 'complete'];
+const statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
 const statusData = <?php echo json_encode(array_values($statusCounts)); ?>;
 
 // Function to render chart
@@ -1181,7 +1181,7 @@ function renderStatusChart() {
     }
 
     statusChart = new Chart(ctx, {
-        type: 'pie', // can also be 'pie'
+        type: 'doughnut', // can also be 'pie'
         data: {
             labels: statusLabels,
             datasets: [{
