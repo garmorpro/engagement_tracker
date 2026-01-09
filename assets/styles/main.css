@@ -58,7 +58,7 @@ body {
         color: white;
         border-radius: 10px !important;
     }
-    .menu-btn, .filter-btn {
+    .filter-btn {
       background-color: rgb(241,242,245) !important;
       border-radius: 10px !important;
       padding: 8px 10px !important;
@@ -71,9 +71,18 @@ body {
       border: none !important;
     }
     .tools-btn.active {
-      background-color: pink !important;
+      background-color: rgb(181,72,255) !important;
     }
-    .menu-btn:hover, .filter-btn:hover {
+    .archive-btn {
+      background-color: rgb(241,242,245) !important;
+      border-radius: 10px !important;
+      padding: 5.5px 10px !important;
+      border: none !important;
+    }
+    .archive-btn.active {
+      background-color: rgb(33,128,255) !important;
+    }
+    .filter-btn:hover {
       background-color: rgb(225,228,232) !important;
     }
     .new-btn:hover {
