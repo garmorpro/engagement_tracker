@@ -295,7 +295,7 @@
           </div>
     <!-- end search bar -->
 
-  <div class="tab-content mt-3">
+  <div class="tab-content mt-2">
     <div class="tab-pane fade show active" id="content-board" role="tabpanel">
 
   
