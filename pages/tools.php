@@ -191,11 +191,11 @@ require_once '../includes/functions.php';
               </span>
             </div>
             <!-- Title -->
-            <div class="fw-bold" style="font-size: 14px;">
+            <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
               Export Data
             </div>
             <!-- Description -->
-            <div class="text-secondary" style="font-size: 14px;">
+            <div class="text-secondary" style="font-size: 14px; color: rgb(137,146,158);">
               Export engagements to CSV or Excel
             </div>
           </div>
