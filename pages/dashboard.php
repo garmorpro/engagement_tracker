@@ -65,6 +65,7 @@
     .new-btn {
         background-color: rgb(15,62,69);
         color: white;
+        border-radius: 15px !important;
     }
     .new-btn:hover {
         background-color: rgba(15, 62, 69, 0.9);
@@ -153,7 +154,9 @@
           <i class="bi bi-graph-up"></i> Analytics
         </button>
       </div>
-      <button class="btn new-btn btn-sm ms-3">+ New Engagement</button>
+      <button class="btn menu-btn btn-sm ms-3">Archive</button>
+      <button class="btn menu-btn btn-sm ms-3">Tools</button>
+      <button class="btn new-btn btn-sm ms-3"><i class="bi bi-plus"></i>&nbsp;&nbsp;&nbsp;New Engagement</button>
     </div>
   </div>
 </div>
