@@ -757,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'planning': 'vertical',
         'in-progress': 'vertical',
         'in-review': 'vertical',
-        'complete': 'vertical'
+        'complete': 'horizontal'
     };
 
     const updateBadge = (column) => {
