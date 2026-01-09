@@ -324,8 +324,7 @@ document.getElementById("nextMonth").onclick = () => {
     renderCalendar();
 };
 
-
-    renderCalendar();
+renderCalendar();
 
 </script>
 
