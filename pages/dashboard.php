@@ -215,6 +215,8 @@ require_once '../includes/functions.php';
                     <div class="card engagement-card-kanban mb-2"
                          draggable="true"
                          data-id="<?php echo $eng['eng_idno']; ?>"
+                         data-name="<?php echo htmlspecialchars($eng['eng_name']); ?>"
+                         data-engno="<?php echo htmlspecialchars($eng['eng_idno']); ?>"
                          style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
 
                         <div class="card-body d-flex align-items-center justify-content-between">
@@ -326,6 +328,8 @@ require_once '../includes/functions.php';
                     <div class="card engagement-card-kanban mb-2"
                          draggable="true"
                          data-id="<?php echo $eng['eng_idno']; ?>"
+                         data-name="<?php echo htmlspecialchars($eng['eng_name']); ?>"
+                         data-engno="<?php echo htmlspecialchars($eng['eng_idno']); ?>"
                          style="background-color: rgb(249,250,251);
                                 border: 1px solid rgb(208,213,219);
                                 border-radius: 15px;
