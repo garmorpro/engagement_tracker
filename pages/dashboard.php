@@ -1126,12 +1126,12 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    const engagements = [
+const engagements = [
   {
     id: 1,
     name: "Global Finance Hold Co",
     finalDueDate: "2026-04-05",
-    type: "Final Due", // for color
+    type: "Final Due",
   },
   {
     id: 2,
@@ -1140,10 +1140,9 @@
     type: "Draft Due",
   }
 ];
-  </script>
 
-  <script>
-    let currentDate = new Date();
+// Start month (February 2026 for testing)
+let currentDate = new Date(2026, 1);
 
 function renderCalendar() {
   const daysContainer = document.getElementById("calendar-days");
@@ -1152,34 +1151,43 @@ function renderCalendar() {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
-  // Title
   document.getElementById("calendar-title").textContent =
     currentDate.toLocaleString("default", { month: "long", year: "numeric" });
 
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayStr = new Date().toISOString().split("T")[0];
 
-  // Empty cells before first day
+  // Empty placeholders
   for (let i = 0; i < firstDay; i++) {
     daysContainer.appendChild(document.createElement("div"));
   }
 
-  // Create days
   for (let day = 1; day <= daysInMonth; day++) {
     const dayEl = document.createElement("div");
     dayEl.className = "calendar-day";
 
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
 
+    if (dateStr === todayStr) {
+      dayEl.classList.add("today");
+    }
+
     dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
 
-    // Add engagements
     engagements
       .filter(e => e.finalDueDate === dateStr)
       .forEach(e => {
         const eventEl = document.createElement("div");
-        eventEl.className = `event ${e.type.toLowerCase().replace(" ", "")}`;
+
+        const typeClassMap = {
+          "Final Due": "final-due",
+          "Draft Due": "draft-due"
+        };
+
+        eventEl.className = `event ${typeClassMap[e.type]}`;
         eventEl.textContent = e.name;
+
         dayEl.appendChild(eventEl);
       });
 
@@ -1198,14 +1206,7 @@ document.getElementById("nextMonth").onclick = () => {
 };
 
 renderCalendar();
+</script>
 
-const todayStr = new Date().toISOString().split("T")[0];
-
-if (dateStr === todayStr) {
-  dayEl.style.border = "2px solid #2563eb";
-}
-
-
-  </script>
 </body>
 </html>
