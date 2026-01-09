@@ -1,5 +1,5 @@
 <?php
-require 'db_connection.php'; // your DB connection
+require 'db.php'; // your DB connection
 
 $data = json_decode(file_get_contents('php://input'), true);
 
