@@ -158,17 +158,17 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
         <div class="card h-100"
              style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
           <div class="card-body p-4">
-    
+
             <div class="d-flex justify-content-between align-items-start mb-5 mt-2">
-    
+
               <!-- Left Side -->
               <div class="d-flex flex-column">
-    
+
                 <!-- Top badges row -->
                 <div class="mb-2 d-flex align-items-center flex-wrap gap-2">
                   <!-- Engagement ID -->
                   <span class="badge text-bg-secondary"><?php echo htmlspecialchars($eng['eng_idno']); ?></span>
-    
+
                   <!-- Status -->
                   <span class="badge rounded-pill" style="background-color: <?php echo $pillColor; ?>; color: white;">
                     <?php 
@@ -176,8 +176,8 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                       echo htmlspecialchars(ucwords(str_replace('-', ' ', $eng['eng_status']))); 
                     ?>
                   </span>
-    
-    
+
+
                   <!-- Overdue badge -->
                   <?php
                   $today = new DateTime();
@@ -229,7 +229,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                       }
                   }
                 ?>
-    
+
               </div>
                 
             </div>
@@ -241,6 +241,52 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
 
   <!-- end upper bay -->
+
+  <!-- second row details -->
+    <div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
+
+      <div class="col-md-3">
+        <div class="card h-100"
+             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+          <div class="card-body p-4">
+                
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card h-100"
+             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+          <div class="card-body p-4">
+                
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100"
+             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+          <div class="card-body p-4">
+                
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card h-100"
+             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+          <div class="card-body p-4">
+                
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+
+
+  <!-- end upper bay -->
+
+
 
 
 
