@@ -1180,7 +1180,7 @@ require_once '../includes/functions.php';
                 <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; font-weight: bold;">
                   2
                 </div>
-                <div class="">Other</div>
+                <div style="font-size: 14px;">Other</div>
               </div>
             </div>
           </div>
