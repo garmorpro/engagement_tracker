@@ -4,6 +4,8 @@ session_start();
 
 // get engagement details
 
+$engagements = getAllEngagements();
+
 // Function to get all engagements
 function getAllEngagements($conn) {
     $sql = "SELECT `eng_id`, `eng_idno`, `eng_name`, `eng_manager`, `eng_senior`, `eng_staff`, 
@@ -28,3 +30,5 @@ function getAllEngagements($conn) {
 
     return $engagements;
 }
+
+
