@@ -65,7 +65,7 @@
     .new-btn {
         background-color: rgb(15,62,69);
         color: white;
-        border-radius: 15px !important;
+        border-radius: 5px !important;
     }
     .new-btn:hover {
         background-color: rgba(15, 62, 69, 0.9);
