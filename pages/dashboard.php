@@ -200,19 +200,16 @@ $engagements = getAllEngagements($conn);
             $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d', strtotime($eng['eng_fieldwork'])) : '';
       ?>
         <div class="engagement-card-wrapper mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
-
           <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
             <div class="card engagement-card-kanban" 
                  style="border-radius:15px; border:1px solid rgb(208,213,219); cursor: grab;">
 
               <div class="card-body d-flex justify-content-between align-items-center">
-                <!-- LEFT -->
                 <div>
                   <h5 class="mb-0" style="font-size:18px;"><?php echo htmlspecialchars($eng['eng_name']); ?></h5>
                   <span style="font-size:14px; color:#6a7382;"><?php echo htmlspecialchars($eng['eng_idno']); ?></span>
                 </div>
 
-                <!-- RIGHT -->
                 <div class="text-secondary" style="font-size:14px;">
                   <span><i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?></span><br>
                   <span style="color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?></span>
@@ -226,7 +223,6 @@ $engagements = getAllEngagements($conn);
               </div>
             </div>
           </a>
-
         </div>
       <?php
           endforeach;
@@ -245,84 +241,62 @@ $engagements = getAllEngagements($conn);
           <!-- Row 2 -->
             <div class="row align-items-start g-4" style="margin-top: 1px; margin-top: px; margin-left: 200px; margin-right: 200px;">
   
-              <!-- Column 1 -->
+              <!-- Column 1: Planning -->
 <div class="col-md-4">
-
   <div class="card kanban-column" data-status="planning" style="border-radius: 15px; border: 2px solid rgb(154,196,254); background-color: rgb(233,241,254) !important;">
     <div class="card-body">
       
-      <!-- Column header -->
       <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
             style="font-size: 15px; padding: 10px 14px; background-color: rgb(68,125,252) !important;">
         Planning
-        <?php
-          // Count planning engagements
-          $planningCount = count(array_filter($engagements, function($eng) {
-              return $eng['eng_status'] === 'planning';
-          }));
-        ?>
+        <?php $planningCount = count(array_filter($engagements, fn($e) => $e['eng_status']==='planning')); ?>
         <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(123,162,249) !important;">
           <?php echo $planningCount; ?>
         </span>
       </span>
 
-      <!-- Kanban cards -->
       <?php
-        $planningEngagements = array_filter($engagements, function($eng) {
-            return $eng['eng_status'] === 'planning';
-        });
-
-        if (count($planningEngagements) > 0):
-            foreach ($planningEngagements as $eng):
-                $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d, Y', strtotime($eng['eng_fieldwork'])) : '';
+        $planningEngagements = array_filter($engagements, fn($e) => $e['eng_status']==='planning');
+        if(count($planningEngagements) > 0):
+          foreach($planningEngagements as $eng):
+            $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d, Y', strtotime($eng['eng_fieldwork'])) : '';
       ?>
+        <div class="engagement-card-wrapper mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
           <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
-            <div class="engagement-card-kanban mb-2"
-                 data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>"
-                 style="background-color: rgb(249,250,251);
-                        border: 1px solid rgb(208,213,219);
-                        border-radius: 15px;
-                        cursor: move;">
-
-              <div class="card-body d-flex flex-column" style="margin-bottom: -15px !important;">
-                <!-- Title row -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-                  <h6 class="card-title fw-bold mb-0">
-                    <?php echo htmlspecialchars($eng['eng_name']); ?>
-                  </h6>
+            <div class="card engagement-card-kanban" 
+                 style="background-color: rgb(249,250,251); border:1px solid rgb(208,213,219); border-radius:15px; cursor: grab;">
+              
+              <div class="card-body d-flex flex-column" style="margin-bottom:-15px !important;">
+                <div class="d-flex align-items-center justify-content-between" style="margin-top:-5px !important;">
+                  <h6 class="card-title fw-bold mb-0"><?php echo htmlspecialchars($eng['eng_name']); ?></h6>
                   <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
                 </div>
 
-                <!-- Subtext -->
-                <div class="text-secondary" style="font-size: 14px; margin-top: 5px;">
+                <div class="text-secondary" style="font-size:14px; margin-top:5px;">
                   <div><?php echo htmlspecialchars($eng['eng_idno']); ?></div>
                   <div><i class="bi bi-people"></i> <?php echo htmlspecialchars($eng['eng_manager']); ?></div>
                   <div style="color: rgb(243,36,57);"><i class="bi bi-calendar2"></i> <?php echo $fieldworkDate; ?></div>
-                  <?php if (!empty($eng['eng_audit_type'])): ?>
+                  <?php if(!empty($eng['eng_audit_type'])): ?>
                     <div class="tags pt-2">
-                      <span class="badge text-bg-secondary"
-                            style="background-color: rgba(235,236,237,1);
-                                   color: rgb(57,69,85);
-                                   font-weight: 500;">
+                      <span class="badge text-bg-secondary" style="background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight:500;">
                         <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
                       </span>
                     </div>
                   <?php endif; ?>
                 </div>
-
               </div>
+
             </div>
           </a>
+        </div>
       <?php
-            endforeach;
+          endforeach;
         else:
       ?>
-          <div class="text-center text-muted py-4" style="border: 1px dashed rgb(208,213,219); border-radius: 15px;">
-            Drop engagements here
-          </div>
-      <?php
-        endif;
-      ?>
+        <div class="text-center text-muted py-4" style="border:1px dashed rgb(208,213,219); border-radius:15px;">
+          Drop engagements here
+        </div>
+      <?php endif; ?>
 
     </div>
   </div>
