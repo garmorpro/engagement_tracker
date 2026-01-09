@@ -54,22 +54,36 @@ require_once '../includes/functions.php';
   <div class="mt-4"></div>
 
   <div style="margin-left: 200px; margin-right: 200px;">
-    <div class="d-flex justify-content-between">
-      <div class="left">
-        <a href="dashboard.php" class="back-link text-decoration-none">
-          <div class="d-flex align-items-center mb-3 back-link-inner">
-            <div class="icon-square me-2 d-flex align-items-center justify-content-center">
-              <i class="bi bi-arrow-left"></i>
-            </div>
-            <p class="mb-0">Back to Dashboard</p>
+  <div class="d-flex justify-content-between align-items-center">
+    
+    <!-- Left: Back link -->
+    <div class="left">
+      <a href="dashboard.php" class="back-link text-decoration-none">
+        <div class="d-flex align-items-center mb-3 back-link-inner">
+          <div class="icon-square me-2 d-flex align-items-center justify-content-center">
+            <i class="bi bi-arrow-left"></i>
           </div>
-        </a>
-      </div>
-      <div class="right">
-        endswitch
-      </div>
+          <p class="mb-0">Back to Dashboard</p>
+        </div>
+      </a>
     </div>
+
+    <!-- Right: Edit & Delete buttons -->
+    <div class="right">
+      <!-- Edit button -->
+      <button class="btn btn-edit me-2">
+        <i class="bi bi-pencil-square me-1"></i> Edit
+      </button>
+
+      <!-- Delete button -->
+      <button class="btn btn-delete">
+        <i class="bi bi-trash me-1"></i> Delete
+      </button>
+    </div>
+
   </div>
+</div>
+
 
 
 
