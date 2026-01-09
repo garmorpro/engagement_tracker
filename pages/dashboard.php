@@ -1211,7 +1211,8 @@ const engagements = [
 ];
 
 // Start month (February 2026 for testing)
-let currentDate = new Date(2026, 1);
+let currentDate = new Date();
+
 
 function renderCalendar() {
   const daysContainer = document.getElementById("calendar-days");
