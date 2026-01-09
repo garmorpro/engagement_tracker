@@ -11,15 +11,30 @@
       /* background-color: #f8f9fa;  */
       font-family: 'Arial', sans-serif;
     }
+    .page-content {
+  padding-top: 80px; /* same as header height */
+}
+
+    
     .header-container {
-      background-color: #fff;
-      padding: 20px 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #dee2e6;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;               /* set explicit height */
+  background: #fff;
+  z-index: 1000;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 200px;
+}
+
     .header-title {
       font-weight: 600;
       font-size: 1.25rem;
@@ -143,6 +158,7 @@
 
 
   <div class="mt-5"></div>
+  <div class="page-content">
 
     <!-- Status Cards -->
         <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 200px; margin-right: 200px;">
@@ -814,6 +830,8 @@
       <!-- end row 3 -->
 
     <!-- end board sections -->
+
+</div>
 
     <div class="mt-5"></div>
 
