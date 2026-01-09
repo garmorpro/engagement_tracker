@@ -690,35 +690,11 @@ require_once '../includes/functions.php';
   <script>
 document.addEventListener('DOMContentLoaded', () => {
     let draggedCard = null;
-    let previousColumn = null;
 
-    // Define styles for each status
-    const statusStyles = {
-        'planning': { backgroundColor: 'rgb(249,250,251)', borderColor: 'rgb(208,213,219)' },
-        'on-hold': { backgroundColor: 'rgb(247,248,250)', borderColor: 'rgb(208,213,219)' },
-        // Add more statuses if needed
-    };
-
-    // Update header badge counts dynamically
-    function updateBadgeCount(column) {
-        const parentCard = column.closest('.card');
-        if (!parentCard) return;
-
-        const headerBadge = parentCard.querySelector('span.badge');
-        if (!headerBadge) return;
-
-        const countBadge = headerBadge.querySelector('span.badge.ms-2');
-        if (countBadge) {
-            const numCards = column.querySelectorAll('.engagement-card-kanban').length;
-            countBadge.textContent = numCards;
-        }
-    }
-
-    // Drag start
+    // DRAG START
     document.querySelectorAll('.engagement-card-kanban').forEach(card => {
         card.addEventListener('dragstart', e => {
             draggedCard = card;
-            previousColumn = card.closest('.kanban-column');
             card.classList.add('dragging');
             e.dataTransfer.effectAllowed = 'move';
         });
@@ -726,11 +702,40 @@ document.addEventListener('DOMContentLoaded', () => {
         card.addEventListener('dragend', () => {
             draggedCard.classList.remove('dragging');
             draggedCard = null;
-            previousColumn = null;
         });
     });
 
-    // Column drop handling
+    // HELPER: Update empty placeholders in all columns
+    function updateEmptyPlaceholders() {
+        document.querySelectorAll('.kanban-column').forEach(column => {
+            const cards = column.querySelectorAll('.engagement-card-kanban');
+            const placeholder = column.querySelector('.empty-placeholder');
+            if (cards.length === 0) {
+                if (!placeholder) {
+                    const div = document.createElement('div');
+                    div.classList.add('text-center', 'text-muted', 'py-4', 'empty-placeholder');
+                    div.style.cssText = "border: 1px dashed rgb(208,213,219); border-radius: 15px;";
+                    div.textContent = "Drop engagements here";
+                    column.appendChild(div);
+                }
+            } else {
+                if (placeholder) placeholder.remove();
+            }
+        });
+    }
+
+    // HELPER: Update header counts
+    function updateHeaderCounts() {
+        document.querySelectorAll('.kanban-column').forEach(column => {
+            const countSpan = column.closest('.card').querySelector('.badge + .badge');
+            if (countSpan) {
+                const cards = column.querySelectorAll('.engagement-card-kanban');
+                countSpan.textContent = cards.length;
+            }
+        });
+    }
+
+    // COLUMN DROP HANDLING
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
@@ -747,65 +752,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!draggedCard) return;
 
-            const newStatus = column.dataset.status;
+            // Remove any existing placeholder in the column
+            const placeholder = column.querySelector('.empty-placeholder');
+            if (placeholder) placeholder.remove();
 
-            // Remove empty placeholder if it exists
-            const emptyPlaceholder = column.querySelector('.empty-placeholder');
-            if (emptyPlaceholder) emptyPlaceholder.remove();
-
-            // Move the card
+            // Append card to new column
             column.appendChild(draggedCard);
 
-            // Apply new status style
-            if (statusStyles[newStatus]) {
-                draggedCard.style.backgroundColor = statusStyles[newStatus].backgroundColor;
-                draggedCard.style.borderColor = statusStyles[newStatus].borderColor;
+            // Adjust styles based on column
+            const status = column.dataset.status;
+
+            if (status === 'on-hold') {
+                // Horizontal style
+                draggedCard.style.border = "1px solid rgb(208,213,219)";
+                draggedCard.style.borderRadius = "15px";
+                draggedCard.style.cursor = "move";
+                draggedCard.style.backgroundColor = ""; // optional: inherit
+                draggedCard.querySelector('.card-body').classList.add('d-flex', 'align-items-center', 'justify-content-between');
+            } else if (status === 'planning') {
+                // Vertical style
+                draggedCard.style.border = "1px solid rgb(208,213,219)";
+                draggedCard.style.borderRadius = "15px";
+                draggedCard.style.cursor = "move";
+                draggedCard.style.backgroundColor = "rgb(249,250,251)";
+                draggedCard.querySelector('.card-body').classList.remove('d-flex', 'align-items-center', 'justify-content-between');
             }
 
-            // Update header counts for both columns
-            if (previousColumn) updateBadgeCount(previousColumn);
-            updateBadgeCount(column);
+            // Update header counts and empty placeholders
+            updateEmptyPlaceholders();
+            updateHeaderCounts();
 
-            // Handle empty placeholder in previous column
-            if (previousColumn && previousColumn !== column && previousColumn.children.length === 0) {
-                const placeholder = document.createElement('div');
-                placeholder.className = 'text-center text-muted py-4 empty-placeholder';
-                placeholder.style.cssText = 'border: 1px dashed rgb(208,213,219); border-radius: 15px;';
-                placeholder.innerText = 'Drop engagements here';
-                previousColumn.appendChild(placeholder);
-            }
-
-            // Adjust layout for horizontal vs vertical
-            const parentRow = column.closest('.row');
-            if (parentRow) {
-                const numColumns = parentRow.querySelectorAll('.kanban-column').length;
-                if (numColumns === 1) {
-                    // Single-column row (on-hold): horizontal
-                    column.style.display = 'flex';
-                    column.style.flexDirection = 'row';
-                    column.style.gap = '10px';
-                } else {
-                    // Multi-column row: vertical
-                    column.style.display = 'block';
-                }
-            }
-
-            // Optional: update DB
+            // Optional: update DB via AJAX
             const engId = draggedCard.dataset.id;
             fetch('../includes/update-engagement-status.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ eng_id: engId, status: newStatus })
+                body: JSON.stringify({ eng_id: engId, status: status })
             })
             .then(res => res.json())
             .then(data => {
-                if (!data.success) console.error('DB update failed:', data.message);
+                if (!data.success) {
+                    console.error('DB update failed:', data.message);
+                }
             })
             .catch(err => console.error('Update error:', err));
         });
     });
-});
 
+    // INITIAL placeholder & counts
+    updateEmptyPlaceholders();
+    updateHeaderCounts();
+});
 
 
 </script>
