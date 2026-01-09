@@ -317,7 +317,7 @@ require_once '../includes/functions.php';
                             <h6 class="card-title fw-bold mb-0" >
                               <!-- Acme Corportation Audit -->
                                <?php if($row['eng_id'] == 1) {
-                                echo $row['engagement_name'];
+                                echo $row['eng_name'];
                                } ?>
                             </h6>
                             <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
