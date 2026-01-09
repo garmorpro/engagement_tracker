@@ -162,6 +162,81 @@
 
 /* new */
 
+.calendar {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff;
+}
+
+/* HEADER */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.calendar-header h5 {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* NAV BUTTONS */
+.calendar-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nav-btn:hover {
+  background: #f3f4f6;
+}
+
+/* WEEKDAYS */
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+}
+
+.calendar-weekdays div {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* DAYS GRID */
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.calendar-day {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  min-height: 120px;
+  padding: 8px;
+  background: #fff;
+}
+
+.calendar-day-number {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+
 .calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -682,27 +757,38 @@
 
     <div class="tab-pane fade" id="content-timeline" role="tabpanel">
 
+    
+
     <div class="calendar">
-  <div class="calendar-header d-flex justify-content-between align-items-center">
+
+  <div class="calendar-header">
     <h5 id="calendar-title"></h5>
-    <div>
-      <button id="prevMonth">&lsaquo;</button>
-      <button id="nextMonth">&rsaquo;</button>
+    <div class="calendar-nav">
+      <button id="prevMonth" class="nav-btn">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button id="nextMonth" class="nav-btn">
+        <i class="bi bi-chevron-right"></i>
+      </button>
     </div>
   </div>
 
-  <div class="calendar-grid">
-    <div class="day-name">Sun</div>
-    <div class="day-name">Mon</div>
-    <div class="day-name">Tue</div>
-    <div class="day-name">Wed</div>
-    <div class="day-name">Thu</div>
-    <div class="day-name">Fri</div>
-    <div class="day-name">Sat</div>
+  <!-- Weekdays -->
+  <div class="calendar-weekdays">
+    <div>Sun</div>
+    <div>Mon</div>
+    <div>Tue</div>
+    <div>Wed</div>
+    <div>Thu</div>
+    <div>Fri</div>
+    <div>Sat</div>
   </div>
 
+  <!-- Days -->
   <div id="calendar-days" class="calendar-days"></div>
+
 </div>
+
 
 
 
@@ -1112,6 +1198,13 @@ document.getElementById("nextMonth").onclick = () => {
 };
 
 renderCalendar();
+
+const todayStr = new Date().toISOString().split("T")[0];
+
+if (dateStr === todayStr) {
+  dayEl.style.border = "2px solid #2563eb";
+}
+
 
   </script>
 </body>
