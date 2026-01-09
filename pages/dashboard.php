@@ -691,35 +691,42 @@ require_once '../includes/functions.php';
 document.addEventListener('DOMContentLoaded', () => {
     let draggedCard = null;
 
-    // Utility: update badge count for a column
+    // Map column status to layout type
+    const layoutMap = {
+        'on-hold': 'horizontal',
+        'planning': 'vertical',
+        'in-progress': 'vertical',
+        'in-review': 'vertical',
+        'complete': 'vertical'
+    };
+
+    // Update badge count for a column
     const updateBadge = (column) => {
         const status = column.dataset.status;
-        const badge = column.closest('.card').querySelector('.badge + .badge');
+        const badge = column.querySelector(`.count-badge[data-status="${status}"]`);
         const count = column.querySelectorAll('.engagement-card-kanban').length;
         if (badge) badge.textContent = count;
 
-        // Handle empty placeholder
         const placeholder = column.querySelector('.empty-placeholder');
         if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
     };
 
-    // Apply layout styles depending on column
+    // Apply layout styles based on column
     const applyLayoutStyles = (card, column) => {
         const status = column.dataset.status;
+        const layout = layoutMap[status] || 'vertical';
+        const body = card.querySelector('.card-body');
 
-        if (status === 'on-hold') {
-            // Horizontal layout
+        if (layout === 'horizontal') {
             card.style.width = 'auto';
-            card.querySelector('.card-body').classList.add('d-flex', 'align-items-center', 'justify-content-between');
+            body.classList.add('d-flex', 'align-items-center', 'justify-content-between');
         } else {
-            // Vertical layout (stacked)
             card.style.width = '100%';
-            const body = card.querySelector('.card-body');
             body.classList.remove('d-flex', 'align-items-center', 'justify-content-between');
         }
     };
 
-    // DRAG START / END
+    // Drag start / end events
     document.querySelectorAll('.engagement-card-kanban').forEach(card => {
         card.addEventListener('dragstart', e => {
             draggedCard = card;
@@ -728,12 +735,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         card.addEventListener('dragend', () => {
-            draggedCard.classList.remove('dragging');
+            if (draggedCard) draggedCard.classList.remove('dragging');
             draggedCard = null;
         });
     });
 
-    // COLUMN DROP HANDLING
+    // Drop handling for columns
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
@@ -747,20 +754,16 @@ document.addEventListener('DOMContentLoaded', () => {
         column.addEventListener('drop', e => {
             e.preventDefault();
             column.classList.remove('drag-over');
-
             if (!draggedCard) return;
 
-            // Append the card to the new column
+            const originalParent = draggedCard.parentElement;
             column.appendChild(draggedCard);
-
-            // Apply layout style dynamically
             applyLayoutStyles(draggedCard, column);
 
-            // Update counts for both source and target columns
-            const allColumns = document.querySelectorAll('.kanban-column');
-            allColumns.forEach(col => updateBadge(col));
+            // Update badges for all columns
+            document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
 
-            // Optional: update DB via AJAX
+            // Update DB via AJAX
             const engId = draggedCard.dataset.id;
             const newStatus = column.dataset.status;
 
@@ -772,14 +775,22 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 if (!data.success) {
-                    console.error('DB update failed:', data.message);
+                    // Rollback UI if DB update fails
+                    originalParent.appendChild(draggedCard);
+                    document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
+                    alert('Failed to update status in DB. Changes reverted.');
                 }
             })
-            .catch(err => console.error('Update error:', err));
+            .catch(err => {
+                originalParent.appendChild(draggedCard);
+                document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
+                console.error('Update error:', err);
+                alert('Failed to update status in DB. Changes reverted.');
+            });
         });
     });
 
-    // Initial style application on page load
+    // Apply initial styles and badge counts
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.querySelectorAll('.engagement-card-kanban').forEach(card => applyLayoutStyles(card, column));
         updateBadge(column);
