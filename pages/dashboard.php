@@ -1145,26 +1145,57 @@ require_once '../includes/functions.php';
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <?php
+$statusCounts = [
+    'On-Hold' => 0,
+    'Planning' => 0,
+    'In-Progress' => 0,
+    'In-Review' => 0,
+    'Complete' => 0
+];
+
+foreach ($engagements as $eng) {
+    $status = $eng['eng_status'];
+    if (isset($statusCounts[$status])) {
+        $statusCounts[$status]++;
+    }
+}
+?>
+
+
 
   <script>
+const statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
+const statusData = [
+    <?php echo $statusCounts['On-Hold']; ?>,
+    <?php echo $statusCounts['Planning']; ?>,
+    <?php echo $statusCounts['In-Progress']; ?>,
+    <?php echo $statusCounts['In-Review']; ?>,
+    <?php echo $statusCounts['Complete']; ?>
+];
+
 const ctx = document.getElementById('status_distribution').getContext('2d');
 
 const myDoughnutChart = new Chart(ctx, {
-    type: 'doughnut', // 'pie' for a pie chart
+    type: 'doughnut',
     data: {
-        labels: ['Completed', 'In Progress', 'Overdue'], // sections
+        labels: statusLabels,
         datasets: [{
             label: 'Engagement Status',
-            data: [12, 7, 3], // values for each section
+            data: statusData,
             backgroundColor: [
-                'rgba(55, 182, 38, 0.8)',  // Completed
-                'rgba(195, 119, 38, 0.8)', // In Progress
-                'rgba(243, 36, 57, 0.8)'   // Overdue
+                'rgba(243,36,57,0.8)',     // On-Hold
+                'rgba(131,38,193,0.8)',    // Planning
+                'rgba(195,119,38,0.8)',    // In-Progress
+                'rgba(41,133,193,0.8)',    // In-Review
+                'rgba(55,182,38,0.8)'      // Complete
             ],
             borderColor: [
-                'rgba(55, 182, 38, 1)',
-                'rgba(195, 119, 38, 1)',
-                'rgba(243, 36, 57, 1)'
+                'rgba(243,36,57,1)',
+                'rgba(131,38,193,1)',
+                'rgba(195,119,38,1)',
+                'rgba(41,133,193,1)',
+                'rgba(55,182,38,1)'
             ],
             borderWidth: 1
         }]
@@ -1182,6 +1213,7 @@ const myDoughnutChart = new Chart(ctx, {
     }
 });
 </script>
+
 
 
 
