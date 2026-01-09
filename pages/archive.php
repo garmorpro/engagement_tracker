@@ -187,72 +187,72 @@ require_once '../includes/functions.php';
           
           <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
 
-<?php if ($totalArchived > 0): ?>
-
-    Showing <?php echo $totalArchived; ?> of <?php echo $totalArchived; ?> engagements
-
-    <div class="table-wrapper mt-3">
-        <table class="table align-middle mb-0">
-            <thead>
-                <tr style="background-color: rgb(236,236,240) !important;">
-                    <th>ID</th>
-                    <th>Engagement Name</th>
-                    <th>Manager</th>
-                    <th>Status</th>
-                    <th>Period</th>
-                    <th>Draft Due</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($archivedEngagements as $eng): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($eng['eng_idno']); ?></td>
-                        <td>
-                            <strong><?php echo htmlspecialchars($eng['eng_name']); ?></strong><br>
-                            <?php if (!empty($eng['eng_audit_type'])): ?>
-                                <span class="text-secondary" style="font-size: 12px;">
-                                    <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                        <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
-                        <td><?php echo ucfirst(htmlspecialchars($eng['eng_status'])); ?></td>
-                        <td><?php echo htmlspecialchars($eng['eng_period']); ?></td>
-                        <td>
-                            <?php
-                            if (!empty($eng['eng_draft_due'])) {
-                                echo date('Y-m-d', strtotime($eng['eng_draft_due']));
-                            }
-                            ?>
-                        </td>
-                        <td><i class="bi bi-trash"></i></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-
-<?php else: ?>
-
-    <!-- Empty State -->
-    <div class="d-flex flex-column align-items-center justify-content-center text-center p-5"
-         style="border: 2px dashed rgb(208,213,219); border-radius: 16px; background-color: #fff;">
-
-        <div class="d-flex align-items-center justify-content-center mb-3"
-             style="width: 64px; height: 64px; border-radius: 50%; background-color: rgb(243,244,246);">
-            <i class="bi bi-archive" style="font-size: 28px; color: rgb(107,114,128);"></i>
-        </div>
-
-        <h5 class="mb-1">No Archived Engagements</h5>
-        <p class="text-secondary mb-0" style="max-width: 420px;">
-            When you archive completed engagements, they'll appear here for future reference.
-        </p>
-    </div>
-
-<?php endif; ?>
-
-</div>
+          <?php if ($totalArchived > 0): ?>
+          
+              Showing <?php echo $totalArchived; ?> of <?php echo $totalArchived; ?> engagements
+          
+              <div class="table-wrapper mt-3">
+                  <table class="table align-middle mb-0">
+                      <thead>
+                          <tr style="background-color: rgb(236,236,240) !important;">
+                              <th>ID</th>
+                              <th>Engagement Name</th>
+                              <th>Manager</th>
+                              <th>Status</th>
+                              <th>Period</th>
+                              <th>Draft Due</th>
+                              <th>Actions</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <?php foreach ($archivedEngagements as $eng): ?>
+                              <tr>
+                                  <td><?php echo htmlspecialchars($eng['eng_idno']); ?></td>
+                                  <td>
+                                      <strong><?php echo htmlspecialchars($eng['eng_name']); ?></strong><br>
+                                      <?php if (!empty($eng['eng_audit_type'])): ?>
+                                          <span class="text-secondary" style="font-size: 12px;">
+                                              <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
+                                          </span>
+                                      <?php endif; ?>
+                                  </td>
+                                  <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
+                                  <td><?php echo ucfirst(htmlspecialchars($eng['eng_status'])); ?></td>
+                                  <td><?php echo htmlspecialchars($eng['eng_period']); ?></td>
+                                  <td>
+                                      <?php
+                                      if (!empty($eng['eng_draft_due'])) {
+                                          echo date('Y-m-d', strtotime($eng['eng_draft_due']));
+                                      }
+                                      ?>
+                                  </td>
+                                  <td><i class="bi bi-trash"></i></td>
+                              </tr>
+                          <?php endforeach; ?>
+                      </tbody>
+                  </table>
+              </div>
+                                    
+          <?php else: ?>
+          
+              <!-- Empty State -->
+              <div class="d-flex flex-column align-items-center justify-content-center text-center p-5"
+                   style="border: 2px dashed rgb(208,213,219); border-radius: 16px; background-color: #fff;">
+          
+                  <div class="d-flex align-items-center justify-content-center mb-3"
+                       style="width: 64px; height: 64px; border-radius: 50%; background-color: rgb(243,244,246);">
+                      <i class="bi bi-archive" style="font-size: 28px; color: rgb(107,114,128);"></i>
+                  </div>
+          
+                  <h5 class="mb-1">No Archived Engagements</h5>
+                  <p class="text-secondary mb-0" style="max-width: 420px;">
+                      When you archive completed engagements, they'll appear here for future reference.
+                  </p>
+              </div>
+          
+          <?php endif; ?>
+          
+          </div>
 
     <!-- end table -->
 
