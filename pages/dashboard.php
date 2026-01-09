@@ -595,7 +595,7 @@
     <tbody>
       <tr>
         <td>ENG-2024-001</td>
-        <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 14px;">SOC 2 Type 2</span></td>
+        <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
         <td>John Smith</td>
         <td>In Progress</td>
         <td>FY 2024</td>
