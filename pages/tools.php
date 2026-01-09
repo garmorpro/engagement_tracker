@@ -182,9 +182,10 @@ require_once '../includes/functions.php';
   <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
     <div class="card-body p-4">
 
-      <!-- Icon + Badge -->
-      <div class="d-flex align-items-center mb-3">
-        <div class="icon-square me-2 d-flex align-items-center justify-content-center"
+      <!-- Icon (left) + Badge (right) -->
+      <div class="d-flex align-items-center justify-content-between mb-3">
+
+        <div class="icon-square d-flex align-items-center justify-content-center"
              style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
           <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
         </div>
@@ -192,6 +193,7 @@ require_once '../includes/functions.php';
         <span class="badge bg-secondary bg-opacity-25 text-secondary">
           Coming Soon
         </span>
+
       </div>
 
       <!-- Title -->
@@ -207,15 +209,17 @@ require_once '../includes/functions.php';
     </div>
   </div>
 </div>
+
 
   
               <div class="col-md-4">
   <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
     <div class="card-body p-4">
 
-      <!-- Icon + Badge -->
-      <div class="d-flex align-items-center mb-3">
-        <div class="icon-square me-2 d-flex align-items-center justify-content-center"
+      <!-- Icon (left) + Badge (right) -->
+      <div class="d-flex align-items-center justify-content-between mb-3">
+
+        <div class="icon-square d-flex align-items-center justify-content-center"
              style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
           <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
         </div>
@@ -223,6 +227,7 @@ require_once '../includes/functions.php';
         <span class="badge bg-secondary bg-opacity-25 text-secondary">
           Coming Soon
         </span>
+
       </div>
 
       <!-- Title -->
@@ -238,6 +243,7 @@ require_once '../includes/functions.php';
     </div>
   </div>
 </div>
+
 
 
 
@@ -245,16 +251,18 @@ require_once '../includes/functions.php';
   <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(229,231,235);">
     <div class="card-body p-4">
 
-      <!-- Icon + Badge -->
-      <div class="d-flex align-items-center mb-3">
-        <div class="icon-square me-2 d-flex align-items-center justify-content-center"
+      <!-- Icon (left) + Badge (right) -->
+      <div class="d-flex align-items-center justify-content-between mb-3">
+
+        <div class="icon-square d-flex align-items-center justify-content-center"
              style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(243,244,246);">
           <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
         </div>
 
-        <span class="badge bg-secondary bg-opacity-25 text-secondary float-end">
+        <span class="badge bg-secondary bg-opacity-25 text-secondary">
           Coming Soon
         </span>
+
       </div>
 
       <!-- Title -->
@@ -270,6 +278,7 @@ require_once '../includes/functions.php';
     </div>
   </div>
 </div>
+
 
   
               
