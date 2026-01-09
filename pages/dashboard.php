@@ -179,7 +179,7 @@
   <div class="tab-content mt-3">
     <div class="tab-pane fade show active" id="content-board" role="tabpanel">
 
-      <div class="page-content">
+      <!-- <div class="page-content"> -->
   
         <!-- Status Cards -->
           <div class="row row-cols-1 row-cols-md-5 g-4" style="margin-left: 200px; margin-right: 200px;">
@@ -283,7 +283,6 @@
       
           </div>
         <!-- end status cards -->
-
   
         <!-- Search bar -->
           <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
@@ -878,7 +877,7 @@
   
         <!-- end board sections -->
   
-      </div>
+      <!-- </div> -->
 
     </div>
 
