@@ -177,7 +177,7 @@ require_once '../includes/functions.php';
   
           <!-- Row 1 -->
             <div class="row align-items-center" style="margin-top: 20px; margin-left: 210px; margin-right: 210px;">
-                <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
+                <div class="card kanban-column" data-status="planning" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
                     <div class="card-body">
                         <!-- <h5 class="card-title">Card title</h5> -->
                         <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
@@ -211,7 +211,7 @@ require_once '../includes/functions.php';
                                   $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d', strtotime($eng['eng_fieldwork'])) : '';
                           ?>
                           <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
-                              <div class="card engagement-card-kanban mb-2" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
+                              <div class="card engagement-card-kanban mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
                                   <div class="card-body d-flex align-items-center justify-content-between">
                               
                                       <!-- LEFT -->
@@ -665,6 +665,8 @@ require_once '../includes/functions.php';
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+
 
 </body>
 </html>
