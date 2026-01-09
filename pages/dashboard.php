@@ -856,6 +856,9 @@
   <!-- Days -->
   <div id="calendar-days" class="calendar-days"></div>
 
+  <hr>
+  
+
 </div>
 
 
