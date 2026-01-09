@@ -622,16 +622,7 @@ $engagements = getAllEngagements($conn);
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <?php
-// Generate a single random RGB color
-$red = rand(50, 250);
-$green = rand(50, 250);
-$blue = rand(50, 250);
-
-// Fill arrays with the same color
-$colors = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,0.2)");
-$borders = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,1)");
-?>
+  
 
 
  <script>
@@ -761,6 +752,17 @@ document.addEventListener('DOMContentLoaded', () => {
     renderManagerChart();
 });
 </script>
+
+<?php
+// Generate a single random RGB color
+$red = rand(50, 250);
+$green = rand(50, 250);
+$blue = rand(50, 250);
+
+// Fill arrays with the same color
+$colors = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,0.2)");
+$borders = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,1)");
+?>
 
 
 
