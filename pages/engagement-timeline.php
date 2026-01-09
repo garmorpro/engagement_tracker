@@ -10,7 +10,7 @@ require_once '../includes/functions.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List - Engagement Tracker</title>
+    <title>Timeline - Engagement Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -32,10 +32,10 @@ require_once '../includes/functions.php';
             <a class="btn btn-sm me-2 tab-btn" href="dashboard.php">
               <i class="bi bi-grid"></i> Board
             </a>
-            <a class="btn btn-sm me-2 tab-btn active" href="engagement-list.php">
+            <a class="btn btn-sm me-2 tab-btn" href="engagement-list.php">
               <i class="bi bi-list-ul"></i> List
             </a>
-            <a class="btn btn-sm me-2 tab-btn" href="engagement-timeline.php">
+            <a class="btn btn-sm me-2 tab-btn active" href="engagement-timeline.php">
               <i class="bi bi-calendar2"></i> Timeline
             </a>
             <a class="btn btn-sm tab-btn" href="engagement-analytics.php">
@@ -173,62 +173,63 @@ require_once '../includes/functions.php';
           </div>
     <!-- end search bar -->
 
+   
 
-    <!-- table -->
-        <?php
-          $engagements = getAllEngagements($conn);
-          $totalEngagements = count($engagements);
-          ?>
-          
-          <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
-              Showing <?php echo $totalEngagements; ?> of <?php echo $totalEngagements; ?> engagements
-                                  
-              <div class="table-wrapper mt-3">
-                  <table class="table align-middle mb-0">
-                      <thead>
-                          <tr style="background-color: rgb(236,236,240) !important;">
-                              <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
-                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
-                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
-                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
-                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
-                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
-                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-                          <?php foreach ($engagements as $eng): ?>
-                              <tr>
-                                  <td><?php echo htmlspecialchars($eng['eng_idno']); ?></td>
-                                  <td>
-                                      <strong><?php echo htmlspecialchars($eng['eng_name']); ?></strong><br>
-                                      <?php if (!empty($eng['eng_audit_type'])): ?>
-                                          <span class="text-secondary" style="font-size: 12px;"><?php echo htmlspecialchars($eng['eng_audit_type']); ?></span>
-                                      <?php endif; ?>
-                                  </td>
-                                  <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
-                                  <td><?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?></td>
-                                  <td><?php echo htmlspecialchars($eng['eng_period']); ?></td>
-                                  <td>
-                                      <?php
-                                          if (!empty($eng['eng_draft_due'])) {
-                                              echo date('Y-m-d', strtotime($eng['eng_draft_due']));
-                                          }
-                                      ?>
-                                  </td>
-                                  <td><i class="bi bi-trash"></i></td>
-                              </tr>
-                          <?php endforeach; ?>
-                      </tbody>
-                  </table>
-              </div>
+    <!-- Calendar -->
+        <div class="calendar mt-4" style="margin-left: 210px; margin-right: 210px;">
+
+          <div class="calendar-header">
+            <h5 id="calendar-title"></h5>
+            <div class="calendar-nav">
+              <button id="prevMonth" class="nav-btn">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button id="nextMonth" class="nav-btn">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
           </div>
 
+          <!-- Weekdays -->
+          <div class="calendar-weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+          </div>
 
+          <!-- Days -->
+          <div id="calendar-days" class="calendar-days"></div>
 
+          <hr>
 
+          <div class="table-key" style="display: flex; gap: 20px; align-items: center;">
+            <div class="final_due" style="display: flex; align-items: center; gap: 5px;">
+              <span style="display:inline-block; width:10px; height:10px; background-color: rgba(55, 182, 38, 1); border-radius: 3px;"></span>
+              Final Due
+            </div>
+            <div class="draft_due" style="display: flex; align-items: center; gap: 5px;">
+              <span style="display:inline-block; width:10px; height:10px; background-color: rgba(195, 119, 38, 1); border-radius: 3px;"></span>
+              Draft Due
+            </div>
+            <div class="fieldwork_start" style="display: flex; align-items: center; gap: 5px;">
+              <span style="display:inline-block; width:10px; height:10px; background-color: rgba(41, 133, 193, 1); border-radius: 3px;"></span>
+              Fieldwork Start
+            </div>
+            <div class="planning_call" style="display: flex; align-items: center; gap: 5px;">
+              <span style="display:inline-block; width:10px; height:10px; background-color: rgba(131, 38, 193, 1); border-radius: 3px;"></span>
+              Planning Call
+            </div>
+          </div>
         </div>
-    <!-- end table -->
+    <!-- end calendar -->
+
+
+
+
 
 
     <div class="mt-5"></div>
@@ -237,6 +238,117 @@ require_once '../includes/functions.php';
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+const engagements = [
+<?php foreach ($engagements as $index => $eng): ?>
+{
+    id: <?php echo $eng['eng_id']; ?>,
+    name: "<?php echo addslashes($eng['eng_name']); ?>",
+    planningCall: "<?php echo $eng['eng_client_planning_call']; ?>",
+    fieldworkStart: "<?php echo $eng['eng_fieldwork']; ?>",
+    draftDue: "<?php echo $eng['eng_draft_due']; ?>",
+    finalDue: "<?php echo $eng['eng_final_due']; ?>"
+}<?php echo ($index < count($engagements) - 1) ? ',' : ''; ?>
+<?php endforeach; ?>
+];
+
+let currentDate = new Date();
+
+function renderCalendar() {
+    const daysContainer = document.getElementById("calendar-days");
+    if (!daysContainer) return;
+
+    daysContainer.innerHTML = "";
+
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+
+    document.getElementById("calendar-title").textContent =
+        currentDate.toLocaleString("default", { month: "long", year: "numeric" });
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const todayStr = new Date().toISOString().split("T")[0];
+
+    // Empty placeholders
+    for (let i = 0; i < firstDay; i++) {
+        daysContainer.appendChild(document.createElement("div"));
+    }
+
+    // Generate each day
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayEl = document.createElement("div");
+        dayEl.className = "calendar-day";
+
+        const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+
+        if (dateStr === todayStr) {
+            dayEl.classList.add("today");
+        }
+
+        dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
+
+        // Add engagements
+        engagements.forEach(e => {
+            const eventMap = [
+                { date: e.planningCall, type: "Planning Call" },
+                { date: e.fieldworkStart, type: "Fieldwork Start" },
+                { date: e.draftDue, type: "Draft Due" },
+                { date: e.finalDue, type: "Final Due" }
+            ];
+
+            eventMap.forEach(ev => {
+                if (ev.date === dateStr) {
+                    const eventEl = document.createElement("div");
+                    const typeClassMap = {
+                        "Planning Call": "planning_call",
+                        "Fieldwork Start": "fieldwork_start",
+                        "Draft Due": "draft_due",
+                        "Final Due": "final_due"
+                    };
+                    eventEl.className = `event ${typeClassMap[ev.type]}`;
+                    eventEl.textContent = `${e.name} (${ev.type})`;
+                    dayEl.appendChild(eventEl);
+                }
+            });
+        });
+
+        daysContainer.appendChild(dayEl);
+    }
+}
+
+// Month navigation
+document.getElementById("prevMonth").onclick = () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+};
+document.getElementById("nextMonth").onclick = () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+};
+
+// Show/hide calendar based on active tab
+const calendarContainer = document.querySelector(".calendar");
+document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
+    tabBtn.addEventListener('shown.bs.tab', (e) => {
+        const target = e.target.getAttribute('data-bs-target');
+        if (target === '#content-timeline') {
+            calendarContainer.style.display = "block"; // show
+            renderCalendar(); // render when tab is active
+        } else {
+            calendarContainer.style.display = "none"; // hide on other tabs
+        }
+    });
+});
+
+// Hide calendar by default if timeline tab is not active
+if (!document.querySelector('#content-timeline').classList.contains('active')) {
+    calendarContainer.style.display = "none";
+}
+</script>
+
 
 
 </body>
