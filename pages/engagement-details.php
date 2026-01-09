@@ -87,7 +87,7 @@ require_once '../includes/functions.php';
     <!-- end top buttons -->
 
   <!-- upper bay -->
-    <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
+    <div class="row g-4" style="margin-left: 200px; margin-right: 200px;">
 
       <div class="col-md-12">
         <div class="card h-100"
