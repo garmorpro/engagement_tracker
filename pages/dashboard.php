@@ -46,7 +46,7 @@
       color: #6c757d;
       margin-top: 2px;
     }
-    .tab-btn.active {
+    .header-inner.tab-btn.active {
         background-color: white;
         border: none !important;
     }
