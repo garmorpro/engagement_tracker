@@ -764,7 +764,7 @@ require_once '../includes/functions.php';
 
       <!-- status updates -->
   
-          <div class="row g-4 mt-3" style="margin-left: 200px; margin-right: 200px;">
+          <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
   
               <!-- Overdue -->
               <div class="col-md-3">
