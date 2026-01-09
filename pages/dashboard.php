@@ -768,7 +768,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show placeholder if no cards
         const placeholder = column.querySelector('.empty-placeholder');
-        if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
+        if (count === 0) {
+    placeholder.classList.add('show');
+} else {
+    placeholder.classList.remove('show');
+}
     };
 
     const applyLayoutStyles = (card, status) => {

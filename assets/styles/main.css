@@ -506,3 +506,15 @@ body {
     margin-bottom: 15px;
     transition: background-color 0.2s ease, border 0.2s ease;
 }
+
+
+.empty-placeholder {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.empty-placeholder.show {
+    display: block;
+    opacity: 1;
+}
