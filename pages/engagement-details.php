@@ -170,10 +170,13 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <span class="badge text-bg-secondary"><?php echo htmlspecialchars($eng['eng_idno']); ?></span>
 
               <!-- Status -->
-              <span class="badge rounded-pill" 
-                    style="background-color: <?php echo $pillColor; ?>; color: white;">
-                <?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?>
+              <span class="badge rounded-pill" style="background-color: <?php echo $pillColor; ?>; color: white;">
+                <?php 
+                  // Replace '-' with ' ' and capitalize each word
+                  echo htmlspecialchars(ucwords(str_replace('-', ' ', $eng['eng_status']))); 
+                ?>
               </span>
+
 
               <!-- Overdue badge -->
               <?php
