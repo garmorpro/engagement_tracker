@@ -252,7 +252,7 @@ require_once '../includes/functions.php';
           <i class="bi bi-download" style="color: rgb(75,85,99);"></i>
         </div>
 
-        <span class="badge bg-secondary bg-opacity-25 text-secondary">
+        <span class="badge bg-secondary bg-opacity-25 text-secondary float-end">
           Coming Soon
         </span>
       </div>
