@@ -302,7 +302,7 @@ require_once '../includes/functions.php';
                                     // Format date
                                     $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d, Y', strtotime($eng['eng_fieldwork'])) : '';
                             ?>
-                                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
+                                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block" style="cursor: move;">
 
                                   <div class="card engagement-card-kanban mb-2"
                                        style="background-color: rgb(249,250,251);
