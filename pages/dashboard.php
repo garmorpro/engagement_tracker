@@ -272,6 +272,75 @@
 .event.draft { background: #f97316; }
 .event.fieldwork { background: #3b82f6; }
 .event.planning { background: #a855f7; }
+.calendar-container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  min-height: 110px;
+  border-radius: 12px;
+  padding: 8px;
+  background: #f9fafb;
+  position: relative;
+}
+
+.calendar-day-number {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.calendar-day.today {
+  border: 2px solid #2563eb;
+  background: #eff6ff;
+}
+
+/* Events */
+.event {
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.final-due {
+  background-color: #dc2626;
+}
+
+.draft-due {
+  background-color: #2563eb;
+}
 
 
   </style>
