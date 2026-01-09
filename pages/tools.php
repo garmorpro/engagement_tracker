@@ -177,7 +177,7 @@ require_once '../includes/functions.php';
   <!-- status updates -->
     <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
 
-    <h5>
+    <h5 class="" style="margin-bottom: -15px;">
       test
     </h5>
 
