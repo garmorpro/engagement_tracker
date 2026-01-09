@@ -842,8 +842,6 @@
     </div>
   </div>
 
-  <hr>
-
   <!-- Weekdays -->
   <div class="calendar-weekdays">
     <div>Sun</div>
@@ -858,6 +856,23 @@
   <!-- Days -->
   <div id="calendar-days" class="calendar-days"></div>
 
+  <hr>
+
+  <div class="table-key">
+    <div class="final-due">
+      <span style="height:5px;width:5px; background-color: rgba(22, 79, 15, 1)"></span> Final Due
+    </div>
+    <div class="draft-due">
+      <span style="height:5px;width:5px; background-color: rgba(79, 48, 15, 1)"></span> Draft Due
+    </div>
+    <div class="draft-due">
+      <span style="height:5px;width:5px; background-color: rgba(15, 53, 79, 1)"></span> Fieldwork Start
+    </div>
+    <div class="draft-due">
+      <span style="height:5px;width:5px; background-color: rgba(74, 15, 79, 1)"></span> Planning Call
+    </div>
+  </div>
+  
 
 </div>
 
