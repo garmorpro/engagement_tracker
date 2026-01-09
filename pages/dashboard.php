@@ -70,6 +70,7 @@
     .menu-btn {
       background-color: rgb(241,242,245);
       border-radius: 10px;
+      padding: 5px;
     }
     .new-btn:hover {
         background-color: rgba(15, 62, 69, 0.9);
