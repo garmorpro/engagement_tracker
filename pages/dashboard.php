@@ -584,44 +584,44 @@
       <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
         Showing 6 of 6 engagements
 
-        <div class="table-wrapper">
-  <table class="table table-hover align-middle mb-0">
-    <thead>
-      <tr style="background-color: rgb(236,236,240) !important;">
-        <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
-        <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
-        <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
-        <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
-        <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
-        <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
-        <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>ENG-2024-001</td>
-        <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
-        <td>John Smith</td>
-        <td>In Progress</td>
-        <td>FY 2024</td>
-        <td>2025-02-01</td>
-        <td><i class="bi bi-trash"></i></td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td>John</td>
-        <td>Doe</td>
-        <td>@social</td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+        <div class="table-wrapper mt-3">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr style="background-color: rgb(236,236,240) !important;">
+                <th class="text-uppercase" style="font-size: 14px;" scope="col">ID</th>
+                <th class="text-uppercase" style="font-size: 14px;" scope="col">Engagement Name</th>
+                <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
+                <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
+                <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
+                <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
+                <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ENG-2024-001</td>
+                <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
+                <td>John Smith</td>
+                <td>In Progress</td>
+                <td>FY 2024</td>
+                <td>2025-02-01</td>
+                <td><i class="bi bi-trash"></i></td>
+              </tr>
+              <tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+              </tr>
+              <tr>
+                <th scope="row">3</th>
+                <td>John</td>
+                <td>Doe</td>
+                <td>@social</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
 
 
