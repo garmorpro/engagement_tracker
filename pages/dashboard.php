@@ -177,7 +177,7 @@ require_once '../includes/functions.php';
   
           <!-- Row 1 -->
             <div class="row align-items-center" style="margin-top: 20px; margin-left: 210px; margin-right: 210px;">
-                <div class="card" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
+                <div class="card kanban-column" data-status="on-hold" style="border-radius: 15px; border: 2px solid rgb(208,213,219); background-color: rgb(247,248,250) !important;">
                     <div class="card-body">
                         <!-- <h5 class="card-title">Card title</h5> -->
                         <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
@@ -270,7 +270,7 @@ require_once '../includes/functions.php';
               <!-- Column 1 -->
                 <div class="col-md-4">
   
-                  <div class="card" style="border-radius: 15px; border: 2px solid rgb(154,196,254); background-color: rgb(233,241,254) !important;">
+                  <div class="card kanban-column" data-status="planning" style="border-radius: 15px; border: 2px solid rgb(154,196,254); background-color: rgb(233,241,254) !important;">
                     <div class="card-body">
                         <!-- <h5 class="card-title">Card title</h5> -->
                         <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
