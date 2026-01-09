@@ -53,36 +53,78 @@ require_once '../includes/functions.php';
 
   <div class="mt-4"></div>
 
-  <div style="margin-left: 200px; margin-right: 200px;">
-  <div class="d-flex justify-content-between align-items-center">
-    
-    <!-- Left: Back link -->
-    <div class="left">
-      <a href="dashboard.php" class="back-link text-decoration-none">
-        <div class="d-flex align-items-center mb-3 back-link-inner">
-          <div class="icon-square me-2 d-flex align-items-center justify-content-center">
-            <i class="bi bi-arrow-left"></i>
+    <!-- top buttons -->
+      <div style="margin-left: 200px; margin-right: 200px;">
+        <div class="d-flex justify-content-between align-items-center">
+  
+          <!-- Left: Back link -->
+          <div class="left">
+            <a href="dashboard.php" class="back-link text-decoration-none">
+              <div class="d-flex align-items-center mb-3 back-link-inner">
+                <div class="icon-square me-2 d-flex align-items-center justify-content-center">
+                  <i class="bi bi-arrow-left"></i>
+                </div>
+                <p class="mb-0">Back to Dashboard</p>
+              </div>
+            </a>
           </div>
-          <p class="mb-0">Back to Dashboard</p>
+  
+          <!-- Right: Edit & Delete buttons -->
+          <div class="right">
+            <!-- Edit button -->
+            <button class="btn btn-edit me-2">
+              <i class="bi bi-pencil-square me-1"></i> Edit
+            </button>
+  
+            <!-- Delete button -->
+            <button class="btn btn-delete">
+              <i class="bi bi-trash me-1"></i> Delete
+            </button>
+          </div>
+  
         </div>
-      </a>
+      </div>
+    <!-- end top buttons -->
+
+  <!-- upper bay -->
+    <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
+
+      <div class="col-md-12">
+        <div class="card h-100"
+             style="border-radius: 15px; border: 1px solid rgb(187,219,253); background-color: rgb(238,246,254);">
+          <div class="card-body p-4">
+
+            <div class="d-flex align-items-start">
+
+              <!-- Icon -->
+              <div class="icon-square d-flex align-items-center justify-content-center me-3"
+                   style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(33,128,255); flex-shrink: 0;">
+                <i class="bi bi-tools" style="color: rgb(255,255,255);"></i>
+              </div>
+
+              <!-- Text Content -->
+              <div>
+                <div class="fw-bold" style="font-size: 14px; color: rgb(27,58,139);">
+                  More Tools Coming Soon
+                </div>
+
+                <div class="mt-1"
+                     style="font-size: 14px; color: rgb(52,83,189);">
+                  We're actively developing new tools to help streamline your audit engagement workflow.
+                  Check back regularly for updates and new features!
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+
     </div>
+  <!-- end upper bay -->
 
-    <!-- Right: Edit & Delete buttons -->
-    <div class="right">
-      <!-- Edit button -->
-      <button class="btn btn-edit me-2">
-        <i class="bi bi-pencil-square me-1"></i> Edit
-      </button>
-
-      <!-- Delete button -->
-      <button class="btn btn-delete">
-        <i class="bi bi-trash me-1"></i> Delete
-      </button>
-    </div>
-
-  </div>
-</div>
 
 
 
