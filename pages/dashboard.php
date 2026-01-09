@@ -1078,51 +1078,75 @@ require_once '../includes/functions.php';
       
       <!-- end status updates -->
 
-      <!-- status updates -->
+      <!-- analytic charts -->
   
           <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
   
               <!-- Status Distribution -->
-<div class="col-md-6">
-  <div class="card h-100" style="border-color: rgb(229,231,235); border-radius: 15px;">
-    <div class="card-body p-4 d-flex flex-column align-items-center">
-
-      <!-- Header -->
-      <div class="d-flex align-items-center mb-3 w-100">
-        <h6 class="fw-semibold mb-0">Status Distribution</h6>
-      </div>
-
-      <!-- Chart container centered -->
-      <div style="width: 400px; height: 400px; display: flex; justify-content: center; align-items: center;">
-        <canvas id="status_distribution"></canvas>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- Manager Workload -->
-<div class="col-md-6">
-  <div class="card h-100" style="border-color: rgb(229,231,235); border-radius: 15px;">
-    <div class="card-body p-4 d-flex flex-column align-items-center">
-
-      <div class="d-flex align-items-center mb-3 w-100">
-        <h6 class="fw-semibold mb-0">Manager Workload</h6>
-      </div>
-
-      <div style="width: 400px; height: 400px; display: flex; justify-content: center; align-items: center;">
-        <canvas id="manager_workload"></canvas>
-      </div>
-
-    </div>
-  </div>
-</div>
+              <div class="col-md-6">
+                <div class="card h-100" style="border-color: rgb(229,231,235); border-radius: 15px;">
+                  <div class="card-body p-4 d-flex flex-column align-items-center">
+                                                    
+                    <!-- Header -->
+                    <div class="d-flex align-items-center mb-3 w-100">
+                      <h6 class="fw-semibold mb-0">Status Distribution</h6>
+                    </div>
+                                                    
+                    <!-- Chart container centered -->
+                    <div style="width: 400px; height: 400px; display: flex; justify-content: center; align-items: center;">
+                      <canvas id="status_distribution"></canvas>
+                    </div>
+                                                    
+                  </div>
+                </div>
+              </div>
+                                                    
+              <!-- Manager Workload -->
+              <div class="col-md-6">
+                <div class="card h-100" style="border-color: rgb(229,231,235); border-radius: 15px;">
+                  <div class="card-body p-4 d-flex flex-column align-items-center">
+                                                    
+                    <div class="d-flex align-items-center mb-3 w-100">
+                      <h6 class="fw-semibold mb-0">Manager Workload</h6>
+                    </div>
+                                                    
+                    <div style="width: 400px; height: 400px; display: flex; justify-content: center; align-items: center;">
+                      <canvas id="manager_workload"></canvas>
+                    </div>
+                                                    
+                  </div>
+                </div>
+              </div>
 
 
   
           </div>
       
-      <!-- end status updates -->
+      <!-- end analytic charts -->
+
+            <!-- analytic charts -->
+  
+          <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
+  
+              <!-- Status Distribution -->
+              <div class="col-md-12">
+                <div class="card h-100" style="border-color: rgb(229,231,235); border-radius: 15px;">
+                  <div class="card-body p-4 d-flex flex-column align-items-center">
+                                                    
+                    <!-- Header -->
+                    <div class="d-flex align-items-center mb-3 w-100">
+                      <h6 class="fw-semibold mb-0">Audit Type Breakdown</h6>
+                    </div>
+                                                    
+                
+                                                    
+                  </div>
+                </div>
+              </div>
+  
+          </div>
+      
+      <!-- end analytic charts -->
     
     </div>
 
