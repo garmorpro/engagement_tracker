@@ -471,7 +471,7 @@ require_once '../includes/functions.php';
                                 endforeach;
                             else:
                             ?>
-                                <div class="text-center text-muted py-4" style="border: 1px dashed rgb(208,213,219); border-radius: 15px;">
+                                <div class="text-center text-muted py-4 empty-placeholder" style="border: 1px dashed rgb(208,213,219); border-radius: 15px;">
                                     Drop engagements here
                                 </div>
                             <?php
