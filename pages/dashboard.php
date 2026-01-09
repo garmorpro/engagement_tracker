@@ -1236,13 +1236,10 @@ function renderManagerChart() {
     // Generate multi-color bars
     const colors = <?php echo json_encode($colors); ?>;
     const borders = <?php echo json_encode($borders); ?>;
-    // const colors = <?php //echo json_encode(array_map(function() {
-    //     return 'rgba(' . rand(50, 250) . ',' . rand(50, 250) . ',' . rand(50, 250) . ',0.8)';
-    // }, $managerLabels)); ?>;
 
-    // const borders = <?php //echo json_encode(array_map(function() {
-    //     return 'rgba(' . rand(50, 250) . ',' . rand(50, 250) . ',' . rand(50, 250) . ',1)';
-    // }, $managerLabels)); ?>;
+    // Find max value in the data
+    const dataValues = <?php echo json_encode($managerData); ?>;
+    const maxValue = Math.max(...dataValues);
 
     managerChart = new Chart(ctx, {
         type: 'bar',
@@ -1250,10 +1247,11 @@ function renderManagerChart() {
             labels: <?php echo json_encode($managerLabels); ?>,
             datasets: [{
                 label: 'Active Engagements',
-                data: <?php echo json_encode($managerData); ?>,
+                data: dataValues,
                 backgroundColor: colors,
                 borderColor: borders,
-                borderWidth: 1
+                borderWidth: 1,
+                borderRadius: { topLeft: 15, topRight: 15 } // top two corners rounded
             }]
         },
         options: {
@@ -1263,11 +1261,16 @@ function renderManagerChart() {
                 tooltip: { enabled: true }
             },
             scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                y: { 
+                    beginAtZero: true, 
+                    max: maxValue + 2, // top value + 2
+                    ticks: { stepSize: 1 } 
+                }
             }
         }
     });
 }
+
 
 // ----------------- Only render charts when Analytics tab is active -----------------
 document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
