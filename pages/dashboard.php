@@ -143,6 +143,7 @@
   border-radius: 12px;
   overflow: hidden;   /* CRITICAL for rounded corners */
   background: #fff;
+  padding: 5px 15px;
 }
 
 .table-wrapper thead th {
