@@ -1180,12 +1180,12 @@ function renderCalendar() {
 // Navigation buttons
 document.getElementById("prevMonth").onclick = () => {
     currentDate.setMonth(currentDate.getMonth() - 1);
-    renderCalendar();
+    // renderCalendar();
 };
 
 document.getElementById("nextMonth").onclick = () => {
     currentDate.setMonth(currentDate.getMonth() + 1);
-    renderCalendar();
+    // renderCalendar();
 };
 
 // renderCalendar();
