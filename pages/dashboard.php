@@ -1109,10 +1109,8 @@ const engagements = [
 <?php endforeach; ?>
 ];
 
-// Track current month for calendar
 let currentDate = new Date();
 
-// Calendar rendering function
 function renderCalendar() {
     const daysContainer = document.getElementById("calendar-days");
     if (!daysContainer) return;
@@ -1147,7 +1145,7 @@ function renderCalendar() {
 
         dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
 
-        // Add engagements to the day
+        // Add engagements
         engagements.forEach(e => {
             const eventMap = [
                 { date: e.planningCall, type: "Planning Call" },
@@ -1159,17 +1157,14 @@ function renderCalendar() {
             eventMap.forEach(ev => {
                 if (ev.date === dateStr) {
                     const eventEl = document.createElement("div");
-
                     const typeClassMap = {
                         "Planning Call": "planning_call",
                         "Fieldwork Start": "fieldwork_start",
                         "Draft Due": "draft_due",
                         "Final Due": "final_due"
                     };
-
                     eventEl.className = `event ${typeClassMap[ev.type]}`;
                     eventEl.textContent = `${e.name} (${ev.type})`;
-
                     dayEl.appendChild(eventEl);
                 }
             });
@@ -1189,18 +1184,26 @@ document.getElementById("nextMonth").onclick = () => {
     renderCalendar();
 };
 
-// ONLY render when timeline tab is shown
+// Show/hide calendar based on active tab
+const calendarContainer = document.querySelector(".calendar");
 document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
     tabBtn.addEventListener('shown.bs.tab', (e) => {
-        if (e.target.getAttribute('data-bs-target') === '#content-timeline') {
-            renderCalendar();
+        const target = e.target.getAttribute('data-bs-target');
+        if (target === '#content-timeline') {
+            calendarContainer.style.display = "block"; // show
+            renderCalendar(); // render when tab is active
+        } else {
+            calendarContainer.style.display = "none"; // hide on other tabs
         }
     });
 });
 
-// REMOVE any initial renderCalendar() call at the bottom!
-// renderCalendar();  <-- DO NOT CALL THIS here
+// Hide calendar by default if timeline tab is not active
+if (!document.querySelector('#content-timeline').classList.contains('active')) {
+    calendarContainer.style.display = "none";
+}
 </script>
+
 
 
 </body>
