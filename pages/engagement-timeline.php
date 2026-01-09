@@ -234,19 +234,20 @@ require_once '../includes/functions.php';
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 
+  
+
+
 <script>
-const engagements = [
-<?php foreach ($engagements as $index => $eng): ?>
-{
-    id: <?php echo $eng['eng_id']; ?>,
-    name: "<?php echo addslashes($eng['eng_name']); ?>",
-    planningCall: "<?php echo $eng['eng_client_planning_call']; ?>",
-    fieldworkStart: "<?php echo $eng['eng_fieldwork']; ?>",
-    draftDue: "<?php echo $eng['eng_draft_due']; ?>",
-    finalDue: "<?php echo $eng['eng_final_due']; ?>"
-}<?php echo ($index < count($engagements) - 1) ? ',' : ''; ?>
-<?php endforeach; ?>
-];
+const engagements = <?php echo json_encode(array_map(function($eng) {
+    return [
+        'id' => $eng['eng_id'],
+        'name' => $eng['eng_name'],
+        'planningCall' => date('Y-m-d', strtotime($eng['eng_client_planning_call'])),
+        'fieldworkStart' => date('Y-m-d', strtotime($eng['eng_fieldwork'])),
+        'draftDue' => date('Y-m-d', strtotime($eng['eng_draft_due'])),
+        'finalDue' => date('Y-m-d', strtotime($eng['eng_final_due']))
+    ];
+}, $engagements)); ?>;
 
 let currentDate = new Date();
 
