@@ -1093,7 +1093,9 @@ require_once '../includes/functions.php';
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script>
+  
+
+<script>
 const engagements = [
 <?php foreach ($engagements as $index => $eng): ?>
 {
@@ -1110,12 +1112,10 @@ const engagements = [
 // Track current month for calendar
 let currentDate = new Date();
 
-// Flag so we only render once
-let calendarRendered = false;
-
+// Calendar rendering function
 function renderCalendar() {
     const daysContainer = document.getElementById("calendar-days");
-    if (!daysContainer) return; // safety check
+    if (!daysContainer) return;
 
     daysContainer.innerHTML = "";
 
@@ -1129,11 +1129,12 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const todayStr = new Date().toISOString().split("T")[0];
 
-    // placeholders for empty days
+    // Empty placeholders
     for (let i = 0; i < firstDay; i++) {
         daysContainer.appendChild(document.createElement("div"));
     }
 
+    // Generate each day
     for (let day = 1; day <= daysInMonth; day++) {
         const dayEl = document.createElement("div");
         dayEl.className = "calendar-day";
@@ -1146,6 +1147,7 @@ function renderCalendar() {
 
         dayEl.innerHTML = `<div class="calendar-day-number">${day}</div>`;
 
+        // Add engagements to the day
         engagements.forEach(e => {
             const eventMap = [
                 { date: e.planningCall, type: "Planning Call" },
@@ -1187,23 +1189,17 @@ document.getElementById("nextMonth").onclick = () => {
     renderCalendar();
 };
 
-// Bootstrap tab event: only render calendar when the tab becomes visible
+// ONLY render when timeline tab is shown
 document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tabBtn => {
     tabBtn.addEventListener('shown.bs.tab', (e) => {
         if (e.target.getAttribute('data-bs-target') === '#content-timeline') {
-            if (!calendarRendered) {
-                renderCalendar();
-                calendarRendered = true;
-            }
+            renderCalendar();
         }
     });
 });
 
-// Optional: if the calendar tab is active on page load, render immediately
-if (document.querySelector('#content-timeline').classList.contains('show')) {
-    renderCalendar();
-    calendarRendered = true;
-}
+// REMOVE any initial renderCalendar() call at the bottom!
+// renderCalendar();  <-- DO NOT CALL THIS here
 </script>
 
 
