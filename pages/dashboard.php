@@ -157,11 +157,6 @@
   padding: 15px 15px;
 }
 
-.table-wrapper table.table-hover tbody tr:hover > td,
-.table-wrapper table.table-hover tbody tr:hover > th {
-  background-color: rgba(235, 235, 235, 1) !important;
-}
-
   </style>
 </head>
 <body>
@@ -613,16 +608,22 @@
                 <td><i class="bi bi-trash"></i></td>
               </tr>
               <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
+                <td>ENG-2024-001</td>
+                <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
+                <td>John Smith</td>
+                <td>In Progress</td>
+                <td>FY 2024</td>
+                <td>2025-02-01</td>
+                <td><i class="bi bi-trash"></i></td>
               </tr>
               <tr>
-                <th scope="row">3</th>
-                <td>John</td>
-                <td>Doe</td>
-                <td>@social</td>
+                <td>ENG-2024-001</td>
+                <td><strong>Acme Corporation Audit</strong><br><span class="text-secondary" style="font-size: 12px;">SOC 2 Type 2</span></td>
+                <td>John Smith</td>
+                <td>In Progress</td>
+                <td>FY 2024</td>
+                <td>2025-02-01</td>
+                <td><i class="bi bi-trash"></i></td>
               </tr>
             </tbody>
           </table>
