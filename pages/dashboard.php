@@ -694,7 +694,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let draggedCard = null;
 
-    // Start dragging
     cards.forEach(card => {
         card.addEventListener('dragstart', e => {
             draggedCard = card;
@@ -702,20 +701,19 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.opacity = '0.5';
         });
 
-        card.addEventListener('dragend', e => {
+        card.addEventListener('dragend', () => {
             draggedCard = null;
             card.style.opacity = '1';
         });
     });
 
-    // Allow drop
     columns.forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
             column.classList.add('drag-over');
         });
 
-        column.addEventListener('dragleave', e => {
+        column.addEventListener('dragleave', () => {
             column.classList.remove('drag-over');
         });
 
@@ -723,29 +721,31 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             column.classList.remove('drag-over');
 
-            if (draggedCard) {
-                // Move card visually
-                column.appendChild(draggedCard);
+            if (!draggedCard) return;
 
-                // Send AJAX to update database
-                const engId = draggedCard.dataset.id;
-                const newStatus = column.dataset.status;
+            // Move visually
+            column.querySelector('.card-body')?.appendChild(draggedCard);
 
-                fetch('../includes/update-engagement-status.php', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({eng_id: engId, status: newStatus})
+            const engId = draggedCard.dataset.id;
+            const newStatus = column.dataset.status;
+
+            console.log('Updating:', { engId, newStatus });
+
+            fetch('../includes/update-engagement-status.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    eng_id: engId,
+                    status: newStatus
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if(data.success){
-                        console.log(`Engagement ${engId} updated to ${newStatus}`);
-                    } else {
-                        console.error('Failed to update status');
-                    }
-                })
-                .catch(err => console.error('Error updating status:', err));
-            }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('DB update failed:', data.message);
+                }
+            })
+            .catch(err => console.error('Fetch error:', err));
         });
     });
 });
