@@ -246,38 +246,66 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
     <div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
 
       <div class="col-md-3">
-        <div class="card h-100"
-             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+        <div class="card h-100" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
           <div class="card-body p-4">
-                
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
+                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+              </div>
+              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trusted Security Criteria</h6>
+            </div>
+            
           </div>
         </div>
       </div>
 
       <div class="col-md-3">
-        <div class="card h-100"
-             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+        <div class="card h-100" style="border-color: rgb(241,225,254); border-radius: 15px; background-color: rgb(248,239,254);">
           <div class="card-body p-4">
-                
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-square me-2" style="background-color: rgb(181,72,255);">
+                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+              </div>
+              <h6 class="fw-semibold mb-0" style="color: rgb(89,0,135);">Review Period/As of Date</h6>
+            </div>
+            
           </div>
         </div>
       </div>
+
       <div class="col-md-3">
-        <div class="card h-100"
-             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+        <div class="card h-100" style="border-color: rgb(203,250,224); border-radius: 15px; background-color: rgb(230,253,239);">
           <div class="card-body p-4">
-                
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-square me-2" style="background-color: rgb(0,201,92);">
+                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+              </div>
+              <h6 class="fw-semibold mb-0" style="color: rgb(0,66,0);">Final Due Date</h6>
+            </div>
+            
           </div>
         </div>
       </div>
+
       <div class="col-md-3">
-        <div class="card h-100"
-             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+        <div class="card h-100" style="border-color: rgb(255,228,201); border-radius: 15px; background-color: rgb(255,242,227);">
           <div class="card-body p-4">
-                
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-square me-2" style="background-color: rgb(255,103,0);">
+                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+              </div>
+              <h6 class="fw-semibold mb-0" style="color: rgb(98,0,0);">Last Contact</h6>
+            </div>
+            
           </div>
         </div>
       </div>
+
+      
 
 
 
