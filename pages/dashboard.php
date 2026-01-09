@@ -583,13 +583,13 @@
   <table class="table table-hover mb-0">
     <thead>
       <tr style="background-color: rgb(236,236,240) !important;">
-        <th scope="col">ID</th>
-        <th scope="col">Engagement Name</th>
-        <th scope="col">Manager</th>
-        <th scope="col">Status</th>
-        <th scope="col">Period</th>
-        <th scope="col">Draft Due</th>
-        <th scope="col">Actions</th>
+        <th class="text-uppercase" scope="col">ID</th>
+        <th class="text-uppercase" scope="col">Engagement Name</th>
+        <th class="text-uppercase" scope="col">Manager</th>
+        <th class="text-uppercase" scope="col">Status</th>
+        <th class="text-uppercase" scope="col">Period</th>
+        <th class="text-uppercase" scope="col">Draft Due</th>
+        <th class="text-uppercase" scope="col">Actions</th>
       </tr>
     </thead>
     <tbody>
