@@ -1127,24 +1127,71 @@ require_once '../includes/functions.php';
             <!-- analytic charts -->
   
           <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
-  
-              <!-- Status Distribution -->
-              <div class="col-md-12">
-                <div class="card h-100" style="border-color: rgb(229,231,235); border-radius: 15px;">
-                  <div class="card-body p-4 d-flex flex-column align-items-center">
-                                                    
-                    <!-- Header -->
-                    <div class="d-flex align-items-center mb-3 w-100">
-                      <h6 class="fw-semibold mb-0">Audit Type Breakdown</h6>
-                    </div>
-                                                    
-                
-                                                    
-                  </div>
+  <div class="col-md-12">
+    <div class="card h-100" style="border-color: rgb(229,231,235); border-radius: 15px;">
+      <div class="card-body p-4">
+        <!-- Header -->
+        <div class="d-flex align-items-center mb-3 w-100">
+          <h6 class="fw-semibold mb-0">Audit Type Breakdown</h6>
+        </div>
+
+        <!-- 4-column cards -->
+        <div class="row text-center mt-4">
+          <!-- Card 1 -->
+          <div class="col-md-3">
+            <div class="card border-0">
+              <div class="card-body d-flex flex-column align-items-center">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-weight: bold;">
+                  5
                 </div>
+                <div>SOC 2</div>
               </div>
-  
+            </div>
           </div>
+
+          <!-- Card 2 -->
+          <div class="col-md-3">
+            <div class="card border-0">
+              <div class="card-body d-flex flex-column align-items-center">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-weight: bold;">
+                  3
+                </div>
+                <div>SOC 1</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="col-md-3">
+            <div class="card border-0">
+              <div class="card-body d-flex flex-column align-items-center">
+                <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-weight: bold;">
+                  7
+                </div>
+                <div>PCI</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="col-md-3">
+            <div class="card border-0">
+              <div class="card-body d-flex flex-column align-items-center">
+                <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-weight: bold;">
+                  2
+                </div>
+                <div>Other</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End 4-column cards -->
+
+      </div>
+    </div>
+  </div>
+</div>
+
       
       <!-- end analytic charts -->
     
