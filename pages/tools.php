@@ -442,7 +442,7 @@ require_once '../includes/functions.php';
         </div>
 
         <h5 class="fw-semibold mb-0">
-          Team Management
+          Settings
         </h5>
       </div>
 
