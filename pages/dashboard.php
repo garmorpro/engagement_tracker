@@ -153,7 +153,7 @@
   padding: 15px 15px;
 }
 
-.table-wrapper thead td {
+.table-wrapper tbody td {
   padding: 15px 15px;
 }
 
