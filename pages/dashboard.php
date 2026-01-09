@@ -2,7 +2,27 @@
 // sessions_start();
 
 require_once '../includes/functions.php';
-require_once '../includes/update-engagement-status.php';
+// require_once '../includes/update-engagement-status.php';
+
+require 'db.php';
+
+$data = json_decode(file_get_contents('php://input'), true);
+
+if (!empty($data['eng_id']) && !empty($data['new_status'])) {
+    $eng_id = $data['eng_id'];
+    $new_status = $data['new_status'];
+
+    $stmt = $conn->prepare("UPDATE engagements SET eng_status = ? WHERE eng_idno = ?");
+    $stmt->bind_param("ss", $new_status, $eng_id);
+
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'eng_id' => $eng_id, 'new_status' => $new_status]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'DB execute failed', 'db_error' => $stmt->error]);
+    }
+} else {
+    echo json_encode(['success' => false, 'error' => 'Missing eng_id or new_status', 'raw_input' => $data]);
+}
 
 $engagements = getAllEngagements($conn);
 
@@ -598,8 +618,46 @@ $engagements = getAllEngagements($conn);
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-  <script src="../assets/js/sortable.js"></script>
+  <!-- <script src="../assets/js/sortable.js"></script> -->
 
+  <script>
+    const columns = document.querySelectorAll('.kanban-column .card-body');
+
+columns.forEach(column => {
+  new Sortable(column, {
+    group: 'kanban',               // allows moving between columns
+    animation: 150,
+    ghostClass: 'kanban-ghost',
+    handle: undefined,             // drag anywhere on the card
+    draggable: '.engagement-card-wrapper', // only move wrapper
+
+    onEnd: function(evt) {
+      const wrapper = evt.item;
+      const engId = wrapper.dataset.engId;
+      const newStatus = evt.to.closest('.kanban-column')?.dataset?.status;
+
+      console.log('Dragged wrapper:', wrapper);
+      console.log('Engagement ID:', engId);
+      console.log('New Status:', newStatus);
+
+      if (!engId || !newStatus) return;
+
+      fetch('includes/update-engagement-status.php', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({eng_id: engId, new_status: newStatus})
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log('Server response:', data);
+        if (!data.success) alert('Failed to update status.');
+      })
+      .catch(err => console.error('Fetch error:', err));
+    }
+  });
+});
+
+  </script>
 
 </body>
 </html>
