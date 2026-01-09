@@ -213,14 +213,13 @@ $engagements = getAllEngagements($conn);
 
       <?php
         $onHoldEngagements = array_filter($engagements, fn($e) => $e['eng_status']==='on-hold');
-        if(count($onHoldEngagements)>0):
+        if(count($onHoldEngagements) > 0):
           foreach($onHoldEngagements as $eng):
             $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d', strtotime($eng['eng_fieldwork'])) : '';
       ?>
         <div class="engagement-card-wrapper mb-2" data-eng-id="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
           <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
-            <div class="card engagement-card-kanban" 
-                 style="border-radius:15px; border:1px solid rgb(208,213,219); cursor: grab;">
+            <div class="card engagement-card-kanban" style="border-radius:15px; border:1px solid rgb(208,213,219); cursor: grab;">
 
               <div class="card-body d-flex justify-content-between align-items-center">
                 <div>
