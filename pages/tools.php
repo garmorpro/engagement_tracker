@@ -195,7 +195,7 @@ require_once '../includes/functions.php';
               Export Data
             </div>
             <!-- Description -->
-            <div class="text-secondary" style="font-size: 14px; color: rgb(137,146,158);">
+            <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
               Export engagements to CSV or Excel
             </div>
           </div>
