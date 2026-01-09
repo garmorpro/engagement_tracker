@@ -1154,25 +1154,20 @@ $statusCounts = [
     'Complete' => 0
 ];
 
-foreach ($engagements as $eng) {
-    $status = $eng['eng_status'];
-    if (isset($statusCounts[$status])) {
-        $statusCounts[$status]++;
+if (!empty($engagements)) {
+    foreach ($engagements as $eng) {
+        $status = $eng['eng_status'];
+        if (isset($statusCounts[$status])) {
+            $statusCounts[$status]++;
+        }
     }
 }
 ?>
 
 
-
   <script>
 const statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
-const statusData = [
-    <?php echo $statusCounts['On-Hold']; ?>,
-    <?php echo $statusCounts['Planning']; ?>,
-    <?php echo $statusCounts['In-Progress']; ?>,
-    <?php echo $statusCounts['In-Review']; ?>,
-    <?php echo $statusCounts['Complete']; ?>
-];
+const statusData = <?php echo json_encode(array_values($statusCounts)); ?>;
 
 const ctx = document.getElementById('status_distribution').getContext('2d');
 
@@ -1213,6 +1208,7 @@ const myDoughnutChart = new Chart(ctx, {
     }
 });
 </script>
+
 
 
 
