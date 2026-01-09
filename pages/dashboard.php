@@ -560,8 +560,8 @@
 
     </div>
 
-    <div class="tab-pane fade mt-2" id="content-list" role="tabpanel">
-      <div style="margin-left: 210px; margin-right: 210px;">
+    <div class="tab-pane fade" id="content-list" role="tabpanel">
+      <div class="mt-2" style="margin-left: 210px; margin-right: 210px;">
         Showing 6 of 6 engagements
       </div>
       
