@@ -691,6 +691,7 @@ require_once '../includes/functions.php';
 document.addEventListener('DOMContentLoaded', () => {
     let draggedCardWrapper = null;
 
+    // Map column status to layout type
     const layoutMap = {
         'on-hold': 'horizontal',
         'planning': 'vertical',
@@ -699,20 +700,24 @@ document.addEventListener('DOMContentLoaded', () => {
         'complete': 'vertical'
     };
 
+    // Update badge count & empty placeholder
     const updateBadge = (column) => {
         const status = column.dataset.status;
-        const badge = column.querySelector(`.count-badge[data-status="${status}"]`);
         const count = column.querySelectorAll('a > .engagement-card-kanban').length;
+
+        // Badge (if you have one)
+        const badge = column.querySelector(`.count-badge[data-status="${status}"]`);
         if (badge) badge.textContent = count;
 
+        // Empty placeholder
         const placeholder = column.querySelector('.empty-placeholder');
         if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
     };
 
+    // Apply horizontal/vertical layout to the card
     const applyLayoutStyles = (card) => {
         const column = card.closest('.kanban-column');
-        const status = column.dataset.status;
-        const layout = layoutMap[status] || 'vertical';
+        const layout = layoutMap[column.dataset.status] || 'vertical';
         const body = card.querySelector('.card-body');
 
         if (layout === 'horizontal') {
@@ -727,6 +732,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // DRAG START / END on <a> wrapper
     document.querySelectorAll('.engagement-card-kanban').forEach(card => {
         const wrapper = card.closest('a');
+        wrapper.setAttribute('draggable', 'true');
+
         wrapper.addEventListener('dragstart', e => {
             draggedCardWrapper = wrapper;
             card.classList.add('dragging');
@@ -741,6 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // COLUMN DROP HANDLING
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
@@ -757,13 +765,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = draggedCardWrapper.querySelector('.engagement-card-kanban');
             const originalParent = draggedCardWrapper.parentElement;
 
-            // Move the entire <a> wrapper
+            // Move the <a> wrapper to new column
             column.appendChild(draggedCardWrapper);
 
-            // Apply layout to the card
+            // Apply correct layout for new column
             applyLayoutStyles(card);
 
-            // Update badges
+            // Update badges for all columns
             document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
 
             // Update DB
@@ -778,7 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 if (!data.success) {
-                    // rollback
+                    // Rollback
                     originalParent.appendChild(draggedCardWrapper);
                     applyLayoutStyles(card);
                     document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
@@ -794,7 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Initial setup
+    // INITIAL SETUP
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.querySelectorAll('a > .engagement-card-kanban').forEach(card => applyLayoutStyles(card));
         updateBadge(column);
