@@ -1084,7 +1084,7 @@ require_once '../includes/functions.php';
   
               <!-- Status Distribution -->
               <div class="col-md-6">
-                <div class="card h-100" style="border-color: rgb(255,201,202); border-radius: 15px;">
+                <div class="card h-100" style="border-color: rgb(229,231,235); border-radius: 15px;">
                   <div class="card-body p-4">
   
                     <!-- Header -->
