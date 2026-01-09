@@ -304,9 +304,9 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <h6 class="fw-semibold mb-0" style="color: rgb(0,66,0);">Final Due Date</h6>
             </div>
             <?php
-            function formatDate($date) {
-                return !empty($date) ? date('M j, Y', strtotime($date)) : 'N/A';
-            }?>
+            // function formatDate($date) {
+            //     return !empty($date) ? date('M j, Y', strtotime($date)) : 'N/A';
+            //}?>
             <p style="color: rgb(0,66,0);">
               <?php echo htmlspecialchars(formatDate($eng['eng_final_due'])); ?>
             </p>
