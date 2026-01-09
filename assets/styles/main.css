@@ -67,7 +67,7 @@ body {
     .tools-btn {
       background-color: rgb(241,242,245) !important;
       border-radius: 10px !important;
-      padding: 6px 10px !important;
+      padding: 5.5px 10px !important;
       border: none !important;
     }
     .tools-btn.active {
