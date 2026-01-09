@@ -739,7 +739,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'complete': 'vertical'
     };
 
-    // Update badge counts and placeholders
+    // Update badge counts and empty placeholders
     const updateBadge = (column) => {
         const count = column.querySelectorAll('a > .engagement-card-kanban').length;
         const badge = column.closest('.card').querySelector('.count-badge');
@@ -756,14 +756,10 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.width = 'auto';
             body.classList.add('d-flex', 'align-items-center', 'justify-content-between');
             body.style.marginBottom = '';
-        } else if (status === 'planning') {
-            card.style.width = '100%';
-            body.classList.remove('d-flex', 'align-items-center', 'justify-content-between');
-            body.style.marginBottom = '-15px';
         } else {
             card.style.width = '100%';
             body.classList.remove('d-flex', 'align-items-center', 'justify-content-between');
-            body.style.marginBottom = '';
+            body.style.marginBottom = status === 'planning' ? '-15px' : '';
         }
     };
 
@@ -845,11 +841,12 @@ document.addEventListener('DOMContentLoaded', () => {
         body.appendChild(rightDiv);
         newCard.appendChild(body);
         wrapper.appendChild(newCard);
+
         attachDragEvents(wrapper);
         return wrapper;
     };
 
-    // TRANSFORM TO PLANNING
+    // TRANSFORM TO PLANNING / DEFAULT VERTICAL
     const transformToPlanning = (card) => {
         const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
 
@@ -889,6 +886,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </p>
         `;
 
+        // Add audit badge
         if (audit) {
             const badgeDiv = body.querySelector('.tags');
             const badge = document.createElement('span');
@@ -898,12 +896,14 @@ document.addEventListener('DOMContentLoaded', () => {
             badgeDiv.appendChild(badge);
         }
 
+        // Add overdue badge if needed
         if (finalDue && new Date(finalDue) < new Date()) {
+            const badgeDiv = body.querySelector('.tags');
             const overdue = document.createElement('span');
             overdue.className = 'badge';
-            overdue.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500;';
+            overdue.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500; margin-left: 5px;';
             overdue.textContent = 'Overdue';
-            body.appendChild(overdue);
+            badgeDiv.appendChild(overdue);
         }
 
         newCard.appendChild(body);
@@ -912,10 +912,10 @@ document.addEventListener('DOMContentLoaded', () => {
         return wrapper;
     };
 
-    // Initial attach
+    // Attach initial drag events
     document.querySelectorAll('.kanban-column a').forEach(a => attachDragEvents(a));
 
-    // Column drop
+    // Handle drops
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => { e.preventDefault(); column.classList.add('drag-over'); });
         column.addEventListener('dragleave', () => column.classList.remove('drag-over'));
@@ -927,10 +927,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const originalParent = draggedWrapper.parentElement;
             const newStatus = column.dataset.status;
 
-            let newWrapper = draggedWrapper;
             const cardData = draggedWrapper.querySelector('.engagement-card-kanban');
+            let newWrapper = draggedWrapper;
+
             if (newStatus === 'on-hold') newWrapper = transformToOnHold(cardData);
-            else if (newStatus === 'planning') newWrapper = transformToPlanning(cardData);
+            else newWrapper = transformToPlanning(cardData); // includes planning, in-progress, in-review, complete
 
             if (newWrapper !== draggedWrapper) draggedWrapper.remove();
             column.appendChild(newWrapper);
@@ -968,6 +969,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
+
 
 
 
