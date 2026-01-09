@@ -842,6 +842,8 @@
     </div>
   </div>
 
+  <hr>
+
   <!-- Weekdays -->
   <div class="calendar-weekdays">
     <div>Sun</div>
@@ -856,8 +858,6 @@
   <!-- Days -->
   <div id="calendar-days" class="calendar-days"></div>
 
-  <hr>
-  
 
 </div>
 
