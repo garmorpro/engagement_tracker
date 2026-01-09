@@ -57,13 +57,13 @@ require_once '../includes/functions.php';
     <div class="d-flex justify-content-between">
       <div class="left">
         <a href="dashboard.php" class="back-link text-decoration-none">
-  <div class="d-flex align-items-center mb-3 back-link-inner">
-    <div class="icon-square me-2 d-flex align-items-center justify-content-center">
-      <i class="bi bi-arrow-left"></i>
-    </div>
-    <p class="mb-0">Back to Dashboard</p>
-  </div>
-</a>
+          <div class="d-flex align-items-center mb-3 back-link-inner">
+            <div class="icon-square me-2 d-flex align-items-center justify-content-center">
+              <i class="bi bi-arrow-left"></i>
+            </div>
+            <p class="mb-0">Back to Dashboard</p>
+          </div>
+        </a>
       </div>
       <div class="right">
         endswitch
