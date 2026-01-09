@@ -6,344 +6,8 @@
     <title>Engagement Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-    body {
-      /* background-color: #f8f9fa;  */
-      font-family: 'Arial', sans-serif;
-    }
-    /* .page-content {
-  padding-top: 80px; 
-} */
 
-    
-    .header-container {
-  position: sticky;
- 
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;               /* set explicit height */
-  background: #fff;
-  z-index: 1000;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-
-.header-inner {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 200px;
-}
-
-    .header-title {
-      font-weight: 600;
-      font-size: 1.25rem;
-    }
-    .header-subtitle {
-      font-size: 0.875rem;
-      color: #6c757d;
-      margin-top: 2px;
-    }
-    .tab-btn.active {
-        background-color: white;
-        border: none !important;
-    }
-
-    .tab-btn.active:hover {
-        background-color: white;
-        border: none !important;
-    }
-    .tab-btn {
-        border: none !important;
-    }
-    .tab-btn:hover {
-        background-color: rgb(225,228,232);
-        border: none !important;
-    }
-    .new-btn {
-        background-color: rgb(15,62,69);
-        color: white;
-        border-radius: 10px !important;
-    }
-    .menu-btn, .filter-btn {
-      background-color: rgb(241,242,245) !important;
-      border-radius: 10px !important;
-      padding: 8px 10px !important;
-      border: none !important;
-    }
-    .menu-btn:hover, .filter-btn:hover {
-      background-color: rgb(225,228,232) !important;
-    }
-    .new-btn:hover {
-        background-color: rgba(15, 62, 69, 0.9);
-        color: white;
-    }
-
-
-/* Card shadow on hover */
-.custom-card {
-  transition: all 0.3s ease;
-}
-
-.custom-card:hover {
-  box-shadow: 8px 8px 20px rgba(0,0,0,0.15);
-}
-
-/* Small icon box */
-.icon-box {
-  transition: all 0.3s ease;
-}
-
-/* Enlarge icon box on hover without affecting card */
-.custom-card:hover .icon-box {
-  transform: scale(1.1); /* grows the box smoothly */
-}
-
-.icon-square {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-}
-
-.engagement-card-updates i {
-  transition: transform 0.25s ease, color 0.25s ease;
-}
-
-.engagement-card-updates:hover {
-    background-color: rgb(243,244,246) !important;
-}
-
-.engagement-card-updates:hover i {
-  transform: translateX(6px);
-  color: rgb(74,86,101);
-}
-.engagement-card-kanban:hover {
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
-}
-
-.engagement-card-kanban .card-actions {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.15s ease-in-out;
-}
-
-.engagement-card-kanban:hover .card-actions {
-  opacity: 1;
-  visibility: visible;
-}
-
-.table-wrapper {
-  border: 1px solid #dee2e6;
-  border-radius: 12px;
-  overflow: hidden;   /* CRITICAL for rounded corners */
-  background: #fff;
-}
-
-.table-wrapper thead th {
-  background-color: rgb(236,236,240);
-  color: rgb(113,113,129);
-  font-weight: 400 !important;
-  border-bottom: 1px solid #dee2e6;
-  padding: 15px 15px;
-}
-
-.table-wrapper tbody td {
-  padding: 15px 15px;
-}
-
-
-
-
-/* new */
-
-.calendar {
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 16px;
-  background: #fff;
-}
-
-/* HEADER */
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.calendar-header h5 {
-  margin: 0;
-  font-weight: 600;
-}
-
-/* NAV BUTTONS */
-.calendar-nav {
-  display: flex;
-  gap: 8px;
-}
-
-.nav-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-}
-
-.nav-btn:hover {
-  background: #f3f4f6;
-}
-
-/* WEEKDAYS */
-.calendar-weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  margin-bottom: 8px;
-}
-
-.calendar-weekdays div {
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-  color: #6b7280;
-}
-
-/* DAYS GRID */
-.calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
-}
-
-.calendar-day {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  min-height: 120px;
-  padding: 8px;
-  background: #fff;
-}
-
-.calendar-day-number {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-
-.calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
-}
-
-.calendar-day {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  min-height: 110px;
-  padding: 8px;
-  position: relative;
-  background: #fff;
-}
-
-.calendar-day-number {
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.event {
-  margin-top: 6px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  font-size: 12px;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.event.final { background: #ef4444; }
-.event.draft { background: #f97316; }
-.event.fieldwork { background: #3b82f6; }
-.event.planning { background: #a855f7; }
-.calendar-container {
-  background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  border: 1px solid #e5e7eb;
-}
-
-.calendar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.calendar-weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-size: 13px;
-  color: #6b7280;
-  font-weight: 500;
-  margin-bottom: 6px;
-}
-
-.calendar-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-}
-
-.calendar-day {
-  min-height: 110px;
-  border-radius: 12px;
-  padding: 8px;
-  background: #f9fafb;
-  position: relative;
-}
-
-.calendar-day-number {
-  font-size: 12px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 6px;
-}
-
-.calendar-day.today {
-  border: 2px solid #2563eb;
-  background: #eff6ff;
-}
-
-/* Events */
-.event {
-  font-size: 12px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  margin-bottom: 4px;
-  color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.final-due {
-  background-color: #dc2626;
-}
-
-.draft-due {
-  background-color: #2563eb;
-}
-
-
-  </style>
+    <link rel="stylesheet" href="../assets/styles/main.css?v="<?php echo now(); ?>>
 </head>
 <body>
 
@@ -826,64 +490,57 @@
 
     <div class="tab-pane fade" id="content-timeline" role="tabpanel">
 
-    
+      <!-- Calendar -->
+        <div class="calendar mt-4" style="margin-left: 210px; margin-right: 210px;">
 
-    <div class="calendar mt-4" style="margin-left: 210px; margin-right: 210px;">
+          <div class="calendar-header">
+            <h5 id="calendar-title"></h5>
+            <div class="calendar-nav">
+              <button id="prevMonth" class="nav-btn">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button id="nextMonth" class="nav-btn">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
 
-  <div class="calendar-header">
-    <h5 id="calendar-title"></h5>
-    <div class="calendar-nav">
-      <button id="prevMonth" class="nav-btn">
-        <i class="bi bi-chevron-left"></i>
-      </button>
-      <button id="nextMonth" class="nav-btn">
-        <i class="bi bi-chevron-right"></i>
-      </button>
-    </div>
-  </div>
+          <!-- Weekdays -->
+          <div class="calendar-weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+          </div>
 
-  <!-- Weekdays -->
-  <div class="calendar-weekdays">
-    <div>Sun</div>
-    <div>Mon</div>
-    <div>Tue</div>
-    <div>Wed</div>
-    <div>Thu</div>
-    <div>Fri</div>
-    <div>Sat</div>
-  </div>
+          <!-- Days -->
+          <div id="calendar-days" class="calendar-days"></div>
 
-  <!-- Days -->
-  <div id="calendar-days" class="calendar-days"></div>
+          <hr>
 
-  <hr>
-
-  <div class="table-key" style="display: flex; gap: 20px; align-items: center;">
-  <div class="final_due" style="display: flex; align-items: center; gap: 5px;">
-    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(55, 182, 38, 1); border-radius: 3px;"></span>
-    Final Due
-  </div>
-  <div class="draft_due" style="display: flex; align-items: center; gap: 5px;">
-    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(195, 119, 38, 1); border-radius: 3px;"></span>
-    Draft Due
-  </div>
-  <div class="fieldwork_start" style="display: flex; align-items: center; gap: 5px;">
-    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(41, 133, 193, 1); border-radius: 3px;"></span>
-    Fieldwork Start
-  </div>
-  <div class="planning_call" style="display: flex; align-items: center; gap: 5px;">
-    <span style="display:inline-block; width:10px; height:10px; background-color: rgba(131, 38, 193, 1); border-radius: 3px;"></span>
-    Planning Call
-  </div>
-</div>
-
-  
-
-</div>
-
-
-
-
+          <div class="table-key" style="display: flex; gap: 20px; align-items: center;">
+            <div class="final_due" style="display: flex; align-items: center; gap: 5px;">
+              <span style="display:inline-block; width:10px; height:10px; background-color: rgba(55, 182, 38, 1); border-radius: 3px;"></span>
+              Final Due
+            </div>
+            <div class="draft_due" style="display: flex; align-items: center; gap: 5px;">
+              <span style="display:inline-block; width:10px; height:10px; background-color: rgba(195, 119, 38, 1); border-radius: 3px;"></span>
+              Draft Due
+            </div>
+            <div class="fieldwork_start" style="display: flex; align-items: center; gap: 5px;">
+              <span style="display:inline-block; width:10px; height:10px; background-color: rgba(41, 133, 193, 1); border-radius: 3px;"></span>
+              Fieldwork Start
+            </div>
+            <div class="planning_call" style="display: flex; align-items: center; gap: 5px;">
+              <span style="display:inline-block; width:10px; height:10px; background-color: rgba(131, 38, 193, 1); border-radius: 3px;"></span>
+              Planning Call
+            </div>
+          </div>
+        </div>
+      <!-- end calendar -->
     
     </div>
 
