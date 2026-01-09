@@ -1188,18 +1188,18 @@ function renderStatusChart() {
                 label: 'Engagement Status',
                 data: statusData,
                 backgroundColor: [
-                    'rgba(243,36,57,0.8)',     // On-Hold
-                    'rgba(131,38,193,0.8)',    // Planning
-                    'rgba(195,119,38,0.8)',    // In-Progress
-                    'rgba(41,133,193,0.8)',    // In-Review
-                    'rgba(55,182,38,0.8)'      // Complete
+                    'rgba(107,114,128,0.8)',     // On-Hold
+                    'rgba(68, 125,252,0.8)',    // Planning
+                    'rgba(241,115,19,0.8)',    // In-Progress
+                    'rgba(160,77,253,0.8)',    // In-Review
+                    'rgba(79,198,95,0.8)'      // Complete
                 ],
                 borderColor: [
-                    'rgba(243,36,57,1)',
-                    'rgba(131,38,193,1)',
-                    'rgba(195,119,38,1)',
-                    'rgba(41,133,193,1)',
-                    'rgba(55,182,38,1)'
+                    'rgba(107,114,128,1)',
+                    'rgba(68, 125,252,1)',
+                    'rgba(241,115,19,1)',
+                    'rgba(160,77,253,1)',
+                    'rgba(79,198,95,1)'
                 ],
                 borderWidth: 1
             }]
