@@ -43,8 +43,8 @@ require_once '../includes/functions.php';
             </a>
           </div>
 
-          <a class="btn menu-btn btn-sm ms-3 active" href="archive.php"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</a>
-          <a class="btn menu-btn btn-sm ms-3" href="tools.php"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</a>
+          <a class="btn menu-btn btn-sm ms-3" href="archive.php"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</a>
+          <a class="btn menu-btn btn-sm ms-3 active" href="tools.php"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</a>
           <button class="btn new-btn btn-sm ms-3"><i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement</button>
         </div>
       </div>
