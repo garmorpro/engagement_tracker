@@ -691,7 +691,7 @@ require_once '../includes/functions.php';
 document.addEventListener('DOMContentLoaded', () => {
     let draggedCardWrapper = null;
 
-    // Layout mapping: on-hold is horizontal, others vertical
+    // Layout mapping: only on-hold is horizontal
     const layoutMap = {
         'on-hold': 'horizontal',
         'planning': 'vertical',
@@ -703,7 +703,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Update badge count and empty placeholder for a column
     const updateBadge = (column) => {
         const status = column.dataset.status;
-        const badge = column.querySelector(`.count-badge[data-status="${status}"]`);
+        const badge = column.closest('.card').querySelector(`.count-badge[data-status="${status}"]`);
         const count = column.querySelectorAll('a > .engagement-card-kanban').length;
 
         if (badge) badge.textContent = count;
@@ -713,19 +713,85 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Apply layout styles depending on column type
-    const applyLayoutStyles = (card) => {
-        const column = card.closest('.kanban-column');
-        const status = column.dataset.status;
-        const layout = layoutMap[status] || 'vertical';
+    const applyLayoutStyles = (card, status) => {
         const body = card.querySelector('.card-body');
 
-        if (layout === 'horizontal') {
+        if (status === 'on-hold') {
+            // Horizontal layout
             card.style.width = 'auto';
             body.classList.add('d-flex', 'align-items-center', 'justify-content-between');
         } else {
+            // Vertical layout
             card.style.width = '100%';
             body.classList.remove('d-flex', 'align-items-center', 'justify-content-between');
         }
+    };
+
+    // Transform card to match On-Hold template dynamically
+    const transformCardToOnHold = (cardData) => {
+        const { eng_id, eng_name, eng_manager, eng_fieldwork, eng_audit_type, eng_final_due } = cardData;
+        const fieldworkDate = eng_fieldwork ? new Date(eng_fieldwork).toLocaleString('en-US', { month: 'short', day: '2-digit' }) : '';
+
+        const wrapper = document.createElement('a');
+        wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(eng_id)}`;
+        wrapper.className = 'text-decoration-none text-reset d-block';
+        wrapper.draggable = true;
+
+        const card = document.createElement('div');
+        card.className = 'card engagement-card-kanban mb-2';
+        card.dataset.id = eng_id;
+        card.style.borderRadius = '15px';
+        card.style.border = '1px solid rgb(208,213,219)';
+        card.style.cursor = 'move';
+
+        const cardBody = document.createElement('div');
+        cardBody.className = 'card-body d-flex align-items-center justify-content-between';
+
+        // LEFT section
+        const leftDiv = document.createElement('div');
+        leftDiv.className = 'd-flex align-items-center gap-3';
+        leftDiv.innerHTML = `
+            <i class="bi bi-grip-horizontal text-secondary"></i>
+            <div>
+                <h5 class="mb-0" style="font-size: 18px; font-weight: 600;">${eng_name}</h5>
+                <span class="text-muted" style="font-size: 14px;">${eng_id}</span>
+            </div>
+        `;
+
+        // RIGHT section
+        const rightDiv = document.createElement('div');
+        rightDiv.className = 'd-flex align-items-center gap-3 text-secondary';
+        rightDiv.innerHTML = `
+            <span style="font-size: 14px;">
+                <i class="bi bi-people"></i>&nbsp;${eng_manager}
+            </span>
+            <span style="font-size: 14px; color: rgb(243,36,57);">
+                <i class="bi bi-calendar2"></i>&nbsp;${fieldworkDate}
+            </span>
+        `;
+
+        if (eng_audit_type) {
+            const auditBadge = document.createElement('span');
+            auditBadge.className = 'badge';
+            auditBadge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;';
+            auditBadge.textContent = eng_audit_type;
+            rightDiv.appendChild(auditBadge);
+        }
+
+        if (eng_final_due && new Date(eng_final_due) < new Date()) {
+            const overdueBadge = document.createElement('span');
+            overdueBadge.className = 'badge';
+            overdueBadge.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500;';
+            overdueBadge.textContent = 'Overdue';
+            rightDiv.appendChild(overdueBadge);
+        }
+
+        cardBody.appendChild(leftDiv);
+        cardBody.appendChild(rightDiv);
+        card.appendChild(cardBody);
+        wrapper.appendChild(card);
+
+        return wrapper;
     };
 
     // Attach drag events to <a> wrapper
@@ -746,7 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Drag-over, leave, and drop for columns
+    // Column drop handling
     document.querySelectorAll('.kanban-column').forEach(column => {
         column.addEventListener('dragover', e => {
             e.preventDefault();
@@ -762,19 +828,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const card = draggedCardWrapper.querySelector('.engagement-card-kanban');
             const originalParent = draggedCardWrapper.parentElement;
+            const newStatus = column.dataset.status;
 
-            // Move <a> wrapper to new column
-            column.appendChild(draggedCardWrapper);
+            // If moving into On-Hold, transform card to match template
+            if (newStatus === 'on-hold') {
+                const cardData = {
+                    eng_id: card.dataset.id,
+                    eng_name: card.querySelector('h5').textContent,
+                    eng_manager: card.querySelector('.bi-people') ? card.querySelector('.bi-people').parentElement.textContent.trim() : '',
+                    eng_fieldwork: card.querySelector('.bi-calendar2') ? card.querySelector('.bi-calendar2').parentElement.textContent.trim() : '',
+                    eng_audit_type: card.querySelector('.badge') ? card.querySelector('.badge').textContent.trim() : '',
+                    eng_final_due: card.dataset.finalDue || ''
+                };
+                const newWrapper = transformCardToOnHold(cardData);
+                column.appendChild(newWrapper);
+                draggedCardWrapper = newWrapper;
+            } else {
+                // Otherwise, just move the existing wrapper
+                column.appendChild(draggedCardWrapper);
+            }
 
-            // Apply layout styles
-            applyLayoutStyles(card);
+            // Apply layout styles dynamically
+            applyLayoutStyles(draggedCardWrapper.querySelector('.engagement-card-kanban'), newStatus);
 
-            // Update badge counts for all columns
+            // Update badge counts
             document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
 
-            // Update DB with new status
-            const engId = card.dataset.id;
-            const newStatus = column.dataset.status;
+            // Update DB
+            const engId = draggedCardWrapper.querySelector('.engagement-card-kanban').dataset.id;
 
             fetch('../includes/update-engagement-status.php', {
                 method: 'POST',
@@ -784,25 +865,25 @@ document.addEventListener('DOMContentLoaded', () => {
             .then(res => res.json())
             .then(data => {
                 if (!data.success) {
-                    // Rollback if DB update fails
+                    // Rollback if DB fails
                     originalParent.appendChild(draggedCardWrapper);
-                    applyLayoutStyles(card);
+                    applyLayoutStyles(draggedCardWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
                     document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
                     alert('Failed to update status in DB. Changes reverted.');
                 }
             })
             .catch(err => {
                 originalParent.appendChild(draggedCardWrapper);
-                applyLayoutStyles(card);
+                applyLayoutStyles(draggedCardWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
                 document.querySelectorAll('.kanban-column').forEach(col => updateBadge(col));
                 alert('Failed to update status in DB. Changes reverted.');
             });
         });
     });
 
-    // Initial setup: apply layout and badge counts
+    // Initial setup
     document.querySelectorAll('.kanban-column').forEach(column => {
-        column.querySelectorAll('a > .engagement-card-kanban').forEach(card => applyLayoutStyles(card));
+        column.querySelectorAll('a > .engagement-card-kanban').forEach(card => applyLayoutStyles(card, column.dataset.status));
         updateBadge(column);
     });
 });
