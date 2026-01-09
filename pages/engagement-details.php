@@ -118,7 +118,7 @@ if (isset($_GET['eng_id'])) {
          style="border-radius: 15px; border: 1px solid rgb(187,219,253); background-color: rgb(238,246,254);">
       <div class="card-body p-4">
 
-        <div class="d-flex justify-content-between align-items-start">
+        <div class="d-flex justify-content-between align-items-start mb-4">
 
           <!-- Left Side -->
           <div class="d-flex flex-column">
