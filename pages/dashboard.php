@@ -1171,6 +1171,17 @@ $statusLabels = ['On-Hold', 'Planning', 'In-Progress', 'In-Review', 'Complete'];
 $statusData = array_values($statusCounts);
 ?>
 
+<?php
+// Generate a single random RGB color
+$red = rand(50, 250);
+$green = rand(50, 250);
+$blue = rand(50, 250);
+
+// Fill arrays with the same color
+$colors = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,0.2)");
+$borders = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,1)");
+?>
+
 
 <script>
 let statusChart;
@@ -1223,10 +1234,15 @@ function renderManagerChart() {
     if (managerChart) managerChart.destroy();
 
     // Generate multi-color bars
-    const colors = <?php echo json_encode(array_map(function() {
-        return 'rgba(' . rand(50, 250) . ',' . rand(50, 250) . ',' . rand(50, 250) . ',0.8)';
-    }, $managerLabels)); ?>;
+    const colors = <?php echo json_encode($colors); ?>;
+    const borders = <?php echo json_encode($borders); ?>;
+    // const colors = <?php //echo json_encode(array_map(function() {
+    //     return 'rgba(' . rand(50, 250) . ',' . rand(50, 250) . ',' . rand(50, 250) . ',0.8)';
+    // }, $managerLabels)); ?>;
 
+    // const borders = <?php //echo json_encode(array_map(function() {
+    //     return 'rgba(' . rand(50, 250) . ',' . rand(50, 250) . ',' . rand(50, 250) . ',1)';
+    // }, $managerLabels)); ?>;
 
     managerChart = new Chart(ctx, {
         type: 'bar',
@@ -1236,7 +1252,7 @@ function renderManagerChart() {
                 label: 'Active Engagements',
                 data: <?php echo json_encode($managerData); ?>,
                 backgroundColor: colors,
-                borderColor: colors,
+                borderColor: borders,
                 borderWidth: 1
             }]
         },
