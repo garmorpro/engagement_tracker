@@ -1136,51 +1136,51 @@ require_once '../includes/functions.php';
         </div>
 
         <!-- 4-column cards -->
-        <div class="row text-center mt-4">
+        <div class="row mt-4">
           <!-- Card 1 -->
           <div class="col-md-3">
-            <div class="card border-0">
-              <div class="card-body d-flex flex-column align-items-center">
-                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-weight: bold;">
+            <div class="card h-100" style="background-color: rgb(247,248,250); border-radius: 12px; border: 1px solid rgb(229,231,235);">
+              <div class="card-body d-flex flex-column align-items-start">
+                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; font-weight: bold;">
                   5
                 </div>
-                <div>SOC 2</div>
+                <div class="fw-semibold">SOC 2</div>
               </div>
             </div>
           </div>
 
           <!-- Card 2 -->
           <div class="col-md-3">
-            <div class="card border-0">
-              <div class="card-body d-flex flex-column align-items-center">
-                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-weight: bold;">
+            <div class="card h-100" style="background-color: rgb(247,248,250); border-radius: 12px; border: 1px solid rgb(229,231,235);">
+              <div class="card-body d-flex flex-column align-items-start">
+                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; font-weight: bold;">
                   3
                 </div>
-                <div>SOC 1</div>
+                <div class="fw-semibold">SOC 1</div>
               </div>
             </div>
           </div>
 
           <!-- Card 3 -->
           <div class="col-md-3">
-            <div class="card border-0">
-              <div class="card-body d-flex flex-column align-items-center">
-                <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-weight: bold;">
+            <div class="card h-100" style="background-color: rgb(247,248,250); border-radius: 12px; border: 1px solid rgb(229,231,235);">
+              <div class="card-body d-flex flex-column align-items-start">
+                <div class="rounded-circle bg-warning text-white d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; font-weight: bold;">
                   7
                 </div>
-                <div>PCI</div>
+                <div class="fw-semibold">PCI</div>
               </div>
             </div>
           </div>
 
           <!-- Card 4 -->
           <div class="col-md-3">
-            <div class="card border-0">
-              <div class="card-body d-flex flex-column align-items-center">
-                <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mb-2" style="width: 60px; height: 60px; font-weight: bold;">
+            <div class="card h-100" style="background-color: rgb(247,248,250); border-radius: 12px; border: 1px solid rgb(229,231,235);">
+              <div class="card-body d-flex flex-column align-items-start">
+                <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px; font-weight: bold;">
                   2
                 </div>
-                <div>Other</div>
+                <div class="fw-semibold">Other</div>
               </div>
             </div>
           </div>
