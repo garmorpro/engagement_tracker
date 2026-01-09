@@ -753,16 +753,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<?php
-// Generate a single random RGB color
-$red = rand(50, 250);
-$green = rand(50, 250);
-$blue = rand(50, 250);
 
-// Fill arrays with the same color
-$colors = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,0.2)");
-$borders = array_fill(0, count($managerLabels), "rgba($red,$green,$blue,1)");
-?>
 
 
 
