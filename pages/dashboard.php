@@ -141,37 +141,40 @@
 </head>
 <body>
 
+  <!-- Header -->
     <div class="header-container">
-  <div class="header-inner">
-    <div>
-      <div class="header-title">Engagement Tracker</div>
-      <div class="header-subtitle">Manage your audit engagements</div>
-    </div>
+      <div class="header-inner">
+        <div>
+          <div class="header-title">Engagement Tracker</div>
+          <div class="header-subtitle">Manage your audit engagements</div>
+        </div>
 
-    <div class="header-actions d-flex align-items-center">
-      <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;">
-        <button class="btn btn-sm me-2 tab-btn active">
-          <i class="bi bi-grid"></i> Board
-        </button>
-        <button class="btn btn-sm me-2 tab-btn">
-          <i class="bi bi-list-ul"></i> List
-        </button>
-        <button class="btn btn-sm me-2 tab-btn">
-          <i class="bi bi-calendar2"></i> Timeline
-        </button>
-        <button class="btn btn-sm tab-btn">
-          <i class="bi bi-graph-up"></i> Analytics
-        </button>
+        <div class="header-actions d-flex align-items-center">
+          <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;">
+            <button class="btn btn-sm me-2 tab-btn active">
+              <i class="bi bi-grid"></i> Board
+            </button>
+            <button class="btn btn-sm me-2 tab-btn">
+              <i class="bi bi-list-ul"></i> List
+            </button>
+            <button class="btn btn-sm me-2 tab-btn">
+              <i class="bi bi-calendar2"></i> Timeline
+            </button>
+            <button class="btn btn-sm tab-btn">
+              <i class="bi bi-graph-up"></i> Analytics
+            </button>
+          </div>
+          <button class="btn menu-btn btn-sm ms-3"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</button>
+          <button class="btn menu-btn btn-sm ms-3"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</button>
+          <button class="btn new-btn btn-sm ms-3"><i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement</button>
+        </div>
       </div>
-      <button class="btn menu-btn btn-sm ms-3"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</button>
-      <button class="btn menu-btn btn-sm ms-3"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</button>
-      <button class="btn new-btn btn-sm ms-3"><i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement</button>
     </div>
-  </div>
-</div>
+  <!-- Header -->
 
 
   <div class="mt-5"></div>
+
   <div class="page-content">
 
     <!-- Status Cards -->
@@ -648,6 +651,32 @@
 
                       </div>
                     </div>
+
+
+                    <div class="card engagement-card-kanban" style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
+                      <div class="card-body d-flex align-items-center justify-content-between">
+
+                        <!-- LEFT -->
+                        <div class="left d-flex align-items-center gap-3">
+                          <i class="bi bi-grip-horizontal text-secondary"></i>
+
+                          
+                            <h5 class="mb-0" style="font-size: 18px; font-weight: 600;">Retain Chain Assessment</h5>
+                            <span class="text-muted" style="font-size: 14px;">ENG-2025-006</span>
+                         
+                        </div>
+
+                        <!-- RIGHT -->
+                        <div class="right d-flex align-items-center gap-3 text-secondary">
+                          <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;Jane Brown</span>
+                          <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;Apr 30</span>
+                          <span class="badge text-bg-secondary" style="background-color: rgba(235, 236, 237, 1) !important; color: rgb(57,69,85) !important; font-weight: 500 !important;">SOC 2 Type 2</span>
+                          <span class="badge text-bg-danger" style="background-color: rgb(255,226,226) !important; color: rgb(201,0,18) !important;font-weight: 500 !important;">Overdue</span>
+                        </div>
+
+                      </div>
+                    </div>
+
 
 
                     
