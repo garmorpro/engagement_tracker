@@ -273,17 +273,22 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <h6 class="fw-semibold mb-0" style="color: rgb(89,0,135);">Review Period/As of Date</h6>
             </div>
             <?php
+            function formatDate($date) {
+                return !empty($date) ? date('M j, Y', strtotime($date)) : 'N/A';
+            }
+            
             if (!empty($eng['eng_start_period']) && !empty($eng['eng_end_period'])): ?>
                 <p style="color: rgb(89,0,135);">
-                    <?php echo htmlspecialchars($eng['eng_start_period']); ?> - <?php echo htmlspecialchars($eng['eng_end_period']); ?>
+                    <?php echo htmlspecialchars(formatDate($eng['eng_start_period'])); ?> - <?php echo htmlspecialchars(formatDate($eng['eng_end_period'])); ?>
                 </p>
             <?php elseif (!empty($eng['eng_as_of_date'])): ?>
                 <p style="color: rgb(89,0,135);">
-                    <?php echo htmlspecialchars($eng['eng_as_of_date']); ?>
+                    <?php echo htmlspecialchars(formatDate($eng['eng_as_of_date'])); ?>
                 </p>
             <?php else: ?>
                 <p style="color: rgb(89,0,135);">N/A</p>
             <?php endif; ?>
+
           </div>
         </div>
       </div>
