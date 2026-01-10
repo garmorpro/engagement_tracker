@@ -706,8 +706,15 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                 <div class="icon-square me-2" style="background-color: rgb(241,232,253); height: 40px; width: 40px;">
                   <i class="bi bi-buildings" style="color: rgb(139,33,241);"></i>
                 </div>
-                <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Client Information</h6>
+                <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Scope & Notes</h6>
               </div>
+
+              <div class="d-flex align-items-center mb-3">
+                    <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px  !important;">Manager</h6>
+                  </div>
+                  <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
+                    <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
+                  </h6>
 
                 
           </div>
