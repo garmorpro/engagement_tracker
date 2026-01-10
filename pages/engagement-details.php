@@ -143,7 +143,7 @@ if (isset($_GET['eng_id'])) {
               'pill' => 'rgb(0,201,92)',
           ],
       ];
-      
+
       // Fallback in case status is unexpected
       $status = $eng['eng_status'];
       $bgColor = $statusColors[$status]['bg'] ?? '#fff';
@@ -270,7 +270,21 @@ if (isset($_GET['eng_id'])) {
               <div class="icon-square me-2" style="background-color: rgb(181,72,255);">
                 <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
               </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(89,0,135);">Review Period/As of Date</h6>
+              <?php
+              $periodLabel = '';
+                                
+              if (!empty($eng['eng_start_period']) && !empty($eng['eng_end_period'])) {
+                  $periodLabel = 'Review Period';
+              } elseif (!empty($eng['eng_as_of_date'])) {
+                  $periodLabel = 'As of Date';
+              } else {
+                  $periodLabel = 'Period'; // fallback if nothing exists
+              }
+              ?>
+              <h6 class="fw-semibold mb-0" style="color: rgb(89,0,135);">
+                <?php echo htmlspecialchars($periodLabel); ?>
+              </h6>
+
             </div>
             <?php
             function formatDate($date) {
