@@ -478,7 +478,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
             <!-- end irl due -->
 
             <!-- Client Planning Call -->
-              <div class="d-flex align-items-start align-items-center position-relative">
+              <div class="d-flex align-items-start align-items-center position-relative mt-3">
 
                 <!-- Icon + line -->
                 <div class="d-flex flex-column align-items-center me-3">
@@ -493,7 +493,9 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                   <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
                     <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
                       <span class="fw-semibold">Planning Call</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);"><?php echo htmlspecialchars($eng['eng_client_planning_call'] ?? 'Planning call not found'); ?></span>
+                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
+                        <?= !empty($eng['eng_client_planning_call']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_client_planning_call']))) : 'Planning call not found'; ?>
+                      </span>
                     </div>
                   </div>
                 </div>
