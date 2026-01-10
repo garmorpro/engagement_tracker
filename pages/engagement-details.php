@@ -452,9 +452,33 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               </div>
               <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Engagement Timeline</h6>
             </div>
-              <p style="color: rgb(0,0,123);">
-                <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
-              </p>
+
+            <div class="d-flex align-items-start position-relative">
+
+    <!-- Left icon + line -->
+    <div class="d-flex flex-column align-items-center me-3">
+      <div class="icon-circle bg-success text-white">
+        <i class="bi bi-telephone-fill"></i>
+      </div>
+      <div class="timeline-line"></div>
+    </div>
+
+    <!-- Right card -->
+    <div class="flex-grow-1">
+      <div class="card timeline-card border-0">
+        <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+          <strong>Planning Call</strong>
+          <span class="text-success fw-semibold">Dec 1, 2024</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+              
+            
+
+
+
             </div>
           </div>
 
