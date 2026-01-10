@@ -711,14 +711,14 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
               
 
-              <div class="d-flex align-items-center mb-3">
+              <div class="d-flex align-items-center mb-2">
                 <h6 class="mb-0 text-uppercase"
                     style="color: rgb(21,87,242); font-weight: 600; font-size: 12px;">
                   Audit Scope
                 </h6>
               </div>
 
-              <div class="card"
+              <div class="card mb-3"
                    style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,242,252);">
                 <div class="card-body d-flex align-items-center">
                   <p class="mb-0" style="font-size:14px;">
@@ -727,7 +727,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                 </div>
               </div>
 
-              <div class="d-flex align-items-center mb-3">
+              <div class="d-flex align-items-center mb-2">
                 <h6 class="mb-0 text-uppercase"
                     style="color: rgb(62,73,90); font-weight: 600; font-size: 12px;">
                   Audit Scope
