@@ -455,19 +455,20 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
             <div class="d-flex align-items-start position-relative">
 
-    <!-- Left icon + line -->
+    <!-- Icon + line -->
     <div class="d-flex flex-column align-items-center me-3">
-      <div class="icon-circle bg-success text-white">
+      <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center"
+           style="width:44px;height:44px;">
         <i class="bi bi-telephone-fill"></i>
       </div>
-      <div class="timeline-line"></div>
+      <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
     </div>
 
-    <!-- Right card -->
+    <!-- Bootstrap Card -->
     <div class="flex-grow-1">
-      <div class="card timeline-card border-0">
+      <div class="card border-0 shadow-sm" style="border-radius:20px;">
         <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-          <strong>Planning Call</strong>
+          <span class="fw-semibold">Planning Call</span>
           <span class="text-success fw-semibold">Dec 1, 2024</span>
         </div>
       </div>
