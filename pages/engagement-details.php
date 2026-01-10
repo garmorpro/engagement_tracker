@@ -355,7 +355,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <div class="card-body p-3">
                 <!-- Header -->
                 <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0" style="color: rgb(21,87,242); font-weight: 500 !important; font-size: 14px !important;">Manager</h6>
+                  <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 500 !important; font-size: 14px !important;">Manager</h6>
                 </div>
                 <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
                   <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
@@ -367,7 +367,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <div class="card-body p-3">
                 <!-- Header -->
                 <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0" style="color: rgb(123,0,240); font-weight: 500 !important; font-size: 14px !important;">Senior</h6>
+                  <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 500 !important; font-size: 14px !important;">Senior</h6>
                 </div>
                 <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
                   <?php echo htmlspecialchars($eng['eng_senior'] ?? 'Senior not assigned'); ?>
@@ -382,7 +382,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <div class="card-body p-3">
                 <!-- Header -->
                 <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0" style="color: rgb(69,166,81); font-weight: 500 !important; font-size: 14px !important;">Staff</h6>
+                  <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 500 !important; font-size: 14px !important;">Staff</h6>
                 </div>
                 <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
                   <?php echo htmlspecialchars($eng['eng_staff'] ?? 'Staff not assigned'); ?>
@@ -417,10 +417,10 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <div class="card-body p-3">
                 <!-- Header -->
                 <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0" style="color: rgb(21,87,242); font-weight: 500 !important; font-size: 14px !important;">Manager</h6>
+                  <h6 class="mb-0 text-uppercase" style="color: rgb(87,95,108); font-weight: 500 !important; font-size: 14px !important;">Point of Contact</h6>
                 </div>
-                <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-                  <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
+                <h6 class="fw-semibold" style="color: rgb(0,0,0); font-size: 20px;">
+                  <?php echo htmlspecialchars($eng['eng_poc'] ?? 'Point of contact not found'); ?>
                 </h6>
               </div>
             </div>
@@ -430,10 +430,10 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <div class="card-body p-3">
                 <!-- Header -->
                 <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0" style="color: rgb(21,87,242); font-weight: 500 !important; font-size: 14px !important;">Manager</h6>
+                  <h6 class="mb-0 text-uppercase" style="color: rgb(87,95,108); font-weight: 500 !important; font-size: 14px !important;">Location</h6>
                 </div>
-                <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-                  <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
+                <h6 class="fw-semibold" style="color: rgb(0,0,0); font-size: 20px;">
+                  <?php echo htmlspecialchars($eng['eng_location'] ?? 'Location not found'); ?>
                 </h6>
               </div>
             </div>
