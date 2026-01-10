@@ -413,7 +413,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
             <div class="row">
               <div class="col-md-6">
-                <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
+                <div class="card mb-4" style="border: none; border-radius: 20px; background-color: rgb(249,250,251);">
               <div class="card-body p-3">
                 <!-- Header -->
                 <div class="d-flex align-items-center mb-3">
@@ -426,7 +426,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
             </div>
               </div>
               <div class="col-md-6">
-                <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
+                <div class="card mb-4" style="border: none; border-radius: 20px; background-color: rgb(249,250,251);">
               <div class="card-body p-3">
                 <!-- Header -->
                 <div class="d-flex align-items-center mb-3">
