@@ -336,360 +336,380 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
   <!-- end second row details -->
 
-  <!-- next section -->
+  <!-- next section (main) -->
     <div class="row align-items-stretch mt-4" style="margin-left: 200px; margin-right: 200px;">
 
-      <!-- LEFT COLUMN (matches height of right column) -->
-      <div class="col-md-4 d-flex">
-        <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
-          <div class="card-body p-4">
-            <!-- Header -->
-            <div class="d-flex align-items-center mb-4">
-              <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
-                <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
-              </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
-            </div>
-
-            <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
-              <div class="card-body p-3">
-                <!-- Header -->
-                <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
+      <!-- LEFT COLUMN (team) -->
+        <div class="col-md-4 d-flex">
+          <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
+            <div class="card-body p-4">
+              <!-- Header -->
+              <div class="d-flex align-items-center mb-4">
+                <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
+                  <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
                 </div>
-                <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-                  <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
-                </h6>
+                <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
               </div>
-            </div>
 
-            <div class="card mb-4" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
-              <div class="card-body p-3">
-                <!-- Header -->
-                <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior</h6>
+              <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);  ">
+                <div class="card-body p-3">
+                  <!-- Header -->
+                  <div class="d-flex align-items-center mb-3">
+                    <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px  !important;">Manager</h6>
+                  </div>
+                  <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
+                    <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
+                  </h6>
                 </div>
-                <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-                  <?php echo htmlspecialchars($eng['eng_senior'] ?? 'Senior not assigned'); ?>
-                </h6>
-                <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-                  <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_senior_dol'] ?? 'DOL not assigned'); ?>
-                </p>
               </div>
-            </div>
 
-            <div class="card mb-4" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
-              <div class="card-body p-3">
-                <!-- Header -->
-                <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff</h6>
+              <div class="card mb-4" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);  ">
+                <div class="card-body p-3">
+                  <!-- Header -->
+                  <div class="d-flex align-items-center mb-3">
+                    <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px  !important;">Senior</h6>
+                  </div>
+                  <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+                    <?php echo htmlspecialchars($eng['eng_senior'] ?? 'Senior not assigned'); ?>
+                  </h6>
+                  <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
+                    <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_senior_dol'] ?? 'DOL not assigned'); ?>
+                  </p>
                 </div>
-                <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-                  <?php echo htmlspecialchars($eng['eng_staff'] ?? 'Staff not assigned'); ?>
-                </h6>
-                <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-                  <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_staff_dol'] ?? 'DOL not assigned'); ?>
-                </p>
               </div>
-            </div>
 
+              <div class="card mb-4" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);  ">
+                <div class="card-body p-3">
+                  <!-- Header -->
+                  <div class="d-flex align-items-center mb-3">
+                    <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px  !important;">Staff</h6>
+                  </div>
+                  <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
+                    <?php echo htmlspecialchars($eng['eng_staff'] ?? 'Staff not assigned'); ?>
+                  </h6>
+                  <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
+                    <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_staff_dol'] ?? 'DOL not assigned'); ?>
+                  </p>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
-      </div>
+      <!-- end LEFT COLUMN (team) -->
+      
 
       <!-- RIGHT COLUMN -->
       <div class="col-md-8 d-flex">
         <div class="d-flex flex-column w-100">
 
-          <!-- TOP ROW (auto height / short) -->
-          <div class="card mb-3" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center mb-4">
-              <div class="icon-square me-2" style="background-color: rgb(241,232,253); height: 40px; width: 40px;">
-                <i class="bi bi-buildings" style="color: rgb(139,33,241);"></i>
+          <!-- TOP ROW (client information) -->
+            <div class="card mb-3" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                <div class="icon-square me-2" style="background-color: rgb(241,232,253); height: 40px; width: 40px;">
+                  <i class="bi bi-buildings" style="color: rgb(139,33,241);"></i>
+                </div>
+                <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Client Information</h6>
               </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Client Information</h6>
-            </div>
 
-            <div class="row">
-              <div class="col-md-6">
-                <div class="card mb-4" style="border: none; border-radius: 20px; background-color: rgb(249,250,251);">
-              <div class="card-body p-3">
-                <!-- Header -->
-                <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0 text-uppercase" style="color: rgb(87,95,108); font-weight: 600 !important; font-size: 12px !important;">Point of Contact</h6>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card mb-4" style="border: none; border-radius: 20px; background-color: rgb(249,250,251);">
+                <div class="card-body p-3">
+                  <!-- Header -->
+                  <div class="d-flex align-items-center mb-3">
+                    <h6 class="mb-0 text-uppercase" style="color: rgb(87,95,108); font-weight: 600 !important; font-size: 12px  !important;">Point of Contact</h6>
+                  </div>
+                  <h6 class="fw-semibold" style="color: rgb(0,0,0); font-size: 20px;">
+                    <?php echo htmlspecialchars($eng['eng_poc'] ?? 'Point of contact not found'); ?>
+                  </h6>
                 </div>
-                <h6 class="fw-semibold" style="color: rgb(0,0,0); font-size: 20px;">
-                  <?php echo htmlspecialchars($eng['eng_poc'] ?? 'Point of contact not found'); ?>
-                </h6>
               </div>
-            </div>
-              </div>
-              <div class="col-md-6">
-                <div class="card mb-4" style="border: none; border-radius: 20px; background-color: rgb(249,250,251);">
-              <div class="card-body p-3">
-                <!-- Header -->
-                <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0 text-uppercase" style="color: rgb(87,95,108); font-weight: 600 !important; font-size: 12px !important;">Location</h6>
                 </div>
-                <h6 class="fw-semibold" style="color: rgb(0,0,0); font-size: 20px;">
-                  <?php echo htmlspecialchars($eng['eng_location'] ?? 'Location not found'); ?>
-                </h6>
+                <div class="col-md-6">
+                  <div class="card mb-4" style="border: none; border-radius: 20px; background-color: rgb(249,250,251);">
+                <div class="card-body p-3">
+                  <!-- Header -->
+                  <div class="d-flex align-items-center mb-3">
+                    <h6 class="mb-0 text-uppercase" style="color: rgb(87,95,108); font-weight: 600 !important; font-size: 12px  !important;">Location</h6>
+                  </div>
+                  <h6 class="fw-semibold" style="color: rgb(0,0,0); font-size: 20px;">
+                    <?php echo htmlspecialchars($eng['eng_location'] ?? 'Location not found'); ?>
+                  </h6>
+                </div>
               </div>
-            </div>
+                </div>
               </div>
-            </div>
-              
-            </div>
-          </div>
 
-          <!-- BOTTOM ROW (fills remaining height) -->
-          <div class="card flex-grow-1" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);   ">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center mb-4">
-              <div class="icon-square me-2" style="background-color: rgb(252,237,215); height: 40px; width: 40px;">
-                <i class="bi bi-calendar2" style="color: rgb(223,50,0);"></i>
               </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Engagement Timeline</h6>
             </div>
+          <!-- end TOP ROW (client information) -->
+          
+          <!-- BOTTOM ROW (timeline) -->
+            <div class="card flex-grow-1" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,  255);   ">
+              <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                <div class="icon-square me-2" style="background-color: rgb(252,237,215); height: 40px; width: 40px;">
+                  <i class="bi bi-calendar2" style="color: rgb(223,50,0);"></i>
+                </div>
+                <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Engagement Timeline</h6>
+              </div>
 
-              <?php
-              function timelineDate($dateValue) {
-                  $hasDate = !empty($dateValue);
-                          
-                  return [
-                      'color'     => $hasDate ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
-                      'textClass' => $hasDate ? 'text-success' : 'text-danger',
-                      'text'      => $hasDate
-                          ? htmlspecialchars(date('M j, Y', strtotime($dateValue)))
-                          : null
-                  ];
-              }
-              ?>
-              
-              <?php
-              $internalPlanning = timelineDate($eng['eng_internal_planning_call'] ?? null);
-              $irlDue           = timelineDate($eng['eng_irl_due'] ?? null);
-              $clientPlanning   = timelineDate($eng['eng_client_planning_call'] ?? null);
-              $fieldwork        = timelineDate($eng['eng_fieldwork'] ?? null);
-              $leadsheetStart   = timelineDate($eng['eng_leadsheet_start'] ?? null);
-              $leadsheetDue     = timelineDate($eng['eng_leadsheet_due'] ?? null);
-              $draftDue         = timelineDate($eng['eng_draft_due'] ?? null);
-              $finalDue         = timelineDate($eng['eng_final_due'] ?? null);
-              $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
-              ?>
-              
-              <div class="timeline position-relative">
+                <?php
+                function timelineDate($dateValue) {
+                    $hasDate = !empty($dateValue);
+
+                    return [
+                        'color'     => $hasDate ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
+                        'textClass' => $hasDate ? 'text-success' : 'text-danger',
+                        'text'      => $hasDate
+                            ? htmlspecialchars(date('M j, Y', strtotime($dateValue)))
+                            : null
+                    ];
+                }
+                ?>
+
+                <?php
+                $internalPlanning = timelineDate($eng['eng_internal_planning_call'] ?? null);
+                $irlDue           = timelineDate($eng['eng_irl_due'] ?? null);
+                $clientPlanning   = timelineDate($eng['eng_client_planning_call'] ?? null);
+                $fieldwork        = timelineDate($eng['eng_fieldwork'] ?? null);
+                $leadsheetStart   = timelineDate($eng['eng_leadsheet_start'] ?? null);
+                $leadsheetDue     = timelineDate($eng['eng_leadsheet_due'] ?? null);
+                $draftDue         = timelineDate($eng['eng_draft_due'] ?? null);
+                $finalDue         = timelineDate($eng['eng_final_due'] ?? null);
+                $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
+                ?>
+
+                <div class="timeline position-relative">
 
 
-            <!-- Internal Planning Call -->
-              <div class="d-flex align-items-center position-relative">
-                <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $internalPlanning['color']; ?>;">
-                    <i class="bi bi-telephone"></i>
+              <!-- Internal Planning Call -->
+                <div class="d-flex align-items-center position-relative">
+                  <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $internalPlanning['color']; ?>;">
+                      <i class="bi bi-telephone"></i>
+                    </div>
+                    <!-- <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div> -->
                   </div>
-                  <!-- <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div> -->
-                </div>
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Internal Planning Call</span>
-                      <span class="fw-semibold <?= $internalPlanning['textClass']; ?>" style="color: <?= $internalPlanning['color']; ?>;">
-                        <?= $internalPlanning['text'] ?? 'Internal planning call not found'; ?>
-                      </span>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Internal Planning Call</span>
+                        <span class="fw-semibold <?= $internalPlanning['textClass']; ?>" style="color: <?= $internalPlanning  ['color']; ?>;">
+                          <?= $internalPlanning['text'] ?? 'Internal planning call not found'; ?>
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            <!-- end Internal Planning Call -->
-                          
-            <!-- IRL Due -->
-              <div class="d-flex align-items-center position-relative mt-3">
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $irlDue['color']; ?>;">
-                    <i class="bi bi-calendar2-event"></i>
-                  </div>
-                  <!-- <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div> -->
-                </div>
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">IRL Due Date</span>
-                      <span class="fw-semibold <?= $irlDue['textClass']; ?>" style="color: <?= $irlDue['color']; ?>;">
-                        <?= $irlDue['text'] ?? 'IRL due date not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <!-- end IRL Due -->
-                          
-            <!-- Client Planning Call -->
-              <div class="d-flex align-items-center position-relative mt-3">
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $clientPlanning['color']; ?>;">
-                    <i class="bi bi-telephone"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Client Planning Call</span>
-                      <span class="fw-semibold <?= $clientPlanning['textClass']; ?>" style="color: <?= $clientPlanning['color']; ?>;">
-                        <?= $clientPlanning['text'] ?? 'Client planning call not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <!-- end Client Planning Call -->
-                          
-            <!-- Fieldwork -->
-              <div class="d-flex align-items-center position-relative mt-3">
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $fieldwork['color']; ?>;">
-                    <i class="bi bi-calendar2-range"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Fieldwork</span>
-                      <span class="fw-semibold <?= $fieldwork['textClass']; ?>" style="color: <?= $fieldwork['color']; ?>;">
-                        <?= $fieldwork['text'] ?? 'Fieldwork date not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <!-- end Fieldwork -->
-                          
-            <!-- Leadsheet Start -->
-              <div class="d-flex align-items-center position-relative mt-3">
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $leadsheetStart['color']; ?>;">
-                    <i class="bi bi-calendar2-event"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Leadsheet Start</span>
-                      <span class="fw-semibold <?= $leadsheetStart['textClass']; ?>" style="color: <?= $leadsheetStart['color']; ?>;">
-                        <?= $leadsheetStart['text'] ?? 'Leadsheet start date not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <!-- end Leadsheet Start -->
-                          
-            <!-- Leadsheet Due -->
-              <div class="d-flex align-items-center position-relative mt-3">
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $leadsheetDue['color']; ?>;">
-                    <i class="bi bi-calendar2-event"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Leadsheet Due</span>
-                      <span class="fw-semibold <?= $leadsheetDue['textClass']; ?>" style="color: <?= $leadsheetDue['color']; ?>;">
-                        <?= $leadsheetDue['text'] ?? 'Leadsheet due date not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <!-- end Leadsheet Due -->
-                          
-            <!-- Draft Due -->
-              <div class="d-flex align-items-center position-relative mt-3">
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $draftDue['color']; ?>;">
-                    <i class="bi bi-calendar2-event"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Draft Report Due</span>
-                      <span class="fw-semibold <?= $draftDue['textClass']; ?>" style="color: <?= $draftDue['color']; ?>;">
-                        <?= $draftDue['text'] ?? 'Draft report due not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <!-- end Draft Due -->
-                          
-            <!-- Final Due -->
-              <div class="d-flex align-items-center position-relative mt-3">
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $finalDue['color']; ?>;">
-                    <i class="bi bi-calendar2-event"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Final Report Due</span>
-                      <span class="fw-semibold <?= $finalDue['textClass']; ?>" style="color: <?= $finalDue['color']; ?>;">
-                        <?= $finalDue['text'] ?? 'Final report due not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <!-- end Final Due -->
-                          
-            <!-- Archive Date -->
-              <div class="d-flex align-items-center position-relative mt-3">
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $archiveDate['color']; ?>;">
-                    <i class="bi bi-archive"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Archive Date</span>
-                      <span class="fw-semibold <?= $archiveDate['textClass']; ?>" style="color: <?= $archiveDate['color']; ?>;">
-                        <?= $archiveDate['text'] ?? 'Not archived yet'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            <!-- end Archive Date -->
+              <!-- end Internal Planning Call -->
 
+              <!-- IRL Due -->
+                <div class="d-flex align-items-center position-relative mt-3">
+                  <div class="d-flex flex-column align-items-center me-3">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $irlDue['color']; ?>;">
+                      <i class="bi bi-calendar2-event"></i>
+                    </div>
+                    <!-- <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div> -->
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">IRL Due Date</span>
+                        <span class="fw-semibold <?= $irlDue['textClass']; ?>" style="color: <?= $irlDue['color']; ?>;">
+                          <?= $irlDue['text'] ?? 'IRL due date not found'; ?>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- end IRL Due -->
+
+              <!-- Client Planning Call -->
+                <div class="d-flex align-items-center position-relative mt-3">
+                  <div class="d-flex flex-column align-items-center me-3">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $clientPlanning['color']; ?>;">
+                      <i class="bi bi-telephone"></i>
+                    </div>
+                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Client Planning Call</span>
+                        <span class="fw-semibold <?= $clientPlanning['textClass']; ?>" style="color: <?= $clientPlanning['color']; ?>;  ">
+                          <?= $clientPlanning['text'] ?? 'Client planning call not found'; ?>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- end Client Planning Call -->
+
+              <!-- Fieldwork -->
+                <div class="d-flex align-items-center position-relative mt-3">
+                  <div class="d-flex flex-column align-items-center me-3">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $fieldwork['color']; ?>;">
+                      <i class="bi bi-calendar2-range"></i>
+                    </div>
+                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Fieldwork</span>
+                        <span class="fw-semibold <?= $fieldwork['textClass']; ?>" style="color: <?= $fieldwork['color']; ?>;">
+                          <?= $fieldwork['text'] ?? 'Fieldwork date not found'; ?>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- end Fieldwork -->
+
+              <!-- Leadsheet Start -->
+                <div class="d-flex align-items-center position-relative mt-3">
+                  <div class="d-flex flex-column align-items-center me-3">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $leadsheetStart['color']; ?>;">
+                      <i class="bi bi-calendar2-event"></i>
+                    </div>
+                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Leadsheet Start</span>
+                        <span class="fw-semibold <?= $leadsheetStart['textClass']; ?>" style="color: <?= $leadsheetStart['color']; ?>;  ">
+                          <?= $leadsheetStart['text'] ?? 'Leadsheet start date not found'; ?>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- end Leadsheet Start -->
+
+              <!-- Leadsheet Due -->
+                <div class="d-flex align-items-center position-relative mt-3">
+                  <div class="d-flex flex-column align-items-center me-3">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $leadsheetDue['color']; ?>;">
+                      <i class="bi bi-calendar2-event"></i>
+                    </div>
+                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Leadsheet Due</span>
+                        <span class="fw-semibold <?= $leadsheetDue['textClass']; ?>" style="color: <?= $leadsheetDue['color']; ?>;">
+                          <?= $leadsheetDue['text'] ?? 'Leadsheet due date not found'; ?>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- end Leadsheet Due -->
+
+              <!-- Draft Due -->
+                <div class="d-flex align-items-center position-relative mt-3">
+                  <div class="d-flex flex-column align-items-center me-3">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $draftDue['color']; ?>;">
+                      <i class="bi bi-calendar2-event"></i>
+                    </div>
+                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Draft Report Due</span>
+                        <span class="fw-semibold <?= $draftDue['textClass']; ?>" style="color: <?= $draftDue['color']; ?>;">
+                          <?= $draftDue['text'] ?? 'Draft report due not found'; ?>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- end Draft Due -->
+
+              <!-- Final Due -->
+                <div class="d-flex align-items-center position-relative mt-3">
+                  <div class="d-flex flex-column align-items-center me-3">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $finalDue['color']; ?>;">
+                      <i class="bi bi-calendar2-event"></i>
+                    </div>
+                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Final Report Due</span>
+                        <span class="fw-semibold <?= $finalDue['textClass']; ?>" style="color: <?= $finalDue['color']; ?>;">
+                          <?= $finalDue['text'] ?? 'Final report due not found'; ?>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- end Final Due -->
+
+              <!-- Archive Date -->
+                <div class="d-flex align-items-center position-relative mt-3">
+                  <div class="d-flex flex-column align-items-center me-3">
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $archiveDate['color']; ?>;">
+                      <i class="bi bi-archive"></i>
+                    </div>
+                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">Archive Date</span>
+                        <span class="fw-semibold <?= $archiveDate['textClass']; ?>" style="color: <?= $archiveDate['color']; ?>;">
+                          <?= $archiveDate['text'] ?? 'Not archived yet'; ?>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- end Archive Date -->
+
+              </div>
+
+              </div>
             </div>
-
-            </div>
-          </div>
+          <!-- END BOTTOM ROW (timeline) -->
 
         </div>
       </div>
 
     </div>
+  <!-- end next section (main) -->
 
+  <!-- upper bay -->
+    <div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
+      <div class="col-md-12">
+        <div class="card h-100"
+             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+          <div class="card-body p-4">
+
+                
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <!-- end upper bay -->
 
 
 
