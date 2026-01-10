@@ -336,68 +336,65 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
   <!-- end second row details -->
 
-  <!-- <div class="container-fluid vh-100"> -->
-  <div class="row h-100" style="margin-left: 200px; margin-right: 200px;">
+<div class="row align-items-stretch" style="margin-left: 200px; margin-right: 200px;">
 
-    <!-- LEFT COLUMN (Full Height) -->
-    <div class="col-md-6 h-100">
-      <div class="card h-100" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
-          <div class="card-body p-4">
-            <!-- Header -->
-            <div class="d-flex align-items-center mb-3">
-              <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
-                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
-              </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
-            </div>
-            <p style="color: rgb(0,0,123);">
-              <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
-            </p>
+  <!-- LEFT COLUMN (matches height of right column) -->
+  <div class="col-md-6 d-flex">
+    <div class="card w-100" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+      <div class="card-body p-4">
+        <!-- Header -->
+        <div class="d-flex align-items-center mb-3">
+          <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
+            <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
           </div>
+          <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
         </div>
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div class="col-md-6 h-100">
-      <div class="d-flex flex-column h-100">
-
-        <!-- TOP ROW (Short) -->
-        <div class="card h-100" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
-          <div class="card-body p-4">
-            <!-- Header -->
-            <div class="d-flex align-items-center mb-3">
-              <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
-                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
-              </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
-            </div>
-            <p style="color: rgb(0,0,123);">
-              <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
-            </p>
-          </div>
-        </div>
-
-        <!-- BOTTOM ROW (Fills remaining height) -->
-        <div class="card h-100 flex-grow-1" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
-          <div class="card-body p-4">
-            <!-- Header -->
-            <div class="d-flex align-items-center mb-3">
-              <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
-                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
-              </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
-            </div>
-            <p style="color: rgb(0,0,123);">
-              <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
-            </p>
-          </div>
-        </div>
-
+        <p style="color: rgb(0,0,123);">
+          <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
+        </p>
       </div>
     </div>
-
   </div>
-<!-- </div> -->
+
+  <!-- RIGHT COLUMN -->
+  <div class="col-md-6 d-flex">
+    <div class="d-flex flex-column w-100">
+
+      <!-- TOP ROW (auto height / short) -->
+      <div class="card mb-3" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
+              <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+            </div>
+            <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
+          </div>
+          <p style="color: rgb(0,0,123);">
+            <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
+          </p>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW (fills remaining height) -->
+      <div class="card flex-grow-1" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+        <div class="card-body p-4">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
+              <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+            </div>
+            <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
+          </div>
+          <p style="color: rgb(0,0,123);">
+            <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
 
 
 
