@@ -505,6 +505,11 @@ $internalPlanning = timelineStatus(
     $eng['eng_completed_internal_planning'] ?? 'N'
 );
 
+$irlDue = timelineStatus(
+    $eng['eng_irl_due'] ?? null,
+    $eng['eng_irl_sent'] ?? 'N'
+);
+
 $clientPlanning = timelineStatus(
     $eng['eng_client_planning_call'] ?? null,
     $eng['eng_completed_client_planning'] ?? 'N'
@@ -514,11 +519,6 @@ $fieldwork = timelineStatus(
     $eng['eng_fieldwork'] ?? null,
     $eng['eng_fieldwork_complete'] ?? 'N'
 );
-
-// $leadsheetStart = timelineStatus(
-//     $eng['eng_leadsheet_start'] ?? null,
-//     $eng['eng_leadsheet_started'] ?? 'N'
-// );
 
 $leadsheetDue = timelineStatus(
     $eng['eng_leadsheet_due'] ?? null,
@@ -609,54 +609,53 @@ $finalDue = timelineStatus(
               <!-- end Client Planning Call -->
 
               <?php
-function yesNoStatus($flag, $yesText = 'Completed', $noText = 'Not requested yet') {
-    $isYes = ($flag === 'Y');
+              function yesNoStatus($flag, $yesText = 'Completed', $noText = 'Not requested yet') {
+                  $isYes = ($flag === 'Y');
+                          
+                  return [
+                      'color'     => $isYes ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
+                      'textClass' => $isYes ? 'text-success' : 'text-danger',
+                      'text'      => $isYes ? $yesText : $noText
+                  ];
+              }
+              ?>
+              
+              <?php
+              $section3Requested = yesNoStatus(
+                  $eng['eng_section_3_requested'] ?? 'N',
+                  'Completed',
+                  'Not requested yet'
+              );
+              ?>
 
-    return [
-        'color'     => $isYes ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
-        'textClass' => $isYes ? 'text-success' : 'text-danger',
-        'text'      => $isYes ? $yesText : $noText
-    ];
-}
-?>
-
-<?php
-$section3Requested = yesNoStatus(
-    $eng['eng_section_3_requested'] ?? 'N',
-    'Completed',
-    'Not requested yet'
-);
-?>
-
-              <!-- Leadsheet Start -->
+              <!-- Section 3 Requested -->
                 <div class="d-flex align-items-center position-relative mt-3">
-  <div class="d-flex flex-column align-items-center me-3">
-    
-    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-         style="width:44px;height:44px;background-color: <?= $section3Requested['color']; ?>;">
-      <i class="bi bi-file-earmark-text"></i>
-    </div>
+                  <div class="d-flex flex-column align-items-center me-3">
 
-    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-  </div>
+                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                         style="width:44px;height:44px;background-color: <?= $section3Requested['color']; ?>;">
+                      <i class="bi bi-file-earmark-text"></i>
+                    </div>
 
-  <div class="flex-grow-1">
-    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-        
-        <span class="fw-semibold">Section 3 Requested</span>
+                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+                  </div>
 
-        <span class="fw-semibold <?= $section3Requested['textClass']; ?>"
-              style="color: <?= $section3Requested['color']; ?>;">
-          <?= $section3Requested['text']; ?>
-        </span>
+                  <div class="flex-grow-1">
+                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
 
-      </div>
-    </div>
-  </div>
-</div>
+                        <span class="fw-semibold">Section 3 Requested</span>
 
-              <!-- end Leadsheet Start -->
+                        <span class="fw-semibold <?= $section3Requested['textClass']; ?>"
+                              style="color: <?= $section3Requested['color']; ?>;">
+                          <?= $section3Requested['text']; ?>
+                        </span>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <!-- end Section 3 requested -->
 
               <!-- Fieldwork -->
                 <div class="d-flex align-items-center position-relative mt-3">
