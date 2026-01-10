@@ -512,7 +512,7 @@ $planningColor = $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)'; // green / 
         <span class="fw-semibold">Internal Planning Call</span>
 
         <span class="fw-semibold" style="color: <?= $planningColor ?>;">
-          <?= htmlspecialchars($planningText) ?>
+          <?= htmlspecialchars($planningDate) ?>
         </span>
 
       </div>
