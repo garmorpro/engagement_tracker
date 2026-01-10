@@ -501,7 +501,7 @@ function planningCallTimeline($scheduledDate, $completedFlag) {
               <?php
               $internalPlanning = planningCallTimeline(
                   $eng['eng_internal_planning_call'] ?? null,
-                  $eng['eng_completed_internal_planning_call'] ?? 'N'
+                  $eng['eng_completed_internal_planning'] ?? 'N'
               );
               ?>
 
