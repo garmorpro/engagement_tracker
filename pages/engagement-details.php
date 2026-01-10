@@ -484,28 +484,43 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
                 <div class="timeline position-relative">
 
+                <?php
+$isCompleted = ($eng['eng_completed_internal_planning_call'] ?? 'N') === 'Y';
+
+$planningDate = !empty($eng['eng_internal_planning_call'])
+    ? (new DateTime($eng['eng_internal_planning_call']))->format('M j, Y')
+    : 'Date not scheduled';
+
+$planningColor = $isCompleted ? 'rgb(34,197,94)' : 'rgb(239,68,68)'; // green / red
+$planningText  = $isCompleted ? 'Completed' : $planningDate;
+?>
+
 
               <!-- Internal Planning Call -->
-                <div class="d-flex align-items-center position-relative">
-                  <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
-                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                         style="width:44px;height:44px;background-color: <?= $internalPlanning['color']; ?>;">
-                      <i class="bi bi-telephone"></i>
-                    </div>
-                    <!-- <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div> -->
-                  </div>
-                  <div class="flex-grow-1">
-                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                        <span class="fw-semibold">Internal Planning Call</span>
-                        <span class="fw-semibold <?= $internalPlanning['textClass']; ?>" style="color: <?= $internalPlanning  ['color']; ?>;">
-                          <?= $internalPlanning['text'] ?? 'Internal planning call not found'; ?>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <!-- end Internal Planning Call -->
+<div class="d-flex align-items-center position-relative">
+  <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
+    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+         style="width:44px;height:44px;background-color: <?= $planningColor ?>;">
+      <i class="bi bi-telephone"></i>
+    </div>
+  </div>
+
+  <div class="flex-grow-1">
+    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+        
+        <span class="fw-semibold">Internal Planning Call</span>
+
+        <span class="fw-semibold" style="color: <?= $planningColor ?>;">
+          <?= htmlspecialchars($planningText) ?>
+        </span>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Internal Planning Call -->
+
 
               <!-- IRL Due -->
                 <div class="d-flex align-items-center position-relative mt-3">
