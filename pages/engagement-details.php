@@ -377,17 +377,17 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
           </div>
         </div>
 
-        <div class="card" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
-          <div class="card-body p-4">
+        <div class="card mb-4" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
+          <div class="card-body p-3">
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
-              <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
-                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
-              </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
+              <h6 class="mb-0" style="color: rgb(69,166,81); font-weight: 500 !important; font-size: 14px !important;">Senior</h6>
             </div>
-            <p style="color: rgb(0,0,123);">
-              <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
+            <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
+              <?php echo htmlspecialchars($eng['eng_staff'] ?? 'N/A'); ?>
+            </h6>
+            <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
+              <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_staff_dol'] ?? 'N/A'); ?>
             </p>
           </div>
         </div>
