@@ -712,17 +712,21 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               
 
               <div class="d-flex align-items-center mb-3">
-                    <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px  !important;">Manager</h6>
-                  </div>
+  <h6 class="mb-0 text-uppercase"
+      style="color: rgb(21,87,242); font-weight: 600; font-size: 12px;">
+    Manager
+  </h6>
+</div>
 
-                  <div class="card" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);  ">
-                <div class="card-body">
-                  <p class="" style="font-size:14px;">
-                    <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
-            </p>
+<div class="card"
+     style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,242,252);">
+  <div class="card-body d-flex align-items-center">
+    <p class="mb-0" style="font-size:14px;">
+      <?= htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
+    </p>
+  </div>
+</div>
 
-                  </div>
-              </div>
 
                 
           </div>
