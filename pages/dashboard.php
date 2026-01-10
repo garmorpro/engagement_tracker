@@ -617,10 +617,11 @@ require_once '../includes/functions.php';
 
                         <!-- Archive Button -->
     <!-- Archive Button -->
-    <button type="button" class="btn btn-sm btn-outline-danger archive-btn"
-            onclick="archiveEngagement('...')">
-        <i class="bi bi-archive"></i> Archive
-    </button>
+   <button type="button" class="btn btn-sm btn-outline-danger archive-btn"
+        onclick="event.stopPropagation(); archiveEngagement('...')">
+    <i class="bi bi-archive"></i> Archive
+</button>
+
 
                     </div>
                 </a>
