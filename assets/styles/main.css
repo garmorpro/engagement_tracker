@@ -527,7 +527,18 @@ body {
     position: relative; /* ensure absolute button is relative to the card */
 }
 
+.engagement-card-kanban .archive-btn {
+    display: none;
+    z-index: 10;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
 .engagement-card-kanban:hover .archive-btn {
     display: inline-block;
-    z-index: 10; /* make sure it’s on top */
+}
+
+.archive-btn {
+    pointer-events: auto;
 }
