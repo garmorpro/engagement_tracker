@@ -336,7 +336,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
   <!-- end second row details -->
 
-<div class="row align-items-stretch mt-1" style="margin-left: 200px; margin-right: 200px;">
+<div class="row align-items-stretch mt-3" style="margin-left: 200px; margin-right: 200px;">
 
   <!-- LEFT COLUMN (matches height of right column) -->
   <div class="col-md-6 d-flex">
