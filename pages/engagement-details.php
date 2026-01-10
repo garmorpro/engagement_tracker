@@ -634,7 +634,7 @@ $section3Requested = yesNoStatus(
     
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
          style="width:44px;height:44px;background-color: <?= $section3Requested['color']; ?>;">
-      <i class="bi bi-check2-circle"></i>
+      <i class="bi bi-file-earmark-text"></i>
     </div>
 
     <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
