@@ -119,7 +119,12 @@ require_once '../includes/functions.php';
                           <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Completed</h6>
   
                           <!-- Big Number -->
-                          <h2 class="fw-bold" style="color: rgb(0,194,81);">1,250</h2>
+                           <?php
+                            $result = $conn->query("SELECT COUNT(*) AS completed_engagements FROM engagements WHERE eng_status = 'complete'");
+                            $row = $result->fetch_assoc();
+                            $completeCount = $row['completed_engagements'] ?? 0;
+                            ?>
+                          <h2 class="fw-bold" style="color: rgb(0,194,81);"><?php echo number_format($completeCount); ?></h2>
   
                           <!-- Decorative Icon behind -->
                           <i class="bi bi-check2-circle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(0,194,81,0.15); z-index: 0;     "></i>
@@ -139,7 +144,21 @@ require_once '../includes/functions.php';
                           <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Overdue</h6>
   
                           <!-- Big Number -->
-                          <h2 class="fw-bold" style="color: rgb(252,35,52);">1,250</h2>
+                           <?php
+                            $today = date('Y-m-d');
+
+                            $result = $conn->query("
+                                SELECT COUNT(*) AS overdue_engagements 
+                                FROM engagements 
+                                WHERE eng_status = 'in-progress'
+                                  AND eng_final_due IS NOT NULL
+                                  AND eng_final_due < '$today'
+                            ");                         
+
+                            $row = $result->fetch_assoc();
+                            $overdueCount = $row['overdue_engagements'] ?? 0;
+                            ?>
+                          <h2 class="fw-bold" style="color: rgb(252,35,52);"><?php echo number_format($overdueCount); ?></h2>
   
                           <!-- Decorative Icon behind -->
                           <i class="bi bi-exclamation-triangle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,35,52,0.15);     z-index: 0;"></i>
