@@ -752,21 +752,34 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
   <!-- end lower bay -->
 
   <!-- sub lower bay -->
-    <div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
-      <div class="col-md-12">
-        <div class="card h-100"
-             style="border-radius: 15px; border: 1px solid rgb(235,237,240); ?>; background-color: rgb(246,247,249);">
-          <div class="card-body p-4">
+<div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
+  <div class="col-md-12">
+    <div class="card h-100"
+         style="border-radius: 15px; border: 1px solid rgb(235,237,240); background-color: rgb(246,247,249);">
+      <div class="card-body p-4">
 
-              
-                
+        <div class="d-flex justify-content-between align-items-center text-muted" style="font-size: 14px;">
+          
+          <!-- Created (left) -->
+          <div class="d-flex align-items-center">
+            <i class="bi bi-calendar-plus me-2"></i>
+            <span><strong>Created:</strong> Nov 15, 2024</span>
           </div>
+
+          <!-- Updated (right) -->
+          <div class="d-flex align-items-center">
+            <i class="bi bi-arrow-repeat me-2"></i>
+            <span><strong>Updated:</strong> Jan 3, 2025</span>
+          </div>
+
         </div>
+
       </div>
     </div>
+  </div>
+</div>
+<!-- end sub lower bay -->
 
-
-  <!-- end sub lower bay -->
 
 
 
