@@ -354,7 +354,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
           <div class="card-body p-4">
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0" style="color: rgb(21,87,242);">Manager</h6>
+              <h6 class="mb-0" style="color: rgb(21,87,242); font-weight: 500 !important;">Manager</h6>
             </div>
             <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
               <?php echo htmlspecialchars($eng['eng_manager'] ?? 'N/A'); ?>
