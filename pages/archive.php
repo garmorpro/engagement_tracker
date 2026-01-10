@@ -99,7 +99,7 @@ require_once '../includes/functions.php';
                               <th>Manager</th>
                               <th>Status</th>
                               <th>Period</th>
-                              <th>Draft Due</th>
+                              <th>Archived</th>
                               <th>Actions</th>
                           </tr>
                       </thead>
@@ -136,8 +136,8 @@ require_once '../includes/functions.php';
                                   <td><?php echo htmlspecialchars($periodText); ?></td>
                                   <td>
                                       <?php
-                                      if (!empty($eng['eng_draft_due'])) {
-                                          echo date('Y-m-d', strtotime($eng['eng_draft_due']));
+                                      if (!empty($eng['eng_archive'])) {
+                                          echo date('Y-m-d', strtotime($eng['eng_archive']));
                                       }
                                       ?>
                                   </td>
