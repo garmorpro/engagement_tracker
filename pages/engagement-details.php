@@ -735,7 +735,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               </div>
                           
               <div class="card"
-                   style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,242,252);">
+                   style="border-color: rgb(230,213,253); border-radius: 20px; background-color: rgb(249,245,254);">
                 <div class="card-body d-flex align-items-center">
                   <p class="mb-0" style="font-size:14px;">
                     <?= htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
