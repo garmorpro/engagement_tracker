@@ -348,7 +348,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
                 <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
               </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123); font-size: 20px !important;">Team</h6>
+              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
             </div>
 
             <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
@@ -419,12 +419,12 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
           <!-- BOTTOM ROW (fills remaining height) -->
           <div class="card flex-grow-1" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);   ">
             <div class="card-body p-4">
-              <div class="d-flex align-items-center mb-3">
-                <div class="icon-square me-2" style="background-color: rgb(33,128,255);height: 40px; width: 40px;">
-                  <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
-                </div>
-                <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
+              <div class="d-flex align-items-center mb-4">
+              <div class="icon-square me-2" style="background-color: rgb(252,237,215); height: 40px; width: 40px;">
+                <i class="bi bi-calendar2" style="color: rgb(223,50,0);"></i>
               </div>
+              <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Engagement Timeline</h6>
+            </div>
               <p style="color: rgb(0,0,123);">
                 <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
               </p>
