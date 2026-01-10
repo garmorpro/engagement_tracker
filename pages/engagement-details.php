@@ -417,7 +417,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <div class="card-body p-3">
                 <!-- Header -->
                 <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0 text-uppercase" style="color: rgb(87,95,108); font-weight: 500 !important; font-size: 14px !important;">Point of Contact</h6>
+                  <h6 class="mb-0 text-uppercase" style="color: rgb(87,95,108); font-weight: 600 !important; font-size: 12px !important;">Point of Contact</h6>
                 </div>
                 <h6 class="fw-semibold" style="color: rgb(0,0,0); font-size: 20px;">
                   <?php echo htmlspecialchars($eng['eng_poc'] ?? 'Point of contact not found'); ?>
