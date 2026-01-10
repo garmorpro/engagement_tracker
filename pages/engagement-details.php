@@ -662,38 +662,42 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
             <!-- end final due date -->
               
             <!-- archive date -->
+              <?php
+              $hasArchiveDate = !empty($eng['eng_archive']);
+              $activeColor   = $hasArchiveDate ? 'rgb(60,163,74)' : 'rgb(220,53,69)';
+              $textClass     = $hasArchiveDate ? 'text-success' : 'text-danger';
+              ?>
+              
               <div class="d-flex align-items-start align-items-center position-relative mt-3">
 
                 <!-- Icon + line -->
                 <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;  height:44px; background-color: rgb(60,163,74);">
+                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+                       style="width:44px;height:44px;background-color: <?= $activeColor; ?>;">
                     <i class="bi bi-telephone"></i>
                   </div>
+
                   <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
                 </div>
 
                 <!-- Bootstrap Card -->
                 <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
+                  <div class="card border-0 shadow-sm"
+                       style="border-radius:20px;background-color: rgb(249,250,251);">
                     <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
                       <span class="fw-semibold">Archive Date</span>
-                      <?php
-                      $archive_date = !empty($eng['eng_archive']);
-                      ?>
 
-                      <span class="fw-semibold <?= $archive_date ? 'text-success' : 'text-danger'; ?>"
-                            style="color: <?= $archive_date ? 'rgb(60,163,74)' : 'rgb(220,53,69)'; ?>;">
-                        <?= $archive_date
+                      <span class="fw-semibold <?= $textClass; ?>" style="color: <?= $activeColor; ?>;">
+                        <?= $hasArchiveDate
                             ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_archive'])))
                             : 'Archive date not found'; ?>
                       </span>
-
                     </div>
                   </div>
                 </div>
 
               </div>
-            <!-- end final due date -->
+            <!-- end archive date -->
 
 
 
