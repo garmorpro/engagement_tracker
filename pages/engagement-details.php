@@ -476,6 +476,7 @@ $leadsheetStart   = timelineDate($eng['eng_leadsheet_start'] ?? null);
 $leadsheetDue     = timelineDate($eng['eng_leadsheet_due'] ?? null);
 $draftDue         = timelineDate($eng['eng_draft_due'] ?? null);
 $finalDue         = timelineDate($eng['eng_final_due'] ?? null);
+$archiveDate      = timelineDate($eng['eng_archive'] ?? null);
 ?>
 
 <!-- Internal Planning Call -->
@@ -646,253 +647,30 @@ $finalDue         = timelineDate($eng['eng_final_due'] ?? null);
   </div>
 </div>
 
+<!-- Archive Date -->
+<div class="d-flex align-items-center position-relative mt-3">
+  <div class="d-flex flex-column align-items-center me-3">
+    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+         style="width:44px;height:44px;background-color: <?= $archiveDate['color']; ?>;">
+      <i class="bi bi-telephone"></i>
+    </div>
+    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+  </div>
+  <div class="flex-grow-1">
+    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+        <span class="fw-semibold">Archive Date</span>
+        <span class="fw-semibold <?= $archiveDate['textClass']; ?>" style="color: <?= $archiveDate['color']; ?>;">
+          <?= $archiveDate['text'] ?? 'Not archived yet'; ?>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
 
 
-            <!-- Internal planning call -->
-              <div class="d-flex align-items-start align-items-center position-relative">
 
-                <!-- Icon + line -->
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;  height:44px; background-color: rgb(60,163,74);">
-                    <i class="bi bi-telephone"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-
-                <!-- Bootstrap Card -->
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Internal Planning Call</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
-                        <?= !empty($eng['eng_internal_planning_call']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_internal_planning_call']))) : 'Internal planning call not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            <!-- end Internal planning call -->
-
-            <!-- IRL due -->
-              <div class="d-flex align-items-start align-items-center position-relative mt-3">
-
-                <!-- Icon + line -->
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;  height:44px; background-color: rgb(60,163,74);">
-                    <i class="bi bi-telephone"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-
-                <!-- Bootstrap Card -->
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">IRL Due Date</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
-                        <?= !empty($eng['eng_irl_due']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_irl_due']))) : 'IRL due date not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            <!-- end irl due -->
-
-            <!-- Internal planning call -->
-              <div class="d-flex align-items-start align-items-center position-relative mt-3">
-
-                <!-- Icon + line -->
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;  height:44px; background-color: rgb(60,163,74);">
-                    <i class="bi bi-telephone"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-
-                <!-- Bootstrap Card -->
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Client Planning Call</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
-                        <?= !empty($eng['eng_client_planning_call']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_client_planning_call']))) : 'Client planning call not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            <!-- end Internal planning call -->
-
-            <!-- Fieldwork -->
-              <div class="d-flex align-items-start align-items-center position-relative mt-3">
-
-                <!-- Icon + line -->
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;  height:44px; background-color: rgb(60,163,74);">
-                    <i class="bi bi-telephone"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-
-                <!-- Bootstrap Card -->
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Fieldwork</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
-                        <?= !empty($eng['eng_fieldwork']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_fieldwork']))) : 'Fieldwork date not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            <!-- end fieldwork -->
-
-            <!-- Leadsheet start date -->
-              <div class="d-flex align-items-start align-items-center position-relative mt-3">
-
-                <!-- Icon + line -->
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;  height:44px; background-color: rgb(60,163,74);">
-                    <i class="bi bi-telephone"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-
-                <!-- Bootstrap Card -->
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Leadsheet Start</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
-                        <?= !empty($eng['eng_leadsheet_start']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_leadsheet_start']))) : 'Leadsheet start date not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            <!-- end leadsheet start date -->
-
-            <!-- Leadsheet due date -->
-              <div class="d-flex align-items-start align-items-center position-relative mt-3">
-
-                <!-- Icon + line -->
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;  height:44px; background-color: rgb(60,163,74);">
-                    <i class="bi bi-telephone"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-
-                <!-- Bootstrap Card -->
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Leadsheet Due</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
-                        <?= !empty($eng['eng_leadsheet_due']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_leadsheet_due']))) : 'Leadsheet due date not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            <!-- end leadsheet due date -->
-
-            <!-- draft due date -->
-              <div class="d-flex align-items-start align-items-center position-relative mt-3">
-
-                <!-- Icon + line -->
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;  height:44px; background-color: rgb(60,163,74);">
-                    <i class="bi bi-telephone"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-
-                <!-- Bootstrap Card -->
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Draft Report Due</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
-                        <?= !empty($eng['eng_draft_due']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_draft_due']))) : 'Draft report due not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            <!-- end draft due date -->
-
-            <!-- final due date -->
-              <div class="d-flex align-items-start align-items-center position-relative mt-3">
-
-                <!-- Icon + line -->
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;  height:44px; background-color: rgb(60,163,74);">
-                    <i class="bi bi-telephone"></i>
-                  </div>
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-
-                <!-- Bootstrap Card -->
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Final Report Due</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
-                        <?= !empty($eng['eng_final_due']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_final_due']))) : 'Final report due not found'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            <!-- end final due date -->
-              
-            <!-- archive date -->
-              <?php
-              $hasArchiveDate = !empty($eng['eng_archive']);
-              $activeColor   = $hasArchiveDate ? 'rgb(60,163,74)' : 'rgb(220,53,69)';
-              $textClass     = $hasArchiveDate ? 'text-success' : 'text-danger';
-              ?>
-
-              <div class="d-flex align-items-start align-items-center position-relative mt-3">
-
-                <!-- Icon + line -->
-                <div class="d-flex flex-column align-items-center me-3">
-                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                       style="width:44px;height:44px;background-color: <?= $activeColor; ?>;">
-                    <i class="bi bi-archive"></i>
-                  </div>
-
-                  <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                </div>
-
-                <!-- Bootstrap Card -->
-                <div class="flex-grow-1">
-                  <div class="card border-0 shadow-sm"
-                       style="border-radius:20px;background-color: rgb(249,250,251);">
-                    <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                      <span class="fw-semibold">Archive Date</span>
-
-                      <span class="fw-semibold <?= $textClass; ?>" style="color: <?= $activeColor; ?>;">
-                        <?= $hasArchiveDate
-                            ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_archive'])))
-                            : 'Not archived yet'; ?>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            <!-- end archive date -->
+            
 
 
 
