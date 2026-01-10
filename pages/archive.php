@@ -117,7 +117,23 @@ require_once '../includes/functions.php';
                                   </td>
                                   <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
                                   <td><?php echo ucfirst(htmlspecialchars($eng['eng_status'])); ?></td>
-                                  <td><?php echo htmlspecialchars($eng['eng_period']); ?></td>
+                                  <?php
+                                    $periodText = '—';
+
+                                    // Case 1: Start + End exist
+                                    if (!empty($eng['eng_start_period']) && !empty($eng['eng_end_period'])) {
+                                        $start = date('M j, Y', strtotime($eng['eng_start_period']));
+                                        $end   = date('M j, Y', strtotime($eng['eng_end_period']));
+                                        $periodText = "{$start} – {$end}";
+
+                                    // Case 2: No range, but As Of date exists
+                                    } elseif (!empty($eng['eng_as_of_date'])) {
+                                        $asOf = date('M j, Y', strtotime($eng['eng_as_of_date']));
+                                        $periodText = "As of {$asOf}";
+                                    }
+                                    ?>
+
+                                  <td><?php echo htmlspecialchars($periodText); ?></td>
                                   <td>
                                       <?php
                                       if (!empty($eng['eng_draft_due'])) {
