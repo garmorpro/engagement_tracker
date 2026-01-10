@@ -167,7 +167,7 @@ if (isset($_GET['eng_id'])) {
                 <!-- Top badges row -->
                 <div class="mb-2 d-flex align-items-center flex-wrap gap-2">
                   <!-- Engagement ID -->
-                  <span class="badge" style="background-color: rgb(252,252,252); border: rgb(229,231,235); color: rgb(0,0,0) font-weight: 400px !important;"><?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?></span>
+                  <span class="badge" style="background-color: rgb(252,252,252); border: rgb(229,231,235); color: rgb(0,0,0); font-weight: 400px !important;"><?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?></span>
 
                   <!-- Status -->
                   <span class="badge rounded-pill" style="background-color: <?php echo $pillColor; ?>; color: white;">
