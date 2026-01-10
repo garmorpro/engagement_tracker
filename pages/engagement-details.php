@@ -742,8 +742,6 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                   </p>
                 </div>
               </div>
-
-
                 
           </div>
         </div>
@@ -751,7 +749,24 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
     </div>
 
 
-  <!-- end upper bay -->
+  <!-- end lower bay -->
+
+  <!-- sub lower bay -->
+    <div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
+      <div class="col-md-12">
+        <div class="card h-100"
+             style="border-radius: 15px; border: 1px solid rgb(235,237,240); ?>; background-color: rgb(246,247,249);">
+          <div class="card-body p-4">
+
+              
+                
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  <!-- end sub lower bay -->
 
 
 
