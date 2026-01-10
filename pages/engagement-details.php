@@ -485,7 +485,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                 <div class="timeline position-relative">
 
                 <?php
-$isCompleted = ($eng['eng_completed_internal_planning_call'] ?? 'N') === 'Y';
+$isCompleted = ($eng['eng_completed_internal_planning'] ?? 'N') === 'Y';
 
 $planningDate = !empty($eng['eng_internal_planning_call'])
     ? (new DateTime($eng['eng_internal_planning_call']))->format('M j, Y')
