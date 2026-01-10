@@ -372,7 +372,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <?php echo htmlspecialchars($eng['eng_senior'] ?? 'N/A'); ?>
             </h6>
             <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-              DOL: <?php echo htmlspecialchars($eng['eng_senior_dol'] ?? 'N/A'); ?>
+              <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_senior_dol'] ?? 'N/A'); ?>
             </p>
           </div>
         </div>
