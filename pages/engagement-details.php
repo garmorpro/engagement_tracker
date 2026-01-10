@@ -506,7 +506,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
             <!-- end irl due -->
 
             <!-- Internal planning call -->
-              <div class="d-flex align-items-start align-items-center position-relative">
+              <div class="d-flex align-items-start align-items-center position-relative mt-3">
 
                 <!-- Icon + line -->
                 <div class="d-flex flex-column align-items-center me-3">
