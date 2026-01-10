@@ -519,3 +519,7 @@ body {
   width: 2px;
   background-color: rgb(229,231,235);
 }
+
+.engagement-card-wrapper:hover .archive-btn {
+    display: inline-block;
+}

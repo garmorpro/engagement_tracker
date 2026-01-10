@@ -523,116 +523,125 @@ require_once '../includes/functions.php';
         <!-- end row 2 -->
   
         <!-- Row 3 -->
-            <div class="row align-items-center" style="margin-top: 20px; margin-left: 210px; margin-right: 210px;">
+<div class="row align-items-center" style="margin-top: 20px; margin-left: 210px; margin-right: 210px;">
 
-                <div class="card" style="border-radius: 15px; border: 2px solid rgb(153,239,174); background-color: rgb(239,252,242) !important;">
-                    <div class="card-body">
+    <div class="card" style="border-radius: 15px; border: 2px solid rgb(153,239,174); background-color: rgb(239,252,242) !important;">
+        <div class="card-body">
 
-                        <!-- Header badge -->
-                        <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
-                              style="font-size: 15px; padding: 10px 14px; background-color: rgb(79,198,95) !important;">
-                            Complete
-                            <?php
-                            $engagements = getAllEngagements($conn);
-                            $completeCount = count(array_filter($engagements, fn($eng) => $eng['eng_status'] === 'complete'));
-                            ?>
-                            <span class="badge rounded-pill ms-2"
-                                  style="color: white !important; background-color: rgb(130,212,141) !important;">
-                                <?php echo $completeCount; ?>
-                            </span>
-                        </span>
+            <!-- Header badge -->
+            <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
+                  style="font-size: 15px; padding: 10px 14px; background-color: rgb(79,198,95) !important;">
+                Complete
+                <?php
+                $engagements = getAllEngagements($conn);
+                $completeCount = count(array_filter($engagements, fn($eng) => $eng['eng_status'] === 'complete'));
+                ?>
+                <span class="badge rounded-pill ms-2"
+                      style="color: white !important; background-color: rgb(130,212,141) !important;">
+                    <?php echo $completeCount; ?>
+                </span>
+            </span>
 
-                        <!-- ✅ DROP ZONE -->
-                        <div class="kanban-column" data-status="complete">
+            <!-- ✅ DROP ZONE -->
+            <div class="kanban-column" data-status="complete">
 
-                            <?php
-                            $completeEngagements = array_filter($engagements, fn($eng) => $eng['eng_status'] === 'complete');
+                <?php
+                $completeEngagements = array_filter($engagements, fn($eng) => $eng['eng_status'] === 'complete');
 
-                            if (count($completeEngagements) > 0):
-                                foreach ($completeEngagements as $eng):
-                                    $fieldworkDate = !empty($eng['eng_fieldwork'])
-                                        ? date('M d', strtotime($eng['eng_fieldwork']))
-                                        : '';
-                            ?>
+                if (count($completeEngagements) > 0):
+                    foreach ($completeEngagements as $eng):
+                        $fieldworkDate = !empty($eng['eng_fieldwork'])
+                            ? date('M d', strtotime($eng['eng_fieldwork']))
+                            : '';
+                ?>
 
-                            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
-                               class="text-decoration-none text-reset d-block">
-                                
-                                <!-- ✅ DRAGGABLE CARD -->
-                                <div class="card engagement-card-kanban mb-2"
-                                     draggable="true"
-                                     data-id="<?php echo $eng['eng_idno']; ?>"
-                                     data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
-                                     data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
-                                     data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
-                                     data-fieldwork="<?php echo $fieldworkDate; ?>"
-                                     data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
-                                     data-final-due="<?php echo htmlspecialchars($eng['eng_final_due'] ?? ''); ?>"
-                                     style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
-                                
-                                    <div class="card-body d-flex align-items-center justify-content-between">
-                                
-                                        <!-- LEFT -->
-                                        <div class="d-flex align-items-center gap-3">
-                                            <i class="bi bi-grip-horizontal text-secondary"></i>
-                                            <div>
-                                                <h5 class="mb-0" style="font-size: 18px; font-weight: 600;">
-                                                    <?php echo htmlspecialchars($eng['eng_name']); ?>
-                                                </h5>
-                                                <span class="text-muted" style="font-size: 14px;">
-                                                    <?php echo htmlspecialchars($eng['eng_idno']); ?>
-                                                </span>
-                                            </div>
-                                        </div>
-                                
-                                        <!-- RIGHT -->
-                                        <div class="d-flex align-items-center gap-3 text-secondary">
-                                            <span style="font-size: 14px;">
-                                                <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
-                                            </span>
-                                
-                                            <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?>
-                                            </span>
-                                
-                                            <?php if (!empty($eng['eng_audit_type'])): ?>
-                                                <span class="badge"
-                                                      style="background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;">
-                                                    <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
-                                                </span>
-                                            <?php endif; ?>
-                                            
-                                            <?php
-                                            $today = date('Y-m-d');
-                                            if (!empty($eng['eng_final_due']) && $eng['eng_final_due'] < $today):
-                                            ?>
-                                                <span class="badge"
-                                                      style="background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500;">
-                                                    Overdue
-                                                </span>
-                                            <?php endif; ?>
-                                        </div>
-                                            
-                                    </div>
+                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
+                   class="text-decoration-none text-reset d-block position-relative engagement-card-wrapper">
+                    
+                    <!-- ✅ DRAGGABLE CARD -->
+                    <div class="card engagement-card-kanban mb-2"
+                         draggable="true"
+                         data-id="<?php echo $eng['eng_idno']; ?>"
+                         data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
+                         data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
+                         data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
+                         data-fieldwork="<?php echo $fieldworkDate; ?>"
+                         data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
+                         data-final-due="<?php echo htmlspecialchars($eng['eng_final_due'] ?? ''); ?>"
+                         style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move; position: relative;">
+                    
+                        <div class="card-body d-flex align-items-center justify-content-between">
+                    
+                            <!-- LEFT -->
+                            <div class="d-flex align-items-center gap-3">
+                                <i class="bi bi-grip-horizontal text-secondary"></i>
+                                <div>
+                                    <h5 class="mb-0" style="font-size: 18px; font-weight: 600;">
+                                        <?php echo htmlspecialchars($eng['eng_name']); ?>
+                                    </h5>
+                                    <span class="text-muted" style="font-size: 14px;">
+                                        <?php echo htmlspecialchars($eng['eng_idno']); ?>
+                                    </span>
                                 </div>
-                            </a>
-                                            
-                            <?php endforeach; else: ?>
-                            
-                                <!-- Empty state -->
-                                <div class="text-center text-muted py-4 empty-placeholder"
-                                     style="border: 1px dashed rgb(208,213,219); border-radius: 15px;">
-                                    Drop engagements here
-                                </div>
-                            
-                            <?php endif; ?>
-                            
-                        </div><!-- end kanban-column -->
-                            
+                            </div>
+                    
+                            <!-- RIGHT -->
+                            <div class="d-flex align-items-center gap-3 text-secondary">
+                                <span style="font-size: 14px;">
+                                    <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
+                                </span>
+                    
+                                <span style="font-size: 14px; color: rgb(243,36,57);">
+                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?>
+                                </span>
+                    
+                                <?php if (!empty($eng['eng_audit_type'])): ?>
+                                    <span class="badge"
+                                          style="background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;">
+                                        <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
+                                    </span>
+                                <?php endif; ?>
+                                
+                                <?php
+                                $today = date('Y-m-d');
+                                if (!empty($eng['eng_final_due']) && $eng['eng_final_due'] < $today):
+                                ?>
+                                    <span class="badge"
+                                          style="background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500;">
+                                        Overdue
+                                    </span>
+                                <?php endif; ?>
+                            </div>
+                                
+                        </div>
+
+                        <!-- Archive Button (hidden by default, shows on hover) -->
+                        <button type="button" class="btn btn-sm btn-outline-danger archive-btn"
+                                style="position: absolute; top: 8px; right: 8px; display: none;"
+                                onclick="archiveEngagement('<?php echo $eng['eng_idno']; ?>')">
+                            <i class="bi bi-archive"></i> Archive
+                        </button>
+
                     </div>
-                </div>
-            </div>
-        <!-- end row 3 -->
+                </a>
+                                
+                <?php endforeach; else: ?>
+                
+                    <!-- Empty state -->
+                    <div class="text-center text-muted py-4 empty-placeholder"
+                         style="border: 1px dashed rgb(208,213,219); border-radius: 15px;">
+                        Drop engagements here
+                    </div>
+                
+                <?php endif; ?>
+                
+            </div><!-- end kanban-column -->
+                
+        </div>
+    </div>
+</div>
+<!-- end row 3 -->
+
 
 
   
@@ -865,6 +874,29 @@ require_once '../includes/functions.php';
             updateColumnUI(column);
         });
     });
+</script>
+
+<script>
+function archiveEngagement(engId) {
+    if (!confirm('Are you sure you want to archive this engagement?')) return;
+
+    // Example AJAX request to archive
+    fetch('../includes/archive-engagement.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eng_id: engId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            alert('Engagement archived!');
+            location.reload(); // or remove card from DOM
+        } else {
+            alert('Failed to archive engagement.');
+        }
+    })
+    .catch(err => console.error(err));
+}
 </script>
 
 
