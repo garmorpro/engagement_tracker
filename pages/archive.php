@@ -99,7 +99,7 @@ require_once '../includes/functions.php';
                               <th>Manager</th>
                               <th>Status</th>
                               <th>Period</th>
-                              <th>Archived</th>
+                              <th>Archive Date</th>
                               <th>Actions</th>
                           </tr>
                       </thead>
@@ -137,7 +137,7 @@ require_once '../includes/functions.php';
                                   <td>
                                       <?php
                                       if (!empty($eng['eng_archive'])) {
-                                          echo date('Y-m-d', strtotime($eng['eng_archive']));
+                                          echo date('M j, Y', strtotime($eng['eng_archive']));
                                       }
                                       ?>
                                   </td>
