@@ -210,13 +210,13 @@ require_once '../includes/functions.php';
                                   <td><?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?></td>
                                   <?php
                                     $periodText = '—';
-                                                                        
+
                                     // Case 1: Start + End exist
-                                    if (!empty($eng['eng_period_start']) && !empty($eng['eng_period_end'])) {
-                                        $start = date('M j, Y', strtotime($eng['eng_period_start']));
-                                        $end   = date('M j, Y', strtotime($eng['eng_period_end']));
+                                    if (!empty($eng['eng_start_period']) && !empty($eng['eng_end_period'])) {
+                                        $start = date('M j, Y', strtotime($eng['eng_start_period']));
+                                        $end   = date('M j, Y', strtotime($eng['eng_end_period']));
                                         $periodText = "{$start} – {$end}";
-                                                                        
+
                                     // Case 2: No range, but As Of date exists
                                     } elseif (!empty($eng['eng_as_of_date'])) {
                                         $asOf = date('M j, Y', strtotime($eng['eng_as_of_date']));
