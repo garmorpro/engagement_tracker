@@ -336,104 +336,105 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
   <!-- end second row details -->
 
-<div class="row align-items-stretch mt-4" style="margin-left: 200px; margin-right: 200px;">
+  <!-- next section -->
+    <div class="row align-items-stretch mt-4" style="margin-left: 200px; margin-right: 200px;">
 
-  <!-- LEFT COLUMN (matches height of right column) -->
-  <div class="col-md-4 d-flex">
-    <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
-      <div class="card-body p-4">
-        <!-- Header -->
-        <div class="d-flex align-items-center mb-4">
-          <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
-            <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
-          </div>
-          <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123); font-size: 20px !important;">Team</h6>
-        </div>
-
-        <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
-          <div class="card-body p-3">
+      <!-- LEFT COLUMN (matches height of right column) -->
+      <div class="col-md-4 d-flex">
+        <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
+          <div class="card-body p-4">
             <!-- Header -->
-            <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0" style="color: rgb(21,87,242); font-weight: 500 !important; font-size: 14px !important;">Manager</h6>
+            <div class="d-flex align-items-center mb-4">
+              <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
+                <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
+              </div>
+              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123); font-size: 20px !important;">Team</h6>
             </div>
-            <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-              <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
-            </h6>
+
+            <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
+              <div class="card-body p-3">
+                <!-- Header -->
+                <div class="d-flex align-items-center mb-3">
+                  <h6 class="mb-0" style="color: rgb(21,87,242); font-weight: 500 !important; font-size: 14px !important;">Manager</h6>
+                </div>
+                <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
+                  <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
+                </h6>
+              </div>
+            </div>
+
+            <div class="card mb-4" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
+              <div class="card-body p-3">
+                <!-- Header -->
+                <div class="d-flex align-items-center mb-3">
+                  <h6 class="mb-0" style="color: rgb(123,0,240); font-weight: 500 !important; font-size: 14px !important;">Senior</h6>
+                </div>
+                <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+                  <?php echo htmlspecialchars($eng['eng_senior'] ?? 'Senior not assigned'); ?>
+                </h6>
+                <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
+                  <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_senior_dol'] ?? 'DOL not assigned'); ?>
+                </p>
+              </div>
+            </div>
+
+            <div class="card mb-4" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
+              <div class="card-body p-3">
+                <!-- Header -->
+                <div class="d-flex align-items-center mb-3">
+                  <h6 class="mb-0" style="color: rgb(69,166,81); font-weight: 500 !important; font-size: 14px !important;">Staff</h6>
+                </div>
+                <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
+                  <?php echo htmlspecialchars($eng['eng_staff'] ?? 'Staff not assigned'); ?>
+                </h6>
+                <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
+                  <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_staff_dol'] ?? 'DOL not assigned'); ?>
+                </p>
+              </div>
+            </div>
+
           </div>
         </div>
-
-        <div class="card mb-4" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
-          <div class="card-body p-3">
-            <!-- Header -->
-            <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0" style="color: rgb(123,0,240); font-weight: 500 !important; font-size: 14px !important;">Senior</h6>
-            </div>
-            <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-              <?php echo htmlspecialchars($eng['eng_senior'] ?? 'Senior not assigned'); ?>
-            </h6>
-            <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-              <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_senior_dol'] ?? 'DOL not assigned'); ?>
-            </p>
-          </div>
-        </div>
-
-        <div class="card mb-4" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
-          <div class="card-body p-3">
-            <!-- Header -->
-            <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0" style="color: rgb(69,166,81); font-weight: 500 !important; font-size: 14px !important;">Staff</h6>
-            </div>
-            <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-              <?php echo htmlspecialchars($eng['eng_staff'] ?? 'Staff not assigned'); ?>
-            </h6>
-            <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-              <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_staff_dol'] ?? 'DOL not assigned'); ?>
-            </p>
-          </div>
-        </div>
-
       </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="col-md-8 d-flex">
+        <div class="d-flex flex-column w-100">
+
+          <!-- TOP ROW (auto height / short) -->
+          <div class="card mb-3" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-4">
+              <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
+                <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
+              </div>
+              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123); font-size: 20px !important;">Team</h6>
+            </div>
+              <p style="color: rgb(0,0,123);">
+                <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
+              </p>
+            </div>
+          </div>
+
+          <!-- BOTTOM ROW (fills remaining height) -->
+          <div class="card flex-grow-1" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);   ">
+            <div class="card-body p-4">
+              <div class="d-flex align-items-center mb-3">
+                <div class="icon-square me-2" style="background-color: rgb(33,128,255);height: 40px; width: 40px;">
+                  <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+                </div>
+                <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
+              </div>
+              <p style="color: rgb(0,0,123);">
+                <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
-  </div>
-
-  <!-- RIGHT COLUMN -->
-  <div class="col-md-8 d-flex">
-    <div class="d-flex flex-column w-100">
-
-      <!-- TOP ROW (auto height / short) -->
-      <div class="card mb-3" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
-        <div class="card-body p-4">
-          <div class="d-flex align-items-center mb-3">
-            <div class="icon-square me-2" style="background-color: rgb(33,128,255); height: 25px; width: 25px;">
-              <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
-            </div>
-            <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
-          </div>
-          <p style="color: rgb(0,0,123);">
-            <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
-          </p>
-        </div>
-      </div>
-
-      <!-- BOTTOM ROW (fills remaining height) -->
-      <div class="card flex-grow-1" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
-        <div class="card-body p-4">
-          <div class="d-flex align-items-center mb-3">
-            <div class="icon-square me-2" style="background-color: rgb(33,128,255);height: 40px; width: 40px;">
-              <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
-            </div>
-            <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
-          </div>
-          <p style="color: rgb(0,0,123);">
-            <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
-          </p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-</div>
 
 
 
