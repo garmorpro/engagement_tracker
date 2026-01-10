@@ -760,16 +760,32 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
             <div class="d-flex justify-content-between align-items-center text-muted" style="font-size: 14px;">
 
+              <?php
+              $createdDate = !empty($eng['eng_created'])
+                  ? (new DateTime($eng['eng_created']))->format('M j, Y')
+                  : '—';
+
+              $updatedDate = !empty($eng['eng_updated'])
+                  ? (new DateTime($eng['eng_updated']))->format('M j, Y')
+                  : '—';
+              ?>
+
               <!-- Created (left) -->
               <div class="d-flex align-items-center">
-                <i class="bi bi-calendar-plus me-2"></i>
-                <span>Created: <span class="fw-semibold">Nov 15, 2024</span></span>
+                <i class="bi bi-clock me-2"></i>
+                <span>
+                  Created:
+                  <span class="fw-semibold"><?php echo htmlspecialchars($createdDate); ?></span>
+                </span>
               </div>
 
               <!-- Updated (right) -->
               <div class="d-flex align-items-center">
-                <i class="bi bi-arrow-repeat me-2"></i>
-                <span><strong>Updated:</strong> Jan 3, 2025</span>
+                <i class="bi bi-calendar2 me-2"></i>
+                <span>
+                  Updated:
+                  <span class="fw-semibold"><?php echo htmlspecialchars($updatedDate); ?></span>
+                </span>
               </div>
 
             </div>
