@@ -560,8 +560,6 @@ $finalDue = timelineStatus(
                 </div>
               <!-- end Internal Planning Call -->
 
-
-
               <!-- IRL Due -->
                 <div class="d-flex align-items-center position-relative mt-3">
                   <div class="d-flex flex-column align-items-center me-3">
@@ -610,6 +608,55 @@ $finalDue = timelineStatus(
 
               <!-- end Client Planning Call -->
 
+              <?php
+function yesNoStatus($flag, $yesText = 'Completed', $noText = 'Not requested yet') {
+    $isYes = ($flag === 'Y');
+
+    return [
+        'color'     => $isYes ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
+        'textClass' => $isYes ? 'text-success' : 'text-danger',
+        'text'      => $isYes ? $yesText : $noText
+    ];
+}
+?>
+
+<?php
+$section3Requested = yesNoStatus(
+    $eng['eng_section_3_requested'] ?? 'N',
+    'Completed',
+    'Not requested yet'
+);
+?>
+
+              <!-- Leadsheet Start -->
+                <div class="d-flex align-items-center position-relative mt-3">
+  <div class="d-flex flex-column align-items-center me-3">
+    
+    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+         style="width:44px;height:44px;background-color: <?= $section3Requested['color']; ?>;">
+      <i class="bi bi-check2-circle"></i>
+    </div>
+
+    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+  </div>
+
+  <div class="flex-grow-1">
+    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+        
+        <span class="fw-semibold">Leadsheet Start</span>
+
+        <span class="fw-semibold <?= $section3Requested['textClass']; ?>"
+              style="color: <?= $section3Requested['color']; ?>;">
+          <?= $section3Requested['text']; ?>
+        </span>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+              <!-- end Leadsheet Start -->
 
               <!-- Fieldwork -->
                 <div class="d-flex align-items-center position-relative mt-3">
@@ -634,28 +681,6 @@ $finalDue = timelineStatus(
                   </div>
                 </div>
               <!-- end Fieldwork -->
-
-              <!-- Leadsheet Start -->
-                <!-- <div class="d-flex align-items-center position-relative mt-3">
-                  <div class="d-flex flex-column align-items-center me-3">
-                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                         style="width:44px;height:44px;background-color: <?= $leadsheetStart['color']; ?>;">
-                      <i class="bi bi-calendar2-event"></i>
-                    </div>
-                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                  </div>
-                  <div class="flex-grow-1">
-                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                        <span class="fw-semibold">Leadsheet Start</span>
-                        <span class="fw-semibold <?= $leadsheetStart['textClass']; ?>" style="color: <?= $leadsheetStart['color']; ?>;  ">
-                          <?= $leadsheetStart['text'] ?? 'Leadsheet start date not found'; ?>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div> -->
-              <!-- end Leadsheet Start -->
 
               <!-- Leadsheet Due -->
                 <div class="d-flex align-items-center position-relative mt-3">
