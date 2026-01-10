@@ -695,7 +695,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
     </div>
   <!-- end next section (main) -->
 
-  <!-- upper bay -->
+  <!-- lower bay -->
     <div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
       <div class="col-md-12">
         <div class="card h-100"
@@ -719,7 +719,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               </div>
 
               <div class="card mb-3"
-                   style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,242,252);">
+                   style="border-color: rgb(182,210,251); border-radius: 20px; background-color: rgb(240,246,254);">
                 <div class="card-body d-flex align-items-center">
                   <p class="mb-0" style="font-size:14px;">
                     <?= htmlspecialchars($eng['eng_scope'] ?? 'Scope not set'); ?> - <?= htmlspecialchars($eng['eng_audit_type'] ?? 'Audit type not assigned'); ?>
