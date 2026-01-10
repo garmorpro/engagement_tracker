@@ -677,9 +677,17 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                   <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
                     <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
                       <span class="fw-semibold">Archive Date</span>
-                      <span class="text-success fw-semibold" style="color: rgb(60,163,74);">
-                        <?= !empty($eng['eng_archive']) ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_archive']))) : 'Archive date not found'; ?>
+                      <?php
+                      $archive_date = !empty($eng['eng_archive']);
+                      ?>
+
+                      <span class="fw-semibold <?= $archive_date ? 'text-success' : 'text-danger'; ?>"
+                            style="color: <?= $archive_date ? 'rgb(60,163,74)' : 'rgb(220,53,69)'; ?>;">
+                        <?= $archive_date
+                            ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_archive'])))
+                            : 'Archive date not found'; ?>
                       </span>
+
                     </div>
                   </div>
                 </div>
