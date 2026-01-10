@@ -713,7 +713,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
               <div class="d-flex align-items-center mb-2">
                 <h6 class="mb-0 text-uppercase"
-                    style="color: rgb(21,87,242); font-weight: 600; font-size: 12px;">
+                    style="color: rgb(62,73,90); font-weight: 600; font-size: 12px;">
                   Audit Scope
                 </h6>
               </div>
