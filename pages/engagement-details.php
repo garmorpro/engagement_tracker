@@ -458,7 +458,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <!-- Icon + line -->
               <div class="d-flex flex-column align-items-center me-3">
                 <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;height:44px; background-color: rgb(60,163,74);">
-                  <i class="bi bi-telephone-fill"></i>
+                  <i class="bi bi-telephone"></i>
                 </div>
                 <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
               </div>
