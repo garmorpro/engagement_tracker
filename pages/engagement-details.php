@@ -699,7 +699,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
     <div class="row g-4 mt-1" style="margin-left: 200px; margin-right: 200px;">
       <div class="col-md-12">
         <div class="card h-100"
-             style="border-radius: 15px; border: 1px solid <?php echo $borderColor; ?>; background-color: <?php echo $bgColor; ?>;">
+             style="border-radius: 15px; border: 1px solid rgb(229,231,235); ?>; background-color: rgb(255,255,255);">
           <div class="card-body p-4">
 
                 
