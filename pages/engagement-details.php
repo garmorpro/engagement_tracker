@@ -644,7 +644,7 @@ $section3Requested = yesNoStatus(
     <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
       <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
         
-        <span class="fw-semibold">Leadsheet Start</span>
+        <span class="fw-semibold">Section 3 Requested</span>
 
         <span class="fw-semibold <?= $section3Requested['textClass']; ?>"
               style="color: <?= $section3Requested['color']; ?>;">
