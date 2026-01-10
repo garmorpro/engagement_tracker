@@ -453,7 +453,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Engagement Timeline</h6>
             </div>
 
-            <div class="d-flex align-items-start position-relative">
+            <div class="d-flex align-items-start align-items-center position-relative">
 
               <!-- Icon + line -->
               <div class="d-flex flex-column align-items-center me-3">
