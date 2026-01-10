@@ -491,8 +491,8 @@ $planningDate = !empty($eng['eng_internal_planning_call'])
     ? (new DateTime($eng['eng_internal_planning_call']))->format('M j, Y')
     : 'Date not scheduled';
 
-$planningColor = $isCompleted ? 'rgb(34,197,94)' : 'rgb(239,68,68)'; // green / red
-$planningText  = $isCompleted ? 'Completed' : $planningDate;
+$planningColor = $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)'; // green / red
+// $planningText  = $isCompleted ? 'Completed' : $planningDate;
 ?>
 
 
