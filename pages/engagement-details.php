@@ -336,8 +336,8 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
   <!-- end second row details -->
 
-  <div class="container-fluid vh-100">
-  <div class="row h-100">
+  <!-- <div class="container-fluid vh-100"> -->
+  <div class="row h-100" style="margin-left: 200px; margin-right: 200px;">
 
     <!-- LEFT COLUMN (Full Height) -->
     <div class="col-md-6 h-100">
@@ -364,7 +364,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
     </div>
 
   </div>
-</div>
+<!-- </div> -->
 
 
 
