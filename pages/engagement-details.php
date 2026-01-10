@@ -361,7 +361,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
     <div class="d-flex flex-column w-100">
 
       <!-- TOP ROW (auto height / short) -->
-      <div class="card mb-3" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+      <div class="card mb-3" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
         <div class="card-body p-4">
           <div class="d-flex align-items-center mb-3">
             <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
@@ -376,7 +376,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
       </div>
 
       <!-- BOTTOM ROW (fills remaining height) -->
-      <div class="card flex-grow-1" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+      <div class="card flex-grow-1" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
         <div class="card-body p-4">
           <div class="d-flex align-items-center mb-3">
             <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
