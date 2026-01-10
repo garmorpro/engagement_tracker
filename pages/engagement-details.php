@@ -512,17 +512,17 @@ $clientPlanning = timelineStatus(
 
 $fieldwork = timelineStatus(
     $eng['eng_fieldwork'] ?? null,
-    $eng['eng_fieldwork_completed'] ?? 'N'
+    $eng['eng_fieldwork_complete'] ?? 'N'
 );
 
-$leadsheetStart = timelineStatus(
-    $eng['eng_leadsheet_start'] ?? null,
-    $eng['eng_leadsheet_started'] ?? 'N'
-);
+// $leadsheetStart = timelineStatus(
+//     $eng['eng_leadsheet_start'] ?? null,
+//     $eng['eng_leadsheet_started'] ?? 'N'
+// );
 
 $leadsheetDue = timelineStatus(
     $eng['eng_leadsheet_due'] ?? null,
-    $eng['eng_leadsheet_completed'] ?? 'N'
+    $eng['eng_leadsheet_complete'] ?? 'N'
 );
 
 $draftDue = timelineStatus(
