@@ -524,21 +524,17 @@ body {
 
 /* Show Archive button on hover */
 .engagement-card-kanban {
-    position: relative; /* ensure absolute button is relative to the card */
+    position: relative; /* ensure absolute positioning works */
 }
 
 .engagement-card-kanban .archive-btn {
     display: none;
-    z-index: 10;
     position: absolute;
     top: 8px;
     right: 8px;
+    z-index: 10;
 }
 
 .engagement-card-kanban:hover .archive-btn {
     display: inline-block;
-}
-
-.archive-btn {
-    pointer-events: auto;
 }
