@@ -334,7 +334,38 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
     </div>
 
 
-  <!-- end upper bay -->
+  <!-- end second row details -->
+
+  <div class="container-fluid vh-100">
+  <div class="row h-100">
+
+    <!-- LEFT COLUMN (Full Height) -->
+    <div class="col-md-6 h-100">
+      <div class="h-100 bg-light p-3">
+        Left column (full height)
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col-md-6 h-100">
+      <div class="d-flex flex-column h-100">
+
+        <!-- TOP ROW (Short) -->
+        <div class="bg-secondary text-white p-3">
+          Top right (short)
+        </div>
+
+        <!-- BOTTOM ROW (Fills remaining height) -->
+        <div class="flex-grow-1 bg-dark text-white p-3">
+          Bottom right (fills height)
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
 
 
 
