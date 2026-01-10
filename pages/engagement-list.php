@@ -192,7 +192,7 @@ require_once '../includes/functions.php';
                               <th class="text-uppercase" style="font-size: 14px;" scope="col">Manager</th>
                               <th class="text-uppercase" style="font-size: 14px;" scope="col">Status</th>
                               <th class="text-uppercase" style="font-size: 14px;" scope="col">Period</th>
-                              <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th>
+                              <!-- <th class="text-uppercase" style="font-size: 14px;" scope="col">Draft Due</th> -->
                               <th class="text-uppercase" style="font-size: 14px;" scope="col">Actions</th>
                           </tr>
                       </thead>
@@ -225,13 +225,13 @@ require_once '../includes/functions.php';
                                     ?>
 
                                   <td><?php echo htmlspecialchars($periodText); ?></td>
-                                  <td>
+                                  <!-- <td>
                                       <?php
-                                          if (!empty($eng['eng_draft_due'])) {
-                                              echo date('Y-m-d', strtotime($eng['eng_draft_due']));
-                                          }
+                                        //   if (!empty($eng['eng_draft_due'])) {
+                                        //       echo date('Y-m-d', strtotime($eng['eng_draft_due']));
+                                        //   }
                                       ?>
-                                  </td>
+                                  </td> -->
                                   <td><i class="bi bi-trash"></i></td>
                               </tr>
                           <?php endforeach; ?>
