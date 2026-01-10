@@ -377,7 +377,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
       <div class="card flex-grow-1" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
         <div class="card-body p-4">
           <div class="d-flex align-items-center mb-3">
-            <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
+            <div class="icon-square me-2" style="background-color: rgb(33,128,255);height: 40px; width: 40px;">
               <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
             </div>
             <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
