@@ -485,22 +485,27 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                 <div class="timeline position-relative">
 
                 <?php
-$isCompleted = ($eng['eng_completed_internal_planning'] ?? 'N') === 'Y';
+function internalPlanningTimeline($scheduledDate, $completedFlag) {
+    $isCompleted = ($completedFlag === 'Y');
+    $hasDate = !empty($scheduledDate);
 
-$planningDate = !empty($eng['eng_internal_planning_call'])
-    ? (new DateTime($eng['eng_internal_planning_call']))->format('M j, Y')
-    : 'Date not scheduled';
-
-$planningColor = $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)'; // green / red
-// $planningText  = $isCompleted ? 'Completed' : $planningDate;
+    return [
+        'color'     => $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
+        'textClass' => $isCompleted ? 'text-success' : 'text-danger',
+        'text'      => $hasDate
+            ? htmlspecialchars(date('M j, Y', strtotime($scheduledDate)))
+            : null
+    ];
+}
 ?>
+
 
 
               <!-- Internal Planning Call -->
 <div class="d-flex align-items-center position-relative">
   <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-         style="width:44px;height:44px;background-color: <?= $planningColor ?>;">
+         style="width:44px;height:44px;background-color: <?= $internalPlanning['color']; ?>;">
       <i class="bi bi-telephone"></i>
     </div>
   </div>
@@ -508,18 +513,17 @@ $planningColor = $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)'; // green / 
   <div class="flex-grow-1">
     <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
       <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-        
         <span class="fw-semibold">Internal Planning Call</span>
-
-        <span class="fw-semibold" style="color: <?= $planningColor ?>;">
-          <?= htmlspecialchars($planningDate) ?>
+        <span class="fw-semibold <?= $internalPlanning['textClass']; ?>"
+              style="color: <?= $internalPlanning['color']; ?>;">
+          <?= $internalPlanning['text'] ?? 'Internal planning call not found'; ?>
         </span>
-
       </div>
     </div>
   </div>
 </div>
 <!-- end Internal Planning Call -->
+
 
 
               <!-- IRL Due -->
