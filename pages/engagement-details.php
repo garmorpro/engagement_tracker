@@ -709,12 +709,20 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                 <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Scope & Notes</h6>
               </div>
 
+              
+
               <div class="d-flex align-items-center mb-3">
                     <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px  !important;">Manager</h6>
                   </div>
+
+                  <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);  ">
+                <div class="card-body p-3">
                   <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
                     <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
                   </h6>
+
+                  </div>
+              </div>
 
                 
           </div>
