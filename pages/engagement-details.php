@@ -343,14 +343,14 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
     <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
       <div class="card-body p-4">
         <!-- Header -->
-        <div class="d-flex align-items-center mb-3">
+        <div class="d-flex align-items-center mb-5">
           <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
             <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
           </div>
           <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Team</h6>
         </div>
 
-        <div class="card mt-3 mb-4" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+        <div class="card mb-4" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
           <div class="card-body p-4">
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
