@@ -73,7 +73,7 @@ require_once '../includes/functions.php';
                             $row = $result->fetch_assoc();
                             $totalEngagements = $row['total_engagements'] ?? 0;
                             ?>
-                            
+
                           <h2 class="fw-bold" style="color: rgb(30,117,225);"><?php echo number_format($totalEngagements); ?></h2>
   
                           <!-- Decorative Icon behind -->
@@ -94,7 +94,12 @@ require_once '../includes/functions.php';
                           <h6 class="card-title mb-2" style="color: rgb(104,115,128);">In Progress</h6>
   
                           <!-- Big Number -->
-                          <h2 class="fw-bold" style="color: rgb(255,92,0);">1,250</h2>
+                           <?php
+                            $result = $conn->query("SELECT COUNT(*) AS in_progress_engagements FROM engagements WHERE status = 'In Progress'");
+                            $row = $result->fetch_assoc();
+                            $inProgressCount = $row['in_progress_engagements'] ?? 0;
+                            ?>
+                          <h2 class="fw-bold" style="color: rgb(255,92,0);"><?php echo number_format($inProgressCount); ?></h2>
   
                           <!-- Decorative Icon behind -->
                           <i class="bi bi-clock position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,92,0,0.15); z-index: 0;"></i>
