@@ -505,7 +505,7 @@ $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
   <div class="d-flex flex-column align-items-center me-3">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
          style="width:44px;height:44px;background-color: <?= $irlDue['color']; ?>;">
-      <i class="bi bi-telephone"></i>
+      <i class="bi bi-calendar2"></i>
     </div>
     <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
   </div>
@@ -547,7 +547,7 @@ $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
   <div class="d-flex flex-column align-items-center me-3">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
          style="width:44px;height:44px;background-color: <?= $fieldwork['color']; ?>;">
-      <i class="bi bi-telephone"></i>
+      <i class="bi bi-calendar2-range"></i>
     </div>
     <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
   </div>
@@ -568,7 +568,7 @@ $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
   <div class="d-flex flex-column align-items-center me-3">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
          style="width:44px;height:44px;background-color: <?= $leadsheetStart['color']; ?>;">
-      <i class="bi bi-telephone"></i>
+      <i class="bi bi-calendar2-event"></i>
     </div>
     <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
   </div>
@@ -589,7 +589,7 @@ $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
   <div class="d-flex flex-column align-items-center me-3">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
          style="width:44px;height:44px;background-color: <?= $leadsheetDue['color']; ?>;">
-      <i class="bi bi-telephone"></i>
+      <i class="bi bi-calendar2-event"></i>
     </div>
     <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
   </div>
@@ -610,7 +610,7 @@ $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
   <div class="d-flex flex-column align-items-center me-3">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
          style="width:44px;height:44px;background-color: <?= $draftDue['color']; ?>;">
-      <i class="bi bi-telephone"></i>
+      <i class="bi bi-calendar2-event"></i>
     </div>
     <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
   </div>
@@ -631,7 +631,7 @@ $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
   <div class="d-flex flex-column align-items-center me-3">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
          style="width:44px;height:44px;background-color: <?= $finalDue['color']; ?>;">
-      <i class="bi bi-telephone"></i>
+      <i class="bi bi-calendar2-event"></i>
     </div>
     <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
   </div>
@@ -652,7 +652,7 @@ $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
   <div class="d-flex flex-column align-items-center me-3">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
          style="width:44px;height:44px;background-color: <?= $archiveDate['color']; ?>;">
-      <i class="bi bi-telephone"></i>
+      <i class="bi bi-archive"></i>
     </div>
     <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
   </div>
