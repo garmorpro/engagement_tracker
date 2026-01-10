@@ -722,7 +722,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                    style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,242,252);">
                 <div class="card-body d-flex align-items-center">
                   <p class="mb-0" style="font-size:14px;">
-                    <?= htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
+                    <?= htmlspecialchars($eng['eng_scope'] ?? 'Scope not set'); ?> - <?= htmlspecialchars($eng['eng_audit_type'] ?? 'Audit type not assigned'); ?>
                   </p>
                 </div>
               </div>
@@ -730,7 +730,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <div class="d-flex align-items-center mb-2">
                 <h6 class="mb-0 text-uppercase"
                     style="color: rgb(62,73,90); font-weight: 600; font-size: 12px;">
-                  Audit Scope
+                  Notes
                 </h6>
               </div>
                           
