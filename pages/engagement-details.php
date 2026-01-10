@@ -251,7 +251,7 @@ if (isset($_GET['eng_id'])) {
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
               <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
-                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+                <i class="bi bi-bullseye" style="color: rgb(255,255,255);"></i>
               </div>
               <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
             </div>
@@ -268,7 +268,7 @@ if (isset($_GET['eng_id'])) {
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
               <div class="icon-square me-2" style="background-color: rgb(181,72,255);">
-                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+                <i class="bi bi-calendar2" style="color: rgb(255,255,255);"></i>
               </div>
               <?php
               $periodLabel = '';
@@ -313,7 +313,7 @@ if (isset($_GET['eng_id'])) {
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
               <div class="icon-square me-2" style="background-color: rgb(0,201,92);">
-                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+                <i class="bi bi-check-circle" style="color: rgb(255,255,255);"></i>
               </div>
               <h6 class="fw-semibold mb-0" style="color: rgb(0,66,0);">Final Due Date</h6>
             </div>
@@ -330,7 +330,7 @@ if (isset($_GET['eng_id'])) {
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
               <div class="icon-square me-2" style="background-color: rgb(255,103,0);">
-                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+                <i class="bi bi-clock" style="color: rgb(255,255,255);"></i>
               </div>
               <h6 class="fw-semibold mb-0" style="color: rgb(98,0,0);">Last Contact</h6>
             </div>
