@@ -552,8 +552,8 @@ function planningCallTimeline($scheduledDate, $completedFlag) {
 
               <?php
               $clientPlanning = planningCallTimeline(
-                  $eng['client_planning_call'] ?? null,
-                  $eng['eng_completed_client_planning_call'] ?? 'N'
+                  $eng['eng_client_planning_call'] ?? null,
+                  $eng['eng_completed_client_planning'] ?? 'N'
               );
               ?>
 
