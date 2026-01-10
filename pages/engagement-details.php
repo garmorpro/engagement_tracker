@@ -717,9 +717,9 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
                   <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);  ">
                 <div class="card-body p-3">
-                  <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
+                  <p class="fw-semibold" style="">
                     <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
-                  </h6>
+            </p>
 
                   </div>
               </div>
