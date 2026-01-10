@@ -369,7 +369,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               <h6 class="mb-0" style="color: rgb(123,0,240); font-weight: 500 !important; font-size: 14px !important;">Senior</h6>
             </div>
             <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-              <?php echo htmlspecialchars($eng['eng_senior'] ?? 'N/A'); ?>
+              <?php echo htmlspecialchars($eng['eng_senior'] ?? 'Senior not assigned'); ?>
             </h6>
             <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
               <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_senior_dol'] ?? 'N/A'); ?>
@@ -381,10 +381,10 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
           <div class="card-body p-3">
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0" style="color: rgb(69,166,81); font-weight: 500 !important; font-size: 14px !important;">Senior</h6>
+              <h6 class="mb-0" style="color: rgb(69,166,81); font-weight: 500 !important; font-size: 14px !important;">Staff</h6>
             </div>
             <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-              <?php echo htmlspecialchars($eng['eng_staff'] ?? 'N/A'); ?>
+              <?php echo htmlspecialchars($eng['eng_staff'] ?? 'Staff not assigned'); ?>
             </h6>
             <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
               <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_staff_dol'] ?? 'N/A'); ?>
