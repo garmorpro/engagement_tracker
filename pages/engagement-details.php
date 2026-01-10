@@ -340,7 +340,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
   <!-- LEFT COLUMN (matches height of right column) -->
   <div class="col-md-6 d-flex">
-    <div class="card w-100" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+    <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
       <div class="card-body p-4">
         <!-- Header -->
         <div class="d-flex align-items-center mb-3">
