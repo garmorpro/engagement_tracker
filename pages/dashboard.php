@@ -95,7 +95,7 @@ require_once '../includes/functions.php';
   
                           <!-- Big Number -->
                            <?php
-                            $result = $conn->query("SELECT COUNT(*) AS in_progress_engagements FROM engagements WHERE status = 'In Progress'");
+                            $result = $conn->query("SELECT COUNT(*) AS in_progress_engagements FROM engagements WHERE eng_status = 'In Progress'");
                             $row = $result->fetch_assoc();
                             $inProgressCount = $row['in_progress_engagements'] ?? 0;
                             ?>
