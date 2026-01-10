@@ -561,10 +561,10 @@ $irlDue = timelineStatus(
 
 
               <?php
-              $clientPlanning = planningCallTimeline(
-                  $eng['eng_client_planning_call'] ?? null,
-                  $eng['eng_completed_client_planning'] ?? 'N'
-              );
+              // $clientPlanning = planningCallTimeline(
+              //     $eng['eng_client_planning_call'] ?? null,
+              //     $eng['eng_completed_client_planning'] ?? 'N'
+              // );
               ?>
 
               <!-- Client Planning Call -->
