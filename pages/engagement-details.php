@@ -455,26 +455,25 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
 
             <div class="d-flex align-items-start position-relative">
 
-    <!-- Icon + line -->
-    <div class="d-flex flex-column align-items-center me-3">
-      <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center"
-           style="width:44px;height:44px;">
-        <i class="bi bi-telephone-fill"></i>
-      </div>
-      <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-    </div>
+              <!-- Icon + line -->
+              <div class="d-flex flex-column align-items-center me-3">
+                <div class="rounded-circle text-white d-flex align-items-center justify-content-center" style="width:44px;height:44px; background-color: rgb(60,163,74);">
+                  <i class="bi bi-telephone-fill"></i>
+                </div>
+                <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
+              </div>
 
-    <!-- Bootstrap Card -->
-    <div class="flex-grow-1">
-      <div class="card border-0 shadow-sm" style="border-radius:20px;">
-        <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-          <span class="fw-semibold">Planning Call</span>
-          <span class="text-success fw-semibold">Dec 1, 2024</span>
-        </div>
-      </div>
-    </div>
+              <!-- Bootstrap Card -->
+              <div class="flex-grow-1">
+                <div class="card border-0 shadow-sm" style="border-radius:20px; background-color: rgb(249,250,251);">
+                  <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold">Planning Call</span>
+                    <span class="text-success fw-semibold" style="color: rgb(60,163,74);">Dec 1, 2024</span>
+                  </div>
+                </div>
+              </div>
 
-  </div>
+            </div>
               
             
 
