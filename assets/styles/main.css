@@ -523,7 +523,8 @@ body {
 
 
 /* Show Archive button on hover */
-.archive-btn {
-    pointer-events: auto;  /* ensure the button receives clicks */
-    z-index: 20;           /* make sure it's above the card content */
+.btn-archive {
+    font-size: 14px;
+    padding: 4px 8px;
 }
+

@@ -96,18 +96,26 @@ if (isset($_GET['eng_id'])) {
             </a>
           </div>
   
-          <!-- Right: Edit & Delete buttons -->
-          <div class="right">
-            <!-- Edit button -->
-            <button class="btn btn-edit me-2">
-              <i class="bi bi-pencil-square me-1"></i> Edit
-            </button>
-  
-            <!-- Delete button -->
-            <button class="btn btn-delete">
-              <i class="bi bi-trash me-1"></i> Delete
-            </button>
-          </div>
+          <!-- Right: Edit, Delete, (optional Archive) -->
+<div class="right d-flex align-items-center gap-2">
+    <!-- Edit button -->
+    <button class="btn btn-edit me-2">
+        <i class="bi bi-pencil-square me-1"></i> Edit
+    </button>
+
+    <!-- Delete button -->
+    <button class="btn btn-delete me-2">
+        <i class="bi bi-trash me-1"></i> Delete
+    </button>
+
+    <?php if ($eng['eng_status'] === 'complete'): ?>
+        <!-- Archive button, only for complete engagements -->
+        <button class="btn btn-outline-danger btn-archive" onclick="archiveEngagement('<?php echo $eng['eng_idno']; ?>')">
+            <i class="bi bi-archive me-1"></i> Archive
+        </button>
+    <?php endif; ?>
+</div>
+
   
         </div>
       </div>
