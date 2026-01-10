@@ -520,6 +520,14 @@ body {
   background-color: rgb(229,231,235);
 }
 
-.engagement-card-wrapper:hover .archive-btn {
+
+
+/* Show Archive button on hover */
+.engagement-card-kanban {
+    position: relative; /* ensure absolute button is relative to the card */
+}
+
+.engagement-card-kanban:hover .archive-btn {
     display: inline-block;
+    z-index: 10; /* make sure it’s on top */
 }

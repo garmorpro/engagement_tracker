@@ -615,12 +615,12 @@ require_once '../includes/functions.php';
                                 
                         </div>
 
-                        <!-- Archive Button (hidden by default, shows on hover) -->
-                        <button type="button" class="btn btn-sm btn-outline-danger "
-                                style="position: absolute; top: 8px; right: 8px; display: none;"
-                                onclick="archiveEngagement('<?php echo $eng['eng_idno']; ?>')">
-                            <i class="bi bi-archive"></i> Archive
-                        </button>
+                        <!-- Archive Button -->
+    <button type="button" class="btn btn-sm btn-outline-danger archive-btn"
+            style="position: absolute; top: 8px; right: 8px; display: none;"
+            onclick="archiveEngagement('<?php echo $eng['eng_idno']; ?>')">
+        <i class="bi bi-archive"></i> Archive
+    </button>
 
                     </div>
                 </a>
