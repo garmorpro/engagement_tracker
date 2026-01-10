@@ -115,41 +115,41 @@ if (isset($_GET['eng_id'])) {
 
     <!-- php color change for status -->
      <?php
-// Map engagement status to background, border, and pill colors
-$statusColors = [
-    'on-hold' => [
-        'bg' => 'rgb(249,250,251)',
-        'border' => 'rgb(229,231,235)',
-        'pill' => 'rgb(105,114,129)',
-    ],
-    'planning' => [
-        'bg' => 'rgb(238,246,254)',
-        'border' => 'rgb(187,219,253)',
-        'pill' => 'rgb(33,128,255)',
-    ],
-    'in-progress' => [
-        'bg' => 'rgb(255,247,238)',
-        'border' => 'rgb(255,214,171)',
-        'pill' => 'rgb(255,103,0)',
-    ],
-    'in-review' => [
-        'bg' => 'rgb(251,245,254)',
-        'border' => 'rgb(236,213,254)',
-        'pill' => 'rgb(181,72,255)',
-    ],
-    'complete' => [
-        'bg' => 'rgb(239,253,245)',
-        'border' => 'rgb(176,248,209)',
-        'pill' => 'rgb(0,201,92)',
-    ],
-];
-
-// Fallback in case status is unexpected
-$status = $eng['eng_status'];
-$bgColor = $statusColors[$status]['bg'] ?? '#fff';
-$borderColor = $statusColors[$status]['border'] ?? '#ccc';
-$pillColor = $statusColors[$status]['pill'] ?? '#000';
-?>
+      // Map engagement status to background, border, and pill colors
+      $statusColors = [
+          'on-hold' => [
+              'bg' => 'rgb(249,250,251)',
+              'border' => 'rgb(229,231,235)',
+              'pill' => 'rgb(105,114,129)',
+          ],
+          'planning' => [
+              'bg' => 'rgb(238,246,254)',
+              'border' => 'rgb(187,219,253)',
+              'pill' => 'rgb(33,128,255)',
+          ],
+          'in-progress' => [
+              'bg' => 'rgb(255,247,238)',
+              'border' => 'rgb(255,214,171)',
+              'pill' => 'rgb(255,103,0)',
+          ],
+          'in-review' => [
+              'bg' => 'rgb(251,245,254)',
+              'border' => 'rgb(236,213,254)',
+              'pill' => 'rgb(181,72,255)',
+          ],
+          'complete' => [
+              'bg' => 'rgb(239,253,245)',
+              'border' => 'rgb(176,248,209)',
+              'pill' => 'rgb(0,201,92)',
+          ],
+      ];
+      
+      // Fallback in case status is unexpected
+      $status = $eng['eng_status'];
+      $bgColor = $statusColors[$status]['bg'] ?? '#fff';
+      $borderColor = $statusColors[$status]['border'] ?? '#ccc';
+      $pillColor = $statusColors[$status]['pill'] ?? '#000';
+      ?>
     <!-- end php color change for status -->
 
   <!-- upper bay -->
@@ -283,7 +283,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                 </p>
             <?php elseif (!empty($eng['eng_as_of_date'])): ?>
                 <p style="color: rgb(89,0,135);">
-                    <?php echo htmlspecialchars(formatDate($eng['eng_as_of_date'])); ?>
+                    As of <?php echo htmlspecialchars(formatDate($eng['eng_as_of_date'])); ?>
                 </p>
             <?php else: ?>
                 <p style="color: rgb(89,0,135);">N/A</p>
@@ -397,10 +397,9 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
           </div>
         </div>
       <!-- end LEFT COLUMN (team) -->
-      
 
       <!-- RIGHT COLUMN -->
-      <div class="col-md-8 d-flex">
+        <div class="col-md-8 d-flex">
         <div class="d-flex flex-column w-100">
 
           <!-- TOP ROW (client information) -->
@@ -485,56 +484,56 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                 <div class="timeline position-relative">
 
                 <?php
-function timelineStatus($scheduledDate, $completedFlag) {
-    $isCompleted = ($completedFlag === 'Y');
-    $hasDate     = !empty($scheduledDate);
-
-    return [
-        'color'     => $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
-        'textClass' => $isCompleted ? 'text-success' : 'text-danger',
-        'text'      => $hasDate
-            ? htmlspecialchars(date('M j, Y', strtotime($scheduledDate)))
-            : null
-    ];
-}
-?>
-
-<?php
-$internalPlanning = timelineStatus(
-    $eng['eng_internal_planning_call'] ?? null,
-    $eng['eng_completed_internal_planning'] ?? 'N'
-);
-
-$irlDue = timelineStatus(
-    $eng['eng_irl_due'] ?? null,
-    $eng['eng_irl_sent'] ?? 'N'
-);
-
-$clientPlanning = timelineStatus(
-    $eng['eng_client_planning_call'] ?? null,
-    $eng['eng_completed_client_planning'] ?? 'N'
-);
-
-$fieldwork = timelineStatus(
-    $eng['eng_fieldwork'] ?? null,
-    $eng['eng_fieldwork_complete'] ?? 'N'
-);
-
-$leadsheetDue = timelineStatus(
-    $eng['eng_leadsheet_due'] ?? null,
-    $eng['eng_leadsheet_complete'] ?? 'N'
-);
-
-$draftDue = timelineStatus(
-    $eng['eng_draft_due'] ?? null,
-    $eng['eng_draft_sent'] ?? 'N'
-);
-
-$finalDue = timelineStatus(
-    $eng['eng_final_due'] ?? null,
-    $eng['eng_final_sent'] ?? 'N'
-);
-?>
+                function timelineStatus($scheduledDate, $completedFlag) {
+                    $isCompleted = ($completedFlag === 'Y');
+                    $hasDate     = !empty($scheduledDate);
+                            
+                    return [
+                        'color'     => $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
+                        'textClass' => $isCompleted ? 'text-success' : 'text-danger',
+                        'text'      => $hasDate
+                            ? htmlspecialchars(date('M j, Y', strtotime($scheduledDate)))
+                            : null
+                    ];
+                }
+                ?>
+                
+                <?php
+                $internalPlanning = timelineStatus(
+                    $eng['eng_internal_planning_call'] ?? null,
+                    $eng['eng_completed_internal_planning'] ?? 'N'
+                );
+                            
+                $irlDue = timelineStatus(
+                    $eng['eng_irl_due'] ?? null,
+                    $eng['eng_irl_sent'] ?? 'N'
+                );
+                            
+                $clientPlanning = timelineStatus(
+                    $eng['eng_client_planning_call'] ?? null,
+                    $eng['eng_completed_client_planning'] ?? 'N'
+                );
+                            
+                $fieldwork = timelineStatus(
+                    $eng['eng_fieldwork'] ?? null,
+                    $eng['eng_fieldwork_complete'] ?? 'N'
+                );
+                            
+                $leadsheetDue = timelineStatus(
+                    $eng['eng_leadsheet_due'] ?? null,
+                    $eng['eng_leadsheet_complete'] ?? 'N'
+                );
+                            
+                $draftDue = timelineStatus(
+                    $eng['eng_draft_due'] ?? null,
+                    $eng['eng_draft_sent'] ?? 'N'
+                );
+                            
+                $finalDue = timelineStatus(
+                    $eng['eng_final_due'] ?? null,
+                    $eng['eng_final_sent'] ?? 'N'
+                );
+                ?>
 
 
               <!-- Internal Planning Call -->
@@ -783,7 +782,8 @@ $finalDue = timelineStatus(
           <!-- END BOTTOM ROW (timeline) -->
 
         </div>
-      </div>
+        </div>
+      <!-- end RIGHT columns -->
 
     </div>
   <!-- end next section (main) -->
