@@ -350,7 +350,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
           <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123); font-size: 20px !important;">Team</h6>
         </div>
 
-        <div class="card mb-4" style="border-color: rgb(214,232,254); border-radius: 20px; background-color: rgb(226,238,253);">
+        <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
           <div class="card-body p-4">
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
@@ -362,17 +362,17 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
           </div>
         </div>
 
-        <div class="card mb-4" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+        <div class="card mb-4" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
           <div class="card-body p-4">
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
-              <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
-                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
-              </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
+              <h6 class="mb-0" style="color: rgb(123,0,240); font-weight: 500 !important; font-size: 14px !important;">Senior</h6>
             </div>
-            <p style="color: rgb(0,0,123);">
-              <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
+            <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+              <?php echo htmlspecialchars($eng['eng_senior'] ?? 'N/A'); ?>
+            </h6>
+            <p class="fw-semibold" style="color: rgb(97,0,206); font-size: 14px;">
+              <?php echo htmlspecialchars($eng['eng_senior_dol'] ?? 'N/A'); ?>
             </p>
           </div>
         </div>
