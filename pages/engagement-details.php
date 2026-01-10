@@ -350,7 +350,22 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
           <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Team</h6>
         </div>
 
-        <div class="card" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+        <div class="card mb-2" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
+          <div class="card-body p-4">
+            <!-- Header -->
+            <div class="d-flex align-items-center mb-3">
+              <div class="icon-square me-2" style="background-color: rgb(33,128,255);">
+                <i class="bi bi-exclamation-circle" style="color: rgb(255,255,255);"></i>
+              </div>
+              <h6 class="fw-semibold mb-0" style="color: rgb(0,0,123);">Trust Services Criteria</h6>
+            </div>
+            <p style="color: rgb(0,0,123);">
+              <?php echo htmlspecialchars($eng['eng_tsc'] ?? 'N/A'); ?>
+            </p>
+          </div>
+        </div>
+
+        <div class="card mb-2" style="border-color: rgb(214,232,254); border-radius: 15px; background-color: rgb(226,238,253);">
           <div class="card-body p-4">
             <!-- Header -->
             <div class="d-flex align-items-center mb-3">
