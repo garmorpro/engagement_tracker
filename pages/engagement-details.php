@@ -667,14 +667,14 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
               $activeColor   = $hasArchiveDate ? 'rgb(60,163,74)' : 'rgb(220,53,69)';
               $textClass     = $hasArchiveDate ? 'text-success' : 'text-danger';
               ?>
-              
+
               <div class="d-flex align-items-start align-items-center position-relative mt-3">
 
                 <!-- Icon + line -->
                 <div class="d-flex flex-column align-items-center me-3">
                   <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
                        style="width:44px;height:44px;background-color: <?= $activeColor; ?>;">
-                    <i class="bi bi-telephone"></i>
+                    <i class="bi bi-archive"></i>
                   </div>
 
                   <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
@@ -690,7 +690,7 @@ $pillColor = $statusColors[$status]['pill'] ?? '#000';
                       <span class="fw-semibold <?= $textClass; ?>" style="color: <?= $activeColor; ?>;">
                         <?= $hasArchiveDate
                             ? htmlspecialchars(date('M j, Y', strtotime($eng['eng_archive'])))
-                            : 'Archive date not found'; ?>
+                            : 'Not archived yet'; ?>
                       </span>
                     </div>
                   </div>
