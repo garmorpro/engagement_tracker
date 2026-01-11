@@ -531,24 +531,24 @@ body {
 
 .action-btn {
   border: none;
-  background-color: rgb(255,255,255);
-  color: rgb(148,148,160);
+  background-color: rgb(255,255,255) !important;
+  color: rgb(148,148,160) !important;
 }
 
 .view-btn:hover {
-  background-color: rgba(236,236,240);
-  color: rgb(60, 103, 163);
+  background-color: rgba(236,236,240) !important;
+  color: rgb(60, 103, 163) !important;
 }
 
 .edit-btn:hover {
-  background-color: rgba(236,236,240);
-  color: rgb(60,163,74);
+  background-color: rgba(236,236,240) !important;
+  color: rgb(60,163,74) !important;
 }
 
 .delete-btn {
-  color: rgb(202,72,87);
+  color: rgb(202,72,87) !important;
 }
 .delete-btn:hover {
-  background-color: rgb(250, 229, 232);
-  color: rgb(202,72,87);
+  background-color: rgb(250, 229, 232) !important;
+  color: rgb(202,72,87) !important;
 }
