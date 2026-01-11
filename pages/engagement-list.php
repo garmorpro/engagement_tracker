@@ -407,7 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const cards = document.querySelectorAll('.status-card');
     const hiddenInput = document.getElementById('eng_status_input');
 
-    // Store original colors
     const defaultBorder = '229,231,235';
     const defaultBg = '255,255,255';
     const defaultText = '76,85,100';
@@ -420,48 +419,43 @@ document.addEventListener('DOMContentLoaded', () => {
         'complete': {border: '79,198,95', bg: '242,253,245', text: '51,128,63'},
     };
 
-    // Initialize selection
-    const selectedStatus = hiddenInput.value;
-
-    cards.forEach(card => {
-        const status = card.dataset.status;
-
-        const applyDefault = () => {
-            if (hiddenInput.value !== status) {
-                card.style.border = `2px solid rgb(${defaultBorder})`;
-                card.style.backgroundColor = `rgb(${defaultBg})`;
-                card.style.color = `rgb(${defaultText})`;
-            }
-        };
-
-        const applySelected = () => {
+    const applyColors = (card, status, isSelected) => {
+        if (isSelected) {
             const colors = statusColors[status];
             card.style.border = `2px solid rgb(${colors.border})`;
             card.style.backgroundColor = `rgb(${colors.bg})`;
             card.style.color = `rgb(${colors.text})`;
-        };
+        } else {
+            card.style.border = `2px solid rgb(${defaultBorder})`;
+            card.style.backgroundColor = `rgb(${defaultBg})`;
+            card.style.color = `rgb(${defaultText})`;
+        }
+    };
 
-        // Initial state
-        if (status === selectedStatus) applySelected();
-        else applyDefault();
+    // Initialize all cards
+    cards.forEach(card => {
+        const status = card.dataset.status;
+        const isSelected = hiddenInput.value === status;
+        applyColors(card, status, isSelected);
 
-        // Click event
+        // Click handler
         card.addEventListener('click', () => {
             hiddenInput.value = status;
-            cards.forEach(c => {
-                const s = c.dataset.status;
-                if (s === status) applySelected();
-                else applyDefault();
-            });
+            // Reset all cards to default except the selected
+            cards.forEach(c => applyColors(c, c.dataset.status, c.dataset.status === status));
         });
 
-        // Hover effect
-        card.addEventListener('mouseenter', () => applySelected());
+        // Hover handler
+        card.addEventListener('mouseenter', () => {
+            applyColors(card, status, true); // temporary highlight
+        });
         card.addEventListener('mouseleave', () => {
-            if (hiddenInput.value !== status) applyDefault();
+            const isSelected = hiddenInput.value === status;
+            applyColors(card, status, isSelected); // revert to selected or default
         });
     });
 });
+
 </script>
 
 
