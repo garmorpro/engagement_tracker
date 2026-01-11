@@ -346,39 +346,40 @@ $totalEngagements = count($engagements);
 </h6>
 <hr>
 
-<?php
-$checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
-?>
 <div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Engagement ID<sup>*</sup></label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">
+    Engagement ID<sup>*</sup>
+  </label>
   <input type="text" class="form-control mb-2" style="background-color: rgb(243,243,245); font-size: 14px;"
          name="eng_idno" value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
 
   <div class="d-flex align-items-center gap-2 mt-1">
-    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>" onclick="toggleYN(this)">
-      <?php echo $checked ? '✓ Y' : 'N'; ?>
+    <div id="repeat-toggle" class="yn-toggle <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'active' : ''; ?>">
+      <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? '✓ Y' : 'N'; ?>
     </div>
-    <!-- ALWAYS POST -->
-    <input type="hidden" name="eng_repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+    <input type="hidden" name="eng_repeat" id="eng_repeat_input" value="<?php echo ($eng['eng_repeat'] ?? 'N'); ?>">
   </div>
 </div>
 
-
 <script>
-  function toggleYN(el) {
-    const hidden = el.nextElementSibling;
-    if (el.classList.contains('active')) {
-        el.classList.remove('active');
-        el.textContent = 'N';
-        hidden.value = 'N';
-    } else {
-        el.classList.add('active');
-        el.textContent = '✓ Y';
-        hidden.value = 'Y';
-    }
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('repeat-toggle');
+    const hiddenInput = document.getElementById('eng_repeat_input');
 
+    toggle.addEventListener('click', () => {
+        if (toggle.classList.contains('active')) {
+            toggle.classList.remove('active');
+            toggle.textContent = 'N';
+            hiddenInput.value = 'N';
+        } else {
+            toggle.classList.add('active');
+            toggle.textContent = '✓ Y';
+            hiddenInput.value = 'Y';
+        }
+    });
+});
 </script>
+
 
 
 <div class="col-md-6">
