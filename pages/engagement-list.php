@@ -393,9 +393,9 @@ foreach ($dateOnly as $field):
 </div>
 <?php endforeach; ?>
 
-<h5>
+<h6>
   Important Dates & Milestones
-</h5>
+</h6>
 
 <!-- DATE + TOGGLE PAIRS -->
 <?php
