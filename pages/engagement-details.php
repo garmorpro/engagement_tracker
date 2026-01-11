@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     $stmt->bind_param("s", $engId);
 
     if ($stmt->execute()) {
-        // Redirect back to dashboard with a success message
+        // Redirect must happen before any output
         header("Location: engagement-details.php?eng_id=" . $engId . "&msg=archived");
         exit;
     } else {
