@@ -393,7 +393,7 @@ $totalEngagements = count($engagements);
                 <?php echo $selected ? 'box-shadow: 0 0 0 2px rgba(0,0,0,0.15);' : ''; ?>
              ">
             <i class="bi <?php echo $s['icon']; ?>" style="font-size: 1.5rem;"></i>
-            <div style="margin-top: 0.25rem;"><?php echo $s['label']; ?></div>
+            <div style="margin-top: 0.25rem; font-size: 12px;"><?php echo $s['label']; ?></div>
         </div>
         <?php endforeach; ?>
     </div>
