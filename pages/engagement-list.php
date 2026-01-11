@@ -351,7 +351,7 @@ $totalEngagements = count($engagements);
 //   'eng_idno' => 'eng_repeat'
 // ];
 // foreach ($pairs as $date => $yn):
-// $checked = (($eng[$yn] ?? 'N') === 'Y');
+$checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
 ?>
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">
@@ -360,8 +360,8 @@ $totalEngagements = count($engagements);
   <div class="d-flex align-items-center gap-2">
 
     <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
-           name="<?php echo $date; ?>"
-           value="<?php echo $eng[$date] ?? ''; ?>">
+           name="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>"
+           value="<?php echo htmlspecialchars($eng['eng_name'] ?? '', ENT_QUOTES); ?>">
 
     <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
          onclick="toggleYN(this)">
