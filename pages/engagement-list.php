@@ -361,9 +361,10 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
 
     <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
            name="<?php echo $date; ?>"
-           value="<?php echo htmlspecialchars($eng[$date] ?? '', ENT_QUOTES); ?>">
+           value="<?php echo $eng[$date] ?? ''; ?>">
 
-    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>">
+    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
+         onclick="toggleYN(this)">
       <?php echo $checked ? '✓ Y' : 'N'; ?>
     </div>
 
@@ -375,24 +376,19 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
 <?php endforeach; ?>
 
 <script>
-// Use event delegation to catch dynamically rendered content
-document.addEventListener('click', function(e) {
-    if(e.target && e.target.classList.contains('yn-toggle')) {
-        const el = e.target;
-        const hidden = el.nextElementSibling; // hidden input must be right after toggle div
-        if(el.classList.contains('active')) {
-            el.classList.remove('active');
-            el.textContent = 'N';
-            hidden.value = 'N';
-        } else {
-            el.classList.add('active');
-            el.textContent = '✓ Y';
-            hidden.value = 'Y';
-        }
+function toggleYN(el) {
+    const hidden = el.nextElementSibling; // hidden input must be right after toggle div
+    if(el.classList.contains('active')) {
+        el.classList.remove('active');
+        el.textContent = 'N';
+        hidden.value = 'N';
+    } else {
+        el.classList.add('active');
+        el.textContent = '✓ Y';
+        hidden.value = 'Y';
     }
-});
+}
 </script>
-
 
 
 
