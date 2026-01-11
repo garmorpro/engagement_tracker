@@ -337,117 +337,182 @@ $totalEngagements = count($engagements);
 <div class="modal-body">
 <div class="row g-3">
 
-<!-- TEXT FIELDS -->
-<?php
-$textFields = [
-  'eng_name'=>'Engagement Name',
-  'eng_manager'=>'Manager',
-  'eng_senior'=>'Senior(s)',
-  'eng_staff'=>'Staff',
-  'eng_senior_dol'=>'Senior DOL',
-  'eng_staff_dol'=>'Staff DOL',
-  'eng_poc'=>'POC',
-  'eng_location'=>'Location',
-  'eng_audit_type'=>'Audit Type',
-  'eng_scope'=>'Scope',
-  'eng_tsc'=>'TSC'
-];
-foreach ($textFields as $field=>$label):
-?>
-<div class="col-md-6">
-  <label class="form-label"><?php echo $label; ?></label>
-  <input type="text" class="form-control" name="<?php echo $field; ?>"
-         value="<?php echo htmlspecialchars($eng[$field] ?? ''); ?>">
-</div>
-<?php endforeach; ?>
+<!-- =====================
+     TEXT FIELDS
+===================== -->
 
-<!-- REPEAT -->
+<div class="col-md-6">
+  <label class="form-label">Engagement Name</label>
+  <input type="text" class="form-control" name="eng_name"
+         value="<?php echo htmlspecialchars($eng['eng_name'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Manager</label>
+  <input type="text" class="form-control" name="eng_manager"
+         value="<?php echo htmlspecialchars($eng['eng_manager'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Senior(s)</label>
+  <input type="text" class="form-control" name="eng_senior"
+         value="<?php echo htmlspecialchars($eng['eng_senior'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Staff</label>
+  <input type="text" class="form-control" name="eng_staff"
+         value="<?php echo htmlspecialchars($eng['eng_staff'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Senior DOL</label>
+  <input type="text" class="form-control" name="eng_senior_dol"
+         value="<?php echo htmlspecialchars($eng['eng_senior_dol'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Staff DOL</label>
+  <input type="text" class="form-control" name="eng_staff_dol"
+         value="<?php echo htmlspecialchars($eng['eng_staff_dol'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">POC</label>
+  <input type="text" class="form-control" name="eng_poc"
+         value="<?php echo htmlspecialchars($eng['eng_poc'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Location</label>
+  <input type="text" class="form-control" name="eng_location"
+         value="<?php echo htmlspecialchars($eng['eng_location'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Audit Type</label>
+  <input type="text" class="form-control" name="eng_audit_type"
+         value="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">Scope</label>
+  <input type="text" class="form-control" name="eng_scope"
+         value="<?php echo htmlspecialchars($eng['eng_scope'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label">TSC</label>
+  <input type="text" class="form-control" name="eng_tsc"
+         value="<?php echo htmlspecialchars($eng['eng_tsc'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<!-- =====================
+     Y / N SELECTS
+===================== -->
+
 <div class="col-md-3">
   <label class="form-label">Repeat</label>
   <select class="form-select" name="eng_repeat">
-    <option value="Y" <?php echo ($eng['eng_repeat']==='Y')?'selected':''; ?>>Yes</option>
-    <option value="N" <?php echo ($eng['eng_repeat']==='N')?'selected':''; ?>>No</option>
+    <option value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
+    <option value="N" <?php echo (($eng['eng_repeat'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
   </select>
 </div>
 
-<!-- SECTION 3 -->
 <div class="col-md-3">
   <label class="form-label">Section 3 Requested</label>
   <select class="form-select" name="eng_section_3_requested">
-    <option value="Y" <?php echo ($eng['eng_section_3_requested']==='Y')?'selected':''; ?>>Yes</option>
-    <option value="N" <?php echo ($eng['eng_section_3_requested']==='N')?'selected':''; ?>>No</option>
+    <option value="Y" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
+    <option value="N" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
   </select>
 </div>
 
-<!-- DATE ONLY -->
+<!-- =====================
+     DATE ONLY
+===================== -->
+
 <?php
-$dateOnly = [
-  'eng_start_period','eng_end_period','eng_as_of_date','eng_archive','eng_last_communication'
+$dateFields = [
+  'eng_start_period'       => 'Start Period',
+  'eng_end_period'         => 'End Period',
+  'eng_as_of_date'         => 'As Of Date',
+  'eng_archive'            => 'Archive Date',
+  'eng_last_communication' => 'Last Communication'
 ];
-foreach ($dateOnly as $field):
+foreach ($dateFields as $field => $label):
 ?>
 <div class="col-md-4">
-  <label class="form-label"><?php echo ucwords(str_replace('_',' ',$field)); ?></label>
-  <input type="date" class="form-control" name="<?php echo $field; ?>"
+  <label class="form-label"><?php echo $label; ?></label>
+  <input type="date" class="form-control"
+         name="<?php echo $field; ?>"
          value="<?php echo $eng[$field] ?? ''; ?>">
 </div>
 <?php endforeach; ?>
 
-<h6 class="fw-semibold mt-5" style="">
-  Important Dates & Milestones
-</h6>
+<h6 class="fw-semibold mt-5">Important Dates & Milestones</h6>
 <hr>
 
-<!-- DATE + TOGGLE PAIRS -->
+<!-- =====================
+     DATE + TOGGLE PAIRS
+===================== -->
+
 <?php
 $pairs = [
-  'eng_internal_planning_call'=>'eng_completed_internal_planning',
-  'eng_irl_due'=>'eng_irl_sent',
-  'eng_client_planning_call'=>'eng_completed_client_planning',
-  'eng_fieldwork'=>'eng_fieldwork_complete',
-  'eng_leadsheet_due'=>'eng_leadsheet_complete',
-  'eng_draft_due'=>'eng_draft_sent',
-  'eng_final_due'=>'eng_final_sent'
+  'eng_internal_planning_call' => 'eng_completed_internal_planning',
+  'eng_irl_due'                => 'eng_irl_sent',
+  'eng_client_planning_call'   => 'eng_completed_client_planning',
+  'eng_fieldwork'              => 'eng_fieldwork_complete',
+  'eng_leadsheet_due'          => 'eng_leadsheet_complete',
+  'eng_draft_due'              => 'eng_draft_sent',
+  'eng_final_due'              => 'eng_final_sent'
 ];
-foreach ($pairs as $date=>$yn):
-$val = ($eng[$yn] ?? 'N') === 'Y';
+foreach ($pairs as $date => $yn):
+$checked = (($eng[$yn] ?? 'N') === 'Y');
 ?>
 <div class="col-md-6">
   <label class="form-label"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
   <div class="d-flex align-items-center gap-2">
+
     <input type="date" class="form-control"
            name="<?php echo $date; ?>"
            value="<?php echo $eng[$date] ?? ''; ?>">
 
-    <div class="yn-toggle <?php echo $val?'active':''; ?>"
+    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
          onclick="toggleYN(this)">
-      <?php echo $val?'✓ Y':'N'; ?>
+      <?php echo $checked ? '✓ Y' : 'N'; ?>
     </div>
 
-    <input type="hidden" name="<?php echo $yn; ?>" value="<?php echo $val?'Y':'N'; ?>">
+    <!-- ALWAYS POST -->
+    <input type="hidden" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+
   </div>
 </div>
 <?php endforeach; ?>
 
+<!-- =====================
+     NOTES
+===================== -->
 
-
-<!-- NOTES -->
 <div class="col-12">
   <label class="form-label">Notes</label>
   <textarea class="form-control" name="eng_notes" rows="4"><?php
-    echo htmlspecialchars($eng['eng_notes'] ?? '');
+    echo htmlspecialchars($eng['eng_notes'] ?? '', ENT_QUOTES);
   ?></textarea>
 </div>
 
-<!-- STATUS -->
+<!-- =====================
+     STATUS
+===================== -->
+
 <div class="col-12">
   <label class="form-label">Status</label>
   <select class="form-select" name="eng_status">
     <?php
-    $statuses=['on-hold','planning','in-progress','in-review','complete','archived'];
-    foreach($statuses as $s):
+    $statuses = ['on-hold','planning','in-progress','in-review','complete','archived'];
+    foreach ($statuses as $s):
     ?>
-    <option value="<?php echo $s; ?>" <?php echo ($eng['eng_status']===$s)?'selected':''; ?>>
+    <option value="<?php echo $s; ?>"
+      <?php echo (($eng['eng_status'] ?? '') === $s) ? 'selected' : ''; ?>>
       <?php echo ucwords(str_replace('-',' ',$s)); ?>
     </option>
     <?php endforeach; ?>
@@ -466,7 +531,6 @@ $val = ($eng[$yn] ?? 'N') === 'Y';
 </div>
 </div>
 </div>
-
 
 
 
