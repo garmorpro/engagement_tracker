@@ -367,7 +367,7 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
       <?php echo $checked ? '✓ Y' : 'N'; ?>
     </div>
 
-    <!-- Hidden input always posts -->
+    <!-- ALWAYS POST -->
     <input type="hidden" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
 
   </div>
@@ -375,21 +375,21 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
 <?php endforeach; ?>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.yn-toggle').forEach(function(toggle) {
-    toggle.addEventListener('click', function() {
-      const hidden = this.nextElementSibling; // MUST be right after toggle div
-      if(this.classList.contains('active')) {
-        this.classList.remove('active');
-        this.textContent = 'N';
-        hidden.value = 'N';
-      } else {
-        this.classList.add('active');
-        this.textContent = '✓ Y';
-        hidden.value = 'Y';
-      }
-    });
-  });
+// Use event delegation to catch dynamically rendered content
+document.addEventListener('click', function(e) {
+    if(e.target && e.target.classList.contains('yn-toggle')) {
+        const el = e.target;
+        const hidden = el.nextElementSibling; // hidden input must be right after toggle div
+        if(el.classList.contains('active')) {
+            el.classList.remove('active');
+            el.textContent = 'N';
+            hidden.value = 'N';
+        } else {
+            el.classList.add('active');
+            el.textContent = '✓ Y';
+            hidden.value = 'Y';
+        }
+    }
 });
 </script>
 
