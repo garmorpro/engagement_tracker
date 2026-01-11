@@ -10,7 +10,7 @@ if (!empty($_GET['eng_id'])) {
 
     if ($stmt->execute()) {
         // Success — redirect back to board or archive page
-        header("Location: /kanban-board.php?msg=archived");
+        header("Location: /pages/dashboard.php?msg=archived");
         exit;
     } else {
         echo "Failed to archive engagement.";
