@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
        EXECUTE
     ============================ */
     if ($stmt->execute()) {
-        header("Location: engagement-list.php?message=Engagement updated successfully");
+        // header("Location: engagement-list.php?message=Engagement updated successfully");
         exit;
     } else {
         echo "<div class='alert alert-danger'>
