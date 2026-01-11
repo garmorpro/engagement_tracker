@@ -377,43 +377,43 @@ $totalEngagements = count($engagements);
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">Staff</label>
-  <input type="text" class="form-control" name="eng_staff"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff"
          value="<?php echo htmlspecialchars($eng['eng_staff'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">Senior DOL</label>
-  <input type="text" class="form-control" name="eng_senior_dol"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_senior_dol"
          value="<?php echo htmlspecialchars($eng['eng_senior_dol'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">Staff DOL</label>
-  <input type="text" class="form-control" name="eng_staff_dol"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff_dol"
          value="<?php echo htmlspecialchars($eng['eng_staff_dol'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">POC</label>
-  <input type="text" class="form-control" name="eng_poc"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_poc"
          value="<?php echo htmlspecialchars($eng['eng_poc'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">Location</label>
-  <input type="text" class="form-control" name="eng_location"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_location"
          value="<?php echo htmlspecialchars($eng['eng_location'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">Scope</label>
-  <input type="text" class="form-control" name="eng_scope"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_scope"
          value="<?php echo htmlspecialchars($eng['eng_scope'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">TSC</label>
-  <input type="text" class="form-control" name="eng_tsc"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_tsc"
          value="<?php echo htmlspecialchars($eng['eng_tsc'] ?? '', ENT_QUOTES); ?>">
 </div>
 
@@ -423,7 +423,7 @@ $totalEngagements = count($engagements);
 
 <div class="col-md-3">
   <label class="form-label" style="font-size: 14px;">Repeat</label>
-  <select class="form-select" name="eng_repeat">
+  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_repeat">
     <option value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
     <option value="N" <?php echo (($eng['eng_repeat'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
   </select>
@@ -431,7 +431,7 @@ $totalEngagements = count($engagements);
 
 <div class="col-md-3">
   <label class="form-label" style="font-size: 14px;">Section 3 Requested</label>
-  <select class="form-select" name="eng_section_3_requested">
+  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_section_3_requested">
     <option value="Y" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
     <option value="N" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
   </select>
@@ -453,7 +453,7 @@ foreach ($dateFields as $field => $label):
 ?>
 <div class="col-md-4">
   <label class="form-label" style="font-size: 14px;"><?php echo $label; ?></label>
-  <input type="date" class="form-control"
+  <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
          name="<?php echo $field; ?>"
          value="<?php echo $eng[$field] ?? ''; ?>">
 </div>
@@ -483,7 +483,7 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
   <label class="form-label" style="font-size: 14px;"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
   <div class="d-flex align-items-center gap-2">
 
-    <input type="date" class="form-control"
+    <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
            name="<?php echo $date; ?>"
            value="<?php echo $eng[$date] ?? ''; ?>">
 
