@@ -561,34 +561,11 @@ foreach ($dateFields as $field => $label):
          value="<?php echo htmlspecialchars($eng['eng_location'] ?? '', ENT_QUOTES); ?>">
 </div>
 
-<div class="col-md-3">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Repeat</label>
-  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_repeat">
-    <option value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
-    <option value="N" <?php echo (($eng['eng_repeat'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
-  </select>
-</div>
 
 <div class="col-md-12">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Scope</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_scope"
          value="<?php echo htmlspecialchars($eng['eng_scope'] ?? '', ENT_QUOTES); ?>">
-</div>
-
-
-
-<!-- =====================
-     Y / N SELECTS
-===================== -->
-
-
-
-<div class="col-md-3">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Section 3 Requested</label>
-  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_section_3_requested">
-    <option value="Y" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
-    <option value="N" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
-  </select>
 </div>
 
 
@@ -651,6 +628,26 @@ foreach ($dateFields as $field => $label):
          value="<?php echo $eng[$field] ?? ''; ?>">
 </div>
 <?php endforeach; ?>
+
+<!-- =====================
+     Y / N SELECTS
+===================== -->
+
+<div class="col-md-3">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Repeat</label>
+  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_repeat">
+    <option value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
+    <option value="N" <?php echo (($eng['eng_repeat'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
+  </select>
+</div>
+
+<div class="col-md-3">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Section 3 Requested</label>
+  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_section_3_requested">
+    <option value="Y" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
+    <option value="N" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
+  </select>
+</div>
 
 <!-- =====================
      NOTES
