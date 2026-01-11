@@ -344,6 +344,7 @@ $totalEngagements = count($engagements);
 <h6 class="fw-semibold mt-4">
   Basic Information
 </h6>
+<hr>
 
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Engagement ID<sup>*</sup></label>
@@ -544,6 +545,10 @@ foreach ($dateFields as $field => $label):
          value="<?php echo htmlspecialchars($eng['eng_staff_dol'] ?? '', ENT_QUOTES); ?>">
 </div>
 
+
+<h6 class="fw-semibold mt-5">Client Information</h6>
+<hr>
+
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">POC</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_poc"
@@ -556,7 +561,15 @@ foreach ($dateFields as $field => $label):
          value="<?php echo htmlspecialchars($eng['eng_location'] ?? '', ENT_QUOTES); ?>">
 </div>
 
-<div class="col-md-6">
+<div class="col-md-3">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Repeat</label>
+  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_repeat">
+    <option value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
+    <option value="N" <?php echo (($eng['eng_repeat'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
+  </select>
+</div>
+
+<div class="col-md-12">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Scope</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_scope"
          value="<?php echo htmlspecialchars($eng['eng_scope'] ?? '', ENT_QUOTES); ?>">
@@ -568,13 +581,7 @@ foreach ($dateFields as $field => $label):
      Y / N SELECTS
 ===================== -->
 
-<div class="col-md-3">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Repeat</label>
-  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_repeat">
-    <option value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
-    <option value="N" <?php echo (($eng['eng_repeat'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
-  </select>
-</div>
+
 
 <div class="col-md-3">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Section 3 Requested</label>
