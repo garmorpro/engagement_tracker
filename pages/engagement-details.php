@@ -3,6 +3,22 @@
 
 require_once '../includes/functions.php';
 
+if (!empty($_GET['eng_id'])) {
+    $engId = $_GET['eng_id'];
+
+    // Update engagement status to 'archived'
+    $stmt = $conn->prepare("UPDATE engagements SET eng_status = 'archived' WHERE eng_idno = ?");
+    $stmt->bind_param("s", $engId);
+
+    if ($stmt->execute()) {
+        // Success — redirect back to board or archive page
+        header("Location: ../pages/dashboard.php?msg=archived");
+        exit;
+    } else {
+        echo "Failed to archive engagement.";
+    }
+}
+
 
 // Check if eng_idno is in the URL
 if (isset($_GET['eng_id'])) {
@@ -109,7 +125,7 @@ if (isset($_GET['eng_id'])) {
     </button>
 
     <?php if ($eng['eng_status'] === 'complete'): ?>
-<a href="../includes/archive-engagement.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
+<a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
    class="btn btn-outline-danger btn-archive"
    onclick="return confirm('Are you sure you want to archive this engagement?');">
     <i class="bi bi-archive me-1"></i> Archive
