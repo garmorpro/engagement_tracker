@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     $engId = $_POST['edit_eng_id'];
 
-    // Collect all fields
+    // Text fields
     $name                       = $_POST['eng_name'] ?? '';
     $manager                    = $_POST['eng_manager'] ?? '';
     $senior                     = $_POST['eng_senior'] ?? '';
@@ -31,34 +31,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     $staff_dol                  = $_POST['eng_staff_dol'] ?? '';
     $poc                        = $_POST['eng_poc'] ?? '';
     $location                   = $_POST['eng_location'] ?? '';
-    $repeat                     = $_POST['eng_repeat'] ?? 'N';
     $audit_type                 = $_POST['eng_audit_type'] ?? '';
     $scope                      = $_POST['eng_scope'] ?? '';
     $tsc                        = $_POST['eng_tsc'] ?? '';
-    $start_period               = $_POST['eng_start_period'] ?? null;
-    $end_period                 = $_POST['eng_end_period'] ?? null;
-    $as_of_date                 = $_POST['eng_as_of_date'] ?? null;
-    $internal_planning_call     = $_POST['eng_internal_planning_call'] ?? null;
-    $completed_internal_planning= $_POST['eng_completed_internal_planning'] ?? 'N';
-    $irl_due                    = $_POST['eng_irl_due'] ?? null;
-    $irl_sent                   = $_POST['eng_irl_sent'] ?? 'N';
-    $client_planning_call       = $_POST['eng_client_planning_call'] ?? null;
-    $completed_client_planning  = $_POST['eng_completed_client_planning'] ?? 'N';
-    $fieldwork                  = $_POST['eng_fieldwork'] ?? null;
-    $fieldwork_complete         = $_POST['eng_fieldwork_complete'] ?? 'N';
-    $leadsheet_due              = $_POST['eng_leadsheet_due'] ?? null;
-    $leadsheet_complete         = $_POST['eng_leadsheet_complete'] ?? 'N';
-    $draft_due                  = $_POST['eng_draft_due'] ?? null;
-    $draft_sent                  = $_POST['eng_draft_sent'] ?? 'N';
-    $final_due                  = $_POST['eng_final_due'] ?? null;
-    $final_sent                  = $_POST['eng_final_sent'] ?? 'N';
-    $archive                    = $_POST['eng_archive'] ?? null;
-    $section_3_requested        = $_POST['eng_section_3_requested'] ?? 'N';
-    $last_communication         = $_POST['eng_last_communication'] ?? null;
     $notes                      = $_POST['eng_notes'] ?? '';
-    $status                      = $_POST['eng_status'] ?? '';
-    
 
+    // Y/N fields (default to 'N')
+    $repeat                     = $_POST['eng_repeat'] ?? 'N';
+    $completed_internal_planning= $_POST['eng_completed_internal_planning'] ?? 'N';
+    $irl_sent                   = $_POST['eng_irl_sent'] ?? 'N';
+    $completed_client_planning  = $_POST['eng_completed_client_planning'] ?? 'N';
+    $fieldwork_complete         = $_POST['eng_fieldwork_complete'] ?? 'N';
+    $leadsheet_complete         = $_POST['eng_leadsheet_complete'] ?? 'N';
+    $draft_sent                 = $_POST['eng_draft_sent'] ?? 'N';
+    $final_sent                 = $_POST['eng_final_sent'] ?? 'N';
+    $section_3_requested        = $_POST['eng_section_3_requested'] ?? 'N';
+
+    // Dates — convert empty to ''
+    $start_period               = $_POST['eng_start_period'] ?? '';
+    $end_period                 = $_POST['eng_end_period'] ?? '';
+    $as_of_date                 = $_POST['eng_as_of_date'] ?? '';
+    $internal_planning_call     = $_POST['eng_internal_planning_call'] ?? '';
+    $irl_due                    = $_POST['eng_irl_due'] ?? '';
+    $client_planning_call       = $_POST['eng_client_planning_call'] ?? '';
+    $fieldwork                  = $_POST['eng_fieldwork'] ?? '';
+    $leadsheet_due              = $_POST['eng_leadsheet_due'] ?? '';
+    $draft_due                  = $_POST['eng_draft_due'] ?? '';
+    $final_due                  = $_POST['eng_final_due'] ?? '';
+    $archive                    = $_POST['eng_archive'] ?? '';
+    $last_communication         = $_POST['eng_last_communication'] ?? '';
+
+    // Single-select status
+    $status                     = $_POST['eng_status'] ?? '';
 
     // Prepare the UPDATE statement
     $stmt = $conn->prepare("UPDATE engagements SET 
@@ -74,8 +78,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
         eng_last_communication = ?, eng_notes = ?, eng_status = ? 
         WHERE eng_idno = ?");
 
+    // Bind parameters (all as strings)
     $stmt->bind_param(
-        "sssssssssssssssssssssssssssssssssssss",
+        "sssssssssssssssssssssssssssssssssss",
         $name, $manager, $senior, $staff,
         $senior_dol, $staff_dol, $poc, $location,
         $repeat, $audit_type, $scope, $tsc,
@@ -95,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
         echo "<div class='alert alert-danger'>Failed to update engagement: " . htmlspecialchars($stmt->error) . "</div>";
     }
 }
+
 
 
 
