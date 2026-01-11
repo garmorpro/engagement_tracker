@@ -621,7 +621,7 @@ $dateFields = [
 ];
 foreach ($dateFields as $field => $label):
 ?>
-<div class="col-md-4">
+<div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo $label; ?></label>
   <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
          name="<?php echo $field; ?>"
