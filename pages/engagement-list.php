@@ -355,7 +355,7 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
 ?>
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">
-    <?php echo ucwords(str_replace('_',' ','eng_idno')); ?>
+    Engagement ID<sup>*</sup>
   </label>
   <div class="d-flex align-items-center gap-2">
 
