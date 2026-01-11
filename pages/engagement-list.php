@@ -484,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<div class="col-md-6">
+<div class="col-md-12">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">TSC</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_tsc"
          value="<?php echo htmlspecialchars($eng['eng_tsc'] ?? '', ENT_QUOTES); ?>">
