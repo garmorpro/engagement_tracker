@@ -3,19 +3,18 @@
 
 require_once '../includes/functions.php';
 
-if (!empty($_GET['eng_id'])) {
-    $engId = $_GET['eng_id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
+    $engId = $_POST['archive_eng_id'];
 
-    // Update engagement status to 'archived'
     $stmt = $conn->prepare("UPDATE engagements SET eng_status = 'archived' WHERE eng_idno = ?");
     $stmt->bind_param("s", $engId);
 
     if ($stmt->execute()) {
-        // Success — redirect back to board or archive page
+        // Redirect back to dashboard with a success message
         header("Location: ../pages/dashboard.php?msg=archived");
         exit;
     } else {
-        echo "Failed to archive engagement.";
+        echo "<div class='alert alert-danger'>Failed to archive engagement.</div>";
     }
 }
 
