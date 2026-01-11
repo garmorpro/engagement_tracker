@@ -392,7 +392,7 @@ $totalEngagements = count($engagements);
                 background-color: rgb(<?php echo $selected ? $s['bg'] : $defaultBg; ?>);
                 color: rgb(<?php echo $selected ? $s['text'] : $defaultText; ?>);
                 font-weight: 500;
-                border-radius: 0.5rem;
+                border-radius: 1rem;
              ">
             <i class="bi <?php echo $s['icon']; ?>" style="font-size: 1.1rem;"></i>
             <div style="margin-top: 0.25rem; font-size: 12px;"><?php echo $s['label']; ?></div>
