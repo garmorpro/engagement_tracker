@@ -535,3 +535,6 @@ body {
   color: rgb(148,148,160);
 }
 
+.view-btn:hover {
+  background-color: rgba(49, 108, 244, 0.5);
+}

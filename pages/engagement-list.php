@@ -129,7 +129,7 @@ require_once '../includes/functions.php';
   <div class="d-flex gap-1">
     <!-- View Button -->
     <a href="engagement-details.php?eng_id=<?php echo $eng['eng_idno']; ?>" 
-       class="btn btn-sm btn-outline-primary action-btn" 
+       class="btn btn-sm btn-outline-primary action-btn view-btn" 
        title="View">
       <i class="bi bi-eye"></i>
     </a>
