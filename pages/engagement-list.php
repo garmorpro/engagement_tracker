@@ -400,19 +400,22 @@ $totalEngagements = count($engagements);
               <textarea class="form-control" id="eng_notes-<?php echo $eng['eng_idno']; ?>" name="eng_notes" rows="4"><?php echo htmlspecialchars($eng['eng_notes']); ?></textarea>
             </div>
 
-            <!-- Status (multi-select) -->
-            <div class="col-12">
-              <label for="eng_status-<?php echo $eng['eng_idno']; ?>" class="form-label">Status</label>
-              <select multiple class="form-select" id="eng_status-<?php echo $eng['eng_idno']; ?>" name="eng_status[]">
-                <?php
-                  $statuses = ['on-hold', 'planning', 'in-progress', 'in-review', 'complete', 'archived'];
-                  $current_status = explode(',', $eng['eng_status']); // assuming CSV in DB
-                  foreach($statuses as $status):
-                ?>
-                <option value="<?php echo $status; ?>" <?php echo in_array($status,$current_status)?'selected':''; ?>><?php echo ucwords(str_replace('-',' ',$status)); ?></option>
-                <?php endforeach; ?>
-              </select>
-            </div>
+            <!-- Status (single-select dropdown) -->
+<div class="col-12">
+  <label for="eng_status-<?php echo $eng['eng_idno']; ?>" class="form-label">Status</label>
+  <select class="form-select" id="eng_status-<?php echo $eng['eng_idno']; ?>" name="eng_status">
+    <?php
+      $statuses = ['on-hold', 'planning', 'in-progress', 'in-review', 'complete', 'archived'];
+      $current_status = $eng['eng_status']; // single value now
+      foreach($statuses as $status):
+    ?>
+    <option value="<?php echo $status; ?>" <?php echo ($status === $current_status) ? 'selected' : ''; ?>>
+      <?php echo ucwords(str_replace('-',' ',$status)); ?>
+    </option>
+    <?php endforeach; ?>
+  </select>
+</div>
+
 
           </div>
         </div>
