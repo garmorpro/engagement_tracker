@@ -1,6 +1,7 @@
-<?php 
-// sessions_start();
+<?php
+ob_start(); // start output buffering
 
+// sessions_start();
 require_once '../includes/functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
@@ -16,37 +17,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     } else {
         echo "<div class='alert alert-danger'>Failed to archive engagement.</div>";
     }
-    ob_end_flush();
 }
-
 
 // Check if eng_idno is in the URL
 if (isset($_GET['eng_id'])) {
     $eng_id = $_GET['eng_id'];
 
-    // Prepare SQL to prevent SQL injection
     $stmt = $conn->prepare("SELECT * FROM engagements WHERE eng_idno = ?");
-    $stmt->bind_param("s", $eng_id); // "s" = string
+    $stmt->bind_param("s", $eng_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
         $eng = $result->fetch_assoc();
     } else {
-        // No engagement found
         echo "<div class='alert alert-warning'>Engagement not found.</div>";
         exit;
     }
 
     $stmt->close();
 } else {
-    // eng_id not provided
     echo "<div class='alert alert-danger'>No engagement specified.</div>";
     exit;
 }
-
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
