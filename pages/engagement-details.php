@@ -265,21 +265,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
        PREPARE INSERT
     ============================ */
     $stmt = $conn->prepare("
-        INSERT INTO engagements (
-            eng_idno, eng_name, eng_manager, eng_senior, eng_staff,
-            eng_senior_dol, eng_staff_dol, eng_poc, eng_location,
-            eng_repeat, eng_audit_type, eng_scope, eng_tsc,
-            eng_start_period, eng_end_period, eng_as_of_date,
-            eng_internal_planning_call, eng_completed_internal_planning,
-            eng_irl_due, eng_irl_sent, eng_client_planning_call,
-            eng_completed_client_planning, eng_fieldwork, eng_fieldwork_complete,
-            eng_leadsheet_due, eng_leadsheet_complete, eng_draft_due, eng_draft_sent,
-            eng_final_due, eng_final_sent, eng_archive, eng_section_3_requested,
-            eng_last_communication, eng_notes, eng_status
-        ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-        )
-    ");
+    INSERT INTO engagements (
+        eng_idno, eng_name, eng_manager, eng_senior, eng_staff,
+        eng_senior_dol, eng_staff_dol, eng_poc, eng_location,
+        eng_repeat, eng_audit_type, eng_scope, eng_tsc,
+        eng_start_period, eng_end_period, eng_as_of_date,
+        eng_internal_planning_call, eng_completed_internal_planning,
+        eng_irl_due, eng_irl_sent, eng_client_planning_call,
+        eng_completed_client_planning, eng_fieldwork, eng_fieldwork_complete,
+        eng_leadsheet_due, eng_leadsheet_complete, eng_draft_due, eng_draft_sent,
+        eng_final_due, eng_final_sent, eng_archive, eng_section_3_requested,
+        eng_last_communication, eng_notes, eng_status
+    ) VALUES (
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+    )
+");
 
     /* ============================
        BIND (35 params)
