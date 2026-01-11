@@ -127,7 +127,7 @@ if (isset($_GET['eng_id'])) {
 
 <?php if ($eng['eng_status'] === 'complete'): ?>
 <form method="post" style="display:inline;">
-    <input type="hidden" name="archive_eng_id" value="<?php echo htmlspecialchars($engId); ?>">
+    <input type="hidden" name="archive_eng_id" value="<?php echo htmlspecialchars($eng['eng_idno']); ?>">
     <button type="submit"
             name="archive_button"
             class="btn btn-outline-danger"
