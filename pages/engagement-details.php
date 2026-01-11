@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
 
     if ($stmt->execute()) {
         // Redirect back to dashboard with a success message
-        header("Location: engagement-details.php?eng_id=$engId&msg=archived");
+        header("Location: engagement-details.php?eng_id=" . urlencode($engId) . "&msg=archived");
         exit;
     } else {
         echo "<div class='alert alert-danger'>Failed to archive engagement.</div>";
