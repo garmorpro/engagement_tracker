@@ -1,5 +1,5 @@
 <?php
-include '/db.php'; // your DB connection
+include 'db.php'; // your DB connection
 
 if (!empty($_GET['eng_id'])) {
     $engId = $_GET['eng_id'];
@@ -10,7 +10,7 @@ if (!empty($_GET['eng_id'])) {
 
     if ($stmt->execute()) {
         // Success — redirect back to board or archive page
-        header("Location: /pages/dashboard.php?msg=archived");
+        header("Location: ../pages/dashboard.php?msg=archived");
         exit;
     } else {
         echo "Failed to archive engagement.";
