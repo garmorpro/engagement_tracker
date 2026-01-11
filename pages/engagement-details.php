@@ -1599,7 +1599,7 @@ foreach ($dateFields as $field => $label):
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
     <div class="modal-content">
 
-      <form method="POST" action="engagement-process.php">
+      <form method="POST">
         <input type="hidden" name="action" value="add"> <!-- Flag for insert -->
 
         <div class="modal-header">
