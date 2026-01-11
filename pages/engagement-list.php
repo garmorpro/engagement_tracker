@@ -393,7 +393,7 @@ foreach ($dateOnly as $field):
 </div>
 <?php endforeach; ?>
 
-<h6 class="fw-semibold mt-3" style="">
+<h6 class="fw-semibold mt-5" style="">
   Important Dates & Milestones
 </h6>
 <hr>
