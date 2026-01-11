@@ -124,14 +124,33 @@ require_once '../includes/functions.php';
                                     ?>
 
                                   <td><?php echo htmlspecialchars($periodText); ?></td>
-                                  <!-- <td>
-                                      <?php
-                                        //   if (!empty($eng['eng_draft_due'])) {
-                                        //       echo date('Y-m-d', strtotime($eng['eng_draft_due']));
-                                        //   }
-                                      ?>
-                                  </td> -->
-                                  <td><i class="bi bi-trash"></i></td>
+
+                                  <td>
+  <div class="d-flex gap-1">
+    <!-- View Button -->
+    <a href="engagement-details.php?eng_id=<?php echo $eng['eng_idno']; ?>" 
+       class="btn btn-sm btn-outline-primary action-btn" 
+       title="View">
+      <i class="bi bi-eye"></i>
+    </a>
+
+    <!-- Edit Button -->
+    <button class="btn btn-sm btn-outline-warning action-btn" 
+            data-bs-toggle="modal" 
+            data-bs-target="#editModal-<?php echo $eng['eng_idno']; ?>"
+            title="Edit">
+      <i class="bi bi-pencil-square"></i>
+    </button>
+
+    <!-- Delete Button -->
+    <button class="btn btn-sm btn-outline-danger action-btn" 
+            onclick="deleteEngagement('<?php echo $eng['eng_idno']; ?>')" 
+            title="Delete">
+      <i class="bi bi-trash"></i>
+    </button>
+  </div>
+</td>
+
                               </tr>
                           <?php endforeach; ?>
                       </tbody>
