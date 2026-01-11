@@ -346,7 +346,7 @@ $totalEngagements = count($engagements);
 </h6>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 12px; color: rgb(10,10,10);">Engagement ID<sup>*</sup></label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Engagement ID<sup>*</sup></label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_idno"
          value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
 </div>
