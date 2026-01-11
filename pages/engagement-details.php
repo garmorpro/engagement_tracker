@@ -41,8 +41,6 @@ if (isset($_GET['eng_id'])) {
     exit;
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
