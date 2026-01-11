@@ -339,7 +339,7 @@ require_once '../includes/functions.php';
       </div>
 
       <div class="col-md-4">
-        <a href="your-target-page.html" class="card-link">
+        <a href="tool/work-balance-tool.php" class="card-link">
           <div class="card h-100">
             <div class="card-body p-4">
               <!-- Icon (left) + Badge (right) -->
