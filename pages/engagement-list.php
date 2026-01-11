@@ -352,27 +352,32 @@ $pairs = [
 ];
 foreach ($pairs as $date => $yn):
 $checked = (($eng[$yn] ?? 'N') === 'Y');
+
+// unique IDs for JS targeting
+$toggleId = $yn . '_toggle';
+$inputId = $yn . '_input';
 ?>
 <div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">
+    <?php echo ucwords(str_replace('_',' ',$date)); ?>
+  </label>
   <div class="d-flex align-items-center gap-2">
-
     <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
-           name="<?php echo $date; ?>"
-           value="<?php echo $eng[$date] ?? ''; ?>">
+           name="<?php echo $date; ?>" value="<?php echo $eng[$date] ?? ''; ?>">
 
-    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
-         onclick="toggleYN(this)">
+    <!-- Toggle button -->
+    <div id="<?php echo $toggleId; ?>" class="yn-toggle <?php echo $checked ? 'active' : ''; ?>">
       <?php echo $checked ? '✓ Y' : 'N'; ?>
     </div>
 
-    <!-- ALWAYS POST -->
-    <input type="hidden" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+    <!-- Hidden input always posts -->
+    <input type="hidden" id="<?php echo $inputId; ?>" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
 
   </div>
+
   <script>
     document.getElementById('<?php echo $toggleId; ?>').addEventListener('click', function(){
-      const hidden = document.getElementById('<?php echo $yn; ?>_input');
+      const hidden = document.getElementById('<?php echo $inputId; ?>');
       if(this.classList.contains('active')){
         this.classList.remove('active');
         this.textContent = 'N';
@@ -386,6 +391,7 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
   </script>
 </div>
 <?php endforeach; ?>
+
 
 
 <div class="col-md-6">
