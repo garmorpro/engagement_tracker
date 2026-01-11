@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     } else {
         echo "<div class='alert alert-danger'>Failed to archive engagement.</div>";
     }
+    ob_end_flush();
 }
 
 
