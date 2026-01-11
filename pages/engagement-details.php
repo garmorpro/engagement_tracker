@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
 
     if ($stmt->execute()) {
         // Redirect must happen before any output
-        header("Location: engagement-details.php?eng_id=" . $engId . "&msg=archived");
+        header("Location: engagement-details.php?eng_id=". $engId);
         exit;
     } else {
         echo "<div class='alert alert-danger'>Failed to archive engagement.</div>";
