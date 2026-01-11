@@ -3,7 +3,6 @@
 
 require_once '../includes/functions.php';
 
-// DELETE engagement if form submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     $engId = $_POST['delete_eng_id'];
 
@@ -11,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     $stmt->bind_param("s", $engId);
 
     if ($stmt->execute()) {
+        // Redirect to avoid resubmission and show success message
         header("Location: dashboard.php?message=Engagement deleted successfully");
         exit;
     } else {
@@ -18,8 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     }
 }
 
-$engagements = getAllEngagements($conn);
-$totalEngagements = count($engagements);
 ?>
 
 <!DOCTYPE html>
@@ -30,13 +28,67 @@ $totalEngagements = count($engagements);
     <title>List - Engagement Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
     <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>">
+
 </head>
 <body>
 
-<div class="mt-4"></div>
+  <!-- Header -->
+    <div class="header-container">
+      <div class="header-inner">
+        <div>
+          <div class="header-title">Engagement Tracker</div>
+          <div class="header-subtitle">Manage your audit engagements</div>
+        </div>
 
-<!-- table -->
+        <div class="header-actions d-flex align-items-center">
+          <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;" role="tablist">
+            <a class="btn btn-sm me-2 tab-btn" href="dashboard.php">
+              <i class="bi bi-grid"></i> Board
+            </a>
+            <a class="btn btn-sm me-2 tab-btn active" href="engagement-list.php">
+              <i class="bi bi-list-ul"></i> List
+            </a>
+            <a class="btn btn-sm me-2 tab-btn" href="engagement-timeline.php">
+              <i class="bi bi-calendar2"></i> Timeline
+            </a>
+            <a class="btn btn-sm tab-btn" href="engagement-analytics.php">
+              <i class="bi bi-graph-up"></i> Analytics
+            </a>
+          </div>
+
+          <a class="btn archive-btn btn-sm ms-3" href="archive.php"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</a>
+          <a class="btn tools-btn btn-sm ms-3" href="tools.php"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</a>
+          <button class="btn new-btn btn-sm ms-3"><i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement</button>
+        </div>
+      </div>
+    </div>
+  <!-- Header -->
+
+  <div class="mt-4"></div>
+
+    <?php include_once '../includes/status_cards.php'; ?>
+
+    <!-- Search bar -->
+          <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
+              <div class="p-3 border d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15); border-radius: 15px;">
+                  <div class="input-group flex-grow-1 me-3">
+                      <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
+                          <i class="bi bi-search"></i>
+                      </span>
+                      <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);;" placeholder="Search...">
+                  </div>
+                  <!-- Filter button -->
+                  <button class="btn filter-btn d-flex" >
+                    <i class="bi bi-funnel me-1"></i> Filter
+                  </button>
+              </div>
+          </div>
+    <!-- end search bar -->
+
+
+    <!-- table -->
 <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
     Showing <?php echo $totalEngagements; ?> of <?php echo $totalEngagements; ?> engagements
     <div class="table-wrapper mt-3">
@@ -139,6 +191,13 @@ $totalEngagements = count($engagements);
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="mt-5"></div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 </body>
 </html>
