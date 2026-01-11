@@ -177,6 +177,11 @@ if (isset($_GET['eng_id'])) {
               'border' => 'rgb(176,248,209)',
               'pill' => 'rgb(0,201,92)',
           ],
+          'archived' => [
+              'bg' => 'rgb(249,250,251)',
+              'border' => 'rgb(229,231,235)',
+              'pill' => 'rgb(105,114,129)',
+          ],
       ];
 
       // Fallback in case status is unexpected

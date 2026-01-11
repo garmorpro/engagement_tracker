@@ -528,19 +528,5 @@ body {
     padding: 4px 8px;
 }
 
-.action-btn {
-    width: 32px;
-    height: 32px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 5px;
-    transition: all 0.2s;
-}
-
-.action-btn:hover {
-    background-color: rgba(0,0,0,0.05);
-}
 
 
