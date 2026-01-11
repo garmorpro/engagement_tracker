@@ -484,6 +484,32 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">TSC</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_tsc"
+         value="<?php echo htmlspecialchars($eng['eng_tsc'] ?? '', ENT_QUOTES); ?>">
+</div>
+
+<!-- =====================
+     DATE ONLY
+===================== -->
+
+<?php
+$dateFields = [
+  'eng_start_period'       => 'Start Period',
+  'eng_end_period'         => 'End Period',
+  'eng_as_of_date'         => 'As Of Date'
+];
+foreach ($dateFields as $field => $label):
+?>
+<div class="col-md-4">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo $label; ?></label>
+  <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
+         name="<?php echo $field; ?>"
+         value="<?php echo $eng[$field] ?? ''; ?>">
+</div>
+<?php endforeach; ?>
+
 
 
 <div class="col-md-6">
@@ -534,11 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
          value="<?php echo htmlspecialchars($eng['eng_scope'] ?? '', ENT_QUOTES); ?>">
 </div>
 
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">TSC</label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_tsc"
-         value="<?php echo htmlspecialchars($eng['eng_tsc'] ?? '', ENT_QUOTES); ?>">
-</div>
+
 
 <!-- =====================
      Y / N SELECTS
@@ -560,27 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
   </select>
 </div>
 
-<!-- =====================
-     DATE ONLY
-===================== -->
 
-<?php
-$dateFields = [
-  'eng_start_period'       => 'Start Period',
-  'eng_end_period'         => 'End Period',
-  'eng_as_of_date'         => 'As Of Date',
-  'eng_archive'            => 'Archive Date',
-  'eng_last_communication' => 'Last Communication'
-];
-foreach ($dateFields as $field => $label):
-?>
-<div class="col-md-4">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo $label; ?></label>
-  <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
-         name="<?php echo $field; ?>"
-         value="<?php echo $eng[$field] ?? ''; ?>">
-</div>
-<?php endforeach; ?>
 
 <h6 class="fw-semibold mt-5">Important Dates & Milestones</h6>
 <hr>
@@ -619,6 +621,25 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
     <input type="hidden" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
 
   </div>
+</div>
+<?php endforeach; ?>
+
+<!-- =====================
+     DATE ONLY
+===================== -->
+
+<?php
+$dateFields = [
+  'eng_archive'            => 'Archive Date',
+  'eng_last_communication' => 'Last Communication'
+];
+foreach ($dateFields as $field => $label):
+?>
+<div class="col-md-4">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo $label; ?></label>
+  <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
+         name="<?php echo $field; ?>"
+         value="<?php echo $eng[$field] ?? ''; ?>">
 </div>
 <?php endforeach; ?>
 
