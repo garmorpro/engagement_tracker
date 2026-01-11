@@ -18,6 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     }
 }
 
+$engagements = getAllEngagements($conn);
+$totalEngagements = count($engagements);
+
 ?>
 
 <!DOCTYPE html>
