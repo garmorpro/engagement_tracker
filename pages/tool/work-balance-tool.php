@@ -53,7 +53,7 @@ require_once '../../includes/functions.php';
 
   <div class="mt-4"></div>
 
-    <?php include_once '../../includes/status_cards.php'; ?>
+    <?php //include_once '../../includes/status_cards.php'; ?>
 
 
 
