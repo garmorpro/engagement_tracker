@@ -346,7 +346,7 @@ $totalEngagements = count($engagements);
 </h6>
 
 <div class="col-md-6">
-  <label class="form-label">Engagement Name <sup>*</sup></label>
+  <label class="form-label" style="font-size: 14px;">Engagement Name <sup>*</sup></label>
   <input type="text" class="form-control" name="eng_name"
          value="<?php echo htmlspecialchars($eng['eng_name'] ?? '', ENT_QUOTES); ?>">
 </div>
