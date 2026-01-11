@@ -18,6 +18,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     }
 }
 
+// Handle editing engagement
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
+    $engId   = $_POST['edit_eng_id'];
+    $name    = $_POST['eng_name'] ?? '';
+    $manager = $_POST['eng_manager'] ?? '';
+
+    // Prepare the UPDATE statement
+    $stmt = $conn->prepare("UPDATE engagements SET eng_name = ?, eng_manager = ? WHERE eng_idno = ?");
+    $stmt->bind_param("sss", $name, $manager, $engId);
+
+    if ($stmt->execute()) {
+        // Redirect to avoid form resubmission and show a success message
+        header("Location: engagement-list.php?message=Engagement updated successfully");
+        exit;
+    } else {
+        echo "<div class='alert alert-danger'>Failed to update engagement.</div>";
+    }
+}
+
+
+
 $engagements = getAllEngagements($conn);
 $totalEngagements = count($engagements);
 
@@ -165,6 +186,8 @@ $totalEngagements = count($engagements);
                   <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                       <form method="POST">
+                        <input type="hidden" name="edit_eng_id" value="<?php echo $eng['eng_idno']; ?>">
+
                         <div class="modal-header">
                           <h5 class="modal-title" id="editModalLabel-<?php echo $eng['eng_idno']; ?>">Edit Engagement</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -188,6 +211,8 @@ $totalEngagements = count($engagements);
                     </div>
                   </div>
                 </div>
+
+
                 <?php endforeach; ?>
             </tbody>
         </table>
