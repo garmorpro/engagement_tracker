@@ -23,62 +23,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     $engId = $_POST['edit_eng_id'];
 
     // Text fields
-    $name                       = $_POST['eng_name'] ?? '';
-    $manager                    = $_POST['eng_manager'] ?? '';
-    $senior                     = $_POST['eng_senior'] ?? '';
-    $staff                      = $_POST['eng_staff'] ?? '';
-    $senior_dol                 = $_POST['eng_senior_dol'] ?? '';
-    $staff_dol                  = $_POST['eng_staff_dol'] ?? '';
-    $poc                        = $_POST['eng_poc'] ?? '';
-    $location                   = $_POST['eng_location'] ?? '';
-    $audit_type                 = $_POST['eng_audit_type'] ?? '';
-    $scope                      = $_POST['eng_scope'] ?? '';
-    $tsc                        = $_POST['eng_tsc'] ?? '';
-    $notes                      = $_POST['eng_notes'] ?? '';
+    $name = $_POST['eng_name'] ?? '';
+    $manager = $_POST['eng_manager'] ?? '';
+    $senior = $_POST['eng_senior'] ?? '';
+    $staff = $_POST['eng_staff'] ?? '';
+    $senior_dol = $_POST['eng_senior_dol'] ?? '';
+    $staff_dol = $_POST['eng_staff_dol'] ?? '';
+    $poc = $_POST['eng_poc'] ?? '';
+    $location = $_POST['eng_location'] ?? '';
+    $audit_type = $_POST['eng_audit_type'] ?? '';
+    $scope = $_POST['eng_scope'] ?? '';
+    $tsc = $_POST['eng_tsc'] ?? '';
+    $notes = $_POST['eng_notes'] ?? '';
 
-    // Y/N fields (default to 'N')
-    $repeat                     = $_POST['eng_repeat'] ?? 'N';
-    $completed_internal_planning= $_POST['eng_completed_internal_planning'] ?? 'N';
-    $irl_sent                   = $_POST['eng_irl_sent'] ?? 'N';
-    $completed_client_planning  = $_POST['eng_completed_client_planning'] ?? 'N';
-    $fieldwork_complete         = $_POST['eng_fieldwork_complete'] ?? 'N';
-    $leadsheet_complete         = $_POST['eng_leadsheet_complete'] ?? 'N';
-    $draft_sent                 = $_POST['eng_draft_sent'] ?? 'N';
-    $final_sent                 = $_POST['eng_final_sent'] ?? 'N';
-    $section_3_requested        = $_POST['eng_section_3_requested'] ?? 'N';
+    // Y/N fields
+    $repeat = $_POST['eng_repeat'] ?? 'N';
+    $completed_internal_planning = $_POST['eng_completed_internal_planning'] ?? 'N';
+    $irl_sent = $_POST['eng_irl_sent'] ?? 'N';
+    $completed_client_planning = $_POST['eng_completed_client_planning'] ?? 'N';
+    $fieldwork_complete = $_POST['eng_fieldwork_complete'] ?? 'N';
+    $leadsheet_complete = $_POST['eng_leadsheet_complete'] ?? 'N';
+    $draft_sent = $_POST['eng_draft_sent'] ?? 'N';
+    $final_sent = $_POST['eng_final_sent'] ?? 'N';
+    $section_3_requested = $_POST['eng_section_3_requested'] ?? 'N';
 
-    // Dates — convert empty to ''
-    $start_period               = $_POST['eng_start_period'] ?? '';
-    $end_period                 = $_POST['eng_end_period'] ?? '';
-    $as_of_date                 = $_POST['eng_as_of_date'] ?? '';
-    $internal_planning_call     = $_POST['eng_internal_planning_call'] ?? '';
-    $irl_due                    = $_POST['eng_irl_due'] ?? '';
-    $client_planning_call       = $_POST['eng_client_planning_call'] ?? '';
-    $fieldwork                  = $_POST['eng_fieldwork'] ?? '';
-    $leadsheet_due              = $_POST['eng_leadsheet_due'] ?? '';
-    $draft_due                  = $_POST['eng_draft_due'] ?? '';
-    $final_due                  = $_POST['eng_final_due'] ?? '';
-    $archive                    = $_POST['eng_archive'] ?? '';
-    $last_communication         = $_POST['eng_last_communication'] ?? '';
+    // Dates — convert empty to NULL
+    $start_period = !empty($_POST['eng_start_period']) ? $_POST['eng_start_period'] : null;
+    $end_period = !empty($_POST['eng_end_period']) ? $_POST['eng_end_period'] : null;
+    $as_of_date = !empty($_POST['eng_as_of_date']) ? $_POST['eng_as_of_date'] : null;
+    $internal_planning_call = !empty($_POST['eng_internal_planning_call']) ? $_POST['eng_internal_planning_call'] : null;
+    $irl_due = !empty($_POST['eng_irl_due']) ? $_POST['eng_irl_due'] : null;
+    $client_planning_call = !empty($_POST['eng_client_planning_call']) ? $_POST['eng_client_planning_call'] : null;
+    $fieldwork = !empty($_POST['eng_fieldwork']) ? $_POST['eng_fieldwork'] : null;
+    $leadsheet_due = !empty($_POST['eng_leadsheet_due']) ? $_POST['eng_leadsheet_due'] : null;
+    $draft_due = !empty($_POST['eng_draft_due']) ? $_POST['eng_draft_due'] : null;
+    $final_due = !empty($_POST['eng_final_due']) ? $_POST['eng_final_due'] : null;
+    $archive = !empty($_POST['eng_archive']) ? $_POST['eng_archive'] : null;
+    $last_communication = !empty($_POST['eng_last_communication']) ? $_POST['eng_last_communication'] : null;
 
     // Single-select status
-    $status                     = $_POST['eng_status'] ?? '';
+    $status = $_POST['eng_status'] ?? '';
 
-    // Prepare the UPDATE statement
+    // Prepare statement
     $stmt = $conn->prepare("UPDATE engagements SET 
-        eng_name = ?, eng_manager = ?, eng_senior = ?, eng_staff = ?, 
-        eng_senior_dol = ?, eng_staff_dol = ?, eng_poc = ?, eng_location = ?, 
-        eng_repeat = ?, eng_audit_type = ?, eng_scope = ?, eng_tsc = ?, 
-        eng_start_period = ?, eng_end_period = ?, eng_as_of_date = ?, 
-        eng_internal_planning_call = ?, eng_completed_internal_planning = ?, 
-        eng_irl_due = ?, eng_irl_sent = ?, eng_client_planning_call = ?, 
-        eng_completed_client_planning = ?, eng_fieldwork = ?, eng_fieldwork_complete = ?, 
-        eng_leadsheet_due = ?, eng_leadsheet_complete = ?, eng_draft_due = ?, eng_draft_sent = ?, 
-        eng_final_due = ?, eng_final_sent = ?, eng_archive = ?, eng_section_3_requested = ?, 
-        eng_last_communication = ?, eng_notes = ?, eng_status = ? 
-        WHERE eng_idno = ?");
+        eng_name=?, eng_manager=?, eng_senior=?, eng_staff=?,
+        eng_senior_dol=?, eng_staff_dol=?, eng_poc=?, eng_location=?,
+        eng_repeat=?, eng_audit_type=?, eng_scope=?, eng_tsc=?,
+        eng_start_period=?, eng_end_period=?, eng_as_of_date=?,
+        eng_internal_planning_call=?, eng_completed_internal_planning=?,
+        eng_irl_due=?, eng_irl_sent=?, eng_client_planning_call=?,
+        eng_completed_client_planning=?, eng_fieldwork=?, eng_fieldwork_complete=?,
+        eng_leadsheet_due=?, eng_leadsheet_complete=?, eng_draft_due=?, eng_draft_sent=?,
+        eng_final_due=?, eng_final_sent=?, eng_archive=?, eng_section_3_requested=?,
+        eng_last_communication=?, eng_notes=?, eng_status=?
+        WHERE eng_idno=?");
 
-    // Bind parameters (all as strings)
+    // Bind parameters — dates can be NULL
     $stmt->bind_param(
         "sssssssssssssssssssssssssssssssssss",
         $name, $manager, $senior, $staff,
