@@ -7,11 +7,15 @@ require_once '../includes/functions.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     $engId = $_POST['archive_eng_id'];
 
-    $stmt = $conn->prepare("UPDATE engagements SET eng_status = 'archived' WHERE eng_idno = ?");
-    $stmt->bind_param("s", $engId);
+    // Get current date in Y-m-d format
+    $archiveDate = date('Y-m-d');
+
+    // Update status and archive date
+    $stmt = $conn->prepare("UPDATE engagements SET eng_status = 'archived', eng_archive = ? WHERE eng_idno = ?");
+    $stmt->bind_param("ss", $archiveDate, $engId);
 
     if ($stmt->execute()) {
-        // Redirect must happen before any output
+        // Redirect before any output
         header("Location: dashboard.php?message=Engagement archived successfully");
         exit;
     } else {
