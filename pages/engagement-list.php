@@ -346,32 +346,32 @@ $totalEngagements = count($engagements);
 </h6>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Engagement ID <sup>*</sup></label>
+  <label class="form-label" style="font-size: 14px;">Engagement ID<sup>*</sup></label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_idno"
          value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Engagement Name</label>
-  <input type="text" class="form-control" name="eng_name"
+  <label class="form-label" style="font-size: 14px;">Engagement Name<sup>*</sup></label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_name"
          value="<?php echo htmlspecialchars($eng['eng_name'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">Audit Type</label>
-  <input type="text" class="form-control" name="eng_audit_type"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_audit_type"
          value="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">Manager</label>
-  <input type="text" class="form-control" name="eng_manager"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_manager"
          value="<?php echo htmlspecialchars($eng['eng_manager'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
   <label class="form-label" style="font-size: 14px;">Senior(s)</label>
-  <input type="text" class="form-control" name="eng_senior"
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_senior"
          value="<?php echo htmlspecialchars($eng['eng_senior'] ?? '', ENT_QUOTES); ?>">
 </div>
 
