@@ -124,12 +124,24 @@ if (isset($_GET['eng_id'])) {
         <i class="bi bi-trash me-1"></i> Delete
     </button>
 
-    <?php if ($eng['eng_status'] === 'complete'): ?>
-<a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
+    <!-- <?php //if ($eng['eng_status'] === 'complete'): ?>
+<a href="engagement-details.php?eng_id=<?php //echo urlencode($eng['eng_idno']); ?>"
    class="btn btn-outline-danger btn-archive"
    onclick="return confirm('Are you sure you want to archive this engagement?');">
     <i class="bi bi-archive me-1"></i> Archive
 </a>
+<?php //endif; ?> -->
+
+<?php if (!empty($engId) && $eng['eng_status'] !== 'archived'): ?>
+<form method="post" style="display:inline;">
+    <input type="hidden" name="archive_eng_id" value="<?php echo htmlspecialchars($engId); ?>">
+    <button type="submit"
+            name="archive_button"
+            class="btn btn-outline-danger"
+            onclick="return confirm('Are you sure you want to archive this engagement?');">
+        <i class="bi bi-archive me-1"></i> Archive
+    </button>
+</form>
 <?php endif; ?>
 
 </div>
