@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     /* ============================
        Y / N FIELDS
     ============================ */
-    $repeat                      = $_POST['eng_repeat'] ?? 'N';
+    $repeat                      = $_POST['repeat'] ?? 'N';
     $completed_internal_planning = $_POST['eng_completed_internal_planning'] ?? 'N';
     $irl_sent                    = $_POST['eng_irl_sent'] ?? 'N';
     $completed_client_planning   = $_POST['eng_completed_client_planning'] ?? 'N';
@@ -365,7 +365,7 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
     </div>
 
     <!-- ALWAYS POST -->
-    <input type="hidden" name="eng_repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+    <input type="hidden" name="repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
 
   </div>
 </div>
