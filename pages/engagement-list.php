@@ -252,114 +252,138 @@ $totalEngagements = count($engagements);
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
 
-      <form method="POST">
-        <input type="hidden" name="edit_eng_id" value="<?php echo $eng['eng_idno']; ?>">
+<form method="POST">
+<input type="hidden" name="edit_eng_id" value="<?php echo $eng['eng_idno']; ?>">
 
-        <div class="modal-header">
-          <h5 class="modal-title">Edit Engagement</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
+<div class="modal-header">
+  <h5 class="modal-title">Edit Engagement</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
 
-        <div class="modal-body">
-          <div class="row g-3">
+<div class="modal-body">
+<div class="row g-3">
 
-            <!-- Engagement Name -->
-            <div class="col-md-6">
-              <label class="form-label">Engagement Name</label>
-              <input type="text" class="form-control" name="eng_name"
-                     value="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>" required>
-            </div>
+<!-- TEXT FIELDS -->
+<?php
+$textFields = [
+  'eng_name'=>'Engagement Name',
+  'eng_manager'=>'Manager',
+  'eng_senior'=>'Senior(s)',
+  'eng_staff'=>'Staff',
+  'eng_senior_dol'=>'Senior DOL',
+  'eng_staff_dol'=>'Staff DOL',
+  'eng_poc'=>'POC',
+  'eng_location'=>'Location',
+  'eng_audit_type'=>'Audit Type',
+  'eng_scope'=>'Scope',
+  'eng_tsc'=>'TSC'
+];
+foreach ($textFields as $field=>$label):
+?>
+<div class="col-md-6">
+  <label class="form-label"><?php echo $label; ?></label>
+  <input type="text" class="form-control" name="<?php echo $field; ?>"
+         value="<?php echo htmlspecialchars($eng[$field] ?? ''); ?>">
+</div>
+<?php endforeach; ?>
 
-            <!-- Manager -->
-            <div class="col-md-6">
-              <label class="form-label">Manager</label>
-              <input type="text" class="form-control" name="eng_manager"
-                     value="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>" required>
-            </div>
+<!-- REPEAT -->
+<div class="col-md-6">
+  <label class="form-label">Repeat</label>
+  <select class="form-select" name="eng_repeat">
+    <option value="Y" <?php echo ($eng['eng_repeat']==='Y')?'selected':''; ?>>Yes</option>
+    <option value="N" <?php echo ($eng['eng_repeat']==='N')?'selected':''; ?>>No</option>
+  </select>
+</div>
 
-            <!-- START / END / AS OF -->
-            <?php
-              $simpleDates = ['eng_start_period','eng_end_period','eng_as_of_date'];
-              foreach ($simpleDates as $f):
-            ?>
-            <div class="col-md-4">
-              <label class="form-label"><?php echo ucwords(str_replace('_',' ',$f)); ?></label>
-              <input type="date" class="form-control" name="<?php echo $f; ?>"
-                     value="<?php echo $eng[$f] ?? ''; ?>">
-            </div>
-            <?php endforeach; ?>
+<!-- DATE ONLY -->
+<?php
+$dateOnly = [
+  'eng_start_period','eng_end_period','eng_as_of_date','eng_archive','eng_last_communication'
+];
+foreach ($dateOnly as $field):
+?>
+<div class="col-md-4">
+  <label class="form-label"><?php echo ucwords(str_replace('_',' ',$field)); ?></label>
+  <input type="date" class="form-control" name="<?php echo $field; ?>"
+         value="<?php echo $eng[$field] ?? ''; ?>">
+</div>
+<?php endforeach; ?>
 
-            <!-- ===== DATE + TOGGLE PAIRS ===== -->
-            <?php
-              $togglePairs = [
-                'Internal Planning Call' => ['eng_internal_planning_call','eng_complete_internal_planning'],
-                'IRL Due' => ['eng_irl_due','eng_irl_sent'],
-                'Client Planning Call' => ['eng_client_planning_call','eng_complete_client_planning'],
-                'Fieldwork' => ['eng_fieldwork','eng_fieldwork_complete'],
-                'Leadsheet Due' => ['eng_leadsheet_due','eng_leadsheet_complete'],
-                'Draft Due' => ['eng_draft_due','eng_draft_sent'],
-                'Final Due' => ['eng_final_due','eng_final_sent'],
-              ];
+<!-- DATE + TOGGLE PAIRS -->
+<?php
+$pairs = [
+  'eng_internal_planning_call'=>'eng_completed_internal_planning',
+  'eng_irl_due'=>'eng_irl_sent',
+  'eng_client_planning_call'=>'eng_completed_client_planning',
+  'eng_fieldwork'=>'eng_fieldwork_complete',
+  'eng_leadsheet_due'=>'eng_leadsheet_complete',
+  'eng_draft_due'=>'eng_draft_sent',
+  'eng_final_due'=>'eng_final_sent'
+];
+foreach ($pairs as $date=>$yn):
+$val = ($eng[$yn] ?? 'N') === 'Y';
+?>
+<div class="col-md-6">
+  <label class="form-label"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
+  <div class="d-flex align-items-center gap-2">
+    <input type="date" class="form-control"
+           name="<?php echo $date; ?>"
+           value="<?php echo $eng[$date] ?? ''; ?>">
 
-              foreach ($togglePairs as $label => [$dateField,$ynField]):
-                $isYes = ($eng[$ynField] ?? 'N') === 'Y';
-            ?>
-            <div class="col-md-6">
-              <label class="form-label"><?php echo $label; ?></label>
-
-              <div class="d-flex align-items-center gap-2">
-                <input type="date"
-                       class="form-control"
-                       name="<?php echo $dateField; ?>"
-                       value="<?php echo $eng[$dateField] ?? ''; ?>">
-
-                <div class="yn-toggle <?php echo $isYes ? 'active' : ''; ?>"
-                     onclick="toggleYN(this)">
-                  <?php echo $isYes ? '✓ Y' : 'N'; ?>
-                </div>
-
-                <input type="hidden"
-                       name="<?php echo $ynField; ?>"
-                       value="<?php echo $isYes ? 'Y' : 'N'; ?>">
-              </div>
-            </div>
-            <?php endforeach; ?>
-
-            <!-- Notes -->
-            <div class="col-12">
-              <label class="form-label">Notes</label>
-              <textarea class="form-control" name="eng_notes" rows="4"><?php
-                echo htmlspecialchars($eng['eng_notes'] ?? '');
-              ?></textarea>
-            </div>
-
-            <!-- Status -->
-            <div class="col-12">
-              <label class="form-label">Status</label>
-              <select class="form-select" name="eng_status">
-                <?php
-                  $statuses = ['on-hold','planning','in-progress','in-review','complete','archived'];
-                  foreach ($statuses as $s):
-                ?>
-                  <option value="<?php echo $s; ?>"
-                    <?php echo ($eng['eng_status'] === $s) ? 'selected' : ''; ?>>
-                    <?php echo ucwords(str_replace('-',' ',$s)); ?>
-                  </option>
-                <?php endforeach; ?>
-              </select>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-        </div>
-
-      </form>
+    <div class="yn-toggle <?php echo $val?'active':''; ?>"
+         onclick="toggleYN(this)">
+      <?php echo $val?'✓ Y':'N'; ?>
     </div>
+
+    <input type="hidden" name="<?php echo $yn; ?>" value="<?php echo $val?'Y':'N'; ?>">
   </div>
+</div>
+<?php endforeach; ?>
+
+<!-- SECTION 3 -->
+<div class="col-md-6">
+  <label class="form-label">Section 3 Requested</label>
+  <select class="form-select" name="eng_section_3_requested">
+    <option value="Y" <?php echo ($eng['eng_section_3_requested']==='Y')?'selected':''; ?>>Yes</option>
+    <option value="N" <?php echo ($eng['eng_section_3_requested']==='N')?'selected':''; ?>>No</option>
+  </select>
+</div>
+
+<!-- NOTES -->
+<div class="col-12">
+  <label class="form-label">Notes</label>
+  <textarea class="form-control" name="eng_notes" rows="4"><?php
+    echo htmlspecialchars($eng['eng_notes'] ?? '');
+  ?></textarea>
+</div>
+
+<!-- STATUS -->
+<div class="col-12">
+  <label class="form-label">Status</label>
+  <select class="form-select" name="eng_status">
+    <?php
+    $statuses=['on-hold','planning','in-progress','in-review','complete','archived'];
+    foreach($statuses as $s):
+    ?>
+    <option value="<?php echo $s; ?>" <?php echo ($eng['eng_status']===$s)?'selected':''; ?>>
+      <?php echo ucwords(str_replace('-',' ',$s)); ?>
+    </option>
+    <?php endforeach; ?>
+  </select>
+</div>
+
+</div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  <button type="submit" class="btn btn-primary">Save Changes</button>
+</div>
+
+</form>
+</div>
+</div>
 </div>
 
 
