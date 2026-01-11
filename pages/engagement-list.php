@@ -247,95 +247,158 @@ $totalEngagements = count($engagements);
                     </td>
                 </tr>
 
-                <!-- Modal for this engagement -->
-<div class="modal fade" id="editModal-<?php echo $eng['eng_idno']; ?>" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
+                <!-- Edit Engagement Modal -->
+<div class="modal fade engagement-edit-modal"
+     id="editModal-<?php echo $eng['eng_idno']; ?>"
+     tabindex="-1"
+     aria-labelledby="editModalLabel-<?php echo $eng['eng_idno']; ?>"
+     aria-hidden="true">
+
+  <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
     <div class="modal-content">
 
       <form method="POST">
         <input type="hidden" name="edit_eng_id" value="<?php echo $eng['eng_idno']; ?>">
 
+        <!-- HEADER -->
         <div class="modal-header">
-          <h5 class="modal-title">Edit Engagement</h5>
+          <h5 class="modal-title">
+            Edit Engagement
+            <span class="badge status-badge ms-2"
+                  data-status="<?php echo htmlspecialchars($eng['eng_status'] ?? 'planning'); ?>">
+              <?php echo ucwords(str_replace('-', ' ', $eng['eng_status'] ?? 'planning')); ?>
+            </span>
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
+        <!-- BODY -->
         <div class="modal-body">
           <div class="row g-3">
 
-            <!-- Engagement Name -->
+            <!-- BASIC INFO -->
+            <div class="col-12 section-title">Basic Info</div>
+
+            <?php
+              function h($v) { return htmlspecialchars($v ?? '', ENT_QUOTES); }
+              function d($v) { return $v ?? ''; }
+            ?>
+
             <div class="col-md-6">
               <label class="form-label">Engagement Name</label>
-              <input type="text" class="form-control" name="eng_name"
-                     value="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>" required>
+              <input type="text" class="form-control" name="eng_name" value="<?php echo h($eng['eng_name']); ?>" required>
             </div>
 
-            <!-- Manager -->
             <div class="col-md-6">
               <label class="form-label">Manager</label>
-              <input type="text" class="form-control" name="eng_manager"
-                     value="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>" required>
+              <input type="text" class="form-control" name="eng_manager" value="<?php echo h($eng['eng_manager']); ?>" required>
             </div>
 
-            <!-- ================= DATE + TOGGLE PAIRS ================= -->
-            <?php
-              $pairs = [
-                ['eng_internal_planning_call','eng_complete_internal_planning','Internal Planning Call'],
-                ['eng_irl_due','eng_irl_sent','IRL Due'],
-                ['eng_client_planning_call','eng_complete_client_planning','Client Planning Call'],
-                ['eng_fieldwork','eng_fieldwork_complete','Fieldwork'],
-                ['eng_leadsheet_due','eng_leadsheet_complete','Leadsheet Due'],
-                ['eng_draft_due','eng_draft_sent','Draft Due'],
-                ['eng_final_due','eng_final_sent','Final Due']
-              ];
-            ?>
-
-            <?php foreach ($pairs as [$dateField, $ynField, $label]): 
-              $isYes = ($eng[$ynField] ?? 'N') === 'Y';
-            ?>
             <div class="col-md-6">
+              <label class="form-label">Senior</label>
+              <input type="text" class="form-control" name="eng_senior" value="<?php echo h($eng['eng_senior']); ?>">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Staff</label>
+              <input type="text" class="form-control" name="eng_staff" value="<?php echo h($eng['eng_staff']); ?>">
+            </div>
+
+            <!-- DETAILS -->
+            <div class="col-12 section-title">Details</div>
+
+            <div class="col-md-6">
+              <label class="form-label">Location</label>
+              <input type="text" class="form-control" name="eng_location" value="<?php echo h($eng['eng_location']); ?>">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Audit Type</label>
+              <input type="text" class="form-control" name="eng_audit_type" value="<?php echo h($eng['eng_audit_type']); ?>">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Scope</label>
+              <input type="text" class="form-control" name="eng_scope" value="<?php echo h($eng['eng_scope']); ?>">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Repeat</label>
+              <select class="form-select" name="eng_repeat">
+                <option value="Y" <?php if(($eng['eng_repeat'] ?? '')==='Y') echo 'selected'; ?>>Yes</option>
+                <option value="N" <?php if(($eng['eng_repeat'] ?? '')==='N') echo 'selected'; ?>>No</option>
+              </select>
+            </div>
+
+            <!-- DATES -->
+            <div class="col-12 section-title">Key Dates</div>
+
+            <?php
+              $dates = [
+                'eng_start_period' => 'Start Period',
+                'eng_end_period' => 'End Period',
+                'eng_as_of_date' => 'As Of Date',
+                'eng_internal_planning_call' => 'Internal Planning Call',
+                'eng_irl_due' => 'IRL Due',
+                'eng_client_planning_call' => 'Client Planning Call',
+                'eng_fieldwork' => 'Fieldwork',
+                'eng_leadsheet_due' => 'Leadsheet Due',
+                'eng_draft_due' => 'Draft Due',
+                'eng_final_due' => 'Final Due',
+                'eng_archive' => 'Archive',
+                'eng_last_communication' => 'Last Communication'
+              ];
+              foreach ($dates as $k => $label):
+            ?>
+            <div class="col-md-4">
               <label class="form-label"><?php echo $label; ?></label>
-              <div class="d-flex align-items-center gap-2">
-
-                <!-- Date -->
-                <input type="date"
-                       class="form-control"
-                       name="<?php echo $dateField; ?>"
-                       value="<?php echo $eng[$dateField] ?? ''; ?>">
-
-                <!-- Toggle -->
-                <div class="yn-toggle <?php echo $isYes ? 'active' : ''; ?>"
-                     onclick="toggleYN(this)">
-                  <?php echo $isYes ? '✓ Y' : 'N'; ?>
-                </div>
-
-                <!-- Hidden Input -->
-                <input type="hidden"
-                       name="<?php echo $ynField; ?>"
-                       value="<?php echo $isYes ? 'Y' : 'N'; ?>">
-              </div>
+              <input type="date" class="form-control" name="<?php echo $k; ?>" value="<?php echo d($eng[$k] ?? null); ?>">
             </div>
             <?php endforeach; ?>
 
-            <!-- Notes -->
+            <!-- YES / NO -->
+            <div class="col-12 section-title">Completion Flags</div>
+
+            <?php
+              $flags = [
+                'eng_completed_internal_planning',
+                'eng_irl_sent',
+                'eng_completed_client_planning',
+                'eng_fieldwork_complete',
+                'eng_leadsheet_complete',
+                'eng_draft_sent',
+                'eng_final_sent',
+                'eng_section_3_requested'
+              ];
+              foreach ($flags as $f):
+            ?>
+            <div class="col-md-4">
+              <label class="form-label"><?php echo ucwords(str_replace('_',' ',$f)); ?></label>
+              <select class="form-select" name="<?php echo $f; ?>">
+                <option value="Y" <?php if(($eng[$f] ?? '')==='Y') echo 'selected'; ?>>Yes</option>
+                <option value="N" <?php if(($eng[$f] ?? '')==='N') echo 'selected'; ?>>No</option>
+              </select>
+            </div>
+            <?php endforeach; ?>
+
+            <!-- NOTES -->
+            <div class="col-12 section-title">Notes</div>
+
             <div class="col-12">
-              <label class="form-label">Notes</label>
-              <textarea class="form-control" name="eng_notes" rows="4"><?php
-                echo htmlspecialchars($eng['eng_notes'] ?? '');
-              ?></textarea>
+              <textarea class="form-control" name="eng_notes" rows="4"><?php echo h($eng['eng_notes']); ?></textarea>
             </div>
 
-            <!-- Status -->
-            <div class="col-12">
-              <label class="form-label">Status</label>
-              <select class="form-select" name="eng_status">
+            <!-- STATUS -->
+            <div class="col-12 section-title">Status</div>
+
+            <div class="col-md-6">
+              <select class="form-select status-select" name="eng_status">
                 <?php
                   $statuses = ['on-hold','planning','in-progress','in-review','complete','archived'];
-                  foreach ($statuses as $status):
+                  foreach($statuses as $s):
                 ?>
-                <option value="<?php echo $status; ?>"
-                  <?php echo ($eng['eng_status'] === $status) ? 'selected' : ''; ?>>
-                  <?php echo ucwords(str_replace('-',' ',$status)); ?>
+                <option value="<?php echo $s; ?>" <?php if(($eng['eng_status'] ?? '')===$s) echo 'selected'; ?>>
+                  <?php echo ucwords(str_replace('-',' ',$s)); ?>
                 </option>
                 <?php endforeach; ?>
               </select>
@@ -344,8 +407,9 @@ $totalEngagements = count($engagements);
           </div>
         </div>
 
+        <!-- FOOTER -->
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary">Save Changes</button>
         </div>
 
@@ -369,22 +433,18 @@ $totalEngagements = count($engagements);
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('change', e => {
+  if (!e.target.classList.contains('status-select')) return;
 
-  <script>
-function toggleYN(el) {
-  const hidden = el.nextElementSibling;
-  el.classList.toggle('active');
+  const modal = e.target.closest('.modal');
+  const badge = modal.querySelector('.status-badge');
+  const value = e.target.value;
 
-  if (el.classList.contains('active')) {
-    el.innerHTML = '✓ Y';
-    hidden.value = 'Y';
-  } else {
-    el.innerHTML = 'N';
-    hidden.value = 'N';
-  }
-}
+  badge.textContent = value.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+  badge.setAttribute('data-status', value);
+});
 </script>
-
 
 
 </body>
