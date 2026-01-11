@@ -3,20 +3,20 @@
 
 require_once '../includes/functions.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
-    $engId = $_POST['delete_eng_id'];
+// if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
+//     $engId = $_POST['delete_eng_id'];
 
-    $stmt = $conn->prepare("DELETE FROM engagements WHERE eng_idno = ?");
-    $stmt->bind_param("s", $engId);
+//     $stmt = $conn->prepare("DELETE FROM engagements WHERE eng_idno = ?");
+//     $stmt->bind_param("s", $engId);
 
-    if ($stmt->execute()) {
-        // Redirect to avoid resubmission and show success message
-        header("Location: dashboard.php?message=Engagement deleted successfully");
-        exit;
-    } else {
-        echo "<div class='alert alert-danger'>Failed to delete engagement.</div>";
-    }
-}
+//     if ($stmt->execute()) {
+//         // Redirect to avoid resubmission and show success message
+//         header("Location: dashboard.php?message=Engagement deleted successfully");
+//         exit;
+//     } else {
+//         echo "<div class='alert alert-danger'>Failed to delete engagement.</div>";
+//     }
+// }
 
 ?>
 
