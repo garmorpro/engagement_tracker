@@ -362,11 +362,20 @@ foreach ($textFields as $field=>$label):
 <?php endforeach; ?>
 
 <!-- REPEAT -->
-<div class="col-md-6">
+<div class="col-md-3">
   <label class="form-label">Repeat</label>
   <select class="form-select" name="eng_repeat">
     <option value="Y" <?php echo ($eng['eng_repeat']==='Y')?'selected':''; ?>>Yes</option>
     <option value="N" <?php echo ($eng['eng_repeat']==='N')?'selected':''; ?>>No</option>
+  </select>
+</div>
+
+<!-- SECTION 3 -->
+<div class="col-md-3">
+  <label class="form-label">Section 3 Requested</label>
+  <select class="form-select" name="eng_section_3_requested">
+    <option value="Y" <?php echo ($eng['eng_section_3_requested']==='Y')?'selected':''; ?>>Yes</option>
+    <option value="N" <?php echo ($eng['eng_section_3_requested']==='N')?'selected':''; ?>>No</option>
   </select>
 </div>
 
@@ -415,14 +424,7 @@ $val = ($eng[$yn] ?? 'N') === 'Y';
 </div>
 <?php endforeach; ?>
 
-<!-- SECTION 3 -->
-<div class="col-md-6">
-  <label class="form-label">Section 3 Requested</label>
-  <select class="form-select" name="eng_section_3_requested">
-    <option value="Y" <?php echo ($eng['eng_section_3_requested']==='Y')?'selected':''; ?>>Yes</option>
-    <option value="N" <?php echo ($eng['eng_section_3_requested']==='N')?'selected':''; ?>>No</option>
-  </select>
-</div>
+
 
 <!-- NOTES -->
 <div class="col-12">
