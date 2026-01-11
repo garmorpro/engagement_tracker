@@ -109,11 +109,11 @@ if (isset($_GET['eng_id'])) {
     </button>
 
     <?php if ($eng['eng_status'] === 'complete'): ?>
-        <!-- Archive button, only for complete engagements -->
-        <button class="btn btn-outline-danger btn-archive" onclick="archiveEngagement('<?php echo $eng['eng_idno']; ?>')">
-            <i class="bi bi-archive me-1"></i> Archive
-        </button>
-    <?php endif; ?>
+<button class="btn btn-outline-danger btn-archive"
+        onclick="archiveEngagement('<?php echo $eng['eng_idno']; ?>')">
+    <i class="bi bi-archive me-1"></i> Archive
+</button>
+<?php endif; ?>
 </div>
 
   
