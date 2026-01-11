@@ -347,12 +347,27 @@ $totalEngagements = count($engagements);
 <hr>
 
 <?php
+// Debug: show the contents of $eng
+echo '<pre>';
+echo "=== ENG ARRAY ===\n";
+print_r($eng);
+echo "=================\n";
+echo '</pre>';
+
+// Debug: see what is checked
 $pairs = [
   'eng_idno' => 'eng_repeat'
 ];
 foreach ($pairs as $date => $yn):
 $checked = (($eng[$yn] ?? 'N') === 'Y');
+
+echo '<pre>';
+echo "Processing pair: $date => $yn\n";
+echo "Value in $yn: " . ($eng[$yn] ?? 'NULL') . "\n";
+echo "Checked? " . ($checked ? 'YES' : 'NO') . "\n";
+echo '</pre>';
 ?>
+
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">
     <?php echo ucwords(str_replace('_',' ',$date)); ?>
