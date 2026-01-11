@@ -3,6 +3,21 @@
 
 require_once '../includes/functions.php';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
+    $engId = $_POST['delete_eng_id'];
+
+    $stmt = $conn->prepare("DELETE FROM engagements WHERE eng_idno = ?");
+    $stmt->bind_param("s", $engId);
+
+    if ($stmt->execute()) {
+        // Redirect to avoid resubmission and show success message
+        header("Location: dashboard.php?message=Engagement deleted successfully");
+        exit;
+    } else {
+        echo "<div class='alert alert-danger'>Failed to delete engagement.</div>";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -142,12 +157,14 @@ require_once '../includes/functions.php';
       <i class="bi bi-pencil-square"></i>
     </button>
 
-    <!-- Delete Button -->
-    <button class="btn btn-sm btn-outline-danger action-btn delete-btn" 
-            onclick="deleteEngagement('<?php echo $eng['eng_idno']; ?>')" 
-            title="Delete">
-      <i class="bi bi-trash"></i>
-    </button>
+    <!-- DELETE Button using form -->
+    <form method="POST" style="display:inline-block;" 
+          onsubmit="return confirm('Are you sure you want to delete this engagement?');">
+        <input type="hidden" name="delete_eng_id" value="<?php echo $eng['eng_idno']; ?>">
+        <button type="submit" class="btn btn-sm btn-outline-danger action-btn delete-btn" title="Delete">
+            <i class="bi bi-trash"></i>
+        </button>
+    </form>
   </div>
 </td>
 
