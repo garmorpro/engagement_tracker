@@ -537,5 +537,17 @@ body {
 
 .view-btn:hover {
   background-color: rgba(236,236,240);
+  color: rgb(60, 103, 163);
+}
+
+.edit-btn:hover {
+  background-color: rgba(236,236,240);
   color: rgb(60,163,74);
+}
+
+.delete-btn {
+  color: rgb(202,72,87);
+}
+.delete-btn:hover {
+  background-color: rgba(241,226,249);
 }

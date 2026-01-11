@@ -135,7 +135,7 @@ require_once '../includes/functions.php';
     </a>
 
     <!-- Edit Button -->
-    <button class="btn btn-sm btn-outline-warning action-btn" 
+    <button class="btn btn-sm btn-outline-warning action-btn edit-btn" 
             data-bs-toggle="modal" 
             data-bs-target="#editModal-<?php echo $eng['eng_idno']; ?>"
             title="Edit">
@@ -143,7 +143,7 @@ require_once '../includes/functions.php';
     </button>
 
     <!-- Delete Button -->
-    <button class="btn btn-sm btn-outline-danger action-btn" 
+    <button class="btn btn-sm btn-outline-danger action-btn delete-btn" 
             onclick="deleteEngagement('<?php echo $eng['eng_idno']; ?>')" 
             title="Delete">
       <i class="bi bi-trash"></i>
