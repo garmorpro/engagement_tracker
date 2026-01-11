@@ -362,7 +362,7 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
     <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
          onclick="toggleYN(this)">
       <?php echo $checked ? '✓ Y' : 'N'; ?>
-      <br> <span style="font-size: 8px;">Repeat Client</span>
+      <br><br> <span style="font-size: 8px;">Repeat Client</span>
     </div>
 
     <!-- ALWAYS POST -->
