@@ -182,6 +182,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     <!-- end table -->
 
 
+    <!-- Edit Modal -->
+<div class="modal fade" id="editModal-<?php echo $eng['eng_idno']; ?>" tabindex="-1" aria-labelledby="editModalLabel-<?php echo $eng['eng_idno']; ?>" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      
+      <form method="POST" action="">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editModalLabel-<?php echo $eng['eng_idno']; ?>">Edit Engagement</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+          <!-- Hidden field for engagement ID -->
+          <input type="hidden" name="edit_eng_id" value="<?php echo $eng['eng_idno']; ?>">
+
+          <!-- Example fields -->
+          <div class="mb-3">
+            <label for="eng_name-<?php echo $eng['eng_idno']; ?>" class="form-label">Engagement Name</label>
+            <input type="text" class="form-control" id="eng_name-<?php echo $eng['eng_idno']; ?>" name="eng_name" value="<?php echo htmlspecialchars($eng['eng_name']); ?>" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="eng_manager-<?php echo $eng['eng_idno']; ?>" class="form-label">Manager</label>
+            <input type="text" class="form-control" id="eng_manager-<?php echo $eng['eng_idno']; ?>" name="eng_manager" value="<?php echo htmlspecialchars($eng['eng_manager']); ?>" required>
+          </div>
+
+          <!-- Add more fields as needed -->
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+
     <div class="mt-5"></div>
 
 
