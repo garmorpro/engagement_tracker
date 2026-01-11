@@ -360,8 +360,8 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
   <div class="d-flex align-items-center gap-2">
 
     <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
-           name="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>"
-           value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
+           name="<?php echo $eng['eng_idno'] ?? ''; ?>"
+           value="<?php echo $eng['eng_idno'] ?? ''; ?>">
 
     <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
          onclick="toggleYN(this)">
@@ -369,7 +369,7 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
     </div>
 
     <!-- ALWAYS POST -->
-    <input type="text" name="eng_repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+    <input type="hidden" name="eng_repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
 
   </div>
 </div>
