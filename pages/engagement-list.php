@@ -348,12 +348,10 @@ $totalEngagements = count($engagements);
 
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Engagement ID<sup>*</sup></label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_idno"
+  <input type="text" class="form-control mb-2" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_idno"
          value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
-</div>
 
-<div class="col-md-3 d-flex align-items-center">
-  <div class="form-check mt-2">
+  <div class="form-check mt-1">
     <input class="form-check-input" type="checkbox" name="eng_repeat" id="eng_repeat_checkbox"
            value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'checked' : ''; ?>>
     <label class="form-check-label" for="eng_repeat_checkbox" style="font-size: 12px; color: rgb(10,10,10);">
