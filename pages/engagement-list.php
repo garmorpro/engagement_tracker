@@ -352,13 +352,13 @@ $totalEngagements = count($engagements);
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Engagement Name<sup>*</sup></label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Engagement Name<sup>*</sup></label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_name"
          value="<?php echo htmlspecialchars($eng['eng_name'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-12">
-  <label class="form-label" style="font-size: 14px;">Audit Type</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Audit Type</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_audit_type"
          value="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? '', ENT_QUOTES); ?>">
 </div>
@@ -368,7 +368,7 @@ $totalEngagements = count($engagements);
 ===================== -->
 
 <div class="col-12 mb-3">
-    <label class="form-label">Status</label>
+    <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Status</label>
     <div class="d-flex gap-2 flex-wrap">
         <?php
         $statuses = [
@@ -493,55 +493,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Manager</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Manager</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_manager"
          value="<?php echo htmlspecialchars($eng['eng_manager'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Senior(s)</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Senior(s)</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_senior"
          value="<?php echo htmlspecialchars($eng['eng_senior'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Staff</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff"
          value="<?php echo htmlspecialchars($eng['eng_staff'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Senior DOL</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Senior DOL</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_senior_dol"
          value="<?php echo htmlspecialchars($eng['eng_senior_dol'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Staff DOL</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff DOL</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff_dol"
          value="<?php echo htmlspecialchars($eng['eng_staff_dol'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">POC</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">POC</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_poc"
          value="<?php echo htmlspecialchars($eng['eng_poc'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Location</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Location</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_location"
          value="<?php echo htmlspecialchars($eng['eng_location'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">Scope</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Scope</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_scope"
          value="<?php echo htmlspecialchars($eng['eng_scope'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;">TSC</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">TSC</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_tsc"
          value="<?php echo htmlspecialchars($eng['eng_tsc'] ?? '', ENT_QUOTES); ?>">
 </div>
@@ -551,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ===================== -->
 
 <div class="col-md-3">
-  <label class="form-label" style="font-size: 14px;">Repeat</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Repeat</label>
   <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_repeat">
     <option value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
     <option value="N" <?php echo (($eng['eng_repeat'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
@@ -559,7 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </div>
 
 <div class="col-md-3">
-  <label class="form-label" style="font-size: 14px;">Section 3 Requested</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Section 3 Requested</label>
   <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_section_3_requested">
     <option value="Y" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'Y') ? 'selected' : ''; ?>>Yes</option>
     <option value="N" <?php echo (($eng['eng_section_3_requested'] ?? 'N') === 'N') ? 'selected' : ''; ?>>No</option>
@@ -581,7 +581,7 @@ $dateFields = [
 foreach ($dateFields as $field => $label):
 ?>
 <div class="col-md-4">
-  <label class="form-label" style="font-size: 14px;"><?php echo $label; ?></label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo $label; ?></label>
   <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
          name="<?php echo $field; ?>"
          value="<?php echo $eng[$field] ?? ''; ?>">
@@ -609,7 +609,7 @@ foreach ($pairs as $date => $yn):
 $checked = (($eng[$yn] ?? 'N') === 'Y');
 ?>
 <div class="col-md-6">
-  <label class="form-label" style="font-size: 14px;"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
   <div class="d-flex align-items-center gap-2">
 
     <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
@@ -633,7 +633,7 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
 ===================== -->
 
 <div class="col-12">
-  <label class="form-label">Notes</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Notes</label>
   <textarea class="form-control" name="eng_notes" rows="4"><?php
     echo htmlspecialchars($eng['eng_notes'] ?? '', ENT_QUOTES);
   ?></textarea>
