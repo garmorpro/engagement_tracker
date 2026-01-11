@@ -346,20 +346,39 @@ $totalEngagements = count($engagements);
 </h6>
 <hr>
 
+<?php
+$checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
+?>
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Engagement ID<sup>*</sup></label>
-  <input type="text" class="form-control mb-2" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_idno"
-         value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
+  <input type="text" class="form-control mb-2" style="background-color: rgb(243,243,245); font-size: 14px;"
+         name="eng_idno" value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
 
-  <div class="form-check mt-1">
-    <input type="hidden" name="eng_repeat" value="N"> <!-- ensures unchecked sends "N" -->
-    <input class="form-check-input" type="checkbox" name="eng_repeat" id="eng_repeat_checkbox"
-           value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'checked' : ''; ?>>
-    <label class="form-check-label" for="eng_repeat_checkbox" style="font-size: 12px; color: rgb(10,10,10);">
-      Repeat Client
-    </label>
+  <div class="d-flex align-items-center gap-2 mt-1">
+    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>" onclick="toggleYN(this)">
+      <?php echo $checked ? '✓ Y' : 'N'; ?>
+    </div>
+    <!-- ALWAYS POST -->
+    <input type="hidden" name="eng_repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
   </div>
 </div>
+
+
+<script>
+  function toggleYN(el) {
+    const hidden = el.nextElementSibling;
+    if (el.classList.contains('active')) {
+        el.classList.remove('active');
+        el.textContent = 'N';
+        hidden.value = 'N';
+    } else {
+        el.classList.add('active');
+        el.textContent = '✓ Y';
+        hidden.value = 'Y';
+    }
+}
+
+</script>
 
 
 <div class="col-md-6">
