@@ -403,7 +403,7 @@ $totalEngagements = count($engagements);
             <!-- Notes -->
             <div class="col-12">
               <label for="eng_notes-<?php echo $eng['eng_idno']; ?>" class="form-label">Notes</label>
-              <textarea class="form-control" id="eng_notes-<?php echo $eng['eng_idno']; ?>" name="eng_notes" rows="4"><?php echo htmlspecialchars($eng['eng_notes']); ?></textarea>
+              <textarea class="form-control" id="eng_notes-<?php echo $eng['eng_idno']; ?>" name="eng_notes" rows="4"><?php echo htmlspecialchars($eng['eng_notes'] ?? ''); ?></textarea>
             </div>
 
             <!-- Status (single-select dropdown) -->
