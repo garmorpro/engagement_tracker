@@ -361,7 +361,7 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
 
     <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
            name="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>"
-           value="<?php echo htmlspecialchars($eng['eng_name'] ?? '', ENT_QUOTES); ?>">
+           value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
 
     <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
          onclick="toggleYN(this)">
