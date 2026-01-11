@@ -1,5 +1,5 @@
 <?php
-ob_start(); // start output buffering
+ // start output buffering
 
 // sessions_start();
 require_once '../includes/functions.php';
