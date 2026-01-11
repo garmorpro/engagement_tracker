@@ -347,9 +347,9 @@ require_once '../includes/functions.php';
                 <div class="icon-square d-flex align-items-center justify-content-center">
                   <i class="bi bi-people"></i>
                 </div>
-                <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
+                <!-- <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
                   Coming Soon
-                </span>
+                </span> -->
               </div>
               <!-- Title -->
               <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
