@@ -349,7 +349,7 @@ $totalEngagements = count($engagements);
 <?php
 // Define your toggle fields: db_column => label (optional)
 $ynFields = [
-    'eng_repeat' => 'Repeat'
+    'eng_idno' => 'eng_repeat'
 ];
 
 foreach ($ynFields as $col => $label):
