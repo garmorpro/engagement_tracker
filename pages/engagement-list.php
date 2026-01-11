@@ -56,9 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     $section_3_requested        = $_POST['eng_section_3_requested'] ?? 'N';
     $last_communication         = $_POST['eng_last_communication'] ?? null;
     $notes                      = $_POST['eng_notes'] ?? '';
+    $status                      = $_POST['eng_status'] ?? '';
     
-    // Handle multi-select status (array)
-    $status                     = isset($_POST['eng_status']) ? implode(',', $_POST['eng_status']) : '';
+
 
     // Prepare the UPDATE statement
     $stmt = $conn->prepare("UPDATE engagements SET 
