@@ -252,7 +252,9 @@ $totalEngagements = count($engagements);
 
           <a class="btn archive-btn btn-sm ms-3" href="archive.php"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</a>
           <a class="btn tools-btn btn-sm ms-3" href="tools.php"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</a>
-          <button class="btn new-btn btn-sm ms-3"><i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement</button>
+          <button class="btn new-btn btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#addModal">
+            <i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement
+          </button>
         </div>
       </div>
     </div>
@@ -1454,6 +1456,183 @@ foreach ($dateFields as $field => $label):
 </div>
 </div>
 </div>
+
+
+
+<!-- Modal for Adding Engagement -->
+<div class="modal fade" id="addModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <form method="POST" action="engagement-process.php">
+        <input type="hidden" name="action" value="add"> <!-- Flag for insert -->
+
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Engagement</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+
+            <!-- =====================
+                 Basic Information
+            ===================== -->
+            <h6 class="fw-semibold mt-4">Basic Information</h6>
+            <hr>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" style="font-size:12px;">Engagement ID<sup>*</sup></label>
+              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_idno" value="">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" style="font-size:12px;">Engagement Name<sup>*</sup></label>
+              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_name" value="">
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
+              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_audit_type" value="">
+            </div>
+
+            <!-- =====================
+                 Status
+            ===================== -->
+            <div class="col-12 mb-3 engagement-status-container">
+              <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
+              <div class="d-flex gap-2 flex-wrap">
+                <?php
+                $statuses = [
+                  'on-hold' => ['label' => 'On Hold', 'border' => '107,114,129', 'bg' => '249,250,251', 'text' => '56,65,82', 'icon' => 'bi-pause-circle'],
+                  'planning' => ['label' => 'Planning', 'border' => '68,125,252', 'bg' => '240,246,254', 'text' => '35,70,221', 'icon' => 'bi-clock'],
+                  'in-progress' => ['label' => 'In Progress', 'border' => '241,115,19', 'bg' => '254,247,238', 'text' => '186,66,13', 'icon' => 'bi-play-circle'],
+                  'in-review' => ['label' => 'In Review', 'border' => '160,77,253', 'bg' => '249,245,254', 'text' => '119,17,210', 'icon' => 'bi-eye'],
+                  'complete' => ['label' => 'Completed', 'border' => '79,198,95', 'bg' => '242,253,245', 'text' => '51,128,63', 'icon' => 'bi-check2-circle'],
+                ];
+                $defaultBorder = '229,231,235';
+                $defaultBg = '255,255,255';
+                $defaultText = '76,85,100';
+                ?>
+                <?php foreach ($statuses as $key => $s): ?>
+                  <div class="status-card text-center p-2 flex-fill" data-status="<?php echo $key; ?>"
+                       style="
+                          cursor:pointer;
+                          border:2px solid rgb(<?php echo $defaultBorder; ?>);
+                          background-color: rgb(<?php echo $defaultBg; ?>);
+                          color: rgb(<?php echo $defaultText; ?>);
+                          font-weight:500;
+                          border-radius:1rem;
+                       ">
+                    <i class="bi <?php echo $s['icon']; ?>" style="font-size:1.1rem;"></i>
+                    <div style="margin-top:0.25rem; font-size:12px;"><?php echo $s['label']; ?></div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+              <input type="hidden" name="eng_status" class="eng_status_input" value="">
+            </div>
+
+            <!-- =====================
+                 Team Members
+            ===================== -->
+            <h6 class="fw-semibold mt-5">Team Members</h6>
+            <hr>
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="Manager" name="eng_manager"></div>
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="Senior(s)" name="eng_senior"></div>
+            <div class="col-md-12"><input type="text" class="form-control" placeholder="Staff" name="eng_staff"></div>
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="Senior DOL" name="eng_senior_dol"></div>
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="Staff DOL" name="eng_staff_dol"></div>
+
+            <!-- =====================
+                 Client Info
+            ===================== -->
+            <h6 class="fw-semibold mt-5">Client Information</h6>
+            <hr>
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="POC" name="eng_poc"></div>
+            <div class="col-md-6"><input type="text" class="form-control" placeholder="Location" name="eng_location"></div>
+            <div class="col-md-12"><input type="text" class="form-control" placeholder="Scope" name="eng_scope"></div>
+
+            <!-- =====================
+                 Dates & Milestones
+            ===================== -->
+            <h6 class="fw-semibold mt-5">Important Dates & Milestones</h6>
+            <hr>
+            <?php
+            $pairs = [
+              'eng_internal_planning_call'=>'eng_completed_internal_planning',
+              'eng_irl_due'=>'eng_irl_sent',
+              'eng_client_planning_call'=>'eng_completed_client_planning',
+              'eng_fieldwork'=>'eng_fieldwork_complete',
+              'eng_leadsheet_due'=>'eng_leadsheet_complete',
+              'eng_draft_due'=>'eng_draft_sent',
+              'eng_final_due'=>'eng_final_sent'
+            ];
+            foreach($pairs as $date=>$yn):
+            ?>
+              <div class="col-md-6 d-flex gap-2 align-items-center">
+                <input type="date" class="form-control" name="<?php echo $date; ?>" value="">
+                <div class="yn-toggle" onclick="toggleYN(this)">N</div>
+                <input type="hidden" name="<?php echo $yn; ?>" value="N">
+              </div>
+            <?php endforeach; ?>
+
+            <!-- Notes -->
+            <div class="col-12">
+              <textarea class="form-control mt-3" name="eng_notes" rows="4" placeholder="Notes"></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Engagement</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Engagement Status JS -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('#addModal .engagement-status-container').forEach(container => {
+    const cards = container.querySelectorAll('.status-card');
+    const hiddenInput = container.querySelector('.eng_status_input');
+    const defaultBorder = '229,231,235';
+    const defaultBg = '255,255,255';
+    const defaultText = '76,85,100';
+    const statusColors = {
+      'on-hold': {border:'107,114,129',bg:'249,250,251',text:'56,65,82'},
+      'planning': {border:'68,125,252',bg:'240,246,254',text:'35,70,221'},
+      'in-progress': {border:'241,115,19',bg:'254,247,238',text:'186,66,13'},
+      'in-review': {border:'160,77,253',bg:'249,245,254',text:'119,17,210'},
+      'complete': {border:'79,198,95',bg:'242,253,245',text:'51,128,63'},
+    };
+    const applyColors = (card,status,isSelected)=>{
+      if(isSelected){
+        const colors=statusColors[status];
+        card.style.border=`2px solid rgb(${colors.border})`;
+        card.style.backgroundColor=`rgb(${colors.bg})`;
+        card.style.color=`rgb(${colors.text})`;
+      } else {
+        card.style.border=`2px solid rgb(${defaultBorder})`;
+        card.style.backgroundColor=`rgb(${defaultBg})`;
+        card.style.color=`rgb(${defaultText})`;
+      }
+    };
+    cards.forEach(card=>{
+      const status=card.dataset.status;
+      applyColors(card,status,false);
+      card.addEventListener('click',()=>{
+        hiddenInput.value=status;
+        cards.forEach(c=>applyColors(c,c.dataset.status,c.dataset.status===status));
+      });
+    });
+  });
+});
+</script>
 
 
 
