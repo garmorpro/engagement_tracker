@@ -20,22 +20,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
 
 // Handle editing engagement
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
-    $engId   = $_POST['edit_eng_id'];
-    $name    = $_POST['eng_name'] ?? '';
-    $manager = $_POST['eng_manager'] ?? '';
+    $engId = $_POST['edit_eng_id'];
+
+    // Collect all fields
+    $name                       = $_POST['eng_name'] ?? '';
+    $manager                    = $_POST['eng_manager'] ?? '';
+    $senior                     = $_POST['eng_senior'] ?? '';
+    $staff                      = $_POST['eng_staff'] ?? '';
+    $senior_dol                 = $_POST['eng_senior_dol'] ?? '';
+    $staff_dol                  = $_POST['eng_staff_dol'] ?? '';
+    $poc                        = $_POST['eng_poc'] ?? '';
+    $location                   = $_POST['eng_location'] ?? '';
+    $repeat                     = $_POST['eng_repeat'] ?? 'N';
+    $audit_type                 = $_POST['eng_audit_type'] ?? '';
+    $scope                      = $_POST['eng_scope'] ?? '';
+    $tsc                        = $_POST['eng_tsc'] ?? '';
+    $start_period               = $_POST['eng_start_period'] ?? null;
+    $end_period                 = $_POST['eng_end_period'] ?? null;
+    $as_of_date                 = $_POST['eng_as_of_date'] ?? null;
+    $internal_planning_call     = $_POST['eng_internal_planning_call'] ?? null;
+    $completed_internal_planning= $_POST['eng_completed_internal_planning'] ?? 'N';
+    $irl_due                    = $_POST['eng_irl_due'] ?? null;
+    $irl_sent                   = $_POST['eng_irl_sent'] ?? 'N';
+    $client_planning_call       = $_POST['eng_client_planning_call'] ?? null;
+    $completed_client_planning  = $_POST['eng_completed_client_planning'] ?? 'N';
+    $fieldwork                  = $_POST['eng_fieldwork'] ?? null;
+    $fieldwork_complete         = $_POST['eng_fieldwork_complete'] ?? 'N';
+    $leadsheet_due              = $_POST['eng_leadsheet_due'] ?? null;
+    $leadsheet_complete         = $_POST['eng_leadsheet_complete'] ?? 'N';
+    $draft_due                  = $_POST['eng_draft_due'] ?? null;
+    $draft_sent                  = $_POST['eng_draft_sent'] ?? 'N';
+    $final_due                  = $_POST['eng_final_due'] ?? null;
+    $final_sent                  = $_POST['eng_final_sent'] ?? 'N';
+    $archive                    = $_POST['eng_archive'] ?? null;
+    $section_3_requested        = $_POST['eng_section_3_requested'] ?? 'N';
+    $last_communication         = $_POST['eng_last_communication'] ?? null;
+    $notes                      = $_POST['eng_notes'] ?? '';
+    
+    // Handle multi-select status (array)
+    $status                     = isset($_POST['eng_status']) ? implode(',', $_POST['eng_status']) : '';
 
     // Prepare the UPDATE statement
-    $stmt = $conn->prepare("UPDATE engagements SET eng_name = ?, eng_manager = ? WHERE eng_idno = ?");
-    $stmt->bind_param("sss", $name, $manager, $engId);
+    $stmt = $conn->prepare("UPDATE engagements SET 
+        eng_name = ?, eng_manager = ?, eng_senior = ?, eng_staff = ?, 
+        eng_senior_dol = ?, eng_staff_dol = ?, eng_poc = ?, eng_location = ?, 
+        eng_repeat = ?, eng_audit_type = ?, eng_scope = ?, eng_tsc = ?, 
+        eng_start_period = ?, eng_end_period = ?, eng_as_of_date = ?, 
+        eng_internal_planning_call = ?, eng_completed_internal_planning = ?, 
+        eng_irl_due = ?, eng_irl_sent = ?, eng_client_planning_call = ?, 
+        eng_completed_client_planning = ?, eng_fieldwork = ?, eng_fieldwork_complete = ?, 
+        eng_leadsheet_due = ?, eng_leadsheet_complete = ?, eng_draft_due = ?, eng_draft_sent = ?, 
+        eng_final_due = ?, eng_final_sent = ?, eng_archive = ?, eng_section_3_requested = ?, 
+        eng_last_communication = ?, eng_notes = ?, eng_status = ? 
+        WHERE eng_idno = ?");
+
+    $stmt->bind_param(
+        "sssssssssssssssssssssssssssssssssssss",
+        $name, $manager, $senior, $staff,
+        $senior_dol, $staff_dol, $poc, $location,
+        $repeat, $audit_type, $scope, $tsc,
+        $start_period, $end_period, $as_of_date,
+        $internal_planning_call, $completed_internal_planning,
+        $irl_due, $irl_sent, $client_planning_call,
+        $completed_client_planning, $fieldwork, $fieldwork_complete,
+        $leadsheet_due, $leadsheet_complete, $draft_due, $draft_sent,
+        $final_due, $final_sent, $archive, $section_3_requested,
+        $last_communication, $notes, $status, $engId
+    );
 
     if ($stmt->execute()) {
-        // Redirect to avoid form resubmission and show a success message
         header("Location: engagement-list.php?message=Engagement updated successfully");
         exit;
     } else {
-        echo "<div class='alert alert-danger'>Failed to update engagement.</div>";
+        echo "<div class='alert alert-danger'>Failed to update engagement: " . htmlspecialchars($stmt->error) . "</div>";
     }
 }
+
 
 
 
