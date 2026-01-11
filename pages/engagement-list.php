@@ -341,12 +341,12 @@ $totalEngagements = count($engagements);
      TEXT FIELDS
 ===================== -->
 
-<h6 style="fw-semibold mt-4">
+<h6 class="fw-semibold mt-4">
   Basic Information
 </h6>
 
 <div class="col-md-6">
-  <label class="form-label">Engagement Name <sub>*</sub></label>
+  <label class="form-label">Engagement Name <sup>*</sup></label>
   <input type="text" class="form-control" name="eng_name"
          value="<?php echo htmlspecialchars($eng['eng_name'] ?? '', ENT_QUOTES); ?>">
 </div>
