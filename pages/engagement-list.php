@@ -369,7 +369,7 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
     </div>
 
     <!-- ALWAYS POST -->
-    <input type="text" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+    <input type="text" name="eng_repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
 
   </div>
 </div>
