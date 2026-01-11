@@ -393,8 +393,6 @@ foreach ($dateOnly as $field):
 </div>
 <?php endforeach; ?>
 
-import dates
-
 <!-- DATE + TOGGLE PAIRS -->
 <?php
 $pairs = [
@@ -409,6 +407,9 @@ $pairs = [
 foreach ($pairs as $date=>$yn):
 $val = ($eng[$yn] ?? 'N') === 'Y';
 ?>
+<h5>
+  Important Dates & Milestones
+</h5>
 <div class="col-md-6">
   <label class="form-label"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
   <div class="d-flex align-items-center gap-2">
