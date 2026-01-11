@@ -347,36 +347,37 @@ $totalEngagements = count($engagements);
 <hr>
 
 <?php
-// Define your toggle fields: db_column => label
-$ynFields = [
-    'eng_repeat' => 'Repeat'
-    // Add more Y/N fields if needed, e.g. 'eng_completed_internal_planning' => 'Completed Internal Planning'
+$pairs = [
+  'eng_idno' => 'eng_repeat'
 ];
-
-foreach ($ynFields as $col => $label):
-    $checked = (($eng[$col] ?? 'N') === 'Y');
+foreach ($pairs as $date => $yn):
+$checked = (($eng[$yn] ?? 'N') === 'Y');
 ?>
-<div class="col-md-6 mb-2">
-    <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">
-        <?php echo $label; ?>
-    </label>
-    <div class="d-flex align-items-center gap-2">
-        <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
-             data-hidden-name="<?php echo $col; ?>"
-             onclick="toggleYN(this)">
-            <?php echo $checked ? '✓ Y' : 'N'; ?>
-        </div>
-        <!-- Hidden input always posts -->
-        <input type="hidden" name="<?php echo $col; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">
+    <?php echo ucwords(str_replace('_',' ',$date)); ?>
+  </label>
+  <div class="d-flex align-items-center gap-2">
+
+    <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
+           name="<?php echo $date; ?>"
+           value="<?php echo $eng[$date] ?? ''; ?>">
+
+    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
+         onclick="toggleYN(this)">
+      <?php echo $checked ? '✓ Y' : 'N'; ?>
     </div>
+
+    <!-- ALWAYS POST -->
+    <input type="text" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+
+  </div>
 </div>
 <?php endforeach; ?>
 
 <script>
 function toggleYN(el) {
-    const hiddenName = el.getAttribute('data-hidden-name');
-    const hidden = document.querySelector(`input[name="${hiddenName}"]`);
-    
+    const hidden = el.nextElementSibling; // hidden input must be right after toggle div
     if(el.classList.contains('active')) {
         el.classList.remove('active');
         el.textContent = 'N';
@@ -388,23 +389,6 @@ function toggleYN(el) {
     }
 }
 </script>
-
-<style>
-.yn-toggle {
-    cursor: pointer;
-    padding: 0 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    user-select: none;
-}
-.yn-toggle.active {
-    background-color: #1577f2;
-    color: white;
-    font-weight: bold;
-}
-</style>
-
 
 
 
