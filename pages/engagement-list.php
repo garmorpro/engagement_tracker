@@ -389,7 +389,7 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
      STATUS
 ===================== -->
 
-<div class="col-12 mb-3">
+<div class="col-12 mb-3 engagement-status-container">
     <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Status</label>
     <div class="d-flex gap-2 flex-wrap">
         <?php
@@ -403,7 +403,8 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
         $defaultBorder = '229,231,235';
         $defaultBg = '255,255,255';
         $defaultText = '76,85,100';
-        foreach ($statuses as $key => $s):
+        ?>
+        <?php foreach ($statuses as $key => $s): 
             $selected = (($eng['eng_status'] ?? '') === $key);
         ?>
         <div class="status-card text-center p-2 flex-fill"
@@ -421,90 +422,60 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
         </div>
         <?php endforeach; ?>
     </div>
-    <input type="hidden" name="eng_status" id="eng_status_input" value="<?php echo htmlspecialchars($eng['eng_status'] ?? ''); ?>">
+    <!-- Use class instead of ID -->
+    <input type="hidden" name="eng_status" class="eng_status_input" value="<?php echo htmlspecialchars($eng['eng_status'] ?? ''); ?>">
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.status-card');
-    const hiddenInput = document.getElementById('eng_status_input');
+    // Loop over each container separately
+    document.querySelectorAll('.engagement-status-container').forEach(container => {
+        const cards = container.querySelectorAll('.status-card');
+        const hiddenInput = container.querySelector('.eng_status_input');
 
-    const defaultBorder = '229,231,235';
-    const defaultBg = '255,255,255';
-    const defaultText = '76,85,100';
+        const defaultBorder = '229,231,235';
+        const defaultBg = '255,255,255';
+        const defaultText = '76,85,100';
 
-    const statusColors = {
-        'on-hold': {border: '107,114,129', bg: '249,250,251', text: '56,65,82'},
-        'planning': {border: '68,125,252', bg: '240,246,254', text: '35,70,221'},
-        'in-progress': {border: '241,115,19', bg: '254,247,238', text: '186,66,13'},
-        'in-review': {border: '160,77,253', bg: '249,245,254', text: '119,17,210'},
-        'complete': {border: '79,198,95', bg: '242,253,245', text: '51,128,63'},
-    };
+        const statusColors = {
+            'on-hold': {border: '107,114,129', bg: '249,250,251', text: '56,65,82'},
+            'planning': {border: '68,125,252', bg: '240,246,254', text: '35,70,221'},
+            'in-progress': {border: '241,115,19', bg: '254,247,238', text: '186,66,13'},
+            'in-review': {border: '160,77,253', bg: '249,245,254', text: '119,17,210'},
+            'complete': {border: '79,198,95', bg: '242,253,245', text: '51,128,63'},
+        };
 
-    const applyColors = (card, status, isSelected) => {
-        if (isSelected) {
-            const colors = statusColors[status];
-            card.style.border = `2px solid rgb(${colors.border})`;
-            card.style.backgroundColor = `rgb(${colors.bg})`;
-            card.style.color = `rgb(${colors.text})`;
-        } else {
-            card.style.border = `2px solid rgb(${defaultBorder})`;
-            card.style.backgroundColor = `rgb(${defaultBg})`;
-            card.style.color = `rgb(${defaultText})`;
-        }
-    };
+        const applyColors = (card, status, isSelected) => {
+            if (isSelected) {
+                const colors = statusColors[status];
+                card.style.border = `2px solid rgb(${colors.border})`;
+                card.style.backgroundColor = `rgb(${colors.bg})`;
+                card.style.color = `rgb(${colors.text})`;
+            } else {
+                card.style.border = `2px solid rgb(${defaultBorder})`;
+                card.style.backgroundColor = `rgb(${defaultBg})`;
+                card.style.color = `rgb(${defaultText})`;
+            }
+        };
 
-    // Initialize all cards
-    cards.forEach(card => {
-        const status = card.dataset.status;
-        const isSelected = hiddenInput.value === status;
-        applyColors(card, status, isSelected);
-
-        // Click handler
-        card.addEventListener('click', () => {
-            hiddenInput.value = status;
-            // Reset all cards to default except the selected
-            cards.forEach(c => applyColors(c, c.dataset.status, c.dataset.status === status));
-        });
-
-        // Hover handler
-        card.addEventListener('mouseenter', () => {
-            applyColors(card, status, true); // temporary highlight
-        });
-        card.addEventListener('mouseleave', () => {
+        cards.forEach(card => {
+            const status = card.dataset.status;
             const isSelected = hiddenInput.value === status;
-            applyColors(card, status, isSelected); // revert to selected or default
-        });
-    });
-});
+            applyColors(card, status, isSelected);
 
-</script>
+            card.addEventListener('click', () => {
+                hiddenInput.value = status;
+                // Reset all cards in this container
+                cards.forEach(c => applyColors(c, c.dataset.status, c.dataset.status === status));
+            });
 
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const cards = document.querySelectorAll('.status-card');
-    const hiddenInput = document.getElementById('eng_status_input');
-
-    cards.forEach(card => {
-        card.addEventListener('click', () => {
-            // Remove selection from all
-            cards.forEach(c => c.style.boxShadow = 'none');
-
-            // Add selection to clicked
-            card.style.boxShadow = '0 0 0 2px rgba(0,0,0,0.15)';
-            hiddenInput.value = card.dataset.status;
-        });
-
-        card.addEventListener('mouseover', () => {
-            card.style.opacity = 0.85;
-        });
-        card.addEventListener('mouseout', () => {
-            card.style.opacity = 1;
+            card.addEventListener('mouseenter', () => applyColors(card, status, true));
+            card.addEventListener('mouseleave', () => applyColors(card, status, hiddenInput.value === status));
         });
     });
 });
 </script>
+
 
 <div class="col-md-12">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">TSC</label>
