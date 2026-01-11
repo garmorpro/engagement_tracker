@@ -347,16 +347,16 @@ require_once '../includes/functions.php';
                 <div class="icon-square d-flex align-items-center justify-content-center">
                   <i class="bi bi-people"></i>
                 </div>
-                <span class="badge">
+                <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
                   Coming Soon
                 </span>
               </div>
               <!-- Title -->
-              <div class="fw-bold">
+              <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
                 Workload Balance
               </div>
               <!-- Description -->
-              <div class="text-secondary mt-2">
+              <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
                 Analyze and balance team workload
               </div>
             </div>
