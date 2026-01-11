@@ -549,5 +549,6 @@ body {
   color: rgb(202,72,87);
 }
 .delete-btn:hover {
-  background-color: rgb(206, 135, 144);
+  background-color: rgb(205, 165, 170);
+  color: rgb(202,72,87);
 }
