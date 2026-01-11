@@ -16,6 +16,45 @@ require_once '../includes/functions.php';
 
     <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>">
 
+    <style>
+      .card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-link .card {
+  border-radius: 15px;
+  border: 1px solid rgb(196,250,221);
+  background-color: rgb(238,254,245);
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-link .icon-square {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: rgb(64,214,133);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.card-link .icon-square i {
+  color: #fff;
+}
+
+/* Hover effects */
+.card-link:hover .card {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.card-link:hover .icon-square {
+  transform: scale(1.2);
+}
+    </style>
+
 </head>
 <body>
 
@@ -300,25 +339,24 @@ require_once '../includes/functions.php';
       </div>
 
       <div class="col-md-4">
-        <a href="your-target-page.html" style="text-decoration: none; color: inherit;">
-          <div class="card h-100" style="border-radius: 15px; border: 1px solid rgb(196,250,221); background-color: rgb(238,254,245); cursor: pointer;">
+        <a href="your-target-page.html" class="card-link">
+          <div class="card h-100">
             <div class="card-body p-4">
               <!-- Icon (left) + Badge (right) -->
               <div class="d-flex align-items-center justify-content-between mb-3">
-                <div class="icon-square d-flex align-items-center justify-content-center"
-                     style="width: 40px; height: 40px; border-radius: 8px; background-color: rgb(64,214,133);">
-                  <i class="bi bi-people" style="color: rgb(255,255,255);"></i>
+                <div class="icon-square d-flex align-items-center justify-content-center">
+                  <i class="bi bi-people"></i>
                 </div>
-                <span class="badge" style="color: rgb(112,120,130); background-color: rgb(232,235,238);">
+                <span class="badge">
                   Coming Soon
                 </span>
               </div>
               <!-- Title -->
-              <div class="fw-bold" style="font-size: 14px; color: rgb(77,81,90);">
+              <div class="fw-bold">
                 Workload Balance
               </div>
               <!-- Description -->
-              <div class="text-secondary mt-2" style="font-size: 14px; color: rgb(137,146,158);">
+              <div class="text-secondary mt-2">
                 Analyze and balance team workload
               </div>
             </div>
