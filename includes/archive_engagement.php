@@ -1,35 +1,19 @@
 <?php
-// archive-engagement.php
+include '/db.php'; // your DB connection
 
-header('Content-Type: application/json');
+if (!empty($_GET['eng_id'])) {
+    $engId = $_GET['eng_id'];
 
-try {
-    // Include your DB connection
-    require_once 'db.php'; // Make sure this file sets $conn (mysqli)
-
-    // Get the raw POST data
-    $input = json_decode(file_get_contents('php://input'), true);
-
-    if (!isset($input['eng_idno']) || empty($input['eng_idno'])) {
-        throw new Exception('Engagement ID is required.');
-    }
-
-    $engId = $input['eng_idno'];
-
-    // Prepare the update query
+    // Update engagement status to 'archived'
     $stmt = $conn->prepare("UPDATE engagements SET eng_status = 'archived' WHERE eng_idno = ?");
     $stmt->bind_param("s", $engId);
 
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Engagement archived successfully.']);
+        // Success — redirect back to board or archive page
+        header("Location: /kanban-board.php?msg=archived");
+        exit;
     } else {
-        throw new Exception('Failed to update engagement status.');
+        echo "Failed to archive engagement.";
     }
-
-    $stmt->close();
-    $conn->close();
-
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
 ?>

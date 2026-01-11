@@ -109,11 +109,13 @@ if (isset($_GET['eng_id'])) {
     </button>
 
     <?php if ($eng['eng_status'] === 'complete'): ?>
-<button class="btn btn-outline-danger btn-archive"
-        onclick="archiveEngagement('<?php echo $eng['eng_idno']; ?>')">
+<a href="../includes/archive-engagement.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
+   class="btn btn-outline-danger btn-archive"
+   onclick="return confirm('Are you sure you want to archive this engagement?');">
     <i class="bi bi-archive me-1"></i> Archive
-</button>
+</a>
 <?php endif; ?>
+
 </div>
 
   
@@ -925,38 +927,7 @@ if (isset($_GET['eng_id'])) {
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-  <script>
-// Function to archive an engagement
-function archiveEngagement(engId) {
-    if (!confirm('Are you sure you want to archive this engagement?')) return;
-
-    fetch('../includes/archive-engagement.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eng_idno: engId })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // Option 1: Remove the card from the DOM
-            const card = document.querySelector(`.engagement-card-kanban[data-id='${engId}']`);
-            if (card) card.remove();
-
-            // Option 2: Or update its status badge (uncomment if you prefer)
-            // const badge = card.querySelector('.badge-status');
-            // if (badge) badge.textContent = 'Archived';
-
-            alert('Engagement archived successfully!');
-        } else {
-            alert('Failed to archive engagement.');
-        }
-    })
-    .catch(err => {
-        console.error(err);
-        alert('Error archiving engagement.');
-    });
-}
-</script>
+  
 
 
 </body>
