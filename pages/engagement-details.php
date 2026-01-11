@@ -46,9 +46,9 @@ if (isset($_GET['eng_id'])) {
 }
 
 // Handle editing engagement
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['eng_id'])) {
 
-    $engId = $_POST['edit_eng_id'];
+    $engId = $_GET['eng_id'];
 
     /* ============================
        TEXT FIELDS
