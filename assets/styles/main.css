@@ -552,3 +552,25 @@ body {
   background-color: rgb(250, 229, 232) !important;
   color: rgb(202,72,87) !important;
 }
+
+
+.yn-toggle {
+  width: 42px;
+  height: 38px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+  background: #f8f9fa;
+  color: #555;
+  user-select: none;
+}
+
+.yn-toggle.active {
+  background: #d1f5e0;
+  border-color: #28a745;
+  color: #1e7e34;
+}

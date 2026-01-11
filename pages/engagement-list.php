@@ -370,6 +370,22 @@ $totalEngagements = count($engagements);
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <script>
+function toggleYN(el) {
+  const hidden = el.nextElementSibling;
+  el.classList.toggle('active');
+
+  if (el.classList.contains('active')) {
+    el.innerHTML = '✓ Y';
+    hidden.value = 'Y';
+  } else {
+    el.innerHTML = 'N';
+    hidden.value = 'N';
+  }
+}
+</script>
+
+
 
 </body>
 </html>
