@@ -248,15 +248,16 @@ $totalEngagements = count($engagements);
                 </tr>
 
                 <!-- Modal for this engagement -->
-<div class="modal fade" id="editModal-<?php echo $eng['eng_idno']; ?>" tabindex="-1" aria-labelledby="editModalLabel-<?php echo $eng['eng_idno']; ?>" aria-hidden="true">
+<div class="modal fade" id="editModal-<?php echo $eng['eng_idno']; ?>" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
+
       <form method="POST">
         <input type="hidden" name="edit_eng_id" value="<?php echo $eng['eng_idno']; ?>">
 
         <div class="modal-header">
-          <h5 class="modal-title" id="editModalLabel-<?php echo $eng['eng_idno']; ?>">Edit Engagement</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title">Edit Engagement</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
         <div class="modal-body">
@@ -264,164 +265,81 @@ $totalEngagements = count($engagements);
 
             <!-- Engagement Name -->
             <div class="col-md-6">
-              <label for="eng_name-<?php echo $eng['eng_idno']; ?>" class="form-label">Engagement Name</label>
-              <input type="text" class="form-control" id="eng_name-<?php echo $eng['eng_idno']; ?>" name="eng_name" value="<?php echo htmlspecialchars($eng['eng_name']); ?>" required>
+              <label class="form-label">Engagement Name</label>
+              <input type="text" class="form-control" name="eng_name"
+                     value="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>" required>
             </div>
 
             <!-- Manager -->
             <div class="col-md-6">
-              <label for="eng_manager-<?php echo $eng['eng_idno']; ?>" class="form-label">Manager</label>
-              <input type="text" class="form-control" id="eng_manager-<?php echo $eng['eng_idno']; ?>" name="eng_manager" value="<?php echo htmlspecialchars($eng['eng_manager']); ?>" required>
+              <label class="form-label">Manager</label>
+              <input type="text" class="form-control" name="eng_manager"
+                     value="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>" required>
             </div>
 
-            <!-- Senior -->
-            <div class="col-md-6">
-              <label for="eng_senior-<?php echo $eng['eng_idno']; ?>" class="form-label">Senior</label>
-              <input type="text" class="form-control" id="eng_senior-<?php echo $eng['eng_idno']; ?>" name="eng_senior" value="<?php echo htmlspecialchars($eng['eng_senior']); ?>">
-            </div>
-
-            <!-- Staff -->
-            <div class="col-md-6">
-              <label for="eng_staff-<?php echo $eng['eng_idno']; ?>" class="form-label">Staff</label>
-              <input type="text" class="form-control" id="eng_staff-<?php echo $eng['eng_idno']; ?>" name="eng_staff" value="<?php echo htmlspecialchars($eng['eng_staff']); ?>">
-            </div>
-
-            <!-- Senior DOL -->
-            <div class="col-md-6">
-              <label for="eng_senior_dol-<?php echo $eng['eng_idno']; ?>" class="form-label">Senior DOL</label>
-              <input type="text" class="form-control" id="eng_senior_dol-<?php echo $eng['eng_idno']; ?>" name="eng_senior_dol" value="<?php echo htmlspecialchars($eng['eng_senior_dol']); ?>">
-            </div>
-
-            <!-- Staff DOL -->
-            <div class="col-md-6">
-              <label for="eng_staff_dol-<?php echo $eng['eng_idno']; ?>" class="form-label">Staff DOL</label>
-              <input type="text" class="form-control" id="eng_staff_dol-<?php echo $eng['eng_idno']; ?>" name="eng_staff_dol" value="<?php echo htmlspecialchars($eng['eng_staff_dol']); ?>">
-            </div>
-
-            <!-- POC -->
-            <div class="col-md-6">
-              <label for="eng_poc-<?php echo $eng['eng_idno']; ?>" class="form-label">POC</label>
-              <input type="text" class="form-control" id="eng_poc-<?php echo $eng['eng_idno']; ?>" name="eng_poc" value="<?php echo htmlspecialchars($eng['eng_poc']); ?>">
-            </div>
-
-            <!-- Location -->
-            <div class="col-md-6">
-              <label for="eng_location-<?php echo $eng['eng_idno']; ?>" class="form-label">Location</label>
-              <input type="text" class="form-control" id="eng_location-<?php echo $eng['eng_idno']; ?>" name="eng_location" value="<?php echo htmlspecialchars($eng['eng_location']); ?>">
-            </div>
-
-            <!-- Repeat -->
-            <div class="col-md-6">
-              <label for="eng_repeat-<?php echo $eng['eng_idno']; ?>" class="form-label">Repeat</label>
-              <select class="form-select" id="eng_repeat-<?php echo $eng['eng_idno']; ?>" name="eng_repeat">
-                <option value="Y" <?php echo ($eng['eng_repeat'] === 'Y') ? 'selected' : ''; ?>>Yes</option>
-                <option value="N" <?php echo ($eng['eng_repeat'] === 'N') ? 'selected' : ''; ?>>No</option>
-              </select>
-            </div>
-
-            <!-- Audit Type -->
-            <div class="col-md-6">
-              <label for="eng_audit_type-<?php echo $eng['eng_idno']; ?>" class="form-label">Audit Type</label>
-              <input type="text" class="form-control" id="eng_audit_type-<?php echo $eng['eng_idno']; ?>" name="eng_audit_type" value="<?php echo htmlspecialchars($eng['eng_audit_type']); ?>">
-            </div>
-
-            <!-- Scope -->
-            <div class="col-md-6">
-              <label for="eng_scope-<?php echo $eng['eng_idno']; ?>" class="form-label">Scope</label>
-              <input type="text" class="form-control" id="eng_scope-<?php echo $eng['eng_idno']; ?>" name="eng_scope" value="<?php echo htmlspecialchars($eng['eng_scope']); ?>">
-            </div>
-
-            <!-- TSC -->
-            <div class="col-md-6">
-              <label for="eng_tsc-<?php echo $eng['eng_idno']; ?>" class="form-label">TSC</label>
-              <input type="text" class="form-control" id="eng_tsc-<?php echo $eng['eng_idno']; ?>" name="eng_tsc" value="<?php echo htmlspecialchars($eng['eng_tsc']); ?>">
-            </div>
-
-            <!-- Start Period -->
-            <div class="col-md-4">
-              <label for="eng_start_period-<?php echo $eng['eng_idno']; ?>" class="form-label">Start Period</label>
-              <input type="date" class="form-control" id="eng_start_period-<?php echo $eng['eng_idno']; ?>" name="eng_start_period" value="<?php echo $eng['eng_start_period']; ?>">
-            </div>
-
-            <!-- End Period -->
-            <div class="col-md-4">
-              <label for="eng_end_period-<?php echo $eng['eng_idno']; ?>" class="form-label">End Period</label>
-              <input type="date" class="form-control" id="eng_end_period-<?php echo $eng['eng_idno']; ?>" name="eng_end_period" value="<?php echo $eng['eng_end_period']; ?>">
-            </div>
-
-            <!-- As of Date -->
-            <div class="col-md-4">
-              <label for="eng_as_of_date-<?php echo $eng['eng_idno']; ?>" class="form-label">As Of Date</label>
-              <input type="date" class="form-control" id="eng_as_of_date-<?php echo $eng['eng_idno']; ?>" name="eng_as_of_date" value="<?php echo $eng['eng_as_of_date']; ?>">
-            </div>
-
-            <!-- Internal Planning Call -->
-            <div class="col-md-4">
-              <label for="eng_internal_planning_call-<?php echo $eng['eng_idno']; ?>" class="form-label">Internal Planning Call</label>
-              <input type="date" class="form-control" id="eng_internal_planning_call-<?php echo $eng['eng_idno']; ?>" name="eng_internal_planning_call" value="<?php echo $eng['eng_internal_planning_call']; ?>">
-            </div>
-
-            <!-- Completed Internal Planning -->
-            <div class="col-md-4">
-              <label for="eng_completed_internal_planning-<?php echo $eng['eng_idno']; ?>" class="form-label">Completed Internal Planning</label>
-              <select class="form-select" id="eng_completed_internal_planning-<?php echo $eng['eng_idno']; ?>" name="eng_completed_internal_planning">
-                <option value="Y" <?php echo ($eng['eng_completed_internal_planning'] === 'Y') ? 'selected' : ''; ?>>Yes</option>
-                <option value="N" <?php echo ($eng['eng_completed_internal_planning'] === 'N') ? 'selected' : ''; ?>>No</option>
-              </select>
-            </div>
-
-            <!-- Additional dates and Y/N fields follow the same pattern -->
-            <!-- IRL Due, IRL Sent, Client Planning Call, Completed Client Planning, Fieldwork, Fieldwork Complete, etc. -->
+            <!-- ================= DATE + TOGGLE PAIRS ================= -->
             <?php
-              $date_fields = [
-                'eng_irl_due', 'eng_client_planning_call', 'eng_fieldwork', 
-                'eng_leadsheet_due', 'eng_draft_due', 'eng_final_due', 
-                'eng_archive', 'eng_last_communication'
-              ];
-              $yn_fields = [
-                'eng_irl_sent', 'eng_completed_client_planning', 'eng_fieldwork_complete',
-                'eng_leadsheet_complete', 'eng_draft_sent', 'eng_final_sent', 'eng_section_3_requested'
+              $pairs = [
+                ['eng_internal_planning_call','eng_complete_internal_planning','Internal Planning Call'],
+                ['eng_irl_due','eng_irl_sent','IRL Due'],
+                ['eng_client_planning_call','eng_complete_client_planning','Client Planning Call'],
+                ['eng_fieldwork','eng_fieldwork_complete','Fieldwork'],
+                ['eng_leadsheet_due','eng_leadsheet_complete','Leadsheet Due'],
+                ['eng_draft_due','eng_draft_sent','Draft Due'],
+                ['eng_final_due','eng_final_sent','Final Due']
               ];
             ?>
-            <?php foreach($date_fields as $field): ?>
-            <div class="col-md-4">
-              <label for="<?php echo $field.'-'.$eng['eng_idno']; ?>" class="form-label"><?php echo ucwords(str_replace('_',' ',$field)); ?></label>
-              <input type="date" class="form-control" id="<?php echo $field.'-'.$eng['eng_idno']; ?>" name="<?php echo $field; ?>" value="<?php echo $eng[$field]; ?>">
-            </div>
-            <?php endforeach; ?>
 
-            <?php foreach($yn_fields as $field): ?>
-            <div class="col-md-4">
-              <label for="<?php echo $field.'-'.$eng['eng_idno']; ?>" class="form-label"><?php echo ucwords(str_replace('_',' ',$field)); ?></label>
-              <select class="form-select" id="<?php echo $field.'-'.$eng['eng_idno']; ?>" name="<?php echo $field; ?>">
-                <option value="Y" <?php echo ($eng[$field]==='Y')?'selected':''; ?>>Yes</option>
-                <option value="N" <?php echo ($eng[$field]==='N')?'selected':''; ?>>No</option>
-              </select>
+            <?php foreach ($pairs as [$dateField, $ynField, $label]): 
+              $isYes = ($eng[$ynField] ?? 'N') === 'Y';
+            ?>
+            <div class="col-md-6">
+              <label class="form-label"><?php echo $label; ?></label>
+              <div class="d-flex align-items-center gap-2">
+
+                <!-- Date -->
+                <input type="date"
+                       class="form-control"
+                       name="<?php echo $dateField; ?>"
+                       value="<?php echo $eng[$dateField] ?? ''; ?>">
+
+                <!-- Toggle -->
+                <div class="yn-toggle <?php echo $isYes ? 'active' : ''; ?>"
+                     onclick="toggleYN(this)">
+                  <?php echo $isYes ? '✓ Y' : 'N'; ?>
+                </div>
+
+                <!-- Hidden Input -->
+                <input type="hidden"
+                       name="<?php echo $ynField; ?>"
+                       value="<?php echo $isYes ? 'Y' : 'N'; ?>">
+              </div>
             </div>
             <?php endforeach; ?>
 
             <!-- Notes -->
             <div class="col-12">
-              <label for="eng_notes-<?php echo $eng['eng_idno']; ?>" class="form-label">Notes</label>
-              <textarea class="form-control" id="eng_notes-<?php echo $eng['eng_idno']; ?>" name="eng_notes" rows="4"><?php echo htmlspecialchars($eng['eng_notes'] ?? ''); ?></textarea>
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" name="eng_notes" rows="4"><?php
+                echo htmlspecialchars($eng['eng_notes'] ?? '');
+              ?></textarea>
             </div>
 
-            <!-- Status (single-select dropdown) -->
-<div class="col-12">
-  <label for="eng_status-<?php echo $eng['eng_idno']; ?>" class="form-label">Status</label>
-  <select class="form-select" id="eng_status-<?php echo $eng['eng_idno']; ?>" name="eng_status">
-    <?php
-      $statuses = ['on-hold', 'planning', 'in-progress', 'in-review', 'complete', 'archived'];
-      $current_status = $eng['eng_status']; // single value now
-      foreach($statuses as $status):
-    ?>
-    <option value="<?php echo $status; ?>" <?php echo ($status === $current_status) ? 'selected' : ''; ?>>
-      <?php echo ucwords(str_replace('-',' ',$status)); ?>
-    </option>
-    <?php endforeach; ?>
-  </select>
-</div>
-
+            <!-- Status -->
+            <div class="col-12">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="eng_status">
+                <?php
+                  $statuses = ['on-hold','planning','in-progress','in-review','complete','archived'];
+                  foreach ($statuses as $status):
+                ?>
+                <option value="<?php echo $status; ?>"
+                  <?php echo ($eng['eng_status'] === $status) ? 'selected' : ''; ?>>
+                  <?php echo ucwords(str_replace('-',' ',$status)); ?>
+                </option>
+                <?php endforeach; ?>
+              </select>
+            </div>
 
           </div>
         </div>
@@ -430,10 +348,12 @@ $totalEngagements = count($engagements);
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary">Save Changes</button>
         </div>
+
       </form>
     </div>
   </div>
 </div>
+
 
 
 
