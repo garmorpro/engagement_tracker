@@ -200,6 +200,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
         </div>";
     }
 }
+
+$engagements = getAllEngagements($conn);
+$totalEngagements = count($engagements);
 ?>
 <!DOCTYPE html>
 <html lang="en">
