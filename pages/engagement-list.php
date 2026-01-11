@@ -361,7 +361,7 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
 
     <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
          onclick="toggleYN(this)">
-      <?php echo $checked ? '✓ Y' : '<span class="text-center" style="font-size: 8px;">Repeat Client</span>'; ?>
+      <?php echo $checked ? '<i class="bi bi-check"></i> Y' : 'N'; ?>
       <!-- <br><br>  -->
     </div>
 
@@ -714,7 +714,7 @@ function toggleYN(el) {
   el.classList.toggle('active');
 
   if (el.classList.contains('active')) {
-    el.innerHTML = '✓ Y';
+    el.innerHTML = '<i class="bi bi-check"></i> Y';
     hidden.value = 'Y';
   } else {
     el.innerHTML = 'N';
