@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     /* ============================
        Y / N FIELDS
     ============================ */
-    $repeat = isset($_POST['eng_repeat']) && $_POST['eng_repeat'] === 'Y' ? 'Y' : 'N';
+    $repeat                      = $_POST['eng_repeat'] ?? 'N';
     $completed_internal_planning = $_POST['eng_completed_internal_planning'] ?? 'N';
     $irl_sent                    = $_POST['eng_irl_sent'] ?? 'N';
     $completed_client_planning   = $_POST['eng_completed_client_planning'] ?? 'N';
@@ -352,6 +352,7 @@ $totalEngagements = count($engagements);
          value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
 
   <div class="form-check mt-1">
+    <input type="hidden" name="eng_repeat" value="N"> <!-- ensures unchecked sends "N" -->
     <input class="form-check-input" type="checkbox" name="eng_repeat" id="eng_repeat_checkbox"
            value="Y" <?php echo (($eng['eng_repeat'] ?? 'N') === 'Y') ? 'checked' : ''; ?>>
     <label class="form-check-label" for="eng_repeat_checkbox" style="font-size: 12px; color: rgb(10,10,10);">
