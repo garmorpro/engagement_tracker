@@ -357,7 +357,7 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
   <div class="d-flex align-items-center gap-2">
 
-    <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
+    <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
            name="<?php echo $date; ?>"
            value="<?php echo $eng[$date] ?? ''; ?>">
 
