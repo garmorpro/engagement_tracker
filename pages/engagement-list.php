@@ -347,43 +347,47 @@ $totalEngagements = count($engagements);
 <hr>
 
 <?php
-$checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
+$pairs = [
+  'eng_idno' => 'eng_repeat'
+];
+foreach ($pairs as $date => $yn):
+$checked = (($eng[$yn] ?? 'N') === 'Y');
 ?>
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">
-    Engagement ID<sup>*</sup>
+    <?php echo ucwords(str_replace('_',' ',$date)); ?>
   </label>
-  <input type="text" class="form-control mb-2" style="background-color: rgb(243,243,245); font-size: 14px;"
-         name="eng_idno" value="<?php echo htmlspecialchars($eng['eng_idno'] ?? '', ENT_QUOTES); ?>">
+  <div class="d-flex align-items-center gap-2">
 
-  <div class="d-flex align-items-center gap-2 mt-1">
-    <!-- Toggle -->
-    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>">
+    <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
+           name="<?php echo $date; ?>"
+           value="<?php echo $eng[$date] ?? ''; ?>">
+
+    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
+         onclick="toggleYN(this)">
       <?php echo $checked ? '✓ Y' : 'N'; ?>
     </div>
-    <!-- Hidden input always posts -->
-    <input type="hidden" name="eng_repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+
+    <!-- ALWAYS POST -->
+    <input type="hidden" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+
   </div>
 </div>
+<?php endforeach; ?>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // Handle all yn-toggles (including repeat client)
-  document.querySelectorAll('.yn-toggle').forEach(function(toggle) {
-    toggle.addEventListener('click', function() {
-      const hidden = this.nextElementSibling; // hidden input must be right after toggle
-      if(this.classList.contains('active')) {
-        this.classList.remove('active');
-        this.textContent = 'N';
+function toggleYN(el) {
+    const hidden = el.nextElementSibling; // hidden input must be right after toggle div
+    if(el.classList.contains('active')) {
+        el.classList.remove('active');
+        el.textContent = 'N';
         hidden.value = 'N';
-      } else {
-        this.classList.add('active');
-        this.textContent = '✓ Y';
+    } else {
+        el.classList.add('active');
+        el.textContent = '✓ Y';
         hidden.value = 'Y';
-      }
-    });
-  });
-});
+    }
+}
 </script>
 
 
