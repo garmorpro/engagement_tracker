@@ -215,6 +215,13 @@ $totalEngagements = count($engagements);
 
     <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>">
 
+    <style>
+      .modal-dialog-scrollable .modal-body {
+    max-height: 70vh; /* keeps modal from exceeding viewport */
+    overflow-y: auto;
+}
+    </style>
+
 </head>
 <body>
 
