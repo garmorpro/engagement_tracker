@@ -933,7 +933,7 @@ function archiveEngagement(engId) {
     fetch('../includes/archive-engagement.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eng_id: engId })
+        body: JSON.stringify({ eng_idno: engId })
     })
     .then(res => res.json())
     .then(data => {

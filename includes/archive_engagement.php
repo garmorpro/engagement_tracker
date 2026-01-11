@@ -10,11 +10,11 @@ try {
     // Get the raw POST data
     $input = json_decode(file_get_contents('php://input'), true);
 
-    if (!isset($input['eng_id']) || empty($input['eng_id'])) {
+    if (!isset($input['eng_idno']) || empty($input['eng_idno'])) {
         throw new Exception('Engagement ID is required.');
     }
 
-    $engId = $input['eng_id'];
+    $engId = $input['eng_idno'];
 
     // Prepare the update query
     $stmt = $conn->prepare("UPDATE engagements SET eng_status = 'archived' WHERE eng_idno = ?");
