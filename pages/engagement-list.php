@@ -249,7 +249,7 @@ $totalEngagements = count($engagements);
 
                 <!-- Modal for this engagement -->
 <div class="modal fade" id="editModal-<?php echo $eng['eng_idno']; ?>" tabindex="-1" aria-labelledby="editModalLabel-<?php echo $eng['eng_idno']; ?>" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
     <div class="modal-content">
       <form method="POST">
         <input type="hidden" name="edit_eng_id" value="<?php echo $eng['eng_idno']; ?>">
