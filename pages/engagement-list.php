@@ -347,15 +347,15 @@ $totalEngagements = count($engagements);
 <hr>
 
 <?php
-$pairs = [
-  'eng_idno' => 'eng_repeat'
-];
-foreach ($pairs as $date => $yn):
-$checked = (($eng[$yn] ?? 'N') === 'Y');
+// $pairs = [
+//   'eng_idno' => 'eng_repeat'
+// ];
+// foreach ($pairs as $date => $yn):
+// $checked = (($eng[$yn] ?? 'N') === 'Y');
 ?>
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">
-    <?php echo ucwords(str_replace('_',' ',$date)); ?>
+    <?php echo ucwords(str_replace('_',' ','eng_idno')); ?>
   </label>
   <div class="d-flex align-items-center gap-2">
 
@@ -373,7 +373,7 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
 
   </div>
 </div>
-<?php endforeach; ?>
+<?php //endforeach; ?>
 
 <script>
 function toggleYN(el) {
