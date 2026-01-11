@@ -347,10 +347,6 @@ $totalEngagements = count($engagements);
 <hr>
 
 <?php
-// $pairs = [
-//   'eng_idno' => 'eng_repeat'
-// ];
-// foreach ($pairs as $date => $yn):
 $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
 ?>
 <div class="col-md-6">
@@ -373,22 +369,6 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
 
   </div>
 </div>
-<?php //endforeach; ?>
-
-<script>
-function toggleYN(el) {
-    const hidden = el.nextElementSibling; // hidden input must be right after toggle div
-    if(el.classList.contains('active')) {
-        el.classList.remove('active');
-        el.textContent = 'N';
-        hidden.value = 'N';
-    } else {
-        el.classList.add('active');
-        el.textContent = '✓ Y';
-        hidden.value = 'Y';
-    }
-}
-</script>
 
 
 
