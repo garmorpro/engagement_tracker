@@ -378,6 +378,9 @@ $totalEngagements = count($engagements);
             'in-review' => ['label' => 'In Review', 'border' => '160,77,253', 'bg' => '249,245,254', 'text' => '119,17,210', 'icon' => 'bi-eye'],
             'complete' => ['label' => 'Completed', 'border' => '79,198,95', 'bg' => '242,253,245', 'text' => '51,128,63', 'icon' => 'bi-check-circle'],
         ];
+        $defaultBorder = '229,231,235';
+        $defaultBg = '255,255,255';
+        $defaultText = '76,85,100';
         foreach ($statuses as $key => $s):
             $selected = (($eng['eng_status'] ?? '') === $key);
         ?>
@@ -385,12 +388,11 @@ $totalEngagements = count($engagements);
              data-status="<?php echo $key; ?>"
              style="
                 cursor: pointer;
-                border: 2px solid rgb(<?php echo $s['border']; ?>);
-                background-color: rgb(<?php echo $s['bg']; ?>);
-                color: rgb(<?php echo $s['text']; ?>);
+                border: 2px solid rgb(<?php echo $selected ? $s['border'] : $defaultBorder; ?>);
+                background-color: rgb(<?php echo $selected ? $s['bg'] : $defaultBg; ?>);
+                color: rgb(<?php echo $selected ? $s['text'] : $defaultText; ?>);
                 font-weight: 500;
                 border-radius: 0.5rem;
-                <?php echo $selected ? 'box-shadow: 0 0 0 2px rgba(0,0,0,0.15);' : ''; ?>
              ">
             <i class="bi <?php echo $s['icon']; ?>" style="font-size: 1.1rem;"></i>
             <div style="margin-top: 0.25rem; font-size: 12px;"><?php echo $s['label']; ?></div>
@@ -399,6 +401,69 @@ $totalEngagements = count($engagements);
     </div>
     <input type="hidden" name="eng_status" id="eng_status_input" value="<?php echo htmlspecialchars($eng['eng_status'] ?? ''); ?>">
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.status-card');
+    const hiddenInput = document.getElementById('eng_status_input');
+
+    // Store original colors
+    const defaultBorder = '229,231,235';
+    const defaultBg = '255,255,255';
+    const defaultText = '76,85,100';
+
+    const statusColors = {
+        'on-hold': {border: '107,114,129', bg: '249,250,251', text: '56,65,82'},
+        'planning': {border: '68,125,252', bg: '240,246,254', text: '35,70,221'},
+        'in-progress': {border: '241,115,19', bg: '254,247,238', text: '186,66,13'},
+        'in-review': {border: '160,77,253', bg: '249,245,254', text: '119,17,210'},
+        'complete': {border: '79,198,95', bg: '242,253,245', text: '51,128,63'},
+    };
+
+    // Initialize selection
+    const selectedStatus = hiddenInput.value;
+
+    cards.forEach(card => {
+        const status = card.dataset.status;
+
+        const applyDefault = () => {
+            if (hiddenInput.value !== status) {
+                card.style.border = `2px solid rgb(${defaultBorder})`;
+                card.style.backgroundColor = `rgb(${defaultBg})`;
+                card.style.color = `rgb(${defaultText})`;
+            }
+        };
+
+        const applySelected = () => {
+            const colors = statusColors[status];
+            card.style.border = `2px solid rgb(${colors.border})`;
+            card.style.backgroundColor = `rgb(${colors.bg})`;
+            card.style.color = `rgb(${colors.text})`;
+        };
+
+        // Initial state
+        if (status === selectedStatus) applySelected();
+        else applyDefault();
+
+        // Click event
+        card.addEventListener('click', () => {
+            hiddenInput.value = status;
+            cards.forEach(c => {
+                const s = c.dataset.status;
+                if (s === status) applySelected();
+                else applyDefault();
+            });
+        });
+
+        // Hover effect
+        card.addEventListener('mouseenter', () => applySelected());
+        card.addEventListener('mouseleave', () => {
+            if (hiddenInput.value !== status) applyDefault();
+        });
+    });
+});
+</script>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
