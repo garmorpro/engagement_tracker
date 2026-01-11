@@ -537,4 +537,5 @@ body {
 
 .view-btn:hover {
   background-color: rgba(236,236,240);
+  color: rgb(60,163,74);
 }
