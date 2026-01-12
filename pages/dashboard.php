@@ -105,6 +105,12 @@ require_once '../includes/functions.php';
                                     $finalDueDate = !empty($eng['eng_final_due'])
                                         ? date('M d', strtotime($eng['eng_final_due']))
                                         : '';
+
+                            $today = new DateTime('today');
+                            $dueDate = new DateTime($finalDueDate);
+
+                            // Red only if past due, otherwise black
+                            $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                             ?>
 
                             <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
@@ -143,9 +149,9 @@ require_once '../includes/functions.php';
                                                 <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
                                             </span>
                                 
-                                            <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?>
-                                            </span>
+                                            <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
+                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                            </span> <br>
                                 
                                             <?php if (!empty($eng['eng_audit_type'])): ?>
                                                 <span class="badge"
@@ -222,6 +228,12 @@ require_once '../includes/functions.php';
                                         $finalDueDate = !empty($eng['eng_final_due'])
                                             ? date('M d, Y', strtotime($eng['eng_final_due']))
                                             : '';
+                                
+                                $today = new DateTime('today');
+                                $dueDate = new DateTime($finalDueDate);
+                                                            
+                                // Red only if past due, otherwise black
+                                $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                                 ?>
 
                                 <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
@@ -265,9 +277,9 @@ require_once '../includes/functions.php';
                                                     <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
                                                 </span><br>
                                     
-                                                <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?>
-                                                </span><br>
+                                                <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
+                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                                </span> <br>
                                     
                                                 <div class="tags pt-2">
                                                     <?php if (!empty($eng['eng_audit_type'])): ?>
@@ -334,6 +346,12 @@ require_once '../includes/functions.php';
                                         $finalDueDate = !empty($eng['eng_final_due'])
                                             ? date('M d, Y', strtotime($eng['eng_final_due']))
                                             : '';
+
+                                $today = new DateTime('today');
+                                $dueDate = new DateTime($finalDueDate);
+                                                            
+                                // Red only if past due, otherwise black
+                                $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                                 ?>
 
                                 <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno'] ?? ''); ?>"
@@ -376,9 +394,9 @@ require_once '../includes/functions.php';
                                                     <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>
                                                 </span><br>
                                     
-                                                <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?>
-                                                </span><br>
+                                                <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
+                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                                </span> <br>
                                     
                                                 <div class="tags pt-2">
                                                     <?php if (!empty($eng['eng_audit_type'])): ?>
@@ -452,6 +470,12 @@ require_once '../includes/functions.php';
                         if (count($inReviewEngagements) > 0):
                           foreach ($inReviewEngagements as $eng):
                             $finalDueDate = !empty($eng['eng_final_due']) ? date('M d, Y', strtotime($eng['eng_final_due'])) : '';
+
+                        $today = new DateTime('today');
+                        $dueDate = new DateTime($finalDueDate);
+                                                    
+                        // Red only if past due, otherwise black
+                        $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                         ?>
                         <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
                           <div class="card engagement-card-kanban mb-2"
@@ -478,7 +502,10 @@ require_once '../includes/functions.php';
                                 <span style="color: rgb(106,115,130); font-size: 14px;"><?php echo htmlspecialchars($eng['eng_idno']); ?></span><br>
                                 <div class="pb-2"></div>
                                 <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?></span><br>
-                                <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?></span><br>
+
+                                <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
+                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                </span> <br>
                         
                                 <div class="tags pt-2">
                                   <?php if (!empty($eng['eng_audit_type'])): ?>
@@ -553,6 +580,12 @@ require_once '../includes/functions.php';
                                     $finalDueDate = !empty($eng['eng_final_due'])
                                         ? date('M d', strtotime($eng['eng_final_due']))
                                         : '';
+                            
+                            $today = new DateTime('today');
+                            $dueDate = new DateTime($finalDueDate);
+
+                            // Red only if past due, otherwise black
+                            $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                             ?>
 
                             <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
@@ -591,9 +624,9 @@ require_once '../includes/functions.php';
                                                 <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
                                             </span>
                                 
-                                            <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?>
-                                            </span>
+                                            <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
+                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                            </span> <br>
                                 
                                             <?php if (!empty($eng['eng_audit_type'])): ?>
                                                 <span class="badge"
