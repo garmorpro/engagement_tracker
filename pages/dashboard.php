@@ -377,7 +377,7 @@ require_once '../includes/functions.php';
                                                 </span><br>
                                     
                                                 <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?>
+                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo $eng['eng_final_due']; ?>
                                                 </span><br>
                                     
                                                 <div class="tags pt-2">
