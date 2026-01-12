@@ -337,7 +337,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
 }
 
 
-$nextEngId = getNextEngagementId($mysqli);
+$nextEngId = getNextEngagementId($conn);
 
 $engagements = getAllEngagements($conn);
 $totalEngagements = count($engagements);
