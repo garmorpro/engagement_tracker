@@ -1612,6 +1612,10 @@ foreach ($dateFields as $field => $label):
 <div class="modal-body">
 <div class="row g-3">
 
+<!-- =====================
+     BASIC INFORMATION
+===================== -->
+
 <h6 class="fw-semibold mt-4">Basic Information</h6>
 <hr>
 
@@ -1638,6 +1642,7 @@ foreach ($dateFields as $field => $label):
 <!-- =====================
      STATUS
 ===================== -->
+
 <div class="col-12 mb-3 engagement-status-container">
   <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
   <div class="d-flex gap-2 flex-wrap">
@@ -1648,7 +1653,7 @@ foreach ($dateFields as $field => $label):
        style="
          cursor:pointer;
          border:2px solid rgb(229,231,235);
-         background-color:#fff;
+         background:#fff;
          color:rgb(76,85,100);
          border-radius:1rem;
        ">
@@ -1661,6 +1666,33 @@ foreach ($dateFields as $field => $label):
   <input type="hidden" name="eng_status" class="eng_status_input" value="">
 </div>
 
+<div class="col-md-12">
+  <label class="form-label fw-semibold" style="font-size:12px;">TSC</label>
+  <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_tsc">
+</div>
+
+<!-- =====================
+     DATE ONLY
+===================== -->
+
+<?php
+$dateFields = [
+  'eng_start_period' => 'Start Period',
+  'eng_end_period'   => 'End Period',
+  'eng_as_of_date'   => 'As Of Date'
+];
+foreach ($dateFields as $field => $label):
+?>
+<div class="col-md-4">
+  <label class="form-label fw-semibold" style="font-size:12px;"><?php echo $label; ?></label>
+  <input type="date" class="form-control" style="background-color:#f3f3f5;" name="<?php echo $field; ?>">
+</div>
+<?php endforeach; ?>
+
+<!-- =====================
+     TEAM MEMBERS
+===================== -->
+
 <h6 class="fw-semibold mt-5">Team Members</h6>
 <hr>
 
@@ -1670,6 +1702,10 @@ foreach ($dateFields as $field => $label):
 <div class="col-md-6"><input class="form-control" name="eng_senior_dol" placeholder="Senior DOL"></div>
 <div class="col-md-6"><input class="form-control" name="eng_staff_dol" placeholder="Staff DOL"></div>
 
+<!-- =====================
+     CLIENT INFO
+===================== -->
+
 <h6 class="fw-semibold mt-5">Client Information</h6>
 <hr>
 
@@ -1677,11 +1713,16 @@ foreach ($dateFields as $field => $label):
 <div class="col-md-6"><input class="form-control" name="eng_location" placeholder="Location"></div>
 <div class="col-md-12"><input class="form-control" name="eng_scope" placeholder="Scope"></div>
 
+<!-- =====================
+     IMPORTANT DATES & MILESTONES
+===================== -->
+
 <h6 class="fw-semibold mt-5">Important Dates & Milestones</h6>
 <hr>
 
 <?php foreach ($pairs as $date => $yn): ?>
 <div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size:12px;"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
   <div class="d-flex gap-2 align-items-center">
     <input type="date" class="form-control" name="<?php echo $date; ?>">
     <div class="yn-toggle" onclick="toggleYN(this)">N</div>
@@ -1689,6 +1730,47 @@ foreach ($dateFields as $field => $label):
   </div>
 </div>
 <?php endforeach; ?>
+
+<!-- =====================
+     DATE ONLY
+===================== -->
+
+<?php
+$dateFields = [
+  'eng_archive'            => 'Archive Date',
+  'eng_last_communication' => 'Last Communication'
+];
+foreach ($dateFields as $field => $label):
+?>
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size:12px;"><?php echo $label; ?></label>
+  <input type="date" class="form-control" style="background-color:#f3f3f5;" name="<?php echo $field; ?>">
+</div>
+<?php endforeach; ?>
+
+<!-- =====================
+     Y / N SELECTS
+===================== -->
+
+<div class="col-md-3">
+  <label class="form-label fw-semibold" style="font-size:12px;">Repeat</label>
+  <select class="form-select" style="background-color:#f3f3f5;" name="eng_repeat">
+    <option value="N" selected>No</option>
+    <option value="Y">Yes</option>
+  </select>
+</div>
+
+<div class="col-md-3">
+  <label class="form-label fw-semibold" style="font-size:12px;">Section 3 Requested</label>
+  <select class="form-select" style="background-color:#f3f3f5;" name="eng_section_3_requested">
+    <option value="N" selected>No</option>
+    <option value="Y">Yes</option>
+  </select>
+</div>
+
+<!-- =====================
+     NOTES
+===================== -->
 
 <div class="col-12">
   <label class="form-label fw-semibold" style="font-size:12px;">Notes</label>
@@ -1707,6 +1789,7 @@ foreach ($dateFields as $field => $label):
 </div>
 </div>
 </div>
+
 
 
 <!-- Engagement Status JS -->
