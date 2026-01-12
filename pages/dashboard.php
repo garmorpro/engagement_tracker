@@ -123,7 +123,6 @@ require_once '../includes/functions.php';
                                      data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                      data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                      data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
-                                     data-fieldwork="<?php echo $fieldworkDate; ?>"
                                      data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
                                      data-final-due="<?php echo htmlspecialchars($eng['eng_final_due'] ?? ''); ?>"
                                      style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
@@ -192,7 +191,6 @@ require_once '../includes/functions.php';
             </div>
         <!-- end row 1 -->
 
-  
         <!-- Row 2 -->
             <div class="row align-items-start g-4" style="margin-top: 1px; margin-top: px; margin-left: 200px; margin-right: 200px;">
   
@@ -246,7 +244,6 @@ require_once '../includes/functions.php';
                                          data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                          data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                          data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
-                                         data-fieldwork="<?php echo $fieldworkDate; ?>"
                                          data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
                                          data-final-due="<?php echo $finalDueDate; ?>"
                                          style="background-color: rgb(249,250,251);
@@ -364,7 +361,6 @@ require_once '../includes/functions.php';
                                          data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                          data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                          data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
-                                         data-fieldwork="<?php echo $fieldworkDate; ?>"
                                          data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
                                          data-final-due="<?php echo $finalDueDate; ?>"
                                          style="background-color: rgb(249,250,251);
@@ -484,7 +480,6 @@ require_once '../includes/functions.php';
                                data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
-                               data-fieldwork="<?php echo $fieldworkDate; ?>"
                                data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
                                data-final-due="<?php echo $finalDueDate; ?>"
                                style="background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); border-radius: 15px; cursor: move;">
@@ -598,7 +593,6 @@ require_once '../includes/functions.php';
                                      data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                      data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                      data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
-                                     data-fieldwork="<?php echo $fieldworkDate; ?>"
                                      data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
                                      data-final-due="<?php echo $finalDueDate; ?>"
                                      style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
