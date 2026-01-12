@@ -27,11 +27,11 @@ function getAllEngagements($conn) {
 
 // automate eng_idno
 
-function getNextEngagementId(mysqli $mysqli): string
+function getNextEngagementId(mysqli $conn): string
 {
     $currentYear = date('Y');
 
-    $stmt = $mysqli->prepare("
+    $stmt = $conn->prepare("
         SELECT eng_idno
         FROM engagements
         WHERE eng_idno LIKE CONCAT('ENG-', ?, '-%')
