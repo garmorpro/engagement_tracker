@@ -732,7 +732,7 @@ require_once '../includes/functions.php';
 
         // Transform card to horizontal layout
         const transformToHorizontal = (card) => {
-            const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
+            const { id, name, engno, manager, audit, finalDue } = card.dataset;
             const wrapper = document.createElement('a');
             wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
             wrapper.className = 'text-decoration-none text-reset d-block';
@@ -740,7 +740,7 @@ require_once '../includes/functions.php';
 
             const newCard = document.createElement('div');
             newCard.className = 'card engagement-card-kanban mb-2';
-            Object.assign(newCard.dataset, { id, name, engno, manager, fieldwork, audit, finalDue });
+            Object.assign(newCard.dataset, { id, name, engno, manager, audit, finalDue });
             newCard.style.cssText = 'border-radius:15px; border:1px solid rgb(208,213,219); cursor:move;';
 
             const body = document.createElement('div');
@@ -756,7 +756,7 @@ require_once '../includes/functions.php';
                 </div>
                 <div class="d-flex align-items-center gap-3 text-secondary">
                     <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span>
-                    <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;${fieldwork}</span>
+                    <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;${finalDue}</span>
                 </div>
             `;
 
@@ -784,7 +784,7 @@ require_once '../includes/functions.php';
 
         // Transform card to vertical layout
         const transformToVertical = (card) => {
-            const { id, name, engno, manager, fieldwork, audit, finalDue } = card.dataset;
+            const { id, name, engno, manager, audit, finalDue } = card.dataset;
             const wrapper = document.createElement('a');
             wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
             wrapper.className = 'text-decoration-none text-reset d-block';
@@ -792,7 +792,7 @@ require_once '../includes/functions.php';
 
             const newCard = document.createElement('div');
             newCard.className = 'card engagement-card-kanban mb-2';
-            Object.assign(newCard.dataset, { id, name, engno, manager, fieldwork, audit, finalDue });
+            Object.assign(newCard.dataset, { id, name, engno, manager, audit, finalDue });
             newCard.style.cssText = 'background-color: rgb(249,250,251); border:1px solid rgb(208,213,219); border-radius:15px; cursor:move;';
 
             const body = document.createElement('div');
@@ -807,7 +807,7 @@ require_once '../includes/functions.php';
                     <span style="color: rgb(106,115,130); font-size:14px;">${engno}</span><br>
                     <div class="pb-2"></div>
                     <span style="font-size:14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span><br>
-                    <span style="font-size:14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;${fieldwork}</span><br>
+                    <span style="font-size:14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;${finalDue}</span><br>
                     <div class="tags pt-2"></div>
                 </p>
             `;
