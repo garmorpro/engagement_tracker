@@ -331,8 +331,8 @@ require_once '../includes/functions.php';
 
                                 if (count($inProgressEngagements) > 0):
                                     foreach ($inProgressEngagements as $eng):
-                                        $fieldworkDate = !empty($eng['eng_fieldwork'])
-                                            ? date('M d, Y', strtotime($eng['eng_fieldwork']))
+                                        $finalDueDate = !empty($eng['eng_final_due'])
+                                            ? date('M d, Y', strtotime($eng['eng_final_due']))
                                             : '';
                                 ?>
 
@@ -377,7 +377,7 @@ require_once '../includes/functions.php';
                                                 </span><br>
                                     
                                                 <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo $eng['eng_final_due']; ?>
+                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?>
                                                 </span><br>
                                     
                                                 <div class="tags pt-2">
