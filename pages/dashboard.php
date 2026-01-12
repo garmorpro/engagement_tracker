@@ -102,8 +102,8 @@ require_once '../includes/functions.php';
 
                             if (count($onHoldEngagements) > 0):
                                 foreach ($onHoldEngagements as $eng):
-                                    $fieldworkDate = !empty($eng['eng_fieldwork'])
-                                        ? date('M d', strtotime($eng['eng_fieldwork']))
+                                    $finalDueDate = !empty($eng['eng_final_due'])
+                                        ? date('M d', strtotime($eng['eng_final_due']))
                                         : '';
                             ?>
 
@@ -144,7 +144,7 @@ require_once '../includes/functions.php';
                                             </span>
                                 
                                             <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?>
+                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?>
                                             </span>
                                 
                                             <?php if (!empty($eng['eng_audit_type'])): ?>
@@ -219,8 +219,8 @@ require_once '../includes/functions.php';
 
                                 if (count($planningEngagements) > 0):
                                     foreach ($planningEngagements as $eng):
-                                        $fieldworkDate = !empty($eng['eng_fieldwork'])
-                                            ? date('M d, Y', strtotime($eng['eng_fieldwork']))
+                                        $finalDueDate = !empty($eng['eng_final_due'])
+                                            ? date('M d, Y', strtotime($eng['eng_final_due']))
                                             : '';
                                 ?>
 
@@ -236,7 +236,7 @@ require_once '../includes/functions.php';
                                          data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
                                          data-fieldwork="<?php echo $fieldworkDate; ?>"
                                          data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
-                                         data-final-due="<?php echo htmlspecialchars($eng['eng_final_due'] ?? ''); ?>"
+                                         data-final-due="<?php echo $finalDueDate; ?>"
                                          style="background-color: rgb(249,250,251);
                                                 border: 1px solid rgb(208,213,219);
                                                 border-radius: 15px;
@@ -266,7 +266,7 @@ require_once '../includes/functions.php';
                                                 </span><br>
                                     
                                                 <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?>
+                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?>
                                                 </span><br>
                                     
                                                 <div class="tags pt-2">
@@ -348,7 +348,7 @@ require_once '../includes/functions.php';
                                          data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
                                          data-fieldwork="<?php echo $fieldworkDate; ?>"
                                          data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
-                                         data-final-due="<?php echo htmlspecialchars($eng['eng_final_due'] ?? ''); ?>"
+                                         data-final-due="<?php echo $finalDueDate; ?>"
                                          style="background-color: rgb(249,250,251);
                                                 border: 1px solid rgb(208,213,219);
                                                 border-radius: 15px;
@@ -451,7 +451,7 @@ require_once '../includes/functions.php';
 
                         if (count($inReviewEngagements) > 0):
                           foreach ($inReviewEngagements as $eng):
-                            $fieldworkDate = !empty($eng['eng_fieldwork']) ? date('M d, Y', strtotime($eng['eng_fieldwork'])) : '';
+                            $finalDueDate = !empty($eng['eng_final_due']) ? date('M d, Y', strtotime($eng['eng_final_due'])) : '';
                         ?>
                         <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
                           <div class="card engagement-card-kanban mb-2"
@@ -462,7 +462,7 @@ require_once '../includes/functions.php';
                                data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
                                data-fieldwork="<?php echo $fieldworkDate; ?>"
                                data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
-                               data-final-due="<?php echo htmlspecialchars($eng['eng_final_due'] ?? ''); ?>"
+                               data-final-due="<?php echo $finalDueDate; ?>"
                                style="background-color: rgb(249,250,251); border: 1px solid rgb(208,213,219); border-radius: 15px; cursor: move;">
                         
                             <div class="card-body" style="margin-bottom: -15px !important;">
@@ -478,7 +478,7 @@ require_once '../includes/functions.php';
                                 <span style="color: rgb(106,115,130); font-size: 14px;"><?php echo htmlspecialchars($eng['eng_idno']); ?></span><br>
                                 <div class="pb-2"></div>
                                 <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?></span><br>
-                                <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?></span><br>
+                                <span style="font-size: 14px; color: rgb(243,36,57);"><i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?></span><br>
                         
                                 <div class="tags pt-2">
                                   <?php if (!empty($eng['eng_audit_type'])): ?>
@@ -550,8 +550,8 @@ require_once '../includes/functions.php';
 
                             if (count($completeEngagements) > 0):
                                 foreach ($completeEngagements as $eng):
-                                    $fieldworkDate = !empty($eng['eng_fieldwork'])
-                                        ? date('M d', strtotime($eng['eng_fieldwork']))
+                                    $finalDueDate = !empty($eng['eng_final_due'])
+                                        ? date('M d', strtotime($eng['eng_final_due']))
                                         : '';
                             ?>
 
@@ -567,7 +567,7 @@ require_once '../includes/functions.php';
                                      data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
                                      data-fieldwork="<?php echo $fieldworkDate; ?>"
                                      data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
-                                     data-final-due="<?php echo htmlspecialchars($eng['eng_final_due'] ?? ''); ?>"
+                                     data-final-due="<?php echo $finalDueDate; ?>"
                                      style="border-radius: 15px; border: 1px solid rgb(208,213,219); cursor: move;">
                                 
                                     <div class="card-body d-flex align-items-center justify-content-between">
@@ -592,7 +592,7 @@ require_once '../includes/functions.php';
                                             </span>
                                 
                                             <span style="font-size: 14px; color: rgb(243,36,57);">
-                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo $fieldworkDate; ?>
+                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo $finalDueDate; ?>
                                             </span>
                                 
                                             <?php if (!empty($eng['eng_audit_type'])): ?>
