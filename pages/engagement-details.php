@@ -337,6 +337,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
 }
 
 
+
+// automate eng_idno
+
+$currentYear = date('Y');
+
+// Get highest ENG-YYYY-XXX for this year
+$stmt = $mysqli->prepare("
+    SELECT eng_idno
+    FROM engagements
+    WHERE eng_idno LIKE CONCAT('ENG-', ?, '-%')
+    ORDER BY eng_idno DESC
+    LIMIT 1
+");
+$stmt->bind_param("s", $currentYear);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$nextNumber = 1;
+
+if ($row = $result->fetch_assoc()) {
+    // Extract the numeric part
+    $parts = explode('-', $row['eng_idno']); // ENG-2026-003
+    $lastNumber = (int)$parts[2];
+    $nextNumber = $lastNumber + 1;
+}
+
+// Format ENG-2026-004
+$nextEngId = sprintf(
+    "ENG-%s-%03d",
+    $currentYear,
+    $nextNumber
+);
+
+
+
+
 $engagements = getAllEngagements($conn);
 $totalEngagements = count($engagements);
 ?>
@@ -1599,135 +1635,113 @@ foreach ($dateFields as $field => $label):
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
     <div class="modal-content">
 
-      <form method="POST">
-        <input type="hidden" name="action" value="add"> <!-- Flag for insert -->
+<form method="POST">
+<input type="hidden" name="action" value="add">
 
-        <div class="modal-header">
-          <h5 class="modal-title">Add New Engagement</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
+<div class="modal-header">
+  <h5 class="modal-title">Add New Engagement</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
 
-        <div class="modal-body">
-          <div class="row g-3">
+<div class="modal-body">
+<div class="row g-3">
 
-            <!-- =====================
-                 Basic Information
-            ===================== -->
-            <h6 class="fw-semibold mt-4">Basic Information</h6>
-            <hr>
+<h6 class="fw-semibold mt-4">Basic Information</h6>
+<hr>
 
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" style="font-size:12px;">Engagement ID<sup>*</sup></label>
-              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_idno" value="">
-            </div>
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size:12px;">Engagement ID<sup>*</sup></label>
+  <input type="text"
+         class="form-control"
+         style="background-color:#f3f3f5;"
+         name="eng_idno"
+         value="<?php echo $nextEngId; ?>"
+         readonly>
+</div>
 
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" style="font-size:12px;">Engagement Name<sup>*</sup></label>
-              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_name" value="">
-            </div>
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size:12px;">Engagement Name<sup>*</sup></label>
+  <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_name">
+</div>
 
-            <div class="col-md-12">
-              <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
-              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_audit_type" value="">
-            </div>
+<div class="col-md-12">
+  <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
+  <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_audit_type">
+</div>
 
-            <!-- =====================
-                 Status
-            ===================== -->
-            <div class="col-12 mb-3 engagement-status-container">
-              <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
-              <div class="d-flex gap-2 flex-wrap">
-                <?php
-                $statuses = [
-                  'on-hold' => ['label' => 'On Hold', 'border' => '107,114,129', 'bg' => '249,250,251', 'text' => '56,65,82', 'icon' => 'bi-pause-circle'],
-                  'planning' => ['label' => 'Planning', 'border' => '68,125,252', 'bg' => '240,246,254', 'text' => '35,70,221', 'icon' => 'bi-clock'],
-                  'in-progress' => ['label' => 'In Progress', 'border' => '241,115,19', 'bg' => '254,247,238', 'text' => '186,66,13', 'icon' => 'bi-play-circle'],
-                  'in-review' => ['label' => 'In Review', 'border' => '160,77,253', 'bg' => '249,245,254', 'text' => '119,17,210', 'icon' => 'bi-eye'],
-                  'complete' => ['label' => 'Completed', 'border' => '79,198,95', 'bg' => '242,253,245', 'text' => '51,128,63', 'icon' => 'bi-check2-circle'],
-                ];
-                $defaultBorder = '229,231,235';
-                $defaultBg = '255,255,255';
-                $defaultText = '76,85,100';
-                ?>
-                <?php foreach ($statuses as $key => $s): ?>
-                  <div class="status-card text-center p-2 flex-fill" data-status="<?php echo $key; ?>"
-                       style="
-                          cursor:pointer;
-                          border:2px solid rgb(<?php echo $defaultBorder; ?>);
-                          background-color: rgb(<?php echo $defaultBg; ?>);
-                          color: rgb(<?php echo $defaultText; ?>);
-                          font-weight:500;
-                          border-radius:1rem;
-                       ">
-                    <i class="bi <?php echo $s['icon']; ?>" style="font-size:1.1rem;"></i>
-                    <div style="margin-top:0.25rem; font-size:12px;"><?php echo $s['label']; ?></div>
-                  </div>
-                <?php endforeach; ?>
-              </div>
-              <input type="hidden" name="eng_status" class="eng_status_input" value="">
-            </div>
+<!-- =====================
+     STATUS
+===================== -->
+<div class="col-12 mb-3 engagement-status-container">
+  <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
+  <div class="d-flex gap-2 flex-wrap">
 
-            <!-- =====================
-                 Team Members
-            ===================== -->
-            <h6 class="fw-semibold mt-5">Team Members</h6>
-            <hr>
-            <div class="col-md-6"><input type="text" class="form-control" placeholder="Manager" name="eng_manager"></div>
-            <div class="col-md-6"><input type="text" class="form-control" placeholder="Senior(s)" name="eng_senior"></div>
-            <div class="col-md-12"><input type="text" class="form-control" placeholder="Staff" name="eng_staff"></div>
-            <div class="col-md-6"><input type="text" class="form-control" placeholder="Senior DOL" name="eng_senior_dol"></div>
-            <div class="col-md-6"><input type="text" class="form-control" placeholder="Staff DOL" name="eng_staff_dol"></div>
+<?php foreach ($statuses as $key => $s): ?>
+  <div class="status-card text-center p-2 flex-fill"
+       data-status="<?php echo $key; ?>"
+       style="
+         cursor:pointer;
+         border:2px solid rgb(229,231,235);
+         background-color:#fff;
+         color:rgb(76,85,100);
+         border-radius:1rem;
+       ">
+    <i class="bi <?php echo $s['icon']; ?>"></i>
+    <div style="font-size:12px;"><?php echo $s['label']; ?></div>
+  </div>
+<?php endforeach; ?>
 
-            <!-- =====================
-                 Client Info
-            ===================== -->
-            <h6 class="fw-semibold mt-5">Client Information</h6>
-            <hr>
-            <div class="col-md-6"><input type="text" class="form-control" placeholder="POC" name="eng_poc"></div>
-            <div class="col-md-6"><input type="text" class="form-control" placeholder="Location" name="eng_location"></div>
-            <div class="col-md-12"><input type="text" class="form-control" placeholder="Scope" name="eng_scope"></div>
+  </div>
+  <input type="hidden" name="eng_status" class="eng_status_input" value="">
+</div>
 
-            <!-- =====================
-                 Dates & Milestones
-            ===================== -->
-            <h6 class="fw-semibold mt-5">Important Dates & Milestones</h6>
-            <hr>
-            <?php
-            $pairs = [
-              'eng_internal_planning_call'=>'eng_completed_internal_planning',
-              'eng_irl_due'=>'eng_irl_sent',
-              'eng_client_planning_call'=>'eng_completed_client_planning',
-              'eng_fieldwork'=>'eng_fieldwork_complete',
-              'eng_leadsheet_due'=>'eng_leadsheet_complete',
-              'eng_draft_due'=>'eng_draft_sent',
-              'eng_final_due'=>'eng_final_sent'
-            ];
-            foreach($pairs as $date=>$yn):
-            ?>
-              <div class="col-md-6 d-flex gap-2 align-items-center">
-                <input type="date" class="form-control" name="<?php echo $date; ?>" value="">
-                <div class="yn-toggle" onclick="toggleYN(this)">N</div>
-                <input type="hidden" name="<?php echo $yn; ?>" value="N">
-              </div>
-            <?php endforeach; ?>
+<h6 class="fw-semibold mt-5">Team Members</h6>
+<hr>
 
-            <!-- Notes -->
-            <div class="col-12">
-              <textarea class="form-control mt-3" name="eng_notes" rows="4" placeholder="Notes"></textarea>
-            </div>
+<div class="col-md-6"><input class="form-control" name="eng_manager" placeholder="Manager"></div>
+<div class="col-md-6"><input class="form-control" name="eng_senior" placeholder="Senior(s)"></div>
+<div class="col-md-12"><input class="form-control" name="eng_staff" placeholder="Staff"></div>
+<div class="col-md-6"><input class="form-control" name="eng_senior_dol" placeholder="Senior DOL"></div>
+<div class="col-md-6"><input class="form-control" name="eng_staff_dol" placeholder="Staff DOL"></div>
 
-          </div>
-        </div>
+<h6 class="fw-semibold mt-5">Client Information</h6>
+<hr>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Add Engagement</button>
-        </div>
+<div class="col-md-6"><input class="form-control" name="eng_poc" placeholder="POC"></div>
+<div class="col-md-6"><input class="form-control" name="eng_location" placeholder="Location"></div>
+<div class="col-md-12"><input class="form-control" name="eng_scope" placeholder="Scope"></div>
 
-      </form>
-    </div>
+<h6 class="fw-semibold mt-5">Important Dates & Milestones</h6>
+<hr>
+
+<?php foreach ($pairs as $date => $yn): ?>
+<div class="col-md-6">
+  <div class="d-flex gap-2 align-items-center">
+    <input type="date" class="form-control" name="<?php echo $date; ?>">
+    <div class="yn-toggle" onclick="toggleYN(this)">N</div>
+    <input type="hidden" name="<?php echo $yn; ?>" value="N">
   </div>
 </div>
+<?php endforeach; ?>
+
+<div class="col-12">
+  <label class="form-label fw-semibold" style="font-size:12px;">Notes</label>
+  <textarea class="form-control" name="eng_notes" rows="4"></textarea>
+</div>
+
+</div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  <button type="submit" class="btn btn-primary">Add Engagement</button>
+</div>
+
+</form>
+</div>
+</div>
+</div>
+
 
 <!-- Engagement Status JS -->
 <script>
