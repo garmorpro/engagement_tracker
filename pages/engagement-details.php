@@ -1597,7 +1597,7 @@ foreach ($dateFields as $field => $label):
 
 
 <!-- Modal for Adding Engagement -->
-<?php include '../modals/add_engagement_modal.php'; ?>
+<?php include '../includes/modals/add_engagement_modal.php'; ?>
 
 
 <!-- Engagement Status JS -->
