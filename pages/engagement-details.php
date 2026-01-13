@@ -781,39 +781,63 @@ $totalEngagements = count($engagements);
 
       <!-- Seniors Container -->
       <div id="seniorsContainer">
-        <?php for ($i = 1; $i <= 2; $i++): 
+        <?php for ($i = 1; $i <= 2; $i++):
             $senior = $eng["eng_senior{$i}"] ?? '';
             if (!$senior) continue;
         ?>
-          <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
-            <div class="card-body p-3">
-              <div class="d-flex align-items-center mb-3">
-                <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
-              </div>
-              <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-                <?php echo htmlspecialchars($senior); ?>
-              </h6>
+        <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
+          <div class="card-body p-3">
+            <div class="d-flex align-items-center mb-3">
+              <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
             </div>
+            <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+              <?php echo htmlspecialchars($senior); ?>
+            </h6>
+
+            <?php if (!empty($eng["eng_soc1_senior{$i}_dol"])): ?>
+              <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
+                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_senior{$i}_dol"]); ?>
+              </p>
+            <?php endif; ?>
+
+            <?php if (!empty($eng["eng_soc2_senior{$i}_dol"])): ?>
+              <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
+                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_senior{$i}_dol"]); ?>
+              </p>
+            <?php endif; ?>
           </div>
+        </div>
         <?php endfor; ?>
       </div>
 
       <!-- Staff Container -->
       <div id="staffContainer">
-        <?php for ($i = 1; $i <= 2; $i++): 
+        <?php for ($i = 1; $i <= 2; $i++):
             $staff = $eng["eng_staff{$i}"] ?? '';
             if (!$staff) continue;
         ?>
-          <div class="card mb-4 staff-card" data-index="<?php echo $i; ?>" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
-            <div class="card-body p-3">
-              <div class="d-flex align-items-center mb-3">
-                <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
-              </div>
-              <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-                <?php echo htmlspecialchars($staff); ?>
-              </h6>
+        <div class="card mb-4 staff-card" data-index="<?php echo $i; ?>" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
+          <div class="card-body p-3">
+            <div class="d-flex align-items-center mb-3">
+              <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
             </div>
+            <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
+              <?php echo htmlspecialchars($staff); ?>
+            </h6>
+
+            <?php if (!empty($eng["eng_soc1_staff{$i}_dol"])): ?>
+              <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
+                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_staff{$i}_dol"]); ?>
+              </p>
+            <?php endif; ?>
+
+            <?php if (!empty($eng["eng_soc2_staff{$i}_dol"])): ?>
+              <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
+                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_staff{$i}_dol"]); ?>
+              </p>
+            <?php endif; ?>
           </div>
+        </div>
         <?php endfor; ?>
       </div>
 
@@ -826,8 +850,7 @@ $totalEngagements = count($engagements);
 document.addEventListener('DOMContentLoaded', () => {
   const maxSeniors = 2;
   const maxStaff = 2;
-  const engId = "<?php echo $eng['eng_idno']; ?>"; // make sure this outputs a number
-  // console.log('engId =', engId);
+  const engId = "<?php echo $eng['eng_idno']; ?>";
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer = document.getElementById('staffContainer');
@@ -835,60 +858,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const addSeniorBtn = document.getElementById('addSeniorBtn');
   const addStaffBtn = document.getElementById('addStaffBtn');
 
-  // Get the first empty slot (1 or 2)
-  function getNextIndex(container) {
-    for (let i = 1; i <= 2; i++) {
-      if (!container.querySelector(`.card[data-index='${i}']`)) return i;
+  function getNextIndex(container){
+    for(let i=1;i<=2;i++){
+      if(!container.querySelector(`.card[data-index='${i}']`)) return i;
     }
     return null;
   }
 
-  function updateButtons() {
+  function updateButtons(){
     addSeniorBtn.style.display = getNextIndex(seniorsContainer) ? 'inline-block' : 'none';
     addStaffBtn.style.display = getNextIndex(staffContainer) ? 'inline-block' : 'none';
   }
 
-  // AJAX save function
-  function saveToDB(type, name, index) {
-    if (!engId || !type || !name || !index) return; // safety check
-
+  function saveToDB(type, name, index){
+    if(!engId || !type || !name || !index) return;
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', '../includes/save_team_member.php', true); // adjust path
-    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xhr.onload = function() {
-      if(xhr.status === 200){
+    xhr.open('POST','../includes/save_team_member.php',true);
+    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+    xhr.onload = function(){
+      if(xhr.status===200){
         let response = {};
-        try {
-          response = JSON.parse(xhr.responseText);
-        } catch (err) {
-          alert('Invalid response from server');
-          return;
-        }
-
-        if(!response.success){
-          alert('Error saving to DB: ' + (response.error || 'Unknown error'));
-        }
+        try { response = JSON.parse(xhr.responseText); } catch(e){ alert('Invalid server response'); return; }
+        if(!response.success) alert('Error saving to DB: ' + (response.error || 'Unknown error'));
       } else {
         alert('HTTP Error: ' + xhr.status);
       }
     };
-    console.log('Sending to DB:', {
-  engId,
-  type: type.toLowerCase(),
-  name,
-  index
-});
     xhr.send(`eng_id=${engId}&type=${type.toLowerCase()}&name=${encodeURIComponent(name)}&index=${index}`);
   }
 
-  // Create new card with input
-  function createCard(container, type) {
+  function createCard(container,type){
     const index = getNextIndex(container);
-    if (!index) return;
+    if(!index) return;
 
     const card = document.createElement('div');
-    card.classList.add('card', 'mb-4', `${type}-card`);
-    card.setAttribute('data-index', index);
+    card.classList.add('card','mb-4',`${type}-card`);
+    card.setAttribute('data-index',index);
     card.style = type==='senior'
       ? "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);"
       : "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
@@ -896,8 +901,8 @@ document.addEventListener('DOMContentLoaded', () => {
     card.innerHTML = `
       <div class="card-body p-3">
         <div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight: 600 !important; font-size: 12px !important;">
-            ${type.charAt(0).toUpperCase() + type.slice(1)} ${index}
+          <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
+            ${type.charAt(0).toUpperCase()+type.slice(1)} ${index}
           </h6>
         </div>
         <input type="text" class="form-control mb-2 new-name" placeholder="Enter ${type} name">
@@ -906,23 +911,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.appendChild(card);
 
-    // Save on Enter
     const input = card.querySelector('.new-name');
-    input.addEventListener('keypress', function(e) {
-      if(e.key === 'Enter'){
+    input.addEventListener('keypress', function(e){
+      if(e.key==='Enter'){
         const name = this.value.trim();
-        if(!name) return; // ignore empty input
-
-        saveToDB(type, name, index);
-
-        // Replace input with static display
+        if(!name) return;
+        saveToDB(type,name,index);
         this.parentElement.innerHTML = `
           <div class="d-flex align-items-center mb-3">
-            <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight: 600 !important; font-size: 12px !important;">
-              ${type.charAt(0).toUpperCase() + type.slice(1)} ${index}
+            <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
+              ${type.charAt(0).toUpperCase()+type.slice(1)} ${index}
             </h6>
           </div>
-          <h6 class="fw-semibold" style="color: ${type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size: 20px;">
+          <h6 class="fw-semibold" style="color: ${type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size:20px;">
             ${name}
           </h6>
         `;
@@ -933,13 +934,13 @@ document.addEventListener('DOMContentLoaded', () => {
     updateButtons();
   }
 
-  // Button events
-  addSeniorBtn.addEventListener('click', () => createCard(seniorsContainer, 'senior'));
-  addStaffBtn.addEventListener('click', () => createCard(staffContainer, 'staff'));
+  addSeniorBtn.addEventListener('click',()=>createCard(seniorsContainer,'senior'));
+  addStaffBtn.addEventListener('click',()=>createCard(staffContainer,'staff'));
 
   updateButtons();
 });
 </script>
+
 
 
       <!-- end LEFT COLUMN (team) -->
