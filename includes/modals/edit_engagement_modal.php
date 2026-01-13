@@ -259,13 +259,24 @@ function getDOL($eng, $audit, $role, $index) {
   ?>
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;"><?php echo $role . " " . $i; ?></label>
-    <input type="text" class="form-control team-input <?php echo strtolower($role); ?>-input"
-           style="background-color:#f3f3f5;"
+    <input type="text" class="form-control team-input"
            data-role="<?php echo $role; ?>" data-index="<?php echo $i; ?>"
-           name="eng_<?php echo $fieldKey; ?>" value="<?php echo htmlspecialchars($nameValue, ENT_QUOTES); ?>">
+           name="eng_<?php echo $fieldKey; ?>" value="<?php echo htmlspecialchars($nameValue, ENT_QUOTES); ?>"
+           style="background-color:#f3f3f5;">
 
-    <div class="dol-container mt-2" id="dol-<?php echo strtolower($role) . '-' . $i; ?>" style="display:<?php echo empty($nameValue) ? 'none' : 'block'; ?>;">
-      <!-- DOL inputs will be dynamically inserted here -->
+    <div class="dol-container mt-2" id="dol-<?php echo strtolower($role) . '-' . $i; ?>">
+      <?php
+      // Pre-render existing DOL values (if any)
+      foreach ($selectedAudits as $audit):
+          if (!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+          $soc = strtolower(str_replace(' ', '', strstr(strtolower($audit), 'soc')));
+          $dolName = "eng_{$soc}_{$fieldKey}_dol";
+          $val = $eng[$dolName] ?? '';
+      ?>
+        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+               name="<?php echo $dolName; ?>" value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+      <?php endforeach; ?>
     </div>
   </div>
   <?php
@@ -278,38 +289,43 @@ function getDOL($eng, $audit, $role, $index) {
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Get selected audits from hidden input
+  // Helper: get selected audits from hidden input
   const getSelectedAudits = () => {
     const input = document.querySelector('.eng_audit_input');
     if (!input) return [];
     return input.value.split(',').map(a => a.trim()).filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
   };
 
-  // Listen for changes on team inputs
+  // Listen to all team inputs
   document.querySelectorAll('.team-input').forEach(input => {
     const role = input.dataset.role;
     const index = input.dataset.index;
     const container = document.getElementById(`dol-${role.toLowerCase()}-${index}`);
 
+    // Hide container if input is empty on page load
+    if (input.value.trim() === '') {
+      container.style.display = 'none';
+    }
+
     input.addEventListener('input', () => {
       const audits = getSelectedAudits();
 
-      // Show or hide container
+      // Clear container if input empty
       if (input.value.trim() === '') {
         container.innerHTML = '';
         container.style.display = 'none';
         return;
-      } else {
-        container.style.display = 'block';
       }
 
+      container.style.display = 'block';
+
       audits.forEach(audit => {
-        let soc = '';
-        if (audit.includes('SOC 1')) soc = 'soc1';
-        else if (audit.includes('SOC 2')) soc = 'soc2';
+        const soc = audit.includes('SOC 1') ? 'soc1' : (audit.includes('SOC 2') ? 'soc2' : '');
+        if (!soc) return;
+
         const fieldName = `eng_${soc}_${role.toLowerCase()}${index}_dol`;
 
-        // If field already exists, skip
+        // Skip if input already exists
         if (container.querySelector(`[name="${fieldName}"]`)) return;
 
         // Create label
@@ -331,11 +347,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    // Trigger input event on page load if name exists (to populate DOL)
-    if(input.value.trim() !== '') {
+    // Trigger input on page load to populate DOL if name exists
+    if (input.value.trim() !== '') {
       input.dispatchEvent(new Event('input'));
     }
   });
+
 });
 </script>
 
