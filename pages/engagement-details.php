@@ -696,11 +696,16 @@ $totalEngagements = count($engagements);
     <div class="card-body p-4">
 
       <!-- Header -->
-      <div class="d-flex align-items-center mb-4">
-        <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
-          <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex align-items-center">
+          <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
+            <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
+          </div>
+          <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
         </div>
-        <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
+
+        <!-- Add/Edit DOL Buttons -->
+        <div id="dolButtonsContainer" class="d-flex gap-2"></div>
       </div>
 
       <!-- Add Buttons -->
@@ -809,7 +814,7 @@ $totalEngagements = count($engagements);
   </div>
 </div>
 
-<!-- JavaScript for Adding Cards Dynamically and Saving to DB -->
+<!-- JavaScript for Adding Cards, Manager, and DOL -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const maxSeniors = 2;
@@ -820,10 +825,34 @@ document.addEventListener('DOMContentLoaded', () => {
   const staffContainer = document.getElementById('staffContainer');
   const managerContainer = document.getElementById('managerContainer');
   const noTeamMsg = document.getElementById('noTeamMsg');
+  const dolButtonsContainer = document.getElementById('dolButtonsContainer');
 
   const addSeniorBtn = document.getElementById('addSeniorBtn');
   const addStaffBtn = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
+
+  // Determine if DOLs exist
+  const teamMembers = [...seniorsContainer.querySelectorAll('.card'), ...staffContainer.querySelectorAll('.card')];
+  const hasDOL = teamMembers.some(card => card.querySelector('p'));
+  const hasTeam = managerContainer.querySelector('.card') || teamMembers.length > 0;
+
+  if(hasTeam){
+    if(!hasDOL){
+      const addDOLBtn = document.createElement('a');
+      addDOLBtn.href="javascript:void(0);";
+      addDOLBtn.className="text-decoration-none text-warning fw-semibold";
+      addDOLBtn.innerHTML='<i class="bi bi-plus-circle me-1"></i> Add DOL';
+      addDOLBtn.addEventListener('click', ()=> alert('Trigger Add DOL modal or function'));
+      dolButtonsContainer.appendChild(addDOLBtn);
+    } else {
+      const editDOLBtn = document.createElement('a');
+      editDOLBtn.href="javascript:void(0);";
+      editDOLBtn.className="text-decoration-none text-warning fw-semibold";
+      editDOLBtn.innerHTML='<i class="bi bi-pencil-square me-1"></i> Edit DOL';
+      editDOLBtn.addEventListener('click', ()=> alert('Trigger Edit DOL modal or function'));
+      dolButtonsContainer.appendChild(editDOLBtn);
+    }
+  }
 
   function getNextIndex(container){
     for(let i=1;i<=2;i++){
@@ -923,6 +952,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateButtons();
 });
 </script>
+
 
 
 
