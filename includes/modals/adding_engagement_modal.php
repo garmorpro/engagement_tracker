@@ -166,7 +166,7 @@ foreach ($dateFields as $field => $label):
 <div class="row g-3">
 
   <!-- Manager -->
-  <div class="col-md-6">
+  <div class="col-md-12">
     <label class="form-label fw-semibold" style="font-size: 12px;">Manager</label>
     <input type="text" class="form-control" name="eng_manager" value="">
   </div>
