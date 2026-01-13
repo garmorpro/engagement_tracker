@@ -122,13 +122,7 @@ $selectedAudits = array_map('trim', $selectedAudits); // remove extra spaces
     ?>
       <div class="audit-card text-center p-2 flex-fill <?php echo $isSelected ? 'selected' : ''; ?>"
            data-audit="<?php echo $key; ?>"
-           style="
-             cursor:pointer;
-             border:2px solid rgb(229,231,235);
-             background: <?php echo $isSelected ? 'rgb(224, 233, 255)' : '#fff'; ?>;
-             color: <?php echo $isSelected ? '#5d5d5d' : 'rgb(76,85,100)'; ?>;
-             border-radius:1rem;
-           ">
+           style="cursor:pointer; border:2px solid rgb(229,231,235); border-radius:1rem;">
         <i class="bi <?php echo $icon; ?>"></i>
         <div style="font-size:12px;"><?php echo $key; ?></div>
       </div>
@@ -144,6 +138,15 @@ $selectedAudits = array_map('trim', $selectedAudits); // remove extra spaces
 document.addEventListener('DOMContentLoaded', () => {
   const auditCards = document.querySelectorAll('.audit-card');
   const auditInput = document.querySelector('.eng_audit_input');
+
+  // Initialize visual style for pre-selected cards
+  auditCards.forEach(card => {
+    if(card.classList.contains('selected')) {
+      card.style.background = 'rgb(224, 233, 255)';
+      card.style.color = '#5d5d5d';
+      card.style.borderColor = 'rgb(194, 213, 255)';
+    }
+  });
 
   auditCards.forEach(card => {
     card.addEventListener('click', () => {
