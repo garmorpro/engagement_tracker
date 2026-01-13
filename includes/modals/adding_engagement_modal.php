@@ -203,19 +203,28 @@ foreach ($dateFields as $field => $label):
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const auditTypeSelect = document.getElementById('auditType');
+  // Grab all audit cards and hidden input
+  const auditCards = document.querySelectorAll('.audit-card');
+  const auditInput = document.querySelector('.eng_audit_input');
 
-  // Function to update DOL inputs
+  // Function to get currently selected audits (excluding PCI)
+  function getSelectedAudits() {
+    return Array.from(document.querySelectorAll('.audit-card.selected'))
+                .map(c => c.dataset.audit)
+                .filter(a => !a.toLowerCase().includes('pci')); // PCI doesn't need DOL
+  }
+
+  // Function to update DOL inputs for a row
   function updateDOL(row, roleType) {
     const nameInput = row.querySelector(`.${roleType}-name`);
     const dolContainer = row.querySelector('.dol-container');
-    const auditType = auditTypeSelect.value;
+    const selectedAudits = getSelectedAudits();
 
     // Clear previous DOLs
     dolContainer.innerHTML = '';
 
     if (nameInput.value.trim() !== '') {
-      if (auditType === 'SOC1' || auditType === 'BOTH') {
+      if (selectedAudits.some(a => a.toLowerCase().includes('soc 1'))) {
         const soc1Input = document.createElement('input');
         soc1Input.type = 'date';
         soc1Input.name = `${roleType}_dol_soc1[]`;
@@ -224,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dolContainer.appendChild(soc1Input);
       }
 
-      if (auditType === 'SOC2' || auditType === 'BOTH') {
+      if (selectedAudits.some(a => a.toLowerCase().includes('soc 2'))) {
         const soc2Input = document.createElement('input');
         soc2Input.type = 'date';
         soc2Input.name = `${roleType}_dol_soc2[]`;
@@ -235,26 +244,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Attach events to existing senior/staff inputs
+  // Attach input events for seniors and staff
   document.querySelectorAll('.senior-name').forEach(input => {
     input.addEventListener('input', (e) => {
       updateDOL(e.target.closest('.senior-row'), 'senior');
     });
   });
-
   document.querySelectorAll('.staff-name').forEach(input => {
     input.addEventListener('input', (e) => {
       updateDOL(e.target.closest('.staff-row'), 'staff');
     });
   });
 
-  // Update DOLs if audit type changes
-  auditTypeSelect.addEventListener('change', () => {
-    document.querySelectorAll('.senior-row').forEach(row => updateDOL(row, 'senior'));
-    document.querySelectorAll('.staff-row').forEach(row => updateDOL(row, 'staff'));
+  // Update DOLs whenever audit cards are toggled
+  auditCards.forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+
+      // Update hidden input value
+      const selected = Array.from(document.querySelectorAll('.audit-card.selected'))
+                            .map(c => c.dataset.audit);
+      auditInput.value = selected.join(',');
+
+      // Update all DOL inputs for seniors and staff
+      document.querySelectorAll('.senior-row').forEach(row => updateDOL(row, 'senior'));
+      document.querySelectorAll('.staff-row').forEach(row => updateDOL(row, 'staff'));
+    });
   });
 });
 </script>
+
 
 
 <!-- <h6 class="fw-semibold mt-5">Team Members</h6>
