@@ -97,81 +97,11 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
          value="<?php echo htmlspecialchars($eng['eng_name'] ?? '', ENT_QUOTES); ?>">
 </div>
 
-<?php
-// Convert DB string to array
-$selectedAudits = explode(',', $eng['eng_audit_type'] ?? '');
-$selectedAudits = array_map('trim', $selectedAudits);
-?>
-
-<div class="col-12 mb-3 engagement-audit-container">
-  <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
-  <div class="d-flex gap-2 flex-wrap">
-
-    <?php 
-    $auditTypes = [
-        'SOC 1 Type 1' => 'bi-check-circle',
-        'SOC 1 Type 2' => 'bi-check-circle',
-        'SOC 2 Type 1' => 'bi-shield-lock',
-        'SOC 2 Type 2' => 'bi-shield-lock',
-        'PCI'          => 'bi-credit-card'
-    ];
-    ?>
-
-    <?php foreach ($auditTypes as $key => $icon): 
-        $isSelected = in_array($key, $selectedAudits);
-    ?>
-      <div class="audit-card text-center p-2 flex-fill <?php echo $isSelected ? 'selected' : ''; ?>"
-           data-audit="<?php echo $key; ?>"
-           style="cursor:pointer; border:2px solid rgb(229,231,235); border-radius:1rem;">
-        <i class="bi <?php echo $icon; ?>"></i>
-        <div style="font-size:12px;"><?php echo $key; ?></div>
-      </div>
-    <?php endforeach; ?>
-
-  </div>
-
-  <input type="hidden" name="eng_audit_type" class="eng_audit_input" value="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>">
+<div class="col-md-12">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Audit Type</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_audit_type"
+         value="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? '', ENT_QUOTES); ?>">
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Target only the audit container inside THIS modal
-  const container = document.querySelector('#editModal-<?php echo $eng['eng_idno']; ?> .engagement-audit-container');
-  const auditCards = container.querySelectorAll('.audit-card');
-  const auditInput = container.querySelector('.eng_audit_input');
-
-  // Initialize styles for pre-selected cards
-  auditCards.forEach(card => {
-    if(card.classList.contains('selected')){
-      card.style.background = 'rgb(224, 233, 255)';
-      card.style.color = '#5d5d5d';
-      card.style.borderColor = 'rgb(194, 213, 255)';
-    }
-  });
-
-  // Click toggle
-  auditCards.forEach(card => {
-    card.addEventListener('click', () => {
-      card.classList.toggle('selected');
-
-      if(card.classList.contains('selected')){
-        card.style.background = 'rgb(224, 233, 255)';
-        card.style.color = '#5d5d5d';
-        card.style.borderColor = 'rgb(194, 213, 255)';
-      } else {
-        card.style.background = '#fff';
-        card.style.color = 'rgb(76,85,100)';
-        card.style.borderColor = 'rgb(229,231,235)';
-      }
-
-      const selected = Array.from(container.querySelectorAll('.audit-card.selected'))
-                            .map(c => c.dataset.audit);
-      auditInput.value = selected.join(',');
-    });
-  });
-});
-</script>
-
 
 <!-- =====================
      STATUS

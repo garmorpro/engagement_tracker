@@ -160,6 +160,21 @@ foreach ($dateFields as $field => $label):
      TEAM MEMBERS
 ===================== -->
 
+<?php
+// Get selected audits from DB (comma-separated)
+$selectedAudits = explode(',', $eng['eng_audit_type'] ?? []);
+$selectedAudits = array_map('trim', $selectedAudits);
+
+// Helper function to get DOL value from DB
+function getDOL($eng, $audit, $role, $index) {
+    $soc = '';
+    if(strpos($audit, 'SOC 1') !== false) $soc = 'soc1';
+    elseif(strpos($audit, 'SOC 2') !== false) $soc = 'soc2';
+    $field = "eng_{$soc}_" . strtolower($role) . $index . "_dol";
+    return $eng[$field] ?? '';
+}
+?>
+
 <h6 class="fw-semibold mt-5">Team Members</h6>
 <hr>
 
@@ -168,91 +183,84 @@ foreach ($dateFields as $field => $label):
   <!-- Manager -->
   <div class="col-md-12">
     <label class="form-label fw-semibold" style="font-size: 12px;">Manager</label>
-    <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_manager" value="">
+    <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_manager"
+           value="<?php echo htmlspecialchars($eng['eng_manager'] ?? '', ENT_QUOTES); ?>">
   </div>
 
   <!-- Senior 1 -->
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;">Senior 1</label>
-    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="1" name="eng_senior1" value="">
-    <div class="dol-container mt-2" id="dol-senior-1"></div>
+    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="1" name="eng_senior1"
+           value="<?php echo htmlspecialchars($eng['eng_senior1'] ?? '', ENT_QUOTES); ?>">
+    <div class="dol-container mt-2" id="dol-senior-1">
+      <?php foreach($selectedAudits as $audit):
+        if(!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+        $val = getDOL($eng, $audit, 'Senior', 1);
+      ?>
+        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+               name="eng_<?php echo strtolower(str_replace(' ', '', strstr(strtolower($audit),'soc'))); ?>_senior1_dol"
+               value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+      <?php endforeach; ?>
+    </div>
   </div>
 
   <!-- Senior 2 -->
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;">Senior 2</label>
-    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="2" name="eng_senior2" value="">
-    <div class="dol-container mt-2" id="dol-senior-2"></div>
+    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="2" name="eng_senior2"
+           value="<?php echo htmlspecialchars($eng['eng_senior2'] ?? '', ENT_QUOTES); ?>">
+    <div class="dol-container mt-2" id="dol-senior-2">
+      <?php foreach($selectedAudits as $audit):
+        if(!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+        $val = getDOL($eng, $audit, 'Senior', 2);
+      ?>
+        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+               name="eng_<?php echo strtolower(str_replace(' ', '', strstr(strtolower($audit),'soc'))); ?>_senior2_dol"
+               value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+      <?php endforeach; ?>
+    </div>
   </div>
 
   <!-- Staff 1 -->
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;">Staff 1</label>
-    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="1" name="eng_staff1" value="">
-    <div class="dol-container mt-2" id="dol-staff-1"></div>
+    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="1" name="eng_staff1"
+           value="<?php echo htmlspecialchars($eng['eng_staff1'] ?? '', ENT_QUOTES); ?>">
+    <div class="dol-container mt-2" id="dol-staff-1">
+      <?php foreach($selectedAudits as $audit):
+        if(!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+        $val = getDOL($eng, $audit, 'Staff', 1);
+      ?>
+        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+               name="eng_<?php echo strtolower(str_replace(' ', '', strstr(strtolower($audit),'soc'))); ?>_staff1_dol"
+               value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+      <?php endforeach; ?>
+    </div>
   </div>
 
   <!-- Staff 2 -->
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;">Staff 2</label>
-    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="2" name="eng_staff2" value="">
-    <div class="dol-container mt-2" id="dol-staff-2"></div>
+    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="2" name="eng_staff2"
+           value="<?php echo htmlspecialchars($eng['eng_staff2'] ?? '', ENT_QUOTES); ?>">
+    <div class="dol-container mt-2" id="dol-staff-2">
+      <?php foreach($selectedAudits as $audit):
+        if(!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+        $val = getDOL($eng, $audit, 'Staff', 2);
+      ?>
+        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+               name="eng_<?php echo strtolower(str_replace(' ', '', strstr(strtolower($audit),'soc'))); ?>_staff2_dol"
+               value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+      <?php endforeach; ?>
+    </div>
   </div>
 
 </div>
 
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-  // Get selected audit types
-  const getSelectedAudits = () => {
-    const audits = document.querySelector('.eng_audit_input').value.split(',');
-    // Only SOC 1 / SOC 2
-    return audits.filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
-  };
-
-  // When typing a team member, show DOLs
-  const teamInputs = document.querySelectorAll('.team-input');
-
-  teamInputs.forEach(input => {
-    input.addEventListener('input', () => {
-      const containerId = `dol-${input.dataset.role.toLowerCase()}-${input.dataset.index}`;
-      const container = document.getElementById(containerId);
-      container.innerHTML = ''; // Clear first
-
-      if(input.value.trim() === '') return; // hide if empty
-
-      const audits = getSelectedAudits();
-      if(audits.length === 0) return; // no audit selected, no DOLs
-
-      audits.forEach(audit => {
-        const label = document.createElement('label');
-        label.classList.add('form-label', 'fw-semibold', 'mb-1');
-        label.style.fontSize = '12px';
-        label.textContent = `${audit} DOL`;
-
-        const inputEl = document.createElement('input');
-        inputEl.type = 'text';
-        // Convert audit string into backend-friendly SOC name
-        let socName = audit.toLowerCase();
-        // Only keep 'soc1' or 'soc2' from audit string
-        if (socName.includes('soc 1')) socName = 'soc1';
-        else if (socName.includes('soc 2')) socName = 'soc2';
-        // Build input name
-        inputEl.name = `eng_${socName}_${input.dataset.role.toLowerCase()}${input.dataset.index}_dol`;
-        inputEl.classList.add('form-control', 'mb-2');
-        inputEl.style.fontSize = '14px';
-        inputEl.style.backgroundColor = 'rgb(243,243,245)';
-
-        container.appendChild(label);
-        container.appendChild(inputEl);
-      });
-    });
-  });
-
-});
-</script>
 
 
 
