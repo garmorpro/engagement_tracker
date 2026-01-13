@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const inputEl = document.createElement('input');
         inputEl.type = 'text';
-        inputEl.name = `dol[${audit}][${input.dataset.role}][${input.dataset.index}]`;
+        inputEl.name = `dol[${input.dataset.index}]`;
         inputEl.classList.add('form-control', 'mb-2');
         inputEl.style.fontSize = '14px';
         inputEl.style.backgroundColor = 'rgb(243,243,245)';
