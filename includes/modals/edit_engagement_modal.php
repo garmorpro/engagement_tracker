@@ -97,6 +97,12 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
          value="<?php echo htmlspecialchars($eng['eng_name'] ?? '', ENT_QUOTES); ?>">
 </div>
 
+<?php
+// Turn DB string into array
+$selectedAudits = explode(',', $eng['eng_audit_type'] ?? '');
+$selectedAudits = array_map('trim', $selectedAudits); // remove extra spaces
+?>
+
 <div class="col-12 mb-3 engagement-audit-container">
   <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
   <div class="d-flex gap-2 flex-wrap">
@@ -109,18 +115,16 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
         'SOC 2 Type 2' => 'bi-shield-lock',
         'PCI'  => 'bi-credit-card'
       ];
-
-      // Get selected audits from DB
-      $selectedAudits = !empty($eng['eng_audit_type']) ? explode(',', $eng['eng_audit_type']) : [];
     ?>
 
-    <?php foreach ($auditTypes as $key => $icon): ?>
-      <?php $isSelected = in_array($key, $selectedAudits); ?>
+    <?php foreach ($auditTypes as $key => $icon): 
+        $isSelected = in_array($key, $selectedAudits);
+    ?>
       <div class="audit-card text-center p-2 flex-fill <?php echo $isSelected ? 'selected' : ''; ?>"
            data-audit="<?php echo $key; ?>"
            style="
              cursor:pointer;
-             border:2px solid <?php echo $isSelected ? 'rgb(194, 213, 255)' : 'rgb(229,231,235)'; ?>;
+             border:2px solid rgb(229,231,235);
              background: <?php echo $isSelected ? 'rgb(224, 233, 255)' : '#fff'; ?>;
              color: <?php echo $isSelected ? '#5d5d5d' : 'rgb(76,85,100)'; ?>;
              border-radius:1rem;
@@ -133,7 +137,7 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
   </div>
 
   <!-- Hidden input to store selected audit types -->
-  <input type="hidden" name="eng_audit_type" class="eng_audit_input" value="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? '', ENT_QUOTES); ?>">
+  <input type="hidden" name="eng_audit_type" class="eng_audit_input" value="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>">
 </div>
 
 <script>
