@@ -223,41 +223,40 @@ foreach ($dateFields as $field => $label):
      IMPORTANT DATES & MILESTONES
 ===================== -->
 
-<h6 class="fw-semibold mt-5">Important Dates & Milestones</h6>
-<hr>
+<!-- <h6 class="fw-semibold mt-5">Important Dates & Milestones</h6>
+<hr> -->
 
 <?php
-$pairs = [
-  'eng_internal_planning_call' => 'eng_completed_internal_planning',
-  'eng_irl_due'                => 'eng_irl_sent',
-  'eng_client_planning_call'   => 'eng_completed_client_planning',
-  'eng_fieldwork'              => 'eng_fieldwork_complete',
-  'eng_leadsheet_due'          => 'eng_leadsheet_complete',
-  'eng_draft_due'              => 'eng_draft_sent',
-  'eng_final_due'              => 'eng_final_sent'
-];
-foreach ($pairs as $date => $yn):
-$checked = (($eng[$yn] ?? 'N') === 'Y');
+// $pairs = [
+//   'eng_internal_planning_call' => 'eng_completed_internal_planning',
+//   'eng_irl_due'                => 'eng_irl_sent',
+//   'eng_client_planning_call'   => 'eng_completed_client_planning',
+//   'eng_fieldwork'              => 'eng_fieldwork_complete',
+//   'eng_leadsheet_due'          => 'eng_leadsheet_complete',
+//   'eng_draft_due'              => 'eng_draft_sent',
+//   'eng_final_due'              => 'eng_final_sent'
+// ];
+// foreach ($pairs as $date => $yn):
+// $checked = (($eng[$yn] ?? 'N') === 'Y');
 ?>
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
+<!-- <div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php //echo ucwords(str_replace('_',' ',$date)); ?></label>
   <div class="d-flex align-items-center gap-2">
 
     <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
-           name="<?php echo $date; ?>"
+           name="<?php //echo $date; ?>"
            value="">
 
-    <div class="yn-toggle <?php echo $checked ? 'active' : ''; ?>"
+    <div class="yn-toggle <?php //echo $checked ? 'active' : ''; ?>"
          onclick="toggleYN(this)">
-      <?php echo $checked ? '✓ Y' : 'N'; ?>
+      <?php //echo $checked ? '✓ Y' : 'N'; ?>
     </div>
 
-    <!-- ALWAYS POST -->
-    <input type="hidden" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+    <input type="hidden" name="<?php //echo $yn; ?>" value="<?php //echo $checked ? 'Y' : 'N'; ?>">
 
   </div>
-</div>
-<?php endforeach; ?>
+</div> -->
+<?php //endforeach; ?>
 
 <!-- =====================
      DATE ONLY
@@ -285,8 +284,8 @@ foreach ($dateFields as $field => $label):
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Section 3 Requested</label>
   <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_section_3_requested">
-    <option value="Y">Yes</option>
     <option value="N">No</option>
+    <option value="Y">Yes</option>
   </select>
 </div>
 
