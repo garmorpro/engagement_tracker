@@ -323,6 +323,62 @@ function getDOL($eng, $audit, $role, $index) {
 
 </div>
 
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+  const getSelectedAudits = () => {
+    const audits = document.querySelector('.eng_audit_input').value.split(',').map(a => a.trim());
+    return audits.filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
+  };
+
+  const teamInputs = document.querySelectorAll('.team-input');
+
+  teamInputs.forEach(input => {
+    input.addEventListener('input', () => {
+      const containerId = `dol-${input.dataset.role.toLowerCase()}-${input.dataset.index}`;
+      const container = document.getElementById(containerId);
+
+      if(input.value.trim() === '') return;
+
+      const audits = getSelectedAudits();
+      if(audits.length === 0) return;
+
+      // Build a map of existing DOL inputs so we don't duplicate
+      const existing = {};
+      container.querySelectorAll('input').forEach(inp => {
+        existing[inp.name] = inp.value;
+      });
+
+      audits.forEach(audit => {
+        let socName = audit.toLowerCase();
+        if (socName.includes('soc 1')) socName = 'soc1';
+        else if (socName.includes('soc 2')) socName = 'soc2';
+        const dolName = `eng_${socName}_${input.dataset.role.toLowerCase()}${input.dataset.index}_dol`;
+
+        if(!existing[dolName]) {
+          const label = document.createElement('label');
+          label.classList.add('form-label', 'fw-semibold', 'mb-1');
+          label.style.fontSize = '12px';
+          label.textContent = `${audit} DOL`;
+
+          const inputEl = document.createElement('input');
+          inputEl.type = 'text';
+          inputEl.name = dolName;
+          inputEl.classList.add('form-control', 'mb-2');
+          inputEl.style.fontSize = '14px';
+          inputEl.style.backgroundColor = 'rgb(243,243,245)';
+
+          container.appendChild(label);
+          container.appendChild(inputEl);
+        }
+      });
+    });
+  });
+
+});
+
+</script>
+
 
 <!-- <h6 class="fw-semibold mt-5">Team Members</h6>
 <hr>
