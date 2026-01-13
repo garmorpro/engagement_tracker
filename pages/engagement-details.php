@@ -64,23 +64,42 @@ if (isset($_GET['eng_id'])) {
     $eng = $result->fetch_assoc();
     $stmt->close();
 
-    /* =========================
-       2️⃣ Team members
-    ========================= */
-    $stmt = $conn->prepare("
-        SELECT *
-        FROM engagement_team
-        WHERE eng_id = ?
-        ORDER BY FIELD(role, 'Manager', 'Senior', 'Staff'), emp_name
-    ");
-    $stmt->bind_param("i", $eng_id);
-    $stmt->execute();
-    $team_result = $stmt->get_result();
-    $team = ['Manager' => [], 'Senior' => [], 'Staff' => []];
-    while ($row = $team_result->fetch_assoc()) {
-        $team[$row['role']][] = $row;
+/* =========================
+   2️⃣ Team members
+========================= */
+$stmt = $conn->prepare("
+    SELECT *
+    FROM engagement_team
+    WHERE eng_id = ?
+    ORDER BY FIELD(role, 'Manager', 'Senior', 'Staff'), emp_name
+");
+$stmt->bind_param("i", $eng_id);
+$stmt->execute();
+$team_result = $stmt->get_result();
+
+// Organize team by role, then by person, then collect DOLs per audit type
+$team = ['Manager' => [], 'Senior' => [], 'Staff' => []];
+
+while ($row = $team_result->fetch_assoc()) {
+    $role = $row['role'];
+    $name = $row['emp_name'];
+    $audit_type = $row['audit_type']; // SOC 1 or SOC 2
+    $dol = $row['emp_dol'];
+
+    // Check if this person is already in the team array
+    if (!isset($team[$role][$name])) {
+        $team[$role][$name] = [
+            'emp_name' => $name,
+            'audit_dols' => [] // will hold SOC 1/SOC 2 DOLs
+        ];
     }
-    $stmt->close();
+
+    // Add the DOLs under the correct audit type
+    $team[$role][$name]['audit_dols'][$audit_type] = $dol;
+}
+
+$stmt->close();
+
 
     /* =========================
        3️⃣ Milestones
