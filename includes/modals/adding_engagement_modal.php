@@ -97,11 +97,41 @@ foreach ($dateFields as $field => $label):
 <h6 class="fw-semibold mt-5">Team Members</h6>
 <hr>
 
-<div class="col-md-6"><input class="form-control" name="eng_manager" placeholder="Manager"></div>
+<!-- <div class="col-md-6"><input class="form-control" name="eng_manager" placeholder="Manager"></div>
 <div class="col-md-6"><input class="form-control" name="eng_senior" placeholder="Senior(s)"></div>
 <div class="col-md-12"><input class="form-control" name="eng_staff" placeholder="Staff"></div>
 <div class="col-md-6"><input class="form-control" name="eng_senior_dol" placeholder="Senior DOL"></div>
-<div class="col-md-6"><input class="form-control" name="eng_staff_dol" placeholder="Staff DOL"></div>
+<div class="col-md-6"><input class="form-control" name="eng_staff_dol" placeholder="Staff DOL"></div> -->
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Manager</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_manager"
+         value="">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Senior(s)</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_senior"
+         value="">
+</div>
+
+<div class="col-md-12">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff"
+         value="">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Senior DOL</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_senior_dol"
+         value="">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff DOL</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff_dol"
+         value="">
+</div>
 
 <!-- =====================
      CLIENT INFO
