@@ -44,11 +44,11 @@
      STATUS
 ===================== -->
 
-<div class="col-12 mb-3 engagement-status-container">
+<!-- <div class="col-12 mb-3 engagement-status-container">
   <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
   <div class="d-flex gap-2 flex-wrap">
 
-<?php foreach ($statuses as $key => $s): ?>
+<?php //foreach ($statuses as $key => $s): ?>
   <div class="status-card text-center p-2 flex-fill"
        data-status="<?php echo $key; ?>"
        style="
@@ -58,14 +58,78 @@
          color:rgb(76,85,100);
          border-radius:1rem;
        ">
-    <i class="bi <?php echo $s['icon']; ?>"></i>
-    <div style="font-size:12px;"><?php echo $s['label']; ?></div>
+    <i class="bi <?php //echo $s['icon']; ?>"></i>
+    <div style="font-size:12px;"><?php //echo $s['label']; ?></div>
   </div>
-<?php endforeach; ?>
+<?php //endforeach; ?>
 
   </div>
   <input type="hidden" name="eng_status" class="eng_status_input" value="">
+</div> -->
+
+<div class="col-12 mb-3 engagement-audit-container">
+  <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
+  <div class="d-flex gap-2 flex-wrap">
+    
+    <?php 
+      $auditTypes = [
+        'SOC1' => 'bi-check-circle',
+        'SOC2' => 'bi-shield-lock',
+        'PCI'  => 'bi-credit-card'
+      ];
+    ?>
+
+    <?php foreach ($auditTypes as $key => $icon): ?>
+      <div class="audit-card text-center p-2 flex-fill"
+           data-audit="<?php echo $key; ?>"
+           style="
+             cursor:pointer;
+             border:2px solid rgb(229,231,235);
+             background:#fff;
+             color:rgb(76,85,100);
+             border-radius:1rem;
+           ">
+        <i class="bi <?php echo $icon; ?>"></i>
+        <div style="font-size:12px;"><?php echo $key; ?></div>
+      </div>
+    <?php endforeach; ?>
+
+  </div>
+
+  <!-- Hidden input to store selected audit types -->
+  <input type="hidden" name="eng_audit_type" class="eng_audit_input" value="">
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const auditCards = document.querySelectorAll('.audit-card');
+  const auditInput = document.querySelector('.eng_audit_input');
+
+  auditCards.forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+
+      // Style toggle
+      if(card.classList.contains('selected')) {
+        card.style.background = 'rgb(21,87,242)';
+        card.style.color = '#fff';
+        card.style.borderColor = 'rgb(21,87,242)';
+      } else {
+        card.style.background = '#fff';
+        card.style.color = 'rgb(76,85,100)';
+        card.style.borderColor = 'rgb(229,231,235)';
+      }
+
+      // Update hidden input with selected values
+      const selected = Array.from(document.querySelectorAll('.audit-card.selected'))
+                            .map(c => c.dataset.audit);
+      auditInput.value = selected.join(',');
+    });
+  });
+});
+</script>
+
 
 <div class="col-md-12">
   <label class="form-label fw-semibold" style="font-size:12px;">TSC</label>
