@@ -297,83 +297,59 @@ foreach ($members as [$role, $index]):
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+  const renderDOLs = (input, force = false) => {
+  const role = input.dataset.role.toLowerCase();
+  const index = input.dataset.index;
+  const container = document.getElementById(`dol-${role}-${index}`);
+  if (!container) return;
 
-  const getSelectedAudits = () => {
-    const input = document.querySelector('.eng_audit_input');
-    if (!input || !input.value) return [];
-    return input.value
-      .split(',')
-      .map(a => a.trim())
-      .filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
-  };
+  // If container already has inputs and we're just typing, do NOTHING
+  if (!force && container.querySelector('input')) {
+    container.style.display = input.value.trim() ? 'block' : 'none';
+    return;
+  }
 
-  const renderDOLs = (input) => {
-    const role = input.dataset.role.toLowerCase();
-    const index = input.dataset.index;
-    const container = document.getElementById(`dol-${role}-${index}`);
-    if (!container) return;
-
-    const existingValues = {};
-    container.querySelectorAll('input').forEach(i => {
-      existingValues[i.name] = i.value;
-    });
-
-    container.innerHTML = '';
-
-    if (input.value.trim() === '') {
-      container.style.display = 'none';
-      return;
-    }
-
-    const audits = getSelectedAudits();
-    if (!audits.length) {
-      container.style.display = 'none';
-      return;
-    }
-
-    audits.forEach(audit => {
-      let soc = audit.includes('SOC 1') ? 'soc1' : 'soc2';
-      const name = `eng_${soc}_${role}${index}_dol`;
-
-      const label = document.createElement('label');
-      label.className = 'form-label fw-semibold mb-1';
-      label.style.fontSize = '12px';
-      label.textContent = `${audit} DOL`;
-
-      const inputEl = document.createElement('input');
-      inputEl.type = 'text';
-      inputEl.name = name;
-      inputEl.value = existingValues[name] ?? '';
-      inputEl.className = 'form-control mb-2';
-      inputEl.style.fontSize = '14px';
-      inputEl.style.backgroundColor = 'rgb(243,243,245)';
-
-      container.appendChild(label);
-      container.appendChild(inputEl);
-    });
-
-    container.style.display = 'block';
-  };
-
-  // Name typing
-  document.querySelectorAll('.team-input').forEach(input => {
-    input.addEventListener('input', () => renderDOLs(input));
-    if (input.value.trim() !== '') renderDOLs(input);
+  // Now we are allowed to rebuild
+  const existingValues = {};
+  container.querySelectorAll('input').forEach(i => {
+    existingValues[i.name] = i.value;
   });
 
-  // Audit selection changes
-  document.querySelectorAll('.audit-card').forEach(card => {
-    card.addEventListener('click', () => {
-      document.querySelectorAll('.team-input').forEach(input => {
-        renderDOLs(input);
-      });
-    });
+  container.innerHTML = '';
+
+  if (input.value.trim() === '') {
+    container.style.display = 'none';
+    return;
+  }
+
+  const audits = getSelectedAudits();
+  if (!audits.length) return;
+
+  audits.forEach(audit => {
+    const soc = audit.includes('SOC 1') ? 'soc1' : 'soc2';
+    const name = `eng_${soc}_${role}${index}_dol`;
+
+    const label = document.createElement('label');
+    label.className = 'form-label fw-semibold mb-1';
+    label.style.fontSize = '12px';
+    label.textContent = `${audit} DOL`;
+
+    const inputEl = document.createElement('input');
+    inputEl.type = 'text';
+    inputEl.name = name;
+    inputEl.value = existingValues[name] ?? '';
+    inputEl.className = 'form-control mb-2';
+    inputEl.style.fontSize = '14px';
+    inputEl.style.backgroundColor = 'rgb(243,243,245)';
+
+    container.appendChild(label);
+    container.appendChild(inputEl);
   });
 
-});
+  container.style.display = 'block';
+};
+
 </script>
-
 
 
 <!-- <h6 class="fw-semibold mt-5">Team Members</h6>
