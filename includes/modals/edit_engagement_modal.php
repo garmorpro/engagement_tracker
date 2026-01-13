@@ -300,7 +300,26 @@ foreach ($members as [$role, $index]):
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ===============================
-     GET SELECTED AUDITS
+     SHOW / HIDE ONLY — NO REBUILD
+  =============================== */
+  document.querySelectorAll('.team-input').forEach(input => {
+    const role = input.dataset.role.toLowerCase();
+    const index = input.dataset.index;
+    const container = document.getElementById(`dol-${role}-${index}`);
+
+    if (!container) return;
+
+    // Initial state (edit modal)
+    container.style.display = input.value.trim() ? 'block' : 'none';
+
+    // Typing ONLY toggles visibility
+    input.addEventListener('input', () => {
+      container.style.display = input.value.trim() ? 'block' : 'none';
+    });
+  });
+
+  /* ===============================
+     AUDIT CHANGE = FULL REBUILD
   =============================== */
   const getSelectedAudits = () => {
     const input = document.querySelector('.eng_audit_input');
@@ -311,83 +330,49 @@ document.addEventListener('DOMContentLoaded', () => {
       .filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
   };
 
-  /* ===============================
-     RENDER DOLS (SAFE)
-  =============================== */
-  const renderDOLs = (input, force = false) => {
-    const role = input.dataset.role.toLowerCase();
-    const index = input.dataset.index;
-    const container = document.getElementById(`dol-${role}-${index}`);
-    if (!container) return;
-
-    // If typing and DOLs already exist → DO NOT TOUCH THEM
-    if (!force && container.querySelector('input')) {
-      container.style.display = input.value.trim() ? 'block' : 'none';
-      return;
-    }
-
-    // Cache existing values (edit modal safety)
-    const existingValues = {};
-    container.querySelectorAll('input').forEach(i => {
-      existingValues[i.name] = i.value;
-    });
-
-    container.innerHTML = '';
-
-    if (input.value.trim() === '') {
-      container.style.display = 'none';
-      return;
-    }
-
-    const audits = getSelectedAudits();
-    if (!audits.length) {
-      container.style.display = 'none';
-      return;
-    }
-
-    audits.forEach(audit => {
-      const soc = audit.includes('SOC 1') ? 'soc1' : 'soc2';
-      const fieldName = `eng_${soc}_${role}${index}_dol`;
-
-      const label = document.createElement('label');
-      label.className = 'form-label fw-semibold mb-1';
-      label.style.fontSize = '12px';
-      label.textContent = `${audit} DOL`;
-
-      const inputEl = document.createElement('input');
-      inputEl.type = 'text';
-      inputEl.name = fieldName;
-      inputEl.value = existingValues[fieldName] ?? '';
-      inputEl.className = 'form-control mb-2';
-      inputEl.style.fontSize = '14px';
-      inputEl.style.backgroundColor = 'rgb(243,243,245)';
-
-      container.appendChild(label);
-      container.appendChild(inputEl);
-    });
-
-    container.style.display = 'block';
-  };
-
-  /* ===============================
-     TEAM MEMBER TYPING
-  =============================== */
-  document.querySelectorAll('.team-input').forEach(input => {
-    input.addEventListener('input', () => renderDOLs(input));
-
-    // Initial render for edit modal
-    if (input.value.trim() !== '') {
-      renderDOLs(input);
-    }
-  });
-
-  /* ===============================
-     AUDIT TOGGLE HANDLING
-  =============================== */
   document.querySelectorAll('.audit-card').forEach(card => {
     card.addEventListener('click', () => {
+
+      const audits = getSelectedAudits();
+
       document.querySelectorAll('.team-input').forEach(input => {
-        renderDOLs(input, true); // FORCE rebuild on audit change
+        if (!input.value.trim()) return;
+
+        const role = input.dataset.role.toLowerCase();
+        const index = input.dataset.index;
+        const container = document.getElementById(`dol-${role}-${index}`);
+        if (!container) return;
+
+        // Preserve existing values
+        const existing = {};
+        container.querySelectorAll('input').forEach(i => {
+          existing[i.name] = i.value;
+        });
+
+        container.innerHTML = '';
+
+        audits.forEach(audit => {
+          const soc = audit.includes('SOC 1') ? 'soc1' : 'soc2';
+          const name = `eng_${soc}_${role}${index}_dol`;
+
+          const label = document.createElement('label');
+          label.className = 'form-label fw-semibold mb-1';
+          label.style.fontSize = '12px';
+          label.textContent = `${audit} DOL`;
+
+          const inputEl = document.createElement('input');
+          inputEl.type = 'text';
+          inputEl.name = name;
+          inputEl.value = existing[name] ?? '';
+          inputEl.className = 'form-control mb-2';
+          inputEl.style.fontSize = '14px';
+          inputEl.style.backgroundColor = 'rgb(243,243,245)';
+
+          container.appendChild(label);
+          container.appendChild(inputEl);
+        });
+
+        container.style.display = 'block';
       });
     });
   });
