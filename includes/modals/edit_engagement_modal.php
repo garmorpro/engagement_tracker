@@ -250,7 +250,6 @@ function getDOL($eng, $audit, $role, $index) {
   </div>
 
   <?php
-  // Roles and count
   $roles = ['Senior' => 2, 'Staff' => 2];
 
   foreach ($roles as $role => $count):
@@ -265,19 +264,8 @@ function getDOL($eng, $audit, $role, $index) {
            data-role="<?php echo $role; ?>" data-index="<?php echo $i; ?>"
            name="eng_<?php echo $fieldKey; ?>" value="<?php echo htmlspecialchars($nameValue, ENT_QUOTES); ?>">
 
-    <!-- DOL container always has all inputs pre-rendered -->
-    <div class="dol-container mt-2" id="dol-<?php echo strtolower($role) . '-' . $i; ?>"
-         style="<?php echo empty($nameValue) ? 'display:none;' : 'display:block;'; ?>">
-      <?php foreach ($selectedAudits as $audit):
-        if (!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
-        $val = getDOL($eng, $audit, $role, $i);
-        $soc = strtolower(str_replace(' ', '', strstr(strtolower($audit), 'soc')));
-      ?>
-        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
-        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
-               name="eng_<?php echo $soc . '_' . $fieldKey; ?>_dol"
-               value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
-      <?php endforeach; ?>
+    <div class="dol-container mt-2" id="dol-<?php echo strtolower($role) . '-' . $i; ?>" style="display:<?php echo empty($nameValue) ? 'none' : 'block'; ?>;">
+      <!-- DOL inputs will be dynamically inserted here -->
     </div>
   </div>
   <?php
@@ -289,15 +277,64 @@ function getDOL($eng, $audit, $role, $index) {
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Just toggle visibility; never add/remove inputs
+
+  // Get selected audits from hidden input
+  const getSelectedAudits = () => {
+    const input = document.querySelector('.eng_audit_input');
+    if (!input) return [];
+    return input.value.split(',').map(a => a.trim()).filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
+  };
+
+  // Listen for changes on team inputs
   document.querySelectorAll('.team-input').forEach(input => {
-    const containerId = `dol-${input.dataset.role.toLowerCase()}-${input.dataset.index}`;
-    const container = document.getElementById(containerId);
-    if (!container) return;
+    const role = input.dataset.role;
+    const index = input.dataset.index;
+    const container = document.getElementById(`dol-${role.toLowerCase()}-${index}`);
 
     input.addEventListener('input', () => {
-      container.style.display = input.value.trim() === '' ? 'none' : 'block';
+      const audits = getSelectedAudits();
+
+      // Show or hide container
+      if (input.value.trim() === '') {
+        container.innerHTML = '';
+        container.style.display = 'none';
+        return;
+      } else {
+        container.style.display = 'block';
+      }
+
+      audits.forEach(audit => {
+        let soc = '';
+        if (audit.includes('SOC 1')) soc = 'soc1';
+        else if (audit.includes('SOC 2')) soc = 'soc2';
+        const fieldName = `eng_${soc}_${role.toLowerCase()}${index}_dol`;
+
+        // If field already exists, skip
+        if (container.querySelector(`[name="${fieldName}"]`)) return;
+
+        // Create label
+        const label = document.createElement('label');
+        label.classList.add('form-label','fw-semibold','mb-1');
+        label.style.fontSize = '12px';
+        label.textContent = `${audit} DOL`;
+
+        // Create input
+        const dolInput = document.createElement('input');
+        dolInput.type = 'text';
+        dolInput.name = fieldName;
+        dolInput.classList.add('form-control','mb-2');
+        dolInput.style.fontSize = '14px';
+        dolInput.style.backgroundColor = 'rgb(243,243,245)';
+
+        container.appendChild(label);
+        container.appendChild(dolInput);
+      });
     });
+
+    // Trigger input event on page load if name exists (to populate DOL)
+    if(input.value.trim() !== '') {
+      input.dispatchEvent(new Event('input'));
+    }
   });
 });
 </script>
