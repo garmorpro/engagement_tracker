@@ -23,27 +23,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     }
 }
 
-// Check if eng_idno is in the URL
-if (isset($_GET['eng_id'])) {
-    $eng_id = $_GET['eng_id'];
+// // Check if eng_idno is in the URL
+// if (isset($_GET['eng_id'])) {
+//     $eng_id = $_GET['eng_id'];
 
-    $stmt = $conn->prepare("SELECT * FROM engagements WHERE eng_idno = ?");
-    $stmt->bind_param("s", $eng_id);
+//     $stmt = $conn->prepare("SELECT * FROM engagements WHERE eng_idno = ?");
+//     $stmt->bind_param("s", $eng_id);
+//     $stmt->execute();
+//     $result = $stmt->get_result();
+
+//     if ($result->num_rows > 0) {
+//         $eng = $result->fetch_assoc();
+//     } else {
+//         echo "<div class='alert alert-warning'>Engagement not found.</div>";
+//         exit;
+//     }
+
+//     $stmt->close();
+// } else {
+//     echo "<div class='alert alert-danger'>No engagement specified.</div>";
+//     exit;
+// }
+
+
+if (isset($_GET['eng_id'])) {
+
+    $eng_id = (int) $_GET['eng_id'];
+
+    /* =========================
+       1️⃣ Engagement info
+    ========================= */
+    $stmt = $conn->prepare("SELECT * FROM engagements WHERE eng_id = ?");
+    $stmt->bind_param("i", $eng_id);
     $stmt->execute();
     $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $eng = $result->fetch_assoc();
-    } else {
+    if ($result->num_rows === 0) {
         echo "<div class='alert alert-warning'>Engagement not found.</div>";
         exit;
     }
-
+    $eng = $result->fetch_assoc();
     $stmt->close();
+
+    /* =========================
+       2️⃣ Team members
+    ========================= */
+    $stmt = $conn->prepare("
+        SELECT *
+        FROM engagement_team
+        WHERE eng_id = ?
+        ORDER BY FIELD(role, 'Manager', 'Senior', 'Staff'), emp_name
+    ");
+    $stmt->bind_param("i", $eng_id);
+    $stmt->execute();
+    $team_result = $stmt->get_result();
+    $team = ['Manager' => [], 'Senior' => [], 'Staff' => []];
+    while ($row = $team_result->fetch_assoc()) {
+        $team[$row['role']][] = $row;
+    }
+    $stmt->close();
+
+    /* =========================
+       3️⃣ Milestones
+    ========================= */
+    $stmt = $conn->prepare("
+        SELECT *
+        FROM engagement_milestones
+        WHERE eng_id = ?
+        ORDER BY due_date ASC
+    ");
+    $stmt->bind_param("i", $eng_id);
+    $stmt->execute();
+    $ms_result = $stmt->get_result();
+    $milestones = [];
+    while ($row = $ms_result->fetch_assoc()) {
+        $milestones[] = $row;
+    }
+    $stmt->close();
+
 } else {
     echo "<div class='alert alert-danger'>No engagement specified.</div>";
     exit;
 }
+
+
 
 // Handle editing engagement
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
@@ -632,16 +694,34 @@ $totalEngagements = count($engagements);
 
 
       <!-- Manager Card -->
-      <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
+      <!-- <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
         <div class="card-body p-3">
           <div class="d-flex align-items-center mb-3">
             <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
           </div>
           <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-            <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
+            <?php //echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
           </h6>
         </div>
-      </div>
+      </div> -->
+
+      <!-- Manager Card -->
+<div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
+  <div class="card-body p-3">
+    <div class="d-flex align-items-center mb-3">
+      <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
+    </div>
+    <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
+      <?php 
+        if (!empty($team['Manager'][0])) {
+            echo htmlspecialchars($team['Manager'][0]['emp_name']);
+        } else {
+            echo 'Manager not assigned';
+        }
+      ?>
+    </h6>
+  </div>
+</div>
 
       <!-- Seniors Container -->
       <div id="seniorsContainer">
