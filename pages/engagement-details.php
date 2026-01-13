@@ -747,7 +747,7 @@ $totalEngagements = count($engagements);
   <!-- next section (main) -->
     <div class="row align-items-stretch mt-4" style="margin-left: 200px; margin-right: 200px;">
 
-      <!-- LEFT COLUMN (team) -->
+
         <!-- LEFT COLUMN (team) -->
 <div class="col-md-4 d-flex">
   <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
@@ -841,61 +841,101 @@ $totalEngagements = count($engagements);
   </div>
 </div>
 
-<!-- JavaScript for Adding Cards Dynamically -->
+<!-- JavaScript for Adding Cards Dynamically and Saving to DB -->
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const maxSeniors = 2;
-    const maxStaff = 2;
+document.addEventListener('DOMContentLoaded', () => {
+  const maxSeniors = 2;
+  const maxStaff = 2;
+  const engId = "<?php echo $eng['eng_idno']; ?>";
 
-    const seniorsContainer = document.getElementById('seniorsContainer');
-    const staffContainer = document.getElementById('staffContainer');
+  const seniorsContainer = document.getElementById('seniorsContainer');
+  const staffContainer = document.getElementById('staffContainer');
 
-    const addSeniorBtn = document.getElementById('addSeniorBtn');
-    const addStaffBtn = document.getElementById('addStaffBtn');
+  const addSeniorBtn = document.getElementById('addSeniorBtn');
+  const addStaffBtn = document.getElementById('addStaffBtn');
 
-    function updateButtons() {
-      addSeniorBtn.style.display = seniorsContainer.children.length >= maxSeniors ? 'none' : 'inline-block';
-      addStaffBtn.style.display = staffContainer.children.length >= maxStaff ? 'none' : 'inline-block';
-    }
+  function updateButtons() {
+    addSeniorBtn.style.display = seniorsContainer.children.length >= maxSeniors ? 'none' : 'inline-block';
+    addStaffBtn.style.display = staffContainer.children.length >= maxStaff ? 'none' : 'inline-block';
+  }
 
-    addSeniorBtn.addEventListener('click', () => {
-      const index = seniorsContainer.children.length + 1;
-      const card = document.createElement('div');
-      card.classList.add('card', 'mb-4', 'senior-card');
-      card.setAttribute('data-index', index);
-      card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
-      card.innerHTML = `
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center mb-3">
-            <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior ${index}</h6>
-          </div>
-          <input type="text" class="form-control mb-2" placeholder="Enter senior name" name="new_senior${index}">
+  function saveToDB(type, name, index) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'save_team_member.php', true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        const response = JSON.parse(xhr.responseText);
+        if (response.success) {
+          console.log(`${type} saved`);
+        } else {
+          alert('Error saving to DB');
+        }
+      }
+    };
+    xhr.send(`eng_id=${engId}&type=${type}&name=${encodeURIComponent(name)}&index=${index}`);
+  }
+
+  addSeniorBtn.addEventListener('click', () => {
+    const index = seniorsContainer.children.length + 1;
+    const card = document.createElement('div');
+    card.classList.add('card', 'mb-4', 'senior-card');
+    card.setAttribute('data-index', index);
+    card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
+    card.innerHTML = `
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center mb-3">
+          <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior ${index}</h6>
         </div>
-      `;
-      seniorsContainer.appendChild(card);
-      updateButtons();
-    });
+        <input type="text" class="form-control mb-2 new-name" placeholder="Enter senior name" name="new_senior${index}">
+      </div>
+    `;
+    seniorsContainer.appendChild(card);
 
-    addStaffBtn.addEventListener('click', () => {
-      const index = staffContainer.children.length + 1;
-      const card = document.createElement('div');
-      card.classList.add('card', 'mb-4', 'staff-card');
-      card.setAttribute('data-index', index);
-      card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
-      card.innerHTML = `
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center mb-3">
-            <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff ${index}</h6>
-          </div>
-          <input type="text" class="form-control mb-2" placeholder="Enter staff name" name="new_staff${index}">
+    card.querySelector('.new-name').addEventListener('keypress', function(e){
+      if (e.key === 'Enter') {
+        saveToDB('senior', this.value, index);
+        this.parentElement.innerHTML = `<div class="d-flex align-items-center mb-3">
+          <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior ${index}</h6>
         </div>
-      `;
-      staffContainer.appendChild(card);
-      updateButtons();
+        <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">${this.value}</h6>`;
+      }
     });
 
     updateButtons();
   });
+
+  addStaffBtn.addEventListener('click', () => {
+    const index = staffContainer.children.length + 1;
+    const card = document.createElement('div');
+    card.classList.add('card', 'mb-4', 'staff-card');
+    card.setAttribute('data-index', index);
+    card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
+    card.innerHTML = `
+      <div class="card-body p-3">
+        <div class="d-flex align-items-center mb-3">
+          <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff ${index}</h6>
+        </div>
+        <input type="text" class="form-control mb-2 new-name" placeholder="Enter staff name" name="new_staff${index}">
+      </div>
+    `;
+    staffContainer.appendChild(card);
+
+    card.querySelector('.new-name').addEventListener('keypress', function(e){
+      if (e.key === 'Enter') {
+        saveToDB('staff', this.value, index);
+        this.parentElement.innerHTML = `<div class="d-flex align-items-center mb-3">
+          <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff ${index}</h6>
+        </div>
+        <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">${this.value}</h6>`;
+      }
+    });
+
+    updateButtons();
+  });
+
+  updateButtons();
+});
 </script>
 
 
