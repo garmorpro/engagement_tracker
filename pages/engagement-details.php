@@ -743,61 +743,87 @@ $totalEngagements = count($engagements);
 
       <!-- LEFT COLUMN (team) -->
         <div class="col-md-4 d-flex">
-          <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
-            <div class="card-body p-4">
-              <!-- Header -->
-              <div class="d-flex align-items-center mb-4">
-                <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
-                  <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
-                </div>
-                <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
-              </div>
+  <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
+    <div class="card-body p-4">
 
-              <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);  ">
-                <div class="card-body p-3">
-                  <!-- Header -->
-                  <div class="d-flex align-items-center mb-3">
-                    <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px  !important;">Manager</h6>
-                  </div>
-                  <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-                    <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
-                  </h6>
-                </div>
-              </div>
+      <!-- Header -->
+      <div class="d-flex align-items-center mb-4">
+        <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
+          <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
+        </div>
+        <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
+      </div>
 
-              <div class="card mb-4" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);  ">
-                <div class="card-body p-3">
-                  <!-- Header -->
-                  <div class="d-flex align-items-center mb-3">
-                    <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px  !important;">Senior</h6>
-                  </div>
-                  <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-                    <?php echo htmlspecialchars($eng['eng_senior'] ?? 'Senior not assigned'); ?>
-                  </h6>
-                  <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-                    <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_senior_dol'] ?? 'DOL not assigned'); ?>
-                  </p>
-                </div>
-              </div>
+      <!-- Manager Card -->
+      <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center mb-3">
+            <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
+          </div>
+          <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
+            <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
+          </h6>
+        </div>
+      </div>
 
-              <div class="card mb-4" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);  ">
-                <div class="card-body p-3">
-                  <!-- Header -->
-                  <div class="d-flex align-items-center mb-3">
-                    <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px  !important;">Staff</h6>
-                  </div>
-                  <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-                    <?php echo htmlspecialchars($eng['eng_staff'] ?? 'Staff not assigned'); ?>
-                  </h6>
-                  <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-                    <strong>DOL:</strong> <?php echo htmlspecialchars($eng['eng_staff_dol'] ?? 'DOL not assigned'); ?>
-                  </p>
-                </div>
-              </div>
-
+      <!-- Seniors -->
+      <?php for ($i = 1; $i <= 2; $i++): 
+          $senior = $eng["eng_senior{$i}"] ?? '';
+          if (!$senior) continue; // skip if not in DB
+      ?>
+        <div class="card mb-4" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
+          <div class="card-body p-3">
+            <div class="d-flex align-items-center mb-3">
+              <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
             </div>
+            <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+              <?php echo htmlspecialchars($senior); ?>
+            </h6>
+            <?php if (!empty($eng["eng_soc1_senior{$i}_dol"])): ?>
+              <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
+                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_senior{$i}_dol"]); ?>
+              </p>
+            <?php endif; ?>
+            <?php if (!empty($eng["eng_soc2_senior{$i}_dol"])): ?>
+              <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
+                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_senior{$i}_dol"]); ?>
+              </p>
+            <?php endif; ?>
           </div>
         </div>
+      <?php endfor; ?>
+
+      <!-- Staff -->
+      <?php for ($i = 1; $i <= 2; $i++): 
+          $staff = $eng["eng_staff{$i}"] ?? '';
+          if (!$staff) continue; // skip if not in DB
+      ?>
+        <div class="card mb-4" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
+          <div class="card-body p-3">
+            <div class="d-flex align-items-center mb-3">
+              <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
+            </div>
+            <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
+              <?php echo htmlspecialchars($staff); ?>
+            </h6>
+            <?php if (!empty($eng["eng_soc1_staff{$i}_dol"])): ?>
+              <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
+                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_staff{$i}_dol"]); ?>
+              </p>
+            <?php endif; ?>
+            <?php if (!empty($eng["eng_soc2_staff{$i}_dol"])): ?>
+              <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
+                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_staff{$i}_dol"]); ?>
+              </p>
+            <?php endif; ?>
+          </div>
+        </div>
+      <?php endfor; ?>
+
+    </div>
+  </div>
+</div>
+
       <!-- end LEFT COLUMN (team) -->
 
       <!-- RIGHT COLUMN -->
