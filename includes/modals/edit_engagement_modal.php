@@ -322,8 +322,8 @@ foreach ($dateFields as $field => $label):
 ===================== -->
 
 <div class="col-12">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Notes</label>
-  <textarea class="form-control" name="eng_notes" rows="4"><?php
+  <label class="form-label fw-semibold"  style="font-size: 12px; color: rgb(10,10,10);">Notes</label>
+  <textarea class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_notes" rows="4"><?php
     echo htmlspecialchars($eng['eng_notes'] ?? '', ENT_QUOTES);
   ?></textarea>
 </div>
