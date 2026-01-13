@@ -244,40 +244,52 @@ function getDOL($eng, $audit, $role, $index) {
 
   <!-- Manager -->
   <div class="col-md-12">
-    <label class="form-label fw-semibold" style="font-size: 12px;">Manager</label>
+    <label class="form-label fw-semibold" style="font-size:12px;">Manager</label>
     <input type="text" class="form-control" style="background-color:#f3f3f5;"
            name="eng_manager"
            value="<?php echo htmlspecialchars($eng['eng_manager'] ?? '', ENT_QUOTES); ?>">
   </div>
 
-<?php
-$members = [
-  ['Senior', 1], ['Senior', 2],
-  ['Staff', 1], ['Staff', 2]
-];
+  <!-- ADD BUTTONS -->
+  <div class="col-12 d-flex gap-2">
+    <button type="button" class="btn btn-sm btn-outline-primary" id="add-senior">
+      + Add Senior
+    </button>
+    <button type="button" class="btn btn-sm btn-outline-primary" id="add-staff">
+      + Add Staff
+    </button>
+  </div>
 
-foreach ($members as [$role, $index]):
-  $key = strtolower($role) . $index;
+<?php
+$roles = ['Senior', 'Staff'];
+foreach ($roles as $role):
+  for ($i = 1; $i <= 2; $i++):
+    $key = strtolower($role) . $i;
+    $hasValue = !empty($eng["eng_$key"]);
 ?>
-  <div class="col-md-6">
+  <div class="col-md-6 team-block"
+       data-role="<?php echo $role; ?>"
+       data-index="<?php echo $i; ?>"
+       style="display: <?php echo $hasValue ? 'block' : 'none'; ?>;">
+
     <label class="form-label fw-semibold" style="font-size:12px;">
-      <?php echo "$role $index"; ?>
+      <?php echo "$role $i"; ?>
     </label>
 
     <input type="text"
            class="form-control team-input"
            style="background-color:#f3f3f5;"
            data-role="<?php echo $role; ?>"
-           data-index="<?php echo $index; ?>"
+           data-index="<?php echo $i; ?>"
            name="eng_<?php echo $key; ?>"
            value="<?php echo htmlspecialchars($eng["eng_$key"] ?? '', ENT_QUOTES); ?>">
 
     <div class="dol-container mt-2"
-         id="dol-<?php echo strtolower($role); ?>-<?php echo $index; ?>">
+         id="dol-<?php echo strtolower($role); ?>-<?php echo $i; ?>">
 
       <?php foreach ($selectedAudits as $audit):
-        if (!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
-        $soc = str_contains($audit, 'SOC 1') ? 'soc1' : 'soc2';
+        if (!str_contains($audit,'SOC 1') && !str_contains($audit,'SOC 2')) continue;
+        $soc = str_contains($audit,'SOC 1') ? 'soc1' : 'soc2';
         $dolName = "eng_{$soc}_{$key}_dol";
       ?>
         <label class="form-label fw-semibold mb-1" style="font-size:12px;">
@@ -285,42 +297,19 @@ foreach ($members as [$role, $index]):
         </label>
         <input type="text"
                class="form-control mb-2"
-               style="font-size:14px; background-color:rgb(243,243,245);"
+               style="font-size:14px;background:#f3f3f5;"
                name="<?php echo $dolName; ?>"
                value="<?php echo htmlspecialchars($eng[$dolName] ?? '', ENT_QUOTES); ?>">
       <?php endforeach; ?>
 
     </div>
   </div>
-<?php endforeach; ?>
+<?php endfor; endforeach; ?>
 
 </div>
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* ===============================
-     SHOW / HIDE ONLY — NO REBUILD
-  =============================== */
-  document.querySelectorAll('.team-input').forEach(input => {
-    const role = input.dataset.role.toLowerCase();
-    const index = input.dataset.index;
-    const container = document.getElementById(`dol-${role}-${index}`);
-
-    if (!container) return;
-
-    // Initial state (edit modal)
-    container.style.display = input.value.trim() ? 'block' : 'none';
-
-    // Typing ONLY toggles visibility
-    input.addEventListener('input', () => {
-      container.style.display = input.value.trim() ? 'block' : 'none';
-    });
-  });
-
-  /* ===============================
-     AUDIT CHANGE = FULL REBUILD
-  =============================== */
   const getSelectedAudits = () => {
     const input = document.querySelector('.eng_audit_input');
     if (!input || !input.value) return [];
@@ -330,55 +319,42 @@ document.addEventListener('DOMContentLoaded', () => {
       .filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
   };
 
-  document.querySelectorAll('.audit-card').forEach(card => {
-    card.addEventListener('click', () => {
+  const addMember = (role) => {
+    const blocks = [...document.querySelectorAll(`.team-block[data-role="${role}"]`)];
+    const next = blocks.find(b => b.style.display === 'none');
+    if (!next) return;
 
-      const audits = getSelectedAudits();
+    next.style.display = 'block';
 
-      document.querySelectorAll('.team-input').forEach(input => {
-        if (!input.value.trim()) return;
+    const index = next.dataset.index;
+    const container = document.getElementById(`dol-${role.toLowerCase()}-${index}`);
+    container.innerHTML = '';
 
-        const role = input.dataset.role.toLowerCase();
-        const index = input.dataset.index;
-        const container = document.getElementById(`dol-${role}-${index}`);
-        if (!container) return;
+    getSelectedAudits().forEach(audit => {
+      const soc = audit.includes('SOC 1') ? 'soc1' : 'soc2';
 
-        // Preserve existing values
-        const existing = {};
-        container.querySelectorAll('input').forEach(i => {
-          existing[i.name] = i.value;
-        });
+      const label = document.createElement('label');
+      label.className = 'form-label fw-semibold mb-1';
+      label.style.fontSize = '12px';
+      label.textContent = `${audit} DOL`;
 
-        container.innerHTML = '';
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.name = `eng_${soc}_${role.toLowerCase()}${index}_dol`;
+      input.className = 'form-control mb-2';
+      input.style.background = '#f3f3f5';
 
-        audits.forEach(audit => {
-          const soc = audit.includes('SOC 1') ? 'soc1' : 'soc2';
-          const name = `eng_${soc}_${role}${index}_dol`;
-
-          const label = document.createElement('label');
-          label.className = 'form-label fw-semibold mb-1';
-          label.style.fontSize = '12px';
-          label.textContent = `${audit} DOL`;
-
-          const inputEl = document.createElement('input');
-          inputEl.type = 'text';
-          inputEl.name = name;
-          inputEl.value = existing[name] ?? '';
-          inputEl.className = 'form-control mb-2';
-          inputEl.style.fontSize = '14px';
-          inputEl.style.backgroundColor = 'rgb(243,243,245)';
-
-          container.appendChild(label);
-          container.appendChild(inputEl);
-        });
-
-        container.style.display = 'block';
-      });
+      container.appendChild(label);
+      container.appendChild(input);
     });
-  });
+  };
+
+  document.getElementById('add-senior').addEventListener('click', () => addMember('Senior'));
+  document.getElementById('add-staff').addEventListener('click', () => addMember('Staff'));
 
 });
 </script>
+
 
 
 
