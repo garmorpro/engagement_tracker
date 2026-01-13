@@ -705,6 +705,9 @@ $totalEngagements = count($engagements);
 
       <!-- Add Buttons -->
       <div class="d-flex mb-3 gap-3">
+        <a href="javascript:void(0);" id="addManagerBtn" class="text-decoration-none text-blue fw-semibold">
+    <i class="bi bi-plus-circle me-1"></i> Add Manager
+  </a>
   <a href="javascript:void(0);" id="addSeniorBtn" class="text-decoration-none text-purple fw-semibold">
     <i class="bi bi-plus-circle me-1"></i> Add Senior
   </a>
@@ -816,10 +819,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer = document.getElementById('staffContainer');
+  const managerContainer = document.getElementById('managerContainer'); // container for manager card
 
   const addSeniorBtn = document.getElementById('addSeniorBtn');
   const addStaffBtn = document.getElementById('addStaffBtn');
+  const addManagerBtn = document.getElementById('addManagerBtn');
 
+  // Returns next available index for seniors/staff cards
   function getNextIndex(container){
     for(let i=1;i<=2;i++){
       if(!container.querySelector(`.card[data-index='${i}']`)) return i;
@@ -827,13 +833,16 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
+  // Show/hide add buttons based on available slots
   function updateButtons(){
     addSeniorBtn.style.display = getNextIndex(seniorsContainer) ? 'inline-block' : 'none';
     addStaffBtn.style.display = getNextIndex(staffContainer) ? 'inline-block' : 'none';
+    addManagerBtn.style.display = managerContainer.querySelector('.card') ? 'none' : 'inline-block';
   }
 
+  // Save new team member to engagement_team table
   function saveToDB(type, name, index){
-    if(!engId || !type || !name || !index) return;
+    if(!engId || !type || !name) return;
     const xhr = new XMLHttpRequest();
     xhr.open('POST','../includes/save_team_member.php',true);
     xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
@@ -849,22 +858,29 @@ document.addEventListener('DOMContentLoaded', () => {
     xhr.send(`eng_id=${engId}&type=${type.toLowerCase()}&name=${encodeURIComponent(name)}&index=${index}`);
   }
 
+  // Create a new card for manager/senior/staff
   function createCard(container,type){
-    const index = getNextIndex(container);
+    const index = type === 'manager' ? 1 : getNextIndex(container);
     if(!index) return;
 
     const card = document.createElement('div');
     card.classList.add('card','mb-4',`${type}-card`);
-    card.setAttribute('data-index',index);
-    card.style = type==='senior'
-      ? "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);"
-      : "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
+    if(type !== 'manager') card.setAttribute('data-index',index);
+
+    // Set styles per type
+    if(type === 'manager'){
+      card.style = "border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);";
+    } else if(type === 'senior'){
+      card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
+    } else {
+      card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
+    }
 
     card.innerHTML = `
       <div class="card-body p-3">
         <div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
-            ${type.charAt(0).toUpperCase()+type.slice(1)} ${index}
+          <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
+            ${type.charAt(0).toUpperCase() + type.slice(1)} ${type==='manager'?'':index}
           </h6>
         </div>
         <input type="text" class="form-control mb-2 new-name" placeholder="Enter ${type} name">
@@ -878,14 +894,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if(e.key==='Enter'){
         const name = this.value.trim();
         if(!name) return;
+
         saveToDB(type,name,index);
+
+        // Replace input with static display
         this.parentElement.innerHTML = `
           <div class="d-flex align-items-center mb-3">
-            <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
-              ${type.charAt(0).toUpperCase()+type.slice(1)} ${index}
+            <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
+              ${type.charAt(0).toUpperCase() + type.slice(1)} ${type==='manager'?'':index}
             </h6>
           </div>
-          <h6 class="fw-semibold" style="color: ${type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size:20px;">
+          <h6 class="fw-semibold" style="color: ${type==='manager'?'rgb(0,37,132)':type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size:20px;">
             ${name}
           </h6>
         `;
@@ -896,12 +915,16 @@ document.addEventListener('DOMContentLoaded', () => {
     updateButtons();
   }
 
+  // Event listeners for add buttons
   addSeniorBtn.addEventListener('click',()=>createCard(seniorsContainer,'senior'));
   addStaffBtn.addEventListener('click',()=>createCard(staffContainer,'staff'));
+  addManagerBtn.addEventListener('click',()=>createCard(managerContainer,'manager'));
 
+  // Initial button state
   updateButtons();
 });
 </script>
+
 
 
 
