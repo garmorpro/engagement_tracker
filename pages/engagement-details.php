@@ -233,8 +233,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
     $engId       = $_POST['eng_idno'] ?? '';
     $name        = $_POST['eng_name'] ?? '';
     $manager     = $_POST['eng_manager'] ?? '';
-    $senior      = $_POST['eng_senior'] ?? '';
-    $staff       = $_POST['eng_staff'] ?? '';
+    $senior1     = $_POST['eng_senior1'] ?? '';
+    $senior2     = $_POST['eng_senior2'] ?? '';
+    $staff1      = $_POST['eng_staff1'] ?? '';
+    $staff2      = $_POST['eng_staff2'] ?? '';
 
     // SOC 1 / SOC 2 DOLs for up to 2 Seniors and 2 Staff
     $soc1_senior1 = $_POST['eng_soc1_senior1_dol'] ?? '';
@@ -296,7 +298,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
     ============================ */
     $stmt = $conn->prepare("
     INSERT INTO engagements (
-        eng_idno, eng_name, eng_manager, eng_senior, eng_staff,
+        eng_idno, eng_name, eng_manager, eng_senior1, eng_senior2, eng_staff1, eng_staff2,
         eng_soc1_senior1_dol, eng_soc2_senior1_dol, eng_soc1_senior2_dol, eng_soc2_senior2_dol,
         eng_soc1_staff1_dol, eng_soc2_staff1_dol, eng_soc1_staff2_dol, eng_soc2_staff2_dol,
         eng_poc, eng_location, eng_repeat, eng_audit_type, eng_scope, eng_tsc,
@@ -308,7 +310,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
         eng_final_due, eng_final_sent, eng_archive, eng_section_3_requested,
         eng_last_communication, eng_notes, eng_status
     ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )
     ");
 
@@ -316,12 +318,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
        BIND (39 params)
     ============================ */
     $stmt->bind_param(
-        "sssssssssssssssssssssssssssssssssssssssss",
+        "sssssssssssssssssssssssssssssssssssssssssss",
         $engId,
         $name,
         $manager,
-        $senior,
-        $staff,
+        $senior1,
+        $senior2,
+        $staff1,
+        $staff2,
         $soc1_senior1,
         $soc2_senior1,
         $soc1_senior2,
