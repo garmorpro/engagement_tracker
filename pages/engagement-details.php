@@ -849,7 +849,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function saveToDB(type, name, index) {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'save_team_member.php', true);
+    xhr.open('POST', '../includes/save_team_member.php', true);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
       if (xhr.status === 200) {
