@@ -103,7 +103,7 @@ require_once '../includes/functions.php';
                             if (count($onHoldEngagements) > 0):
                                 foreach ($onHoldEngagements as $eng):
                                     $finalDueDate = !empty($eng['eng_final_due'])
-                                        ? date('M d', strtotime($eng['eng_final_due']))
+                                        ? date('M d, Y', strtotime($eng['eng_final_due']))
                                         : '';
 
                             $today = new DateTime('today');
