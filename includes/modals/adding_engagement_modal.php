@@ -35,36 +35,9 @@
   <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_name">
 </div>
 
-<div class="col-md-12">
+<!-- <div class="col-md-12">
   <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
   <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_audit_type">
-</div>
-
-<!-- =====================
-     STATUS
-===================== -->
-
-<!-- <div class="col-12 mb-3 engagement-status-container">
-  <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
-  <div class="d-flex gap-2 flex-wrap">
-
-<?php //foreach ($statuses as $key => $s): ?>
-  <div class="status-card text-center p-2 flex-fill"
-       data-status="<?php echo $key; ?>"
-       style="
-         cursor:pointer;
-         border:2px solid rgb(229,231,235);
-         background:#fff;
-         color:rgb(76,85,100);
-         border-radius:1rem;
-       ">
-    <i class="bi <?php //echo $s['icon']; ?>"></i>
-    <div style="font-size:12px;"><?php //echo $s['label']; ?></div>
-  </div>
-<?php //endforeach; ?>
-
-  </div>
-  <input type="hidden" name="eng_status" class="eng_status_input" value="">
 </div> -->
 
 <div class="col-12 mb-3 engagement-audit-container">
@@ -130,6 +103,33 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+
+<!-- =====================
+     STATUS
+===================== -->
+
+<div class="col-12 mb-3 engagement-status-container">
+  <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
+  <div class="d-flex gap-2 flex-wrap">
+
+<?php foreach ($statuses as $key => $s): ?>
+  <div class="status-card text-center p-2 flex-fill"
+       data-status="<?php echo $key; ?>"
+       style="
+         cursor:pointer;
+         border:2px solid rgb(229,231,235);
+         background:#fff;
+         color:rgb(76,85,100);
+         border-radius:1rem;
+       ">
+    <i class="bi <?php echo $s['icon']; ?>"></i>
+    <div style="font-size:12px;"><?php echo $s['label']; ?></div>
+  </div>
+<?php endforeach; ?>
+
+  </div>
+  <input type="hidden" name="eng_status" class="eng_status_input" value="">
+</div>
 
 <div class="col-md-12">
   <label class="form-label fw-semibold" style="font-size:12px;">TSC</label>
