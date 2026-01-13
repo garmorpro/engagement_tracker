@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
       // Style toggle
       if(card.classList.contains('selected')) {
         card.style.background = 'rgb(224, 233, 255)';
-        card.style.color = '#939393';
+        card.style.color = '#5d5d5d';
         card.style.borderColor = 'rgb(194, 213, 255)';
       } else {
         card.style.background = '#fff';
