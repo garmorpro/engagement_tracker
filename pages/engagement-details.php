@@ -1458,6 +1458,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Modal for Adding Engagement -->
 <?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
 
+<!-- Modal for this engagement -->
+<?php include_once '../includes/modals/add_edit_dol.php'; ?>
+
 
 <!-- Engagement Status JS -->
 <script>
