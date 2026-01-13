@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
        BIND (39 params + ID)
     ============================ */
     $stmt->bind_param(
-        "sssssssssssssssssssssssssssssssssssssssss",
+        "ssssssssssssssssssssssssssssssssssssssssss",
         $name,
         $manager,
         $senior1,
