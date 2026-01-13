@@ -42,7 +42,7 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
     </div>
 
     <!-- ALWAYS POST -->
-    <input type="hidden" name="repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+    <input type="hidden" name="eng_repeat" value="<?php echo $checked ? 'Y' : 'N'; ?>">
 
   </div>
 </div>
