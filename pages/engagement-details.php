@@ -295,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
        PREPARE INSERT
     ============================ */
     $stmt = $conn->prepare("
-    INSERT INTO engagements (
+    INSERT INTO engagements ( 41
         eng_idno, eng_name, eng_manager, eng_senior, eng_staff,
         eng_soc1_senior1_dol, eng_soc2_senior1_dol, eng_soc1_senior2_dol, eng_soc2_senior2_dol,
         eng_soc1_staff1_dol, eng_soc2_staff1_dol, eng_soc1_staff2_dol, eng_soc2_staff2_dol,
@@ -308,7 +308,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
         eng_final_due, eng_final_sent, eng_archive, eng_section_3_requested,
         eng_last_communication, eng_notes, eng_status
     ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )
     ");
 
