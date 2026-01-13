@@ -2,7 +2,7 @@
 header('Content-Type: application/json');
 include 'db.php';
 
-$eng_id = (int)($_POST['eng_id'] ?? 0);
+$eng_id = ($_POST['eng_id'] ?? 0);
 $type = $_POST['type'] ?? '';
 $name = trim($_POST['name'] ?? '');
 $index = (int)($_POST['index'] ?? 0);
