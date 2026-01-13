@@ -718,6 +718,7 @@ $totalEngagements = count($engagements);
 
 
       <!-- Manager Card -->
+       <div id="managerContainer">
 <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
   <div class="card-body p-3">
     <div class="d-flex align-items-center mb-3">
@@ -734,6 +735,7 @@ $totalEngagements = count($engagements);
       ?>
     </h6>
   </div>
+</div>
 </div>
 
 <!-- Seniors Container -->
