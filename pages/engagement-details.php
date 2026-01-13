@@ -872,6 +872,12 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('HTTP Error: ' + xhr.status);
       }
     };
+    console.log('Sending to DB:', {
+  engId,
+  type: type.toLowerCase(),
+  name,
+  index
+});
     xhr.send(`eng_id=${engId}&type=${type.toLowerCase()}&name=${encodeURIComponent(name)}&index=${index}`);
   }
 
