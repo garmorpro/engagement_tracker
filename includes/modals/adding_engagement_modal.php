@@ -46,8 +46,10 @@
     
     <?php 
       $auditTypes = [
-        'SOC1' => 'bi-check-circle',
-        'SOC2' => 'bi-shield-lock',
+        'SOC 1 Type 1' => 'bi-check-circle',
+        'SOC 1 Type 2' => 'bi-check-circle',
+        'SOC 2 Type 1' => 'bi-shield-lock',
+        'SOC 2 Type 2' => 'bi-shield-lock',
         'PCI'  => 'bi-credit-card'
       ];
     ?>
