@@ -853,7 +853,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!engId || !type || !name || !index) return; // safety check
 
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/includes/save_team_member.php', true); // adjust path
+    xhr.open('POST', '../includes/save_team_member.php', true); // adjust path
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
       if(xhr.status === 200){
