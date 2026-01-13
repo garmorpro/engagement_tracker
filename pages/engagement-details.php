@@ -54,41 +54,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
        TEXT FIELDS
     ============================ */
     $name        = $_POST['eng_name'] ?? '';
-    $manager     = $_POST['eng_manager'] ?? '';
-    $senior1     = $_POST['eng_senior1'] ?? '';
-    $senior2     = $_POST['eng_senior2'] ?? '';
-    $staff1      = $_POST['eng_staff1'] ?? '';
-    $staff2      = $_POST['eng_staff2'] ?? '';
-
-    // SOC 1 / SOC 2 DOLs for up to 2 Seniors and 2 Staff
-    $soc1_senior1 = $_POST['eng_soc1_senior1_dol'] ?? '';
-    $soc2_senior1 = $_POST['eng_soc2_senior1_dol'] ?? '';
-    $soc1_senior2 = $_POST['eng_soc1_senior2_dol'] ?? '';
-    $soc2_senior2 = $_POST['eng_soc2_senior2_dol'] ?? '';
-    $soc1_staff1  = $_POST['eng_soc1_staff1_dol'] ?? '';
-    $soc2_staff1  = $_POST['eng_soc2_staff1_dol'] ?? '';
-    $soc1_staff2  = $_POST['eng_soc1_staff2_dol'] ?? '';
-    $soc2_staff2  = $_POST['eng_soc2_staff2_dol'] ?? '';
-
     $poc         = $_POST['eng_poc'] ?? '';
     $location    = $_POST['eng_location'] ?? '';
     $audit_type  = $_POST['eng_audit_type'] ?? '';
     $scope       = $_POST['eng_scope'] ?? '';
     $tsc         = $_POST['eng_tsc'] ?? '';
     $notes       = $_POST['eng_notes'] ?? '';
+    $status      = $_POST['eng_status'] ?? '';
 
     /* ============================
        Y / N FIELDS
     ============================ */
-    $repeat                      = $_POST['repeat'] ?? 'N';
-    $completed_internal_planning = $_POST['eng_completed_internal_planning'] ?? 'N';
-    $irl_sent                    = $_POST['eng_irl_sent'] ?? 'N';
-    $completed_client_planning   = $_POST['eng_completed_client_planning'] ?? 'N';
-    $fieldwork_complete          = $_POST['eng_fieldwork_complete'] ?? 'N';
-    $leadsheet_complete          = $_POST['eng_leadsheet_complete'] ?? 'N';
-    $draft_sent                  = $_POST['eng_draft_sent'] ?? 'N';
-    $final_sent                  = $_POST['eng_final_sent'] ?? 'N';
-    $section_3_requested         = $_POST['eng_section_3_requested'] ?? 'N';
+    $repeat              = $_POST['eng_repeat'] ?? 'N';
+    $section_3_requested = $_POST['eng_section_3_requested'] ?? 'N';
 
     /* ============================
        DATE FIELDS (EMPTY → NULL)
@@ -97,93 +75,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
         return !empty($_POST[$key]) ? $_POST[$key] : null;
     }
 
-    $start_period              = nullDate('eng_start_period');
-    $end_period                = nullDate('eng_end_period');
-    $as_of_date                = nullDate('eng_as_of_date');
-    $internal_planning_call    = nullDate('eng_internal_planning_call');
-    $irl_due                   = nullDate('eng_irl_due');
-    $client_planning_call      = nullDate('eng_client_planning_call');
-    $fieldwork                 = nullDate('eng_fieldwork');
-    $leadsheet_due             = nullDate('eng_leadsheet_due');
-    $draft_due                 = nullDate('eng_draft_due');
-    $final_due                 = nullDate('eng_final_due');
-    $archive                   = nullDate('eng_archive');
-    $last_communication        = nullDate('eng_last_communication');
-
-    /* ============================
-       STATUS (SINGLE SELECT)
-    ============================ */
-    $status = $_POST['eng_status'] ?? '';
+    $start_period       = nullDate('eng_start_period');
+    $end_period         = nullDate('eng_end_period');
+    $as_of_date         = nullDate('eng_as_of_date');
+    $archive            = nullDate('eng_archive');
+    $last_communication = nullDate('eng_last_communication');
 
     /* ============================
        PREPARE UPDATE
     ============================ */
     $stmt = $conn->prepare("
         UPDATE engagements SET
-            eng_name = ?, 
-            eng_manager = ?, 
-            eng_senior1 = ?, 
-            eng_senior2 = ?, 
-            eng_staff1 = ?,
-            eng_staff2 = ?,
-            eng_soc1_senior1_dol = ?, 
-            eng_soc2_senior1_dol = ?, 
-            eng_soc1_senior2_dol = ?, 
-            eng_soc2_senior2_dol = ?,
-            eng_soc1_staff1_dol = ?, 
-            eng_soc2_staff1_dol = ?, 
-            eng_soc1_staff2_dol = ?, 
-            eng_soc2_staff2_dol = ?,
-            eng_poc = ?, 
+            eng_name = ?,
+            eng_poc = ?,
             eng_location = ?,
-            eng_repeat = ?, 
-            eng_audit_type = ?, 
-            eng_scope = ?, 
+            eng_repeat = ?,
+            eng_audit_type = ?,
+            eng_scope = ?,
             eng_tsc = ?,
-            eng_start_period = ?, 
-            eng_end_period = ?, 
+            eng_start_period = ?,
+            eng_end_period = ?,
             eng_as_of_date = ?,
-            eng_internal_planning_call = ?, 
-            eng_completed_internal_planning = ?,
-            eng_irl_due = ?, 
-            eng_irl_sent = ?, 
-            eng_client_planning_call = ?,
-            eng_completed_client_planning = ?, 
-            eng_fieldwork = ?, 
-            eng_fieldwork_complete = ?,
-            eng_leadsheet_due = ?, 
-            eng_leadsheet_complete = ?, 
-            eng_draft_due = ?, 
-            eng_draft_sent = ?,
-            eng_final_due = ?, 
-            eng_final_sent = ?, 
-            eng_archive = ?, 
+            eng_archive = ?,
             eng_section_3_requested = ?,
-            eng_last_communication = ?, 
-            eng_notes = ?, 
+            eng_last_communication = ?,
+            eng_notes = ?,
             eng_status = ?
         WHERE eng_idno = ?
     ");
 
     /* ============================
-       BIND (39 params + ID)
+       BIND (15 fields + ID)
     ============================ */
     $stmt->bind_param(
-        "sssssssssssssssssssssssssssssssssssssssssss",
+        "ssssssssssssssss",
         $name,
-        $manager,
-        $senior1,
-        $senior2,
-        $staff1,
-        $staff2,
-        $soc1_senior1,
-        $soc2_senior1,
-        $soc1_senior2,
-        $soc2_senior2,
-        $soc1_staff1,
-        $soc2_staff1,
-        $soc1_staff2,
-        $soc2_staff2,
         $poc,
         $location,
         $repeat,
@@ -193,20 +119,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
         $start_period,
         $end_period,
         $as_of_date,
-        $internal_planning_call,
-        $completed_internal_planning,
-        $irl_due,
-        $irl_sent,
-        $client_planning_call,
-        $completed_client_planning,
-        $fieldwork,
-        $fieldwork_complete,
-        $leadsheet_due,
-        $leadsheet_complete,
-        $draft_due,
-        $draft_sent,
-        $final_due,
-        $final_sent,
         $archive,
         $section_3_requested,
         $last_communication,
@@ -219,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
        EXECUTE
     ============================ */
     if ($stmt->execute()) {
-        header("Location: engagement-details.php?eng_id=" . $engId . "&message=Engagement updated successfully");
+        header("Location: engagement-details.php?eng_id=" . urlencode($engId) . "&message=Engagement updated successfully");
         exit;
     } else {
         echo "<div class='alert alert-danger'>
@@ -227,6 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
         </div>";
     }
 }
+
 
 
 
