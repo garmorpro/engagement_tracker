@@ -3,25 +3,32 @@ header('Content-Type: application/json');
 include '../includes/db.php';
 
 $eng_id = $_POST['eng_id'] ?? '';
-$type   = $_POST['type'] ?? '';
+$type   = $_POST['type'] ?? ''; // "senior" or "staff"
 $name   = trim($_POST['name'] ?? '');
-$index  = (int)($_POST['index'] ?? 0);
+$index  = (int)($_POST['index'] ?? 0); // not strictly needed but you can keep for validation
 
-if (!in_array($type, ['senior','staff']) || $index < 1 || $index > 2 || $eng_id === '' || $name === '') {
-    echo json_encode(['success'=>false,'error'=>'Invalid input']);
+// Validate input
+if (!in_array($type, ['senior','staff']) || $eng_id === '' || $name === '') {
+    echo json_encode(['success' => false, 'error' => 'Invalid input']);
     exit;
 }
 
-$column = 'eng_' . $type . $index;
+// Map type to role
+$role = ucfirst($type); // 'Senior' or 'Staff'
 
-$stmt = $conn->prepare("UPDATE engagements SET `$column` = ? WHERE eng_idno = ?");
+// Insert new team member into engagement_team
+$stmt = $conn->prepare("
+    INSERT INTO engagement_team (eng_id, emp_name, role, audit_type, emp_dol, emp_created, emp_updated)
+    VALUES (?, ?, ?, NULL, NULL, NOW(), NOW())
+");
+
 if (!$stmt) {
-    echo json_encode(['success'=>false,'error'=>$conn->error]);
+    echo json_encode(['success' => false, 'error' => $conn->error]);
     exit;
 }
 
-$stmt->bind_param("ss", $name, $eng_id);
+$stmt->bind_param("iss", $eng_id, $name, $role);
 $success = $stmt->execute();
 
-echo json_encode(['success'=>$success,'error'=>$stmt->error]);
+echo json_encode(['success' => $success, 'error' => $stmt->error]);
 exit;

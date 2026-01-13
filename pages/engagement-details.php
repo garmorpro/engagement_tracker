@@ -715,18 +715,6 @@ $totalEngagements = count($engagements);
 
 
       <!-- Manager Card -->
-      <!-- <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
-        <div class="card-body p-3">
-          <div class="d-flex align-items-center mb-3">
-            <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
-          </div>
-          <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-            <?php //echo htmlspecialchars($eng['eng_manager'] ?? 'Manager not assigned'); ?>
-          </h6>
-        </div>
-      </div> -->
-
-      <!-- Manager Card -->
 <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
   <div class="card-body p-3">
     <div class="d-flex align-items-center mb-3">
@@ -814,67 +802,6 @@ $totalEngagements = count($engagements);
 </div>
 
 
-      <!-- Seniors Container -->
-      <!-- <div id="seniorsContainer">
-        <?php //for ($i = 1; $i <= 2; $i++):
-            //$senior = $eng["eng_senior{$i}"] ?? '';
-            //if (!$senior) continue;
-        ?>
-        <div class="card mb-4 senior-card" data-index="<?php //echo $i; ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
-          <div class="card-body p-3">
-            <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php //echo $i; ?></h6>
-            </div>
-            <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-              <?php //echo htmlspecialchars($senior); ?>
-            </h6>
-
-            <?php //if (!empty($eng["eng_soc1_senior{$i}_dol"])): ?>
-              <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 1 DOL:</strong> <?php //echo htmlspecialchars($eng["eng_soc1_senior{$i}_dol"]); ?>
-              </p>
-            <?php //endif; ?>
-
-            <?php //if (!empty($eng["eng_soc2_senior{$i}_dol"])): ?>
-              <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 2 DOL:</strong> <?php //echo htmlspecialchars($eng["eng_soc2_senior{$i}_dol"]); ?>
-              </p>
-            <?php //endif; ?>
-          </div>
-        </div>
-        <?php //endfor; ?>
-      </div> -->
-
-      <!-- Staff Container -->
-      <!-- <div id="staffContainer">
-        <?php //for ($i = 1; $i <= 2; $i++):
-            //$staff = $eng["eng_staff{$i}"] ?? '';
-            //if (!$staff) continue;
-        ?>
-        <div class="card mb-4 staff-card" data-index="<?php //echo $i; ?>" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
-          <div class="card-body p-3">
-            <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php //echo $i; ?></h6>
-            </div>
-            <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-              <?php //echo htmlspecialchars($staff); ?>
-            </h6>
-
-            <?php //if (!empty($eng["eng_soc1_staff{$i}_dol"])): ?>
-              <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-                <strong>SOC 1 DOL:</strong> <?php //echo htmlspecialchars($eng["eng_soc1_staff{$i}_dol"]); ?>
-              </p>
-            <?php //endif; ?>
-
-            <?php //if (!empty($eng["eng_soc2_staff{$i}_dol"])): ?>
-              <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
-                <strong>SOC 2 DOL:</strong> <?php //echo htmlspecialchars($eng["eng_soc2_staff{$i}_dol"]); ?>
-              </p>
-            <?php //endif; ?>
-          </div>
-        </div>
-        <?php //endfor; ?>
-      </div> -->
 
     </div>
   </div>
