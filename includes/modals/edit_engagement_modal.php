@@ -98,23 +98,23 @@ $checked = (($eng['eng_repeat'] ?? 'N') === 'Y');
 </div>
 
 <?php
-// Turn DB string into array
+// Convert DB string to array
 $selectedAudits = explode(',', $eng['eng_audit_type'] ?? '');
-$selectedAudits = array_map('trim', $selectedAudits); // remove extra spaces
+$selectedAudits = array_map('trim', $selectedAudits);
 ?>
 
 <div class="col-12 mb-3 engagement-audit-container">
   <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
   <div class="d-flex gap-2 flex-wrap">
-    
+
     <?php 
-      $auditTypes = [
+    $auditTypes = [
         'SOC 1 Type 1' => 'bi-check-circle',
         'SOC 1 Type 2' => 'bi-check-circle',
         'SOC 2 Type 1' => 'bi-shield-lock',
         'SOC 2 Type 2' => 'bi-shield-lock',
-        'PCI'  => 'bi-credit-card'
-      ];
+        'PCI'          => 'bi-credit-card'
+    ];
     ?>
 
     <?php foreach ($auditTypes as $key => $icon): 
@@ -130,30 +130,31 @@ $selectedAudits = array_map('trim', $selectedAudits); // remove extra spaces
 
   </div>
 
-  <!-- Hidden input to store selected audit types -->
   <input type="hidden" name="eng_audit_type" class="eng_audit_input" value="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>">
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const auditCards = document.querySelectorAll('.audit-card');
-  const auditInput = document.querySelector('.eng_audit_input');
+  // Target only the audit container inside THIS modal
+  const container = document.querySelector('#editModal-<?php echo $eng['eng_idno']; ?> .engagement-audit-container');
+  const auditCards = container.querySelectorAll('.audit-card');
+  const auditInput = container.querySelector('.eng_audit_input');
 
-  // Initialize visual style for pre-selected cards
+  // Initialize styles for pre-selected cards
   auditCards.forEach(card => {
-    if(card.classList.contains('selected')) {
+    if(card.classList.contains('selected')){
       card.style.background = 'rgb(224, 233, 255)';
       card.style.color = '#5d5d5d';
       card.style.borderColor = 'rgb(194, 213, 255)';
     }
   });
 
+  // Click toggle
   auditCards.forEach(card => {
     card.addEventListener('click', () => {
       card.classList.toggle('selected');
 
-      // Style toggle
-      if(card.classList.contains('selected')) {
+      if(card.classList.contains('selected')){
         card.style.background = 'rgb(224, 233, 255)';
         card.style.color = '#5d5d5d';
         card.style.borderColor = 'rgb(194, 213, 255)';
@@ -163,8 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.borderColor = 'rgb(229,231,235)';
       }
 
-      // Update hidden input with selected values
-      const selected = Array.from(document.querySelectorAll('.audit-card.selected'))
+      const selected = Array.from(container.querySelectorAll('.audit-card.selected'))
                             .map(c => c.dataset.audit);
       auditInput.value = selected.join(',');
     });
