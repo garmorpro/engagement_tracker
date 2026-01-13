@@ -762,10 +762,15 @@ $totalEngagements = count($engagements);
       </div>
 
       <!-- Add Buttons -->
-      <div class="d-flex mb-3 gap-2">
-        <button type="button" id="addSeniorBtn" class="btn btn-sm btn-purple">Add Senior</button>
-        <button type="button" id="addStaffBtn" class="btn btn-sm btn-success">Add Staff</button>
-      </div>
+      <div class="d-flex mb-3 gap-3">
+  <a href="javascript:void(0);" id="addSeniorBtn" class="text-decoration-none text-purple fw-semibold">
+    <i class="bi bi-plus-circle me-1"></i> Add Senior
+  </a>
+  <a href="javascript:void(0);" id="addStaffBtn" class="text-decoration-none text-success fw-semibold">
+    <i class="bi bi-plus-circle me-1"></i> Add Staff
+  </a>
+</div>
+
 
       <!-- Manager Card -->
       <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
