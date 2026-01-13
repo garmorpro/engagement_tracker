@@ -163,116 +163,91 @@ foreach ($dateFields as $field => $label):
 <h6 class="fw-semibold mt-5">Team Members</h6>
 <hr>
 
-<!-- Manager -->
-<div class="col-md-6 mb-3">
-  <label class="form-label fw-semibold">Manager</label>
-  <input type="text" class="form-control" name="eng_manager" value="">
-</div>
+<div class="row g-3">
 
-<!-- Audit type selector -->
-<div class="col-md-6 mb-3">
-  <label class="form-label fw-semibold">Audit Type</label>
-  <select class="form-select" id="auditType">
-    <option value="SOC1">SOC 1</option>
-    <option value="SOC2">SOC 2</option>
-    <option value="BOTH">SOC 1 & SOC 2</option>
-  </select>
-</div>
-
-<!-- Seniors -->
-<div id="seniors-container">
-  <div class="senior-row mb-3">
-    <label class="form-label fw-semibold">Senior 1</label>
-    <input type="text" class="form-control senior-name mb-1" name="eng_senior_1" placeholder="Name">
-    
-    <!-- DOL container -->
-    <div class="dol-container"></div>
+  <!-- Manager -->
+  <div class="col-md-6">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Manager</label>
+    <input type="text" class="form-control" name="eng_manager" value="">
   </div>
+
+  <!-- Senior 1 -->
+  <div class="col-md-6">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Senior 1</label>
+    <input type="text" class="form-control team-input senior-input" data-role="Senior" data-index="1" name="eng_senior_1" value="">
+    <div class="dol-container mt-2" id="dol-senior-1"></div>
+  </div>
+
+  <!-- Senior 2 -->
+  <div class="col-md-6">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Senior 2</label>
+    <input type="text" class="form-control team-input senior-input" data-role="Senior" data-index="2" name="eng_senior_2" value="">
+    <div class="dol-container mt-2" id="dol-senior-2"></div>
+  </div>
+
+  <!-- Staff 1 -->
+  <div class="col-md-6">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Staff 1</label>
+    <input type="text" class="form-control team-input staff-input" data-role="Staff" data-index="1" name="eng_staff_1" value="">
+    <div class="dol-container mt-2" id="dol-staff-1"></div>
+  </div>
+
+  <!-- Staff 2 -->
+  <div class="col-md-6">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Staff 2</label>
+    <input type="text" class="form-control team-input staff-input" data-role="Staff" data-index="2" name="eng_staff_2" value="">
+    <div class="dol-container mt-2" id="dol-staff-2"></div>
+  </div>
+
 </div>
 
-<!-- Staff -->
-<div id="staff-container">
-  <div class="staff-row mb-3">
-    <label class="form-label fw-semibold">Staff 1</label>
-    <input type="text" class="form-control staff-name mb-1" name="eng_staff_1" placeholder="Name">
-    
-    <!-- DOL container -->
-    <div class="dol-container"></div>
-  </div>
-</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Grab all audit cards and hidden input
-  const auditCards = document.querySelectorAll('.audit-card');
-  const auditInput = document.querySelector('.eng_audit_input');
 
-  // Function to get currently selected audits (excluding PCI)
-  function getSelectedAudits() {
-    return Array.from(document.querySelectorAll('.audit-card.selected'))
-                .map(c => c.dataset.audit)
-                .filter(a => !a.toLowerCase().includes('pci')); // PCI doesn't need DOL
-  }
+  // Get selected audit types
+  const getSelectedAudits = () => {
+    const audits = document.querySelector('.eng_audit_input').value.split(',');
+    // Only SOC 1 / SOC 2
+    return audits.filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
+  };
 
-  // Function to update DOL inputs for a row
-  function updateDOL(row, roleType) {
-    const nameInput = row.querySelector(`.${roleType}-name`);
-    const dolContainer = row.querySelector('.dol-container');
-    const selectedAudits = getSelectedAudits();
+  // When typing a team member, show DOLs
+  const teamInputs = document.querySelectorAll('.team-input');
 
-    // Clear previous DOLs
-    dolContainer.innerHTML = '';
+  teamInputs.forEach(input => {
+    input.addEventListener('input', () => {
+      const containerId = `dol-${input.dataset.role.toLowerCase()}-${input.dataset.index}`;
+      const container = document.getElementById(containerId);
+      container.innerHTML = ''; // Clear first
 
-    if (nameInput.value.trim() !== '') {
-      if (selectedAudits.some(a => a.toLowerCase().includes('soc 1'))) {
-        const soc1Input = document.createElement('input');
-        soc1Input.type = 'date';
-        soc1Input.name = `${roleType}_dol_soc1[]`;
-        soc1Input.placeholder = 'SOC 1 DOL';
-        soc1Input.className = 'form-control mb-1';
-        dolContainer.appendChild(soc1Input);
-      }
+      if(input.value.trim() === '') return; // hide if empty
 
-      if (selectedAudits.some(a => a.toLowerCase().includes('soc 2'))) {
-        const soc2Input = document.createElement('input');
-        soc2Input.type = 'date';
-        soc2Input.name = `${roleType}_dol_soc2[]`;
-        soc2Input.placeholder = 'SOC 2 DOL';
-        soc2Input.className = 'form-control mb-1';
-        dolContainer.appendChild(soc2Input);
-      }
-    }
-  }
+      const audits = getSelectedAudits();
+      if(audits.length === 0) return; // no audit selected, no DOLs
 
-  // Attach input events for seniors and staff
-  document.querySelectorAll('.senior-name').forEach(input => {
-    input.addEventListener('input', (e) => {
-      updateDOL(e.target.closest('.senior-row'), 'senior');
-    });
-  });
-  document.querySelectorAll('.staff-name').forEach(input => {
-    input.addEventListener('input', (e) => {
-      updateDOL(e.target.closest('.staff-row'), 'staff');
+      audits.forEach(audit => {
+        const label = document.createElement('label');
+        label.classList.add('form-label', 'fw-semibold', 'mb-1');
+        label.style.fontSize = '12px';
+        label.textContent = `${audit} DOL`;
+
+        const inputEl = document.createElement('input');
+        inputEl.type = 'date';
+        inputEl.name = `dol[${audit}][${input.dataset.role}][${input.dataset.index}]`;
+        inputEl.classList.add('form-control', 'mb-2');
+        inputEl.style.fontSize = '14px';
+        inputEl.style.backgroundColor = 'rgb(243,243,245)';
+
+        container.appendChild(label);
+        container.appendChild(inputEl);
+      });
     });
   });
 
-  // Update DOLs whenever audit cards are toggled
-  auditCards.forEach(card => {
-    card.addEventListener('click', () => {
-      card.classList.toggle('selected');
-
-      // Update hidden input value
-      const selected = Array.from(document.querySelectorAll('.audit-card.selected'))
-                            .map(c => c.dataset.audit);
-      auditInput.value = selected.join(',');
-
-      // Update all DOL inputs for seniors and staff
-      document.querySelectorAll('.senior-row').forEach(row => updateDOL(row, 'senior'));
-      document.querySelectorAll('.staff-row').forEach(row => updateDOL(row, 'staff'));
-    });
-  });
 });
 </script>
+
 
 
 
