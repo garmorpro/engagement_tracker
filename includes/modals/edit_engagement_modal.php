@@ -324,14 +324,6 @@ function getDOL($eng, $audit, $role, $index) {
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
-  const getSelectedAudits = () => {
-    const auditsInput = document.querySelector('.eng_audit_input');
-    if (!auditsInput) return [];
-    const audits = auditsInput.value.split(',');
-    return audits.map(a => a.trim()).filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
-  };
-
   const teamInputs = document.querySelectorAll('.team-input');
 
   teamInputs.forEach(input => {
@@ -341,39 +333,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!container) return;
 
       const audits = getSelectedAudits();
-      if (audits.length === 0) return;
 
-      audits.forEach(audit => {
-        let soc = '';
-        if (audit.includes('SOC 1')) soc = 'soc1';
-        else if (audit.includes('SOC 2')) soc = 'soc2';
-
-        const fieldName = `eng_${soc}_${input.dataset.role.toLowerCase()}${input.dataset.index}_dol`;
-
-        // **Only create field if it doesn't exist**
-        if (!container.querySelector(`[name="${fieldName}"]`)) {
-
-          // Create label
-          const label = document.createElement('label');
-          label.classList.add('form-label', 'fw-semibold', 'mb-1');
-          label.style.fontSize = '12px';
-          label.textContent = `${audit} DOL`;
-
-          // Create input
-          const inputEl = document.createElement('input');
-          inputEl.type = 'text';
-          inputEl.name = fieldName;
-          inputEl.classList.add('form-control', 'mb-2');
-          inputEl.style.fontSize = '14px';
-          inputEl.style.backgroundColor = 'rgb(243,243,245)';
-
-          container.appendChild(label);
-          container.appendChild(inputEl);
-        }
-      });
+      // Show/hide existing DOL fields based on whether the input has a value
+      if (input.value.trim() === '') {
+        container.style.display = 'none';
+      } else {
+        container.style.display = 'block';
+      }
     });
   });
-
 });
 
 </script>
