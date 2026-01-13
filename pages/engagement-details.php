@@ -748,7 +748,8 @@ $totalEngagements = count($engagements);
     <div class="row align-items-stretch mt-4" style="margin-left: 200px; margin-right: 200px;">
 
       <!-- LEFT COLUMN (team) -->
-        <div class="col-md-4 d-flex">
+        <!-- LEFT COLUMN (team) -->
+<div class="col-md-4 d-flex">
   <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
     <div class="card-body p-4">
 
@@ -758,6 +759,12 @@ $totalEngagements = count($engagements);
           <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
         </div>
         <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
+      </div>
+
+      <!-- Add Buttons -->
+      <div class="d-flex mb-3 gap-2">
+        <button type="button" id="addSeniorBtn" class="btn btn-sm btn-purple">Add Senior</button>
+        <button type="button" id="addStaffBtn" class="btn btn-sm btn-success">Add Staff</button>
       </div>
 
       <!-- Manager Card -->
@@ -772,63 +779,125 @@ $totalEngagements = count($engagements);
         </div>
       </div>
 
-      <!-- Seniors -->
-      <?php for ($i = 1; $i <= 2; $i++): 
-          $senior = $eng["eng_senior{$i}"] ?? '';
-          if (!$senior) continue; // skip if not in DB
-      ?>
-        <div class="card mb-4" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
-          <div class="card-body p-3">
-            <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
+      <!-- Seniors Container -->
+      <div id="seniorsContainer">
+        <?php for ($i = 1; $i <= 2; $i++): 
+            $senior = $eng["eng_senior{$i}"] ?? '';
+            if (!$senior) continue;
+        ?>
+          <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
+            <div class="card-body p-3">
+              <div class="d-flex align-items-center mb-3">
+                <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
+              </div>
+              <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+                <?php echo htmlspecialchars($senior); ?>
+              </h6>
+              <?php if (!empty($eng["eng_soc1_senior{$i}_dol"])): ?>
+                <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
+                  <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_senior{$i}_dol"]); ?>
+                </p>
+              <?php endif; ?>
+              <?php if (!empty($eng["eng_soc2_senior{$i}_dol"])): ?>
+                <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
+                  <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_senior{$i}_dol"]); ?>
+                </p>
+              <?php endif; ?>
             </div>
-            <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-              <?php echo htmlspecialchars($senior); ?>
-            </h6>
-            <?php if (!empty($eng["eng_soc1_senior{$i}_dol"])): ?>
-              <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_senior{$i}_dol"]); ?>
-              </p>
-            <?php endif; ?>
-            <?php if (!empty($eng["eng_soc2_senior{$i}_dol"])): ?>
-              <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_senior{$i}_dol"]); ?>
-              </p>
-            <?php endif; ?>
           </div>
-        </div>
-      <?php endfor; ?>
+        <?php endfor; ?>
+      </div>
 
-      <!-- Staff -->
-      <?php for ($i = 1; $i <= 2; $i++): 
-          $staff = $eng["eng_staff{$i}"] ?? '';
-          if (!$staff) continue; // skip if not in DB
-      ?>
-        <div class="card mb-4" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
-          <div class="card-body p-3">
-            <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
+      <!-- Staff Container -->
+      <div id="staffContainer">
+        <?php for ($i = 1; $i <= 2; $i++): 
+            $staff = $eng["eng_staff{$i}"] ?? '';
+            if (!$staff) continue;
+        ?>
+          <div class="card mb-4 staff-card" data-index="<?php echo $i; ?>" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
+            <div class="card-body p-3">
+              <div class="d-flex align-items-center mb-3">
+                <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
+              </div>
+              <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
+                <?php echo htmlspecialchars($staff); ?>
+              </h6>
+              <?php if (!empty($eng["eng_soc1_staff{$i}_dol"])): ?>
+                <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
+                  <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_staff{$i}_dol"]); ?>
+                </p>
+              <?php endif; ?>
+              <?php if (!empty($eng["eng_soc2_staff{$i}_dol"])): ?>
+                <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
+                  <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_staff{$i}_dol"]); ?>
+                </p>
+              <?php endif; ?>
             </div>
-            <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-              <?php echo htmlspecialchars($staff); ?>
-            </h6>
-            <?php if (!empty($eng["eng_soc1_staff{$i}_dol"])): ?>
-              <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_staff{$i}_dol"]); ?>
-              </p>
-            <?php endif; ?>
-            <?php if (!empty($eng["eng_soc2_staff{$i}_dol"])): ?>
-              <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
-                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_staff{$i}_dol"]); ?>
-              </p>
-            <?php endif; ?>
           </div>
-        </div>
-      <?php endfor; ?>
+        <?php endfor; ?>
+      </div>
 
     </div>
   </div>
 </div>
+
+<!-- JavaScript for Adding Cards Dynamically -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const maxSeniors = 2;
+    const maxStaff = 2;
+
+    const seniorsContainer = document.getElementById('seniorsContainer');
+    const staffContainer = document.getElementById('staffContainer');
+
+    const addSeniorBtn = document.getElementById('addSeniorBtn');
+    const addStaffBtn = document.getElementById('addStaffBtn');
+
+    function updateButtons() {
+      addSeniorBtn.style.display = seniorsContainer.children.length >= maxSeniors ? 'none' : 'inline-block';
+      addStaffBtn.style.display = staffContainer.children.length >= maxStaff ? 'none' : 'inline-block';
+    }
+
+    addSeniorBtn.addEventListener('click', () => {
+      const index = seniorsContainer.children.length + 1;
+      const card = document.createElement('div');
+      card.classList.add('card', 'mb-4', 'senior-card');
+      card.setAttribute('data-index', index);
+      card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
+      card.innerHTML = `
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center mb-3">
+            <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior ${index}</h6>
+          </div>
+          <input type="text" class="form-control mb-2" placeholder="Enter senior name" name="new_senior${index}">
+        </div>
+      `;
+      seniorsContainer.appendChild(card);
+      updateButtons();
+    });
+
+    addStaffBtn.addEventListener('click', () => {
+      const index = staffContainer.children.length + 1;
+      const card = document.createElement('div');
+      card.classList.add('card', 'mb-4', 'staff-card');
+      card.setAttribute('data-index', index);
+      card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
+      card.innerHTML = `
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center mb-3">
+            <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff ${index}</h6>
+          </div>
+          <input type="text" class="form-control mb-2" placeholder="Enter staff name" name="new_staff${index}">
+        </div>
+      `;
+      staffContainer.appendChild(card);
+      updateButtons();
+    });
+
+    updateButtons();
+  });
+</script>
+
 
       <!-- end LEFT COLUMN (team) -->
 
