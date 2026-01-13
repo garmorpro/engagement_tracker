@@ -322,13 +322,13 @@ function getDOL($eng, $audit, $role, $index) {
   </div>
 
 </div>
-
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
+  // Get selected audit types from hidden input
   const getSelectedAudits = () => {
-    const audits = document.querySelector('.eng_audit_input').value.split(',').map(a => a.trim());
-    return audits.filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
+    const audits = document.querySelector('.eng_audit_input').value.split(',');
+    return audits.map(a => a.trim()).filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
   };
 
   const teamInputs = document.querySelectorAll('.team-input');
@@ -338,46 +338,43 @@ function getDOL($eng, $audit, $role, $index) {
       const containerId = `dol-${input.dataset.role.toLowerCase()}-${input.dataset.index}`;
       const container = document.getElementById(containerId);
 
-      if(input.value.trim() === '') return;
-
       const audits = getSelectedAudits();
       if(audits.length === 0) return;
 
-      // Build a map of existing DOL inputs so we don't duplicate
-      const existing = {};
-      container.querySelectorAll('input').forEach(inp => {
-        existing[inp.name] = inp.value;
-      });
-
       audits.forEach(audit => {
-        let socName = audit.toLowerCase();
-        if (socName.includes('soc 1')) socName = 'soc1';
-        else if (socName.includes('soc 2')) socName = 'soc2';
-        const dolName = `eng_${socName}_${input.dataset.role.toLowerCase()}${input.dataset.index}_dol`;
+        // Determine field name
+        let soc = '';
+        if(audit.includes('SOC 1')) soc = 'soc1';
+        else if(audit.includes('SOC 2')) soc = 'soc2';
 
-        if(!existing[dolName]) {
-          const label = document.createElement('label');
-          label.classList.add('form-label', 'fw-semibold', 'mb-1');
-          label.style.fontSize = '12px';
-          label.textContent = `${audit} DOL`;
+        const fieldName = `eng_${soc}_${input.dataset.role.toLowerCase()}${input.dataset.index}_dol`;
 
-          const inputEl = document.createElement('input');
-          inputEl.type = 'text';
-          inputEl.name = dolName;
-          inputEl.classList.add('form-control', 'mb-2');
-          inputEl.style.fontSize = '14px';
-          inputEl.style.backgroundColor = 'rgb(243,243,245)';
+        // Check if input already exists
+        if(container.querySelector(`[name="${fieldName}"]`)) return;
 
-          container.appendChild(label);
-          container.appendChild(inputEl);
-        }
+        // Create label
+        const label = document.createElement('label');
+        label.classList.add('form-label', 'fw-semibold', 'mb-1');
+        label.style.fontSize = '12px';
+        label.textContent = `${audit} DOL`;
+
+        // Create input
+        const inputEl = document.createElement('input');
+        inputEl.type = 'text';
+        inputEl.name = fieldName;
+        inputEl.classList.add('form-control', 'mb-2');
+        inputEl.style.fontSize = '14px';
+        inputEl.style.backgroundColor = 'rgb(243,243,245)';
+
+        container.appendChild(label);
+        container.appendChild(inputEl);
       });
     });
   });
 
 });
-
 </script>
+
 
 
 <!-- <h6 class="fw-semibold mt-5">Team Members</h6>
