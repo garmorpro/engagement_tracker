@@ -827,6 +827,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const maxSeniors = 2;
   const maxStaff = 2;
   const engId = "<?php echo $eng['eng_idno']; ?>";
+  console.log(engId);
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer = document.getElementById('staffContainer');
@@ -894,7 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save on Enter
     card.querySelector('.new-name').addEventListener('keypress', function(e){
       if (e.key === 'Enter' && this.value.trim() !== '') {
-        saveToDB(type.toLowerCase(), this.value.trim(), index);
+        if(index) saveToDB(type.toLowerCase(), this.value.trim(), index);
 
         this.parentElement.innerHTML = `<div class="d-flex align-items-center mb-3">
           <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight: 600 !important; font-size: 12px !important;">
