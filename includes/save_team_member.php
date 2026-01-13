@@ -8,7 +8,7 @@ $index = (int)$_POST['index'];
 
 // Determine column
 $column = $type . $index; // e.g., senior1 or staff2
-$sql = "UPDATE engagements SET `$column` = ? WHERE eng_idno = ?";
+$sql = "UPDATE engagements SET `eng_$column` = ? WHERE eng_idno = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("si", $name, $eng_id);
 $success = $stmt->execute();
