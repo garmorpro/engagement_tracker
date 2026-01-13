@@ -249,93 +249,56 @@ function getDOL($eng, $audit, $role, $index) {
            value="<?php echo htmlspecialchars($eng['eng_manager'] ?? '', ENT_QUOTES); ?>">
   </div>
 
-  <?php 
-  // Define roles and indices
+  <?php
+  // Roles and count
   $roles = ['Senior' => 2, 'Staff' => 2];
 
-  foreach($roles as $role => $count):
-    for($i=1; $i<=$count; $i++):
-      $engField = strtolower($role) . $i;
-      $nameValue = $eng['eng_' . $engField] ?? '';
+  foreach ($roles as $role => $count):
+      for ($i = 1; $i <= $count; $i++):
+          $fieldKey = strtolower($role) . $i;
+          $nameValue = $eng['eng_' . $fieldKey] ?? '';
   ?>
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;"><?php echo $role . " " . $i; ?></label>
     <input type="text" class="form-control team-input <?php echo strtolower($role); ?>-input"
            style="background-color:#f3f3f5;"
            data-role="<?php echo $role; ?>" data-index="<?php echo $i; ?>"
-           name="eng_<?php echo $engField; ?>" value="<?php echo htmlspecialchars($nameValue, ENT_QUOTES); ?>">
+           name="eng_<?php echo $fieldKey; ?>" value="<?php echo htmlspecialchars($nameValue, ENT_QUOTES); ?>">
 
-    <div class="dol-container mt-2" id="dol-<?php echo strtolower($role) . '-' . $i; ?>" 
+    <!-- DOL container always has all inputs pre-rendered -->
+    <div class="dol-container mt-2" id="dol-<?php echo strtolower($role) . '-' . $i; ?>"
          style="<?php echo empty($nameValue) ? 'display:none;' : 'display:block;'; ?>">
-      <?php foreach($selectedAudits as $audit):
-        if(!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+      <?php foreach ($selectedAudits as $audit):
+        if (!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
         $val = getDOL($eng, $audit, $role, $i);
-        $soc = strtolower(str_replace(' ', '', strstr(strtolower($audit),'soc')));
+        $soc = strtolower(str_replace(' ', '', strstr(strtolower($audit), 'soc')));
       ?>
         <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
         <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
-               name="eng_<?php echo $soc . '_' . strtolower($role) . $i; ?>_dol"
+               name="eng_<?php echo $soc . '_' . $fieldKey; ?>_dol"
                value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
       <?php endforeach; ?>
     </div>
   </div>
-  <?php endfor; endforeach; ?>
+  <?php
+      endfor;
+  endforeach;
+  ?>
 
 </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-
-  const getSelectedAudits = () => {
-    const auditsInput = document.querySelector('.eng_audit_input');
-    if (!auditsInput) return [];
-    return auditsInput.value.split(',').map(a => a.trim()).filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
-  };
-
-  const teamInputs = document.querySelectorAll('.team-input');
-
-  teamInputs.forEach(input => {
+  // Just toggle visibility; never add/remove inputs
+  document.querySelectorAll('.team-input').forEach(input => {
     const containerId = `dol-${input.dataset.role.toLowerCase()}-${input.dataset.index}`;
     const container = document.getElementById(containerId);
     if (!container) return;
 
     input.addEventListener('input', () => {
-      // Show/hide container
       container.style.display = input.value.trim() === '' ? 'none' : 'block';
-
-      if(input.value.trim() === '') return; // no name, no DOL update
-
-      // Dynamically add missing DOL fields for new audits
-      const audits = getSelectedAudits();
-      audits.forEach(audit => {
-        let soc = '';
-        if(audit.includes('SOC 1')) soc = 'soc1';
-        else if(audit.includes('SOC 2')) soc = 'soc2';
-
-        const fieldName = `eng_${soc}_${input.dataset.role.toLowerCase()}${input.dataset.index}_dol`;
-
-        if(!container.querySelector(`[name="${fieldName}"]`)) {
-          // Create label
-          const label = document.createElement('label');
-          label.classList.add('form-label','fw-semibold','mb-1');
-          label.style.fontSize = '12px';
-          label.textContent = `${audit} DOL`;
-
-          // Create input
-          const dolInput = document.createElement('input');
-          dolInput.type = 'text';
-          dolInput.name = fieldName;
-          dolInput.classList.add('form-control','mb-2');
-          dolInput.style.fontSize = '14px';
-          dolInput.style.backgroundColor = 'rgb(243,243,245)';
-
-          container.appendChild(label);
-          container.appendChild(dolInput);
-        }
-      });
     });
   });
-
 });
 </script>
 
