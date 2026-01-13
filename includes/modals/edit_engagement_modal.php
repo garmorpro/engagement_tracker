@@ -190,13 +190,13 @@ foreach ($dateFields as $field => $label):
 </div>
 
 <div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Senior(s)</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Senior 1</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_senior"
          value="<?php echo htmlspecialchars($eng['eng_senior'] ?? '', ENT_QUOTES); ?>">
 </div>
 
 <div class="col-md-12">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff 1</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff"
          value="<?php echo htmlspecialchars($eng['eng_staff'] ?? '', ENT_QUOTES); ?>">
 </div>
@@ -218,7 +218,7 @@ foreach ($dateFields as $field => $label):
 <hr>
 
 <div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">POC</label>
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Point of Contact</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_poc"
          value="<?php echo htmlspecialchars($eng['eng_poc'] ?? '', ENT_QUOTES); ?>">
 </div>

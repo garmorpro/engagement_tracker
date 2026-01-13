@@ -97,11 +97,102 @@ foreach ($dateFields as $field => $label):
 <h6 class="fw-semibold mt-5">Team Members</h6>
 <hr>
 
-<!-- <div class="col-md-6"><input class="form-control" name="eng_manager" placeholder="Manager"></div>
-<div class="col-md-6"><input class="form-control" name="eng_senior" placeholder="Senior(s)"></div>
-<div class="col-md-12"><input class="form-control" name="eng_staff" placeholder="Staff"></div>
-<div class="col-md-6"><input class="form-control" name="eng_senior_dol" placeholder="Senior DOL"></div>
-<div class="col-md-6"><input class="form-control" name="eng_staff_dol" placeholder="Staff DOL"></div> -->
+<!-- Manager -->
+<div class="col-md-6 mb-3">
+  <label class="form-label fw-semibold">Manager</label>
+  <input type="text" class="form-control" name="eng_manager" value="">
+</div>
+
+<!-- Audit type selector -->
+<div class="col-md-6 mb-3">
+  <label class="form-label fw-semibold">Audit Type</label>
+  <select class="form-select" id="auditType">
+    <option value="SOC1">SOC 1</option>
+    <option value="SOC2">SOC 2</option>
+    <option value="BOTH">SOC 1 & SOC 2</option>
+  </select>
+</div>
+
+<!-- Seniors -->
+<div id="seniors-container">
+  <div class="senior-row mb-3">
+    <label class="form-label fw-semibold">Senior 1</label>
+    <input type="text" class="form-control senior-name mb-1" name="eng_senior_1" placeholder="Name">
+    
+    <!-- DOL container -->
+    <div class="dol-container"></div>
+  </div>
+</div>
+
+<!-- Staff -->
+<div id="staff-container">
+  <div class="staff-row mb-3">
+    <label class="form-label fw-semibold">Staff 1</label>
+    <input type="text" class="form-control staff-name mb-1" name="eng_staff_1" placeholder="Name">
+    
+    <!-- DOL container -->
+    <div class="dol-container"></div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const auditTypeSelect = document.getElementById('auditType');
+
+  // Function to update DOL inputs
+  function updateDOL(row, roleType) {
+    const nameInput = row.querySelector(`.${roleType}-name`);
+    const dolContainer = row.querySelector('.dol-container');
+    const auditType = auditTypeSelect.value;
+
+    // Clear previous DOLs
+    dolContainer.innerHTML = '';
+
+    if (nameInput.value.trim() !== '') {
+      if (auditType === 'SOC1' || auditType === 'BOTH') {
+        const soc1Input = document.createElement('input');
+        soc1Input.type = 'date';
+        soc1Input.name = `${roleType}_dol_soc1[]`;
+        soc1Input.placeholder = 'SOC 1 DOL';
+        soc1Input.className = 'form-control mb-1';
+        dolContainer.appendChild(soc1Input);
+      }
+
+      if (auditType === 'SOC2' || auditType === 'BOTH') {
+        const soc2Input = document.createElement('input');
+        soc2Input.type = 'date';
+        soc2Input.name = `${roleType}_dol_soc2[]`;
+        soc2Input.placeholder = 'SOC 2 DOL';
+        soc2Input.className = 'form-control mb-1';
+        dolContainer.appendChild(soc2Input);
+      }
+    }
+  }
+
+  // Attach events to existing senior/staff inputs
+  document.querySelectorAll('.senior-name').forEach(input => {
+    input.addEventListener('input', (e) => {
+      updateDOL(e.target.closest('.senior-row'), 'senior');
+    });
+  });
+
+  document.querySelectorAll('.staff-name').forEach(input => {
+    input.addEventListener('input', (e) => {
+      updateDOL(e.target.closest('.staff-row'), 'staff');
+    });
+  });
+
+  // Update DOLs if audit type changes
+  auditTypeSelect.addEventListener('change', () => {
+    document.querySelectorAll('.senior-row').forEach(row => updateDOL(row, 'senior'));
+    document.querySelectorAll('.staff-row').forEach(row => updateDOL(row, 'staff'));
+  });
+});
+</script>
+
+
+<!-- <h6 class="fw-semibold mt-5">Team Members</h6>
+<hr>
 
 <div class="col-md-6">
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Manager</label>
@@ -131,7 +222,7 @@ foreach ($dateFields as $field => $label):
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff DOL</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff_dol"
          value="">
-</div>
+</div> -->
 
 <!-- =====================
      CLIENT INFO
