@@ -222,7 +222,109 @@ foreach ($dateFields as $field => $label):
 <?php endforeach; ?>
 
 
+<?php
+// Get selected audits from DB (comma-separated)
+$selectedAudits = explode(',', $eng['eng_audit_type'] ?? []);
+$selectedAudits = array_map('trim', $selectedAudits);
+
+// Helper function to get DOL value from DB
+function getDOL($eng, $audit, $role, $index) {
+    $soc = '';
+    if(strpos($audit, 'SOC 1') !== false) $soc = 'soc1';
+    elseif(strpos($audit, 'SOC 2') !== false) $soc = 'soc2';
+    $field = "eng_{$soc}_" . strtolower($role) . $index . "_dol";
+    return $eng[$field] ?? '';
+}
+?>
+
 <h6 class="fw-semibold mt-5">Team Members</h6>
+<hr>
+
+<div class="row g-3">
+
+  <!-- Manager -->
+  <div class="col-md-12">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Manager</label>
+    <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_manager"
+           value="<?php echo htmlspecialchars($eng['eng_manager'] ?? '', ENT_QUOTES); ?>">
+  </div>
+
+  <!-- Senior 1 -->
+  <div class="col-md-6">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Senior 1</label>
+    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="1" name="eng_senior1"
+           value="<?php echo htmlspecialchars($eng['eng_senior1'] ?? '', ENT_QUOTES); ?>">
+    <div class="dol-container mt-2" id="dol-senior-1">
+      <?php foreach($selectedAudits as $audit):
+        if(!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+        $val = getDOL($eng, $audit, 'Senior', 1);
+      ?>
+        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+               name="eng_<?php echo strtolower(str_replace(' ', '', strstr(strtolower($audit),'soc'))); ?>_senior1_dol"
+               value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <!-- Senior 2 -->
+  <div class="col-md-6">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Senior 2</label>
+    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="2" name="eng_senior2"
+           value="<?php echo htmlspecialchars($eng['eng_senior2'] ?? '', ENT_QUOTES); ?>">
+    <div class="dol-container mt-2" id="dol-senior-2">
+      <?php foreach($selectedAudits as $audit):
+        if(!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+        $val = getDOL($eng, $audit, 'Senior', 2);
+      ?>
+        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+               name="eng_<?php echo strtolower(str_replace(' ', '', strstr(strtolower($audit),'soc'))); ?>_senior2_dol"
+               value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <!-- Staff 1 -->
+  <div class="col-md-6">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Staff 1</label>
+    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="1" name="eng_staff1"
+           value="<?php echo htmlspecialchars($eng['eng_staff1'] ?? '', ENT_QUOTES); ?>">
+    <div class="dol-container mt-2" id="dol-staff-1">
+      <?php foreach($selectedAudits as $audit):
+        if(!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+        $val = getDOL($eng, $audit, 'Staff', 1);
+      ?>
+        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+               name="eng_<?php echo strtolower(str_replace(' ', '', strstr(strtolower($audit),'soc'))); ?>_staff1_dol"
+               value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <!-- Staff 2 -->
+  <div class="col-md-6">
+    <label class="form-label fw-semibold" style="font-size: 12px;">Staff 2</label>
+    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="2" name="eng_staff2"
+           value="<?php echo htmlspecialchars($eng['eng_staff2'] ?? '', ENT_QUOTES); ?>">
+    <div class="dol-container mt-2" id="dol-staff-2">
+      <?php foreach($selectedAudits as $audit):
+        if(!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+        $val = getDOL($eng, $audit, 'Staff', 2);
+      ?>
+        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+               name="eng_<?php echo strtolower(str_replace(' ', '', strstr(strtolower($audit),'soc'))); ?>_staff2_dol"
+               value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- <h6 class="fw-semibold mt-5">Team Members</h6>
 <hr>
 
 <div class="col-md-6">
@@ -253,7 +355,7 @@ foreach ($dateFields as $field => $label):
   <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff DOL</label>
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff_dol"
          value="<?php echo htmlspecialchars($eng['eng_staff_dol'] ?? '', ENT_QUOTES); ?>">
-</div>
+</div> -->
 
 
 <h6 class="fw-semibold mt-5">Client Information</h6>
