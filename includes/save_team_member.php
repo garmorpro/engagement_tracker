@@ -18,8 +18,8 @@ $role = ucfirst($type); // 'Senior' or 'Staff'
 
 // Insert new team member into engagement_team
 $stmt = $conn->prepare("
-    INSERT INTO engagement_team (eng_id, emp_name, role, audit_type, emp_dol, emp_created, emp_updated)
-    VALUES (?, ?, ?, NULL, NULL, NOW(), NOW())
+    INSERT INTO engagement_team (eng_id, emp_name, role)
+    VALUES (?, ?, ?)
 ");
 
 if (!$stmt) {

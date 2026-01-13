@@ -812,7 +812,7 @@ $totalEngagements = count($engagements);
 document.addEventListener('DOMContentLoaded', () => {
   const maxSeniors = 2;
   const maxStaff = 2;
-  const engId = "<?php echo $eng['eng_idno']; ?>";
+  const engId = "<?php echo $eng['eng_id']; ?>";
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer = document.getElementById('staffContainer');
