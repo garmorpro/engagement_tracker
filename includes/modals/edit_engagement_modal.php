@@ -237,125 +237,90 @@ function getDOL($eng, $audit, $role, $index) {
 }
 ?>
 
-<h6 class="fw-semibold mt-5">Team Members</h6>
-<hr>
+<?php
+$roles = ['Senior' => 2, 'Staff' => 2];
 
-<div class="row g-3">
+foreach ($roles as $role => $count):
+    for ($i = 1; $i <= $count; $i++):
+        $fieldKey = strtolower($role) . $i;
+        $nameValue = $eng['eng_' . $fieldKey] ?? '';
+?>
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px;"><?php echo $role . " " . $i; ?></label>
+  <input type="text" class="form-control team-input"
+         data-role="<?php echo $role; ?>" data-index="<?php echo $i; ?>"
+         name="eng_<?php echo $fieldKey; ?>" value="<?php echo htmlspecialchars($nameValue, ENT_QUOTES); ?>"
+         style="background-color:#f3f3f5;">
 
-  <!-- Manager -->
-  <div class="col-md-12">
-    <label class="form-label fw-semibold" style="font-size: 12px;">Manager</label>
-    <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_manager"
-           value="<?php echo htmlspecialchars($eng['eng_manager'] ?? '', ENT_QUOTES); ?>">
+  <div class="dol-container mt-2" id="dol-<?php echo strtolower($role) . '-' . $i; ?>">
+    <?php
+    // Always render existing DOLs if present
+    foreach ($selectedAudits as $audit):
+        if (!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
+        $soc = strtolower(str_replace(' ', '', strstr(strtolower($audit), 'soc')));
+        $dolName = "eng_{$soc}_{$fieldKey}_dol";
+        $val = $eng[$dolName] ?? '';
+    ?>
+      <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
+      <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
+             name="<?php echo $dolName; ?>" value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
+    <?php endforeach; ?>
   </div>
-
-  <?php
-  $roles = ['Senior' => 2, 'Staff' => 2];
-
-  foreach ($roles as $role => $count):
-      for ($i = 1; $i <= $count; $i++):
-          $fieldKey = strtolower($role) . $i;
-          $nameValue = $eng['eng_' . $fieldKey] ?? '';
-  ?>
-  <div class="col-md-6">
-    <label class="form-label fw-semibold" style="font-size: 12px;"><?php echo $role . " " . $i; ?></label>
-    <input type="text" class="form-control team-input"
-           data-role="<?php echo $role; ?>" data-index="<?php echo $i; ?>"
-           name="eng_<?php echo $fieldKey; ?>" value="<?php echo htmlspecialchars($nameValue, ENT_QUOTES); ?>"
-           style="background-color:#f3f3f5;">
-
-    <div class="dol-container mt-2" id="dol-<?php echo strtolower($role) . '-' . $i; ?>">
-      <?php
-      // Pre-render existing DOL values (if any)
-      foreach ($selectedAudits as $audit):
-          if (!str_contains($audit, 'SOC 1') && !str_contains($audit, 'SOC 2')) continue;
-          $soc = strtolower(str_replace(' ', '', strstr(strtolower($audit), 'soc')));
-          $dolName = "eng_{$soc}_{$fieldKey}_dol";
-          $val = $eng[$dolName] ?? '';
-      ?>
-        <label class="form-label fw-semibold mb-1" style="font-size:12px;"><?php echo $audit; ?> DOL</label>
-        <input type="text" class="form-control mb-2" style="font-size:14px; background-color: rgb(243,243,245);"
-               name="<?php echo $dolName; ?>" value="<?php echo htmlspecialchars($val, ENT_QUOTES); ?>">
-      <?php endforeach; ?>
-    </div>
-  </div>
-  <?php
-      endfor;
-  endforeach;
-  ?>
-
 </div>
+<?php
+    endfor;
+endforeach;
+?>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
 
-  // Helper: get selected audits from hidden input
   const getSelectedAudits = () => {
     const input = document.querySelector('.eng_audit_input');
     if (!input) return [];
     return input.value.split(',').map(a => a.trim()).filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
   };
 
-  // Listen to all team inputs
-  document.querySelectorAll('.team-input').forEach(input => {
+  const renderDOLFields = (input) => {
     const role = input.dataset.role;
     const index = input.dataset.index;
     const container = document.getElementById(`dol-${role.toLowerCase()}-${index}`);
-
-    // Hide container if input is empty on page load
-    if (input.value.trim() === '') {
-      container.style.display = 'none';
-    }
-
-    input.addEventListener('input', () => {
-      const audits = getSelectedAudits();
-
-      // Clear container if input empty
-      if (input.value.trim() === '') {
-        container.innerHTML = '';
-        container.style.display = 'none';
-        return;
-      }
-
-      container.style.display = 'block';
-
-      audits.forEach(audit => {
-        const soc = audit.includes('SOC 1') ? 'soc1' : (audit.includes('SOC 2') ? 'soc2' : '');
-        if (!soc) return;
-
-        const fieldName = `eng_${soc}_${role.toLowerCase()}${index}_dol`;
-
-        // Skip if input already exists
-        if (container.querySelector(`[name="${fieldName}"]`)) return;
-
-        // Create label
-        const label = document.createElement('label');
-        label.classList.add('form-label','fw-semibold','mb-1');
-        label.style.fontSize = '12px';
-        label.textContent = `${audit} DOL`;
-
-        // Create input
-        const dolInput = document.createElement('input');
-        dolInput.type = 'text';
-        dolInput.name = fieldName;
-        dolInput.classList.add('form-control','mb-2');
-        dolInput.style.fontSize = '14px';
-        dolInput.style.backgroundColor = 'rgb(243,243,245)';
-
-        container.appendChild(label);
-        container.appendChild(dolInput);
-      });
+    container.innerHTML = '';
+    const audits = getSelectedAudits();
+    if (!audits.length) return;
+    
+    audits.forEach(audit => {
+      const soc = audit.includes('SOC 1') ? 'soc1' : (audit.includes('SOC 2') ? 'soc2' : '');
+      if (!soc) return;
+      const fieldName = `eng_${soc}_${role.toLowerCase()}${index}_dol`;
+      // Pre-fill value if exists
+      const val = input.dataset[fieldName] || '';
+      const label = document.createElement('label');
+      label.classList.add('form-label','fw-semibold','mb-1');
+      label.style.fontSize = '12px';
+      label.textContent = `${audit} DOL`;
+      const dolInput = document.createElement('input');
+      dolInput.type = 'text';
+      dolInput.name = fieldName;
+      dolInput.value = val;
+      dolInput.classList.add('form-control','mb-2');
+      dolInput.style.fontSize = '14px';
+      dolInput.style.backgroundColor = 'rgb(243,243,245)';
+      container.appendChild(label);
+      container.appendChild(dolInput);
     });
 
-    // Trigger input on page load to populate DOL if name exists
-    if (input.value.trim() !== '') {
-      input.dispatchEvent(new Event('input'));
-    }
+    container.style.display = audits.length ? 'block' : 'none';
+  };
+
+  document.querySelectorAll('.team-input').forEach(input => {
+    renderDOLFields(input);
+    input.addEventListener('input', () => renderDOLFields(input));
   });
 
 });
-</script>
 
+</script>
 
 
 <!-- <h6 class="fw-semibold mt-5">Team Members</h6>
