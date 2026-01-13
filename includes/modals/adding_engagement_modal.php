@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
         label.textContent = `${audit} DOL`;
 
         const inputEl = document.createElement('input');
-        inputEl.type = 'date';
+        inputEl.type = 'text';
         inputEl.name = `dol[${audit}][${input.dataset.role}][${input.dataset.index}]`;
         inputEl.classList.add('form-control', 'mb-2');
         inputEl.style.fontSize = '14px';
