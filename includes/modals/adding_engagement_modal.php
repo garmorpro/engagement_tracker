@@ -1,3 +1,76 @@
+<?php
+      // Map engagement status to background, border, and pill colors
+      $statusColors = [
+          'on-hold' => [
+              'bg' => 'rgb(249,250,251)',
+              'border' => 'rgb(229,231,235)',
+              'pill' => 'rgb(105,114,129)',
+          ],
+          'planning' => [
+              'bg' => 'rgb(238,246,254)',
+              'border' => 'rgb(187,219,253)',
+              'pill' => 'rgb(33,128,255)',
+          ],
+          'in-progress' => [
+              'bg' => 'rgb(255,247,238)',
+              'border' => 'rgb(255,214,171)',
+              'pill' => 'rgb(255,103,0)',
+          ],
+          'in-review' => [
+              'bg' => 'rgb(251,245,254)',
+              'border' => 'rgb(236,213,254)',
+              'pill' => 'rgb(181,72,255)',
+          ],
+          'complete' => [
+              'bg' => 'rgb(239,253,245)',
+              'border' => 'rgb(176,248,209)',
+              'pill' => 'rgb(0,201,92)',
+          ],
+          'archived' => [
+              'bg' => 'rgb(249,250,251)',
+              'border' => 'rgb(229,231,235)',
+              'pill' => 'rgb(105,114,129)',
+          ],
+      ];
+
+      // Fallback in case status is unexpected
+      $status = $eng['eng_status'];
+      $bgColor = $statusColors[$status]['bg'] ?? '#fff';
+      $borderColor = $statusColors[$status]['border'] ?? '#ccc';
+      $pillColor = $statusColors[$status]['pill'] ?? '#000';
+      ?>
+
+      <?php
+$auditColors = [
+    'SOC 1 Type 1' => [
+        'bg' => 'rgb(238,246,254)',
+        'border' => 'rgb(187,219,253)',
+        'pill' => 'rgb(33,128,255)',
+    ],
+    'SOC 1 Type 2' => [
+        'bg' => 'rgb(251,245,254)',
+        'border' => 'rgb(236,213,254)',
+        'pill' => 'rgb(181,72,255)',
+    ],
+    'SOC 2 Type 1' => [
+        'bg' => 'rgb(255,247,238)',
+        'border' => 'rgb(255,214,171)',
+        'pill' => 'rgb(255,103,0)',
+    ],
+    'SOC 2 Type 2' => [
+        'bg' => 'rgb(239,253,245)',
+        'border' => 'rgb(176,248,209)',
+        'pill' => 'rgb(0,201,92)',
+    ],
+    'PCI' => [
+        'bg' => 'rgb(249,250,251)',
+        'border' => 'rgb(229,231,235)',
+        'pill' => 'rgb(105,114,129)',
+    ],
+];
+?>
+
+
 <div class="modal fade" id="addModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
     <div class="modal-content">
@@ -54,13 +127,18 @@
       ];
     ?>
 
-    <?php foreach ($auditTypes as $key => $icon): ?>
+    <?php foreach ($auditTypes as $key => $icon): 
+        $colors = $auditColors[$key] ?? ['bg'=>'#fff','border'=>'#ccc','pill'=>'#000'];
+    ?>
       <div class="audit-card text-center p-2 flex-fill"
            data-audit="<?php echo $key; ?>"
+           data-bg="<?php echo $colors['bg']; ?>"
+           data-border="<?php echo $colors['border']; ?>"
+           data-pill="<?php echo $colors['pill']; ?>"
            style="
              cursor:pointer;
-             border:2px solid rgb(229,231,235);
-             background:#fff;
+             border:2px solid <?php echo $colors['border']; ?>;
+             background:<?php echo $colors['bg']; ?>;
              color:rgb(76,85,100);
              border-radius:1rem;
            ">
@@ -71,9 +149,9 @@
 
   </div>
 
-  <!-- Hidden input to store selected audit types -->
   <input type="hidden" name="eng_audit_type" class="eng_audit_input" value="">
 </div>
+
 
 
 <script>
