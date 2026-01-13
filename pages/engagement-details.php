@@ -849,16 +849,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function saveToDB(type, name, index) {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/includes/save_team_member.php', true);
+    xhr.open('POST', '/includes/save_team_member.php', true); // make sure path is correct
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
-      if (xhr.status === 200) {
-        const response = JSON.parse(xhr.responseText);
-        if (!response.success) alert('Error saving to DB');
-      }
+        if(xhr.status === 200){
+            const response = JSON.parse(xhr.responseText);
+            if(!response.success){
+                alert('Error saving to DB: ' + (response.error || 'Unknown error'));
+            }
+        } else {
+            alert('HTTP Error: ' + xhr.status);
+        }
     };
     xhr.send(`eng_id=${engId}&type=${type}&name=${encodeURIComponent(name)}&index=${index}`);
-  }
+}
 
   function createCard(container, type) {
     const index = getNextIndex(container);
