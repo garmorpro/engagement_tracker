@@ -793,16 +793,6 @@ $totalEngagements = count($engagements);
               <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
                 <?php echo htmlspecialchars($senior); ?>
               </h6>
-              <?php if (!empty($eng["eng_soc1_senior{$i}_dol"])): ?>
-                <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-                  <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_senior{$i}_dol"]); ?>
-                </p>
-              <?php endif; ?>
-              <?php if (!empty($eng["eng_soc2_senior{$i}_dol"])): ?>
-                <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
-                  <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_senior{$i}_dol"]); ?>
-                </p>
-              <?php endif; ?>
             </div>
           </div>
         <?php endfor; ?>
@@ -822,16 +812,6 @@ $totalEngagements = count($engagements);
               <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
                 <?php echo htmlspecialchars($staff); ?>
               </h6>
-              <?php if (!empty($eng["eng_soc1_staff{$i}_dol"])): ?>
-                <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-                  <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_staff{$i}_dol"]); ?>
-                </p>
-              <?php endif; ?>
-              <?php if (!empty($eng["eng_soc2_staff{$i}_dol"])): ?>
-                <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
-                  <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_staff{$i}_dol"]); ?>
-                </p>
-              <?php endif; ?>
             </div>
           </div>
         <?php endfor; ?>
@@ -854,9 +834,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const addSeniorBtn = document.getElementById('addSeniorBtn');
   const addStaffBtn = document.getElementById('addStaffBtn');
 
+  // Find the first empty index for seniors/staff
+  function getNextIndex(container) {
+    for (let i = 1; i <= 2; i++) {
+      if (!container.querySelector(`.card[data-index='${i}']`)) return i;
+    }
+    return null; // max reached
+  }
+
   function updateButtons() {
-    addSeniorBtn.style.display = seniorsContainer.children.length >= maxSeniors ? 'none' : 'inline-block';
-    addStaffBtn.style.display = staffContainer.children.length >= maxStaff ? 'none' : 'inline-block';
+    addSeniorBtn.style.display = getNextIndex(seniorsContainer) ? 'inline-block' : 'none';
+    addStaffBtn.style.display = getNextIndex(staffContainer) ? 'inline-block' : 'none';
   }
 
   function saveToDB(type, name, index) {
@@ -866,78 +854,64 @@ document.addEventListener('DOMContentLoaded', () => {
     xhr.onload = function() {
       if (xhr.status === 200) {
         const response = JSON.parse(xhr.responseText);
-        if (response.success) {
-          console.log(`${type} saved`);
-        } else {
-          alert('Error saving to DB');
-        }
+        if (!response.success) alert('Error saving to DB');
       }
     };
     xhr.send(`eng_id=${engId}&type=${type}&name=${encodeURIComponent(name)}&index=${index}`);
   }
 
-  addSeniorBtn.addEventListener('click', () => {
-    const index = seniorsContainer.children.length + 1;
+  function createCard(container, type) {
+    const index = getNextIndex(container);
+    if (!index) return;
+
     const card = document.createElement('div');
-    card.classList.add('card', 'mb-4', 'senior-card');
+    card.classList.add('card', 'mb-4', `${type}-card`);
     card.setAttribute('data-index', index);
-    card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
+
+    if(type === 'senior'){
+      card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
+    } else {
+      card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
+    }
+
     card.innerHTML = `
       <div class="card-body p-3">
         <div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior ${index}</h6>
+          <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight: 600 !important; font-size: 12px !important;">
+            ${type.charAt(0).toUpperCase() + type.slice(1)} ${index}
+          </h6>
         </div>
-        <input type="text" class="form-control mb-2 new-name" placeholder="Enter senior name" name="new_senior${index}">
+        <input type="text" class="form-control mb-2 new-name" placeholder="Enter ${type} name">
       </div>
     `;
-    seniorsContainer.appendChild(card);
 
+    container.appendChild(card);
+
+    // Save on Enter
     card.querySelector('.new-name').addEventListener('keypress', function(e){
-      if (e.key === 'Enter') {
-        saveToDB('senior', this.value, index);
+      if (e.key === 'Enter' && this.value.trim() !== '') {
+        saveToDB(type, this.value.trim(), index);
         this.parentElement.innerHTML = `<div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior ${index}</h6>
+          <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight: 600 !important; font-size: 12px !important;">
+            ${type.charAt(0).toUpperCase() + type.slice(1)} ${index}
+          </h6>
         </div>
-        <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">${this.value}</h6>`;
+        <h6 class="fw-semibold" style="color: ${type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size: 20px;">
+          ${this.value.trim()}
+        </h6>`;
+        updateButtons();
       }
     });
 
     updateButtons();
-  });
+  }
 
-  addStaffBtn.addEventListener('click', () => {
-    const index = staffContainer.children.length + 1;
-    const card = document.createElement('div');
-    card.classList.add('card', 'mb-4', 'staff-card');
-    card.setAttribute('data-index', index);
-    card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
-    card.innerHTML = `
-      <div class="card-body p-3">
-        <div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff ${index}</h6>
-        </div>
-        <input type="text" class="form-control mb-2 new-name" placeholder="Enter staff name" name="new_staff${index}">
-      </div>
-    `;
-    staffContainer.appendChild(card);
-
-    card.querySelector('.new-name').addEventListener('keypress', function(e){
-      if (e.key === 'Enter') {
-        saveToDB('staff', this.value, index);
-        this.parentElement.innerHTML = `<div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff ${index}</h6>
-        </div>
-        <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">${this.value}</h6>`;
-      }
-    });
-
-    updateButtons();
-  });
+  addSeniorBtn.addEventListener('click', () => createCard(seniorsContainer, 'senior'));
+  addStaffBtn.addEventListener('click', () => createCard(staffContainer, 'staff'));
 
   updateButtons();
 });
 </script>
-
 
       <!-- end LEFT COLUMN (team) -->
 
