@@ -734,8 +734,9 @@ $totalEngagements = count($engagements);
     </div>
     <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
       <?php 
-        if (!empty($team['Manager'][0])) {
-            echo htmlspecialchars($team['Manager'][0]['emp_name']);
+        if (!empty($team['Manager'])) {
+            // Display first manager (assuming only 1)
+            echo htmlspecialchars(array_values($team['Manager'])[0]['emp_name']);
         } else {
             echo 'Manager not assigned';
         }
@@ -759,15 +760,15 @@ $totalEngagements = count($engagements);
               <?php echo htmlspecialchars($senior['emp_name']); ?>
             </h6>
 
-            <?php if (!empty($senior['emp_dol']) && $senior['audit_type'] === 'SOC 1'): ?>
+            <?php if (!empty($senior['audit_dols']['SOC 1'])): ?>
               <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($senior['emp_dol']); ?>
+                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 1']); ?>
               </p>
             <?php endif; ?>
 
-            <?php if (!empty($senior['emp_dol']) && $senior['audit_type'] === 'SOC 2'): ?>
+            <?php if (!empty($senior['audit_dols']['SOC 2'])): ?>
               <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($senior['emp_dol']); ?>
+                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 2']); ?>
               </p>
             <?php endif; ?>
           </div>
@@ -793,15 +794,15 @@ $totalEngagements = count($engagements);
               <?php echo htmlspecialchars($staff['emp_name']); ?>
             </h6>
 
-            <?php if (!empty($staff['emp_dol']) && $staff['audit_type'] === 'SOC 1'): ?>
+            <?php if (!empty($staff['audit_dols']['SOC 1'])): ?>
               <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($staff['emp_dol']); ?>
+                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 1']); ?>
               </p>
             <?php endif; ?>
 
-            <?php if (!empty($staff['emp_dol']) && $staff['audit_type'] === 'SOC 2'): ?>
+            <?php if (!empty($staff['audit_dols']['SOC 2'])): ?>
               <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
-                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($staff['emp_dol']); ?>
+                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 2']); ?>
               </p>
             <?php endif; ?>
           </div>
@@ -811,6 +812,7 @@ $totalEngagements = count($engagements);
       endforeach; 
   endif; ?>
 </div>
+
 
       <!-- Seniors Container -->
       <!-- <div id="seniorsContainer">
