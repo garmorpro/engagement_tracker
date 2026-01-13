@@ -83,19 +83,21 @@ $team = ['Manager' => [], 'Senior' => [], 'Staff' => []];
 while ($row = $team_result->fetch_assoc()) {
     $role = $row['role'];
     $name = $row['emp_name'];
-    $audit_type = $row['audit_type']; // SOC 1 or SOC 2
-    $dol = $row['emp_dol'];
 
-    // Check if this person is already in the team array
+    // Initialize person in the team array
     if (!isset($team[$role][$name])) {
         $team[$role][$name] = [
             'emp_name' => $name,
-            'audit_dols' => [] // will hold SOC 1/SOC 2 DOLs
+            'audit_dols' => [] // will hold SOC 1 / SOC 2 DOLs
         ];
     }
 
-    // Add the DOLs under the correct audit type
-    $team[$role][$name]['audit_dols'][$audit_type] = $dol;
+    // Only populate DOLs for Seniors and Staff
+    if ($role !== 'Manager' && !empty($row['audit_type'])) {
+        $audit_type = $row['audit_type']; // SOC 1 or SOC 2
+        $dol = $row['emp_dol'];
+        $team[$role][$name]['audit_dols'][$audit_type] = $dol;
+    }
 }
 
 $stmt->close();
