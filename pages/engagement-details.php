@@ -55,8 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     ============================ */
     $name        = $_POST['eng_name'] ?? '';
     $manager     = $_POST['eng_manager'] ?? '';
-    $senior      = $_POST['eng_senior'] ?? '';
-    $staff       = $_POST['eng_staff'] ?? '';
+    $senior1     = $_POST['eng_senior1'] ?? '';
+    $senior2     = $_POST['eng_senior2'] ?? '';
+    $staff1      = $_POST['eng_staff1'] ?? '';
+    $staff2      = $_POST['eng_staff2'] ?? '';
 
     // SOC 1 / SOC 2 DOLs for up to 2 Seniors and 2 Staff
     $soc1_senior1 = $_POST['eng_soc1_senior1_dol'] ?? '';
@@ -120,8 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
         UPDATE engagements SET
             eng_name = ?, 
             eng_manager = ?, 
-            eng_senior = ?, 
-            eng_staff = ?,
+            eng_senior1 = ?, 
+            eng_senior2 = ?, 
+            eng_staff1 = ?,
+            eng_staff2 = ?,
             eng_soc1_senior1_dol = ?, 
             eng_soc2_senior1_dol = ?, 
             eng_soc1_senior2_dol = ?, 
@@ -165,11 +169,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
        BIND (39 params + ID)
     ============================ */
     $stmt->bind_param(
-        "sssssssssssssssssssssssssssssssssssssss",
+        "sssssssssssssssssssssssssssssssssssssssss",
         $name,
         $manager,
-        $senior,
-        $staff,
+        $senior1,
+        $senior2,
+        $staff1,
+        $staff2,
         $soc1_senior1,
         $soc2_senior1,
         $soc1_senior2,
