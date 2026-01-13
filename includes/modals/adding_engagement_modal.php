@@ -193,22 +193,11 @@ $checked = (($eng[$yn] ?? 'N') === 'Y');
     </div>
 
     <!-- ALWAYS POST -->
-    <input type="date" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
+    <input type="hidden" name="<?php echo $yn; ?>" value="<?php echo $checked ? 'Y' : 'N'; ?>">
 
   </div>
 </div>
 <?php endforeach; ?>
-
-<!-- <?php //foreach ($pairs as $date => $yn): ?>
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size:12px;"><?php echo ucwords(str_replace('_',' ',$date)); ?></label>
-  <div class="d-flex gap-2 align-items-center">
-    <input type="date" class="form-control" name="<?php echo $date; ?>">
-    <div class="yn-toggle" onclick="toggleYN(this)">N</div>
-    <input type="hidden" name="<?php echo $yn; ?>" value="N">
-  </div>
-</div>
-<?php //endforeach; ?> -->
 
 <!-- =====================
      DATE ONLY
@@ -222,8 +211,10 @@ $dateFields = [
 foreach ($dateFields as $field => $label):
 ?>
 <div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size:12px;"><?php echo $label; ?></label>
-  <input type="date" class="form-control" style="background-color:#f3f3f5;" name="<?php echo $field; ?>">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo $label; ?></label>
+  <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
+         name="<?php echo $field; ?>"
+         value="">
 </div>
 <?php endforeach; ?>
 
@@ -231,19 +222,11 @@ foreach ($dateFields as $field => $label):
      Y / N SELECTS
 ===================== -->
 
-<div class="col-md-3">
-  <label class="form-label fw-semibold" style="font-size:12px;">Repeat</label>
-  <select class="form-select" style="background-color:#f3f3f5;" name="eng_repeat">
-    <option value="N" selected>No</option>
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Section 3 Requested</label>
+  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_section_3_requested">
     <option value="Y">Yes</option>
-  </select>
-</div>
-
-<div class="col-md-3">
-  <label class="form-label fw-semibold" style="font-size:12px;">Section 3 Requested</label>
-  <select class="form-select" style="background-color:#f3f3f5;" name="eng_section_3_requested">
-    <option value="N" selected>No</option>
-    <option value="Y">Yes</option>
+    <option value="N">No</option>
   </select>
 </div>
 
@@ -252,8 +235,8 @@ foreach ($dateFields as $field => $label):
 ===================== -->
 
 <div class="col-12">
-  <label class="form-label fw-semibold" style="font-size:12px;">Notes</label>
-  <textarea class="form-control" name="eng_notes" rows="4"></textarea>
+  <label class="form-label fw-semibold"  style="font-size: 12px; color: rgb(10,10,10);">Notes</label>
+  <textarea class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_notes" rows="4"></textarea>
 </div>
 
 </div>
