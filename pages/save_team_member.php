@@ -14,6 +14,7 @@ if (!in_array($type, ['senior', 'staff']) || $index < 1 || $index > 2 || $eng_id
 }
 
 $column = 'eng_' . $type . $index; // e.g., eng_senior1
+echo $column;
 $stmt = $conn->prepare("UPDATE engagements SET `$column` = ? WHERE eng_idno = ?");
 $stmt->bind_param("si", $name, $eng_id);
 $success = $stmt->execute();
