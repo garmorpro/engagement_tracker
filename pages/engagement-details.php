@@ -706,107 +706,104 @@ $totalEngagements = count($engagements);
       <!-- Add Buttons -->
       <div class="d-flex mb-3 gap-3">
         <a href="javascript:void(0);" id="addManagerBtn" class="text-decoration-none text-blue fw-semibold">
-    <i class="bi bi-plus-circle me-1"></i> Add Manager
-  </a>
-  <a href="javascript:void(0);" id="addSeniorBtn" class="text-decoration-none text-purple fw-semibold">
-    <i class="bi bi-plus-circle me-1"></i> Add Senior
-  </a>
-  <a href="javascript:void(0);" id="addStaffBtn" class="text-decoration-none text-success fw-semibold">
-    <i class="bi bi-plus-circle me-1"></i> Add Staff
-  </a>
-</div>
-
+          <i class="bi bi-plus-circle me-1"></i> Add Manager
+        </a>
+        <a href="javascript:void(0);" id="addSeniorBtn" class="text-decoration-none text-purple fw-semibold">
+          <i class="bi bi-plus-circle me-1"></i> Add Senior
+        </a>
+        <a href="javascript:void(0);" id="addStaffBtn" class="text-decoration-none text-success fw-semibold">
+          <i class="bi bi-plus-circle me-1"></i> Add Staff
+        </a>
+      </div>
 
       <!-- Manager Card -->
-       <div id="managerContainer">
-<div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
-  <div class="card-body p-3">
-    <div class="d-flex align-items-center mb-3">
-      <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
-    </div>
-    <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-      <?php 
-        // if (!empty($team['Manager'])) {
-            // Display first manager (assuming only 1)
-            echo htmlspecialchars(array_values($team['Manager'])[0]['emp_name']);
-        // } else {
-            // echo 'Manager not assigned';
-        // }
-      ?>
-    </h6>
-  </div>
-</div>
-</div>
-
-<!-- Seniors Container -->
-<div id="seniorsContainer">
-  <?php 
-  $i = 1;
-  if (!empty($team['Senior'])): 
-      foreach ($team['Senior'] as $senior): ?>
-        <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
-          <div class="card-body p-3">
-            <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
+      <div id="managerContainer">
+        <?php if (!empty($team['Manager'])): ?>
+          <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
+            <div class="card-body p-3">
+              <div class="d-flex align-items-center mb-3">
+                <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
+              </div>
+              <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
+                <?php echo htmlspecialchars(array_values($team['Manager'])[0]['emp_name']); ?>
+              </h6>
             </div>
-            <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-              <?php echo htmlspecialchars($senior['emp_name']); ?>
-            </h6>
-
-            <?php if (!empty($senior['audit_dols']['SOC 1'])): ?>
-              <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 1']); ?>
-              </p>
-            <?php endif; ?>
-
-            <?php if (!empty($senior['audit_dols']['SOC 2'])): ?>
-              <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 2']); ?>
-              </p>
-            <?php endif; ?>
           </div>
-        </div>
-  <?php 
-      $i++;
-      endforeach; 
-  endif; ?>
-</div>
+        <?php endif; ?>
+      </div>
 
-<!-- Staff Container -->
-<div id="staffContainer">
-  <?php 
-  $i = 1;
-  if (!empty($team['Staff'])): 
-      foreach ($team['Staff'] as $staff): ?>
-        <div class="card mb-4 staff-card" data-index="<?php echo $i; ?>" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
-          <div class="card-body p-3">
-            <div class="d-flex align-items-center mb-3">
-              <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
+      <!-- Seniors Container -->
+      <div id="seniorsContainer">
+        <?php 
+        $i = 1;
+        if (!empty($team['Senior'])): 
+          foreach ($team['Senior'] as $senior): ?>
+            <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center mb-3">
+                  <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
+                </div>
+                <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+                  <?php echo htmlspecialchars($senior['emp_name']); ?>
+                </h6>
+
+                <?php if (!empty($senior['audit_dols']['SOC 1'])): ?>
+                  <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
+                    <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 1']); ?>
+                  </p>
+                <?php endif; ?>
+
+                <?php if (!empty($senior['audit_dols']['SOC 2'])): ?>
+                  <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
+                    <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 2']); ?>
+                  </p>
+                <?php endif; ?>
+              </div>
             </div>
-            <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-              <?php echo htmlspecialchars($staff['emp_name']); ?>
-            </h6>
+        <?php 
+          $i++;
+          endforeach; 
+        endif; ?>
+      </div>
 
-            <?php if (!empty($staff['audit_dols']['SOC 1'])): ?>
-              <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 1']); ?>
-              </p>
-            <?php endif; ?>
+      <!-- Staff Container -->
+      <div id="staffContainer">
+        <?php 
+        $i = 1;
+        if (!empty($team['Staff'])): 
+          foreach ($team['Staff'] as $staff): ?>
+            <div class="card mb-4 staff-card" data-index="<?php echo $i; ?>" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
+              <div class="card-body p-3">
+                <div class="d-flex align-items-center mb-3">
+                  <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
+                </div>
+                <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
+                  <?php echo htmlspecialchars($staff['emp_name']); ?>
+                </h6>
 
-            <?php if (!empty($staff['audit_dols']['SOC 2'])): ?>
-              <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
-                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 2']); ?>
-              </p>
-            <?php endif; ?>
-          </div>
-        </div>
-  <?php 
-      $i++;
-      endforeach; 
-  endif; ?>
-</div>
+                <?php if (!empty($staff['audit_dols']['SOC 1'])): ?>
+                  <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
+                    <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 1']); ?>
+                  </p>
+                <?php endif; ?>
 
+                <?php if (!empty($staff['audit_dols']['SOC 2'])): ?>
+                  <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
+                    <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 2']); ?>
+                  </p>
+                <?php endif; ?>
+              </div>
+            </div>
+        <?php 
+          $i++;
+          endforeach; 
+        endif; ?>
+      </div>
 
+      <!-- No team assigned message -->
+      <?php if (empty($team['Manager']) && empty($team['Senior']) && empty($team['Staff'])): ?>
+        <p id="noTeamMsg" class="text-muted" style="font-style: italic;">No team assigned yet.</p>
+      <?php endif; ?>
 
     </div>
   </div>
@@ -821,13 +818,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer = document.getElementById('staffContainer');
-  const managerContainer = document.getElementById('managerContainer'); // container for manager card
+  const managerContainer = document.getElementById('managerContainer');
+  const noTeamMsg = document.getElementById('noTeamMsg');
 
   const addSeniorBtn = document.getElementById('addSeniorBtn');
   const addStaffBtn = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
 
-  // Returns next available index for seniors/staff cards
   function getNextIndex(container){
     for(let i=1;i<=2;i++){
       if(!container.querySelector(`.card[data-index='${i}']`)) return i;
@@ -835,14 +832,19 @@ document.addEventListener('DOMContentLoaded', () => {
     return null;
   }
 
-  // Show/hide add buttons based on available slots
   function updateButtons(){
     addSeniorBtn.style.display = getNextIndex(seniorsContainer) ? 'inline-block' : 'none';
     addStaffBtn.style.display = getNextIndex(staffContainer) ? 'inline-block' : 'none';
     addManagerBtn.style.display = managerContainer.querySelector('.card') ? 'none' : 'inline-block';
+    if(noTeamMsg){
+      if(managerContainer.querySelector('.card') || seniorsContainer.querySelector('.card') || staffContainer.querySelector('.card')){
+        noTeamMsg.style.display = 'none';
+      } else {
+        noTeamMsg.style.display = 'block';
+      }
+    }
   }
 
-  // Save new team member to engagement_team table
   function saveToDB(type, name, index){
     if(!engId || !type || !name) return;
     const xhr = new XMLHttpRequest();
@@ -860,19 +862,17 @@ document.addEventListener('DOMContentLoaded', () => {
     xhr.send(`eng_id=${engId}&type=${type.toLowerCase()}&name=${encodeURIComponent(name)}&index=${index}`);
   }
 
-  // Create a new card for manager/senior/staff
   function createCard(container,type){
-    const index = type === 'manager' ? 1 : getNextIndex(container);
+    const index = type==='manager'?1:getNextIndex(container);
     if(!index) return;
 
     const card = document.createElement('div');
     card.classList.add('card','mb-4',`${type}-card`);
-    if(type !== 'manager') card.setAttribute('data-index',index);
+    if(type!=='manager') card.setAttribute('data-index',index);
 
-    // Set styles per type
-    if(type === 'manager'){
+    if(type==='manager'){
       card.style = "border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);";
-    } else if(type === 'senior'){
+    } else if(type==='senior'){
       card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
     } else {
       card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
@@ -882,7 +882,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="card-body p-3">
         <div class="d-flex align-items-center mb-3">
           <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
-            ${type.charAt(0).toUpperCase() + type.slice(1)} ${type==='manager'?'':index}
+            ${type.charAt(0).toUpperCase()+type.slice(1)} ${type==='manager'?'':index}
           </h6>
         </div>
         <input type="text" class="form-control mb-2 new-name" placeholder="Enter ${type} name">
@@ -899,11 +899,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         saveToDB(type,name,index);
 
-        // Replace input with static display
         this.parentElement.innerHTML = `
           <div class="d-flex align-items-center mb-3">
             <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
-              ${type.charAt(0).toUpperCase() + type.slice(1)} ${type==='manager'?'':index}
+              ${type.charAt(0).toUpperCase()+type.slice(1)} ${type==='manager'?'':index}
             </h6>
           </div>
           <h6 class="fw-semibold" style="color: ${type==='manager'?'rgb(0,37,132)':type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size:20px;">
@@ -917,12 +916,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateButtons();
   }
 
-  // Event listeners for add buttons
   addSeniorBtn.addEventListener('click',()=>createCard(seniorsContainer,'senior'));
   addStaffBtn.addEventListener('click',()=>createCard(staffContainer,'staff'));
   addManagerBtn.addEventListener('click',()=>createCard(managerContainer,'manager'));
 
-  // Initial button state
   updateButtons();
 });
 </script>
