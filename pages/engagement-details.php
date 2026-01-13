@@ -57,8 +57,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     $manager     = $_POST['eng_manager'] ?? '';
     $senior      = $_POST['eng_senior'] ?? '';
     $staff       = $_POST['eng_staff'] ?? '';
-    $senior_dol  = $_POST['eng_senior_dol'] ?? '';
-    $staff_dol   = $_POST['eng_staff_dol'] ?? '';
+
+    // SOC 1 / SOC 2 DOLs for up to 2 Seniors and 2 Staff
+    $soc1_senior1 = $_POST['eng_soc1_senior1_dol'] ?? '';
+    $soc2_senior1 = $_POST['eng_soc2_senior1_dol'] ?? '';
+    $soc1_senior2 = $_POST['eng_soc1_senior2_dol'] ?? '';
+    $soc2_senior2 = $_POST['eng_soc2_senior2_dol'] ?? '';
+    $soc1_staff1  = $_POST['eng_soc1_staff1_dol'] ?? '';
+    $soc2_staff1  = $_POST['eng_soc2_staff1_dol'] ?? '';
+    $soc1_staff2  = $_POST['eng_soc1_staff2_dol'] ?? '';
+    $soc2_staff2  = $_POST['eng_soc2_staff2_dol'] ?? '';
+
     $poc         = $_POST['eng_poc'] ?? '';
     $location    = $_POST['eng_location'] ?? '';
     $audit_type  = $_POST['eng_audit_type'] ?? '';
@@ -113,8 +122,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
             eng_manager = ?, 
             eng_senior = ?, 
             eng_staff = ?,
-            eng_senior_dol = ?, 
-            eng_staff_dol = ?, 
+            eng_soc1_senior1_dol = ?, 
+            eng_soc2_senior1_dol = ?, 
+            eng_soc1_senior2_dol = ?, 
+            eng_soc2_senior2_dol = ?,
+            eng_soc1_staff1_dol = ?, 
+            eng_soc2_staff1_dol = ?, 
+            eng_soc1_staff2_dol = ?, 
+            eng_soc2_staff2_dol = ?,
             eng_poc = ?, 
             eng_location = ?,
             eng_repeat = ?, 
@@ -147,16 +162,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     ");
 
     /* ============================
-       BIND (35 params + ID)
+       BIND (39 params + ID)
     ============================ */
     $stmt->bind_param(
-        "sssssssssssssssssssssssssssssssssss",
+        "sssssssssssssssssssssssssssssssssssssss",
         $name,
         $manager,
         $senior,
         $staff,
-        $senior_dol,
-        $staff_dol,
+        $soc1_senior1,
+        $soc2_senior1,
+        $soc1_senior2,
+        $soc2_senior2,
+        $soc1_staff1,
+        $soc2_staff1,
+        $soc1_staff2,
+        $soc2_staff2,
         $poc,
         $location,
         $repeat,
@@ -194,13 +215,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     if ($stmt->execute()) {
         header("Location: engagement-details.php?eng_id=" . $engId . "&message=Engagement updated successfully");
         exit;
-
     } else {
         echo "<div class='alert alert-danger'>
             Failed to update engagement: " . htmlspecialchars($stmt->error) . "
         </div>";
     }
 }
+
 
 
 // Handle adding engagement
@@ -214,8 +235,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
     $manager     = $_POST['eng_manager'] ?? '';
     $senior      = $_POST['eng_senior'] ?? '';
     $staff       = $_POST['eng_staff'] ?? '';
-    $senior_dol  = $_POST['eng_senior_dol'] ?? '';
-    $staff_dol   = $_POST['eng_staff_dol'] ?? '';
+
+    // SOC 1 / SOC 2 DOLs for up to 2 Seniors and 2 Staff
+    $soc1_senior1 = $_POST['eng_soc1_senior1_dol'] ?? '';
+    $soc2_senior1 = $_POST['eng_soc2_senior1_dol'] ?? '';
+    $soc1_senior2 = $_POST['eng_soc1_senior2_dol'] ?? '';
+    $soc2_senior2 = $_POST['eng_soc2_senior2_dol'] ?? '';
+    $soc1_staff1  = $_POST['eng_soc1_staff1_dol'] ?? '';
+    $soc2_staff1  = $_POST['eng_soc2_staff1_dol'] ?? '';
+    $soc1_staff2  = $_POST['eng_soc1_staff2_dol'] ?? '';
+    $soc2_staff2  = $_POST['eng_soc2_staff2_dol'] ?? '';
+
     $poc         = $_POST['eng_poc'] ?? '';
     $location    = $_POST['eng_location'] ?? '';
     $audit_type  = $_POST['eng_audit_type'] ?? '';
@@ -267,8 +297,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
     $stmt = $conn->prepare("
     INSERT INTO engagements (
         eng_idno, eng_name, eng_manager, eng_senior, eng_staff,
-        eng_senior_dol, eng_staff_dol, eng_poc, eng_location,
-        eng_repeat, eng_audit_type, eng_scope, eng_tsc,
+        eng_soc1_senior1_dol, eng_soc2_senior1_dol, eng_soc1_senior2_dol, eng_soc2_senior2_dol,
+        eng_soc1_staff1_dol, eng_soc2_staff1_dol, eng_soc1_staff2_dol, eng_soc2_staff2_dol,
+        eng_poc, eng_location, eng_repeat, eng_audit_type, eng_scope, eng_tsc,
         eng_start_period, eng_end_period, eng_as_of_date,
         eng_internal_planning_call, eng_completed_internal_planning,
         eng_irl_due, eng_irl_sent, eng_client_planning_call,
@@ -277,22 +308,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
         eng_final_due, eng_final_sent, eng_archive, eng_section_3_requested,
         eng_last_communication, eng_notes, eng_status
     ) VALUES (
-        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
     )
-");
+    ");
 
     /* ============================
-       BIND (35 params)
+       BIND (39 params)
     ============================ */
     $stmt->bind_param(
-        "sssssssssssssssssssssssssssssssssss",
+        "sssssssssssssssssssssssssssssssssssssss",
         $engId,
         $name,
         $manager,
         $senior,
         $staff,
-        $senior_dol,
-        $staff_dol,
+        $soc1_senior1,
+        $soc2_senior1,
+        $soc1_senior2,
+        $soc2_senior2,
+        $soc1_staff1,
+        $soc2_staff1,
+        $soc1_staff2,
+        $soc2_staff2,
         $poc,
         $location,
         $repeat,
@@ -335,6 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
         </div>";
     }
 }
+
 
 
 $nextEngId = getNextEngagementId($conn);

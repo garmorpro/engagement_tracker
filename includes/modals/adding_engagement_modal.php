@@ -234,19 +234,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const inputEl = document.createElement('input');
         inputEl.type = 'text';
-        // inputEl.name = `eng_${input.dataset.role.toLowerCase()}_${input.dataset.index}_dol`;
-        // inputEl.name = `dol[${audit}][${input.dataset.role}][${input.dataset.index}]`;
-
         // Convert audit string into backend-friendly SOC name
         let socName = audit.toLowerCase();
-        
         // Only keep 'soc1' or 'soc2' from audit string
         if (socName.includes('soc 1')) socName = 'soc1';
         else if (socName.includes('soc 2')) socName = 'soc2';
-        
         // Build input name
         inputEl.name = `eng_${socName}_${input.dataset.role.toLowerCase()}${input.dataset.index}_dol`;
-
         inputEl.classList.add('form-control', 'mb-2');
         inputEl.style.fontSize = '14px';
         inputEl.style.backgroundColor = 'rgb(243,243,245)';
