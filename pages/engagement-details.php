@@ -726,12 +726,12 @@ $totalEngagements = count($engagements);
     </div>
     <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
       <?php 
-        if (!empty($team['Manager'])) {
+        // if (!empty($team['Manager'])) {
             // Display first manager (assuming only 1)
             echo htmlspecialchars(array_values($team['Manager'])[0]['emp_name']);
-        } else {
+        // } else {
             // echo 'Manager not assigned';
-        }
+        // }
       ?>
     </h6>
   </div>
