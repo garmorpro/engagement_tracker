@@ -316,7 +316,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
        BIND (39 params)
     ============================ */
     $stmt->bind_param(
-        "sssssssssssssssssssssssssssssssssssssss",
+        "ssSsssssssssssssssssssssssssssssssssssss",
         $engId,
         $name,
         $manager,
