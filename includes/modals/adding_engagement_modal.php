@@ -235,7 +235,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputEl = document.createElement('input');
         inputEl.type = 'text';
         // inputEl.name = `eng_${input.dataset.role.toLowerCase()}_${input.dataset.index}_dol`;
-        inputEl.name = `dol[${audit}][${input.dataset.role}][${input.dataset.index}]`;
+        // inputEl.name = `dol[${audit}][${input.dataset.role}][${input.dataset.index}]`;
+        
+        // Convert SOC string into a safe lowercase short name
+        const socName = audit.toLowerCase().replace(/\s+/g, '').replace(/type/g, ''); 
+        // e.g., "SOC 1 Type 1" => "soc11"
+
+        inputEl.name = `eng_${socName}_${input.dataset.role.toLowerCase()}${input.dataset.index}_dol`;
         inputEl.classList.add('form-control', 'mb-2');
         inputEl.style.fontSize = '14px';
         inputEl.style.backgroundColor = 'rgb(243,243,245)';
