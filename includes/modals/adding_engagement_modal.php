@@ -174,28 +174,28 @@ foreach ($dateFields as $field => $label):
   <!-- Senior 1 -->
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;">Senior 1</label>
-    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="1" name="eng_senior_1" value="">
+    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="1" name="eng_senior1" value="">
     <div class="dol-container mt-2" id="dol-senior-1"></div>
   </div>
 
   <!-- Senior 2 -->
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;">Senior 2</label>
-    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="2" name="eng_senior_2" value="">
+    <input type="text" class="form-control team-input senior-input" style="background-color:#f3f3f5;" data-role="Senior" data-index="2" name="eng_senior2" value="">
     <div class="dol-container mt-2" id="dol-senior-2"></div>
   </div>
 
   <!-- Staff 1 -->
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;">Staff 1</label>
-    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="1" name="eng_staff_1" value="">
+    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="1" name="eng_staff1" value="">
     <div class="dol-container mt-2" id="dol-staff-1"></div>
   </div>
 
   <!-- Staff 2 -->
   <div class="col-md-6">
     <label class="form-label fw-semibold" style="font-size: 12px;">Staff 2</label>
-    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="2" name="eng_staff_2" value="">
+    <input type="text" class="form-control team-input staff-input" style="background-color:#f3f3f5;" data-role="Staff" data-index="2" name="eng_staff2" value="">
     <div class="dol-container mt-2" id="dol-staff-2"></div>
   </div>
 
