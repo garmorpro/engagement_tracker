@@ -831,29 +831,94 @@ document.addEventListener('DOMContentLoaded', () => {
   const addStaffBtn = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
 
-  // Determine if DOLs exist
-  const teamMembers = [...seniorsContainer.querySelectorAll('.card'), ...staffContainer.querySelectorAll('.card')];
-  const hasDOL = teamMembers.some(card => card.querySelector('p'));
-  const hasTeam = managerContainer.querySelector('.card') || teamMembers.length > 0;
+  // Helper: get all team members
+  function getTeamMembers(){
+    const members = [];
+    if(managerContainer.querySelector('.card')){
+      members.push({role:'Manager', name: managerContainer.querySelector('h6.fw-semibold')?.textContent.trim() || '', type:'manager'});
+    }
+    seniorsContainer.querySelectorAll('.card').forEach((card,i)=>{
+      members.push({role:'Senior', name: card.querySelector('h6.fw-semibold')?.textContent.trim() || '', type:'senior', index: i+1});
+    });
+    staffContainer.querySelectorAll('.card').forEach((card,i)=>{
+      members.push({role:'Staff', name: card.querySelector('h6.fw-semibold')?.textContent.trim() || '', type:'staff', index: i+1});
+    });
+    return members;
+  }
 
-  if(hasTeam){
-    if(!hasDOL){
-      const addDOLBtn = document.createElement('a');
-      addDOLBtn.href="javascript:void(0);";
-      addDOLBtn.className="text-decoration-none text-warning fw-semibold";
-      addDOLBtn.innerHTML='<i class="bi bi-plus-circle me-1"></i> Add DOL';
-      addDOLBtn.addEventListener('click', ()=> alert('Trigger Add DOL modal or function'));
-      dolButtonsContainer.appendChild(addDOLBtn);
-    } else {
-      const editDOLBtn = document.createElement('a');
-      editDOLBtn.href="javascript:void(0);";
-      editDOLBtn.className="text-decoration-none text-warning fw-semibold";
-      editDOLBtn.innerHTML='<i class="bi bi-pencil-square me-1"></i> Edit DOL';
-      editDOLBtn.addEventListener('click', ()=> alert('Trigger Edit DOL modal or function'));
-      dolButtonsContainer.appendChild(editDOLBtn);
+  // Check if DOL exists
+  function hasAnyDOL(){
+    const cards = [...seniorsContainer.querySelectorAll('.card'), ...staffContainer.querySelectorAll('.card')];
+    return cards.some(c=>c.querySelector('p'));
+  }
+
+  // Update Add/Edit DOL buttons
+  function updateDOLButtons(){
+    dolButtonsContainer.innerHTML = '';
+    const teamMembers = getTeamMembers();
+    const hasTeam = teamMembers.length>0;
+    const hasDOL = hasAnyDOL();
+    if(hasTeam){
+      if(!hasDOL){
+        const addDOLBtn = document.createElement('a');
+        addDOLBtn.href="javascript:void(0);";
+        addDOLBtn.className="text-decoration-none text-warning fw-semibold";
+        addDOLBtn.innerHTML='<i class="bi bi-plus-circle me-1"></i> Add DOL';
+        addDOLBtn.addEventListener('click', ()=> populateDOLModal('add'));
+        dolButtonsContainer.appendChild(addDOLBtn);
+      } else {
+        const editDOLBtn = document.createElement('a');
+        editDOLBtn.href="javascript:void(0);";
+        editDOLBtn.className="text-decoration-none text-warning fw-semibold";
+        editDOLBtn.innerHTML='<i class="bi bi-pencil-square me-1"></i> Edit DOL';
+        editDOLBtn.addEventListener('click', ()=> populateDOLModal('edit'));
+        dolButtonsContainer.appendChild(editDOLBtn);
+      }
     }
   }
 
+  // Populate Add/Edit DOL Modal
+  function populateDOLModal(action){
+    const modalBody = document.getElementById(action==='add'?'addDOLModalBody':'editDOLModalBody');
+    modalBody.innerHTML = '';
+    const members = getTeamMembers();
+    members.forEach((member,idx)=>{
+      const card = document.createElement('div');
+      card.className='mb-3 p-3 border rounded';
+      card.innerHTML = `
+        <h6>${member.role}: ${member.name}</h6>
+        <div class="mb-2">
+          <label class="form-label">SOC 1 DOL</label>
+          <input type="text" class="form-control" name="dol_soc1_${idx}" placeholder="Enter SOC 1 DOL">
+        </div>
+        <div class="mb-2">
+          <label class="form-label">SOC 2 DOL</label>
+          <input type="text" class="form-control" name="dol_soc2_${idx}" placeholder="Enter SOC 2 DOL">
+        </div>
+      `;
+      modalBody.appendChild(card);
+    });
+    const modal = new bootstrap.Modal(document.getElementById(action==='add'?'addDOLModal':'editDOLModal'));
+    modal.show();
+  }
+
+  // Handle Add DOL form submission
+  document.getElementById('addDOLForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    alert('Submit Add DOL form via AJAX or PHP here.');
+    bootstrap.Modal.getInstance(document.getElementById('addDOLModal')).hide();
+    updateDOLButtons();
+  });
+
+  // Handle Edit DOL form submission
+  document.getElementById('editDOLForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    alert('Submit Edit DOL form via AJAX or PHP here.');
+    bootstrap.Modal.getInstance(document.getElementById('editDOLModal')).hide();
+    updateDOLButtons();
+  });
+
+  // Existing helpers for team cards
   function getNextIndex(container){
     for(let i=1;i<=2;i++){
       if(!container.querySelector(`.card[data-index='${i}']`)) return i;
@@ -884,6 +949,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let response = {};
         try { response = JSON.parse(xhr.responseText); } catch(e){ alert('Invalid server response'); return; }
         if(!response.success) alert('Error saving to DB: ' + (response.error || 'Unknown error'));
+        updateDOLButtons();
       } else {
         alert('HTTP Error: ' + xhr.status);
       }
@@ -943,6 +1009,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateButtons();
+    updateDOLButtons();
   }
 
   addSeniorBtn.addEventListener('click',()=>createCard(seniorsContainer,'senior'));
@@ -950,6 +1017,7 @@ document.addEventListener('DOMContentLoaded', () => {
   addManagerBtn.addEventListener('click',()=>createCard(managerContainer,'manager'));
 
   updateButtons();
+  updateDOLButtons();
 });
 </script>
 

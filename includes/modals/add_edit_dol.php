@@ -5,11 +5,9 @@
       <form id="addDOLForm">
         <div class="modal-header">
           <h5 class="modal-title" id="addDOLModalLabel">Add DOL</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body" id="addDOLModalBody">
-          <!-- Team members will be dynamically populated here -->
-        </div>
+        <div class="modal-body" id="addDOLModalBody"></div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Save DOLs</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -26,11 +24,9 @@
       <form id="editDOLForm">
         <div class="modal-header">
           <h5 class="modal-title" id="editDOLModalLabel">Edit DOL</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body" id="editDOLModalBody">
-          <!-- Team members and existing DOLs populated dynamically -->
-        </div>
+        <div class="modal-body" id="editDOLModalBody"></div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Update DOLs</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
