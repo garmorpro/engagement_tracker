@@ -723,36 +723,70 @@ $totalEngagements = count($engagements);
   </div>
 </div>
 
-      <!-- Seniors Container -->
-      <div id="seniorsContainer">
-        <?php for ($i = 1; $i <= 2; $i++):
-            $senior = $eng["eng_senior{$i}"] ?? '';
-            if (!$senior) continue;
-        ?>
+<!-- Seniors Container -->
+<div id="seniorsContainer">
+  <?php 
+  $i = 1;
+  if (!empty($team['Senior'])): 
+      foreach ($team['Senior'] as $senior): ?>
         <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
           <div class="card-body p-3">
             <div class="d-flex align-items-center mb-3">
               <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
             </div>
             <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-              <?php echo htmlspecialchars($senior); ?>
+              <?php echo htmlspecialchars($senior['emp_name']); ?>
             </h6>
 
-            <?php if (!empty($eng["eng_soc1_senior{$i}_dol"])): ?>
+            <?php if (!empty($senior['emp_dol']) && $senior['audit_type'] === 'SOC 1'): ?>
               <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc1_senior{$i}_dol"]); ?>
+                <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($senior['emp_dol']); ?>
               </p>
             <?php endif; ?>
 
-            <?php if (!empty($eng["eng_soc2_senior{$i}_dol"])): ?>
+            <?php if (!empty($senior['emp_dol']) && $senior['audit_type'] === 'SOC 2'): ?>
               <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
-                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($eng["eng_soc2_senior{$i}_dol"]); ?>
+                <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($senior['emp_dol']); ?>
               </p>
             <?php endif; ?>
           </div>
         </div>
-        <?php endfor; ?>
-      </div>
+  <?php 
+      $i++;
+      endforeach; 
+  endif; ?>
+</div>
+
+      <!-- Seniors Container -->
+      <!-- <div id="seniorsContainer">
+        <?php //for ($i = 1; $i <= 2; $i++):
+            //$senior = $eng["eng_senior{$i}"] ?? '';
+            //if (!$senior) continue;
+        ?>
+        <div class="card mb-4 senior-card" data-index="<?php //echo $i; ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
+          <div class="card-body p-3">
+            <div class="d-flex align-items-center mb-3">
+              <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php //echo $i; ?></h6>
+            </div>
+            <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+              <?php //echo htmlspecialchars($senior); ?>
+            </h6>
+
+            <?php //if (!empty($eng["eng_soc1_senior{$i}_dol"])): ?>
+              <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
+                <strong>SOC 1 DOL:</strong> <?php //echo htmlspecialchars($eng["eng_soc1_senior{$i}_dol"]); ?>
+              </p>
+            <?php //endif; ?>
+
+            <?php //if (!empty($eng["eng_soc2_senior{$i}_dol"])): ?>
+              <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
+                <strong>SOC 2 DOL:</strong> <?php //echo htmlspecialchars($eng["eng_soc2_senior{$i}_dol"]); ?>
+              </p>
+            <?php //endif; ?>
+          </div>
+        </div>
+        <?php //endfor; ?>
+      </div> -->
 
       <!-- Staff Container -->
       <div id="staffContainer">
