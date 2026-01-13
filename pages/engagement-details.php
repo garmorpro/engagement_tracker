@@ -730,7 +730,7 @@ $totalEngagements = count($engagements);
             // Display first manager (assuming only 1)
             echo htmlspecialchars(array_values($team['Manager'])[0]['emp_name']);
         } else {
-            echo 'Manager not assigned';
+            // echo 'Manager not assigned';
         }
       ?>
     </h6>
