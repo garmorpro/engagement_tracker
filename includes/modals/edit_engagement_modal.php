@@ -251,14 +251,14 @@ function getDOL($eng, $audit, $role, $index) {
   </div>
 
   <!-- ADD BUTTONS -->
-  <div class="col-12 d-flex gap-2">
+  <!-- <div class="col-12 d-flex gap-2">
     <button type="button" class="btn btn-sm btn-outline-primary" id="add-senior">
       + Add Senior
     </button>
     <button type="button" class="btn btn-sm btn-outline-primary" id="add-staff">
       + Add Staff
     </button>
-  </div>
+  </div> -->
 
 <?php
 $roles = ['Senior', 'Staff'];
