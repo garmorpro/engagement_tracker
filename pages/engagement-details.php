@@ -826,8 +826,8 @@ $totalEngagements = count($engagements);
 document.addEventListener('DOMContentLoaded', () => {
   const maxSeniors = 2;
   const maxStaff = 2;
-  const engId = "<?php echo $eng['eng_idno']; ?>";
-  console.log(engId);
+  const engId = "<?php echo $eng['eng_idno']; ?>"; // make sure this outputs a number
+  console.log('engId =', engId);
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer = document.getElementById('staffContainer');
@@ -835,12 +835,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const addSeniorBtn = document.getElementById('addSeniorBtn');
   const addStaffBtn = document.getElementById('addStaffBtn');
 
-  // Find the first empty index for seniors/staff
+  // Get the first empty slot (1 or 2)
   function getNextIndex(container) {
     for (let i = 1; i <= 2; i++) {
       if (!container.querySelector(`.card[data-index='${i}']`)) return i;
     }
-    return null; // max reached
+    return null;
   }
 
   function updateButtons() {
@@ -848,23 +848,34 @@ document.addEventListener('DOMContentLoaded', () => {
     addStaffBtn.style.display = getNextIndex(staffContainer) ? 'inline-block' : 'none';
   }
 
+  // AJAX save function
   function saveToDB(type, name, index) {
+    if (!engId || !type || !name || !index) return; // safety check
+
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/includes/save_team_member.php', true); // make sure path is correct
+    xhr.open('POST', '/includes/save_team_member.php', true); // adjust path
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.onload = function() {
-        if(xhr.status === 200){
-            const response = JSON.parse(xhr.responseText);
-            if(!response.success){
-                alert('Error saving to DB: ' + (response.error || 'Unknown error'));
-            }
-        } else {
-            alert('HTTP Error: ' + xhr.status);
+      if(xhr.status === 200){
+        let response = {};
+        try {
+          response = JSON.parse(xhr.responseText);
+        } catch (err) {
+          alert('Invalid response from server');
+          return;
         }
-    };
-    xhr.send(`eng_id=${engId}&type=${type}&name=${encodeURIComponent(name)}&index=${index}`);
-}
 
+        if(!response.success){
+          alert('Error saving to DB: ' + (response.error || 'Unknown error'));
+        }
+      } else {
+        alert('HTTP Error: ' + xhr.status);
+      }
+    };
+    xhr.send(`eng_id=${engId}&type=${type.toLowerCase()}&name=${encodeURIComponent(name)}&index=${index}`);
+  }
+
+  // Create new card with input
   function createCard(container, type) {
     const index = getNextIndex(container);
     if (!index) return;
@@ -872,12 +883,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const card = document.createElement('div');
     card.classList.add('card', 'mb-4', `${type}-card`);
     card.setAttribute('data-index', index);
-
-    if(type === 'senior'){
-      card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
-    } else {
-      card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
-    }
+    card.style = type==='senior'
+      ? "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);"
+      : "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
 
     card.innerHTML = `
       <div class="card-body p-3">
@@ -893,18 +901,25 @@ document.addEventListener('DOMContentLoaded', () => {
     container.appendChild(card);
 
     // Save on Enter
-    card.querySelector('.new-name').addEventListener('keypress', function(e){
-      if (e.key === 'Enter' && this.value.trim() !== '') {
-        if(index) saveToDB(type.toLowerCase(), this.value.trim(), index);
+    const input = card.querySelector('.new-name');
+    input.addEventListener('keypress', function(e) {
+      if(e.key === 'Enter'){
+        const name = this.value.trim();
+        if(!name) return; // ignore empty input
 
-        this.parentElement.innerHTML = `<div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight: 600 !important; font-size: 12px !important;">
-            ${type.charAt(0).toUpperCase() + type.slice(1)} ${index}
+        saveToDB(type, name, index);
+
+        // Replace input with static display
+        this.parentElement.innerHTML = `
+          <div class="d-flex align-items-center mb-3">
+            <h6 class="mb-0 text-uppercase" style="color: ${type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight: 600 !important; font-size: 12px !important;">
+              ${type.charAt(0).toUpperCase() + type.slice(1)} ${index}
+            </h6>
+          </div>
+          <h6 class="fw-semibold" style="color: ${type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size: 20px;">
+            ${name}
           </h6>
-        </div>
-        <h6 class="fw-semibold" style="color: ${type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size: 20px;">
-          ${this.value.trim()}
-        </h6>`;
+        `;
         updateButtons();
       }
     });
@@ -912,12 +927,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateButtons();
   }
 
+  // Button events
   addSeniorBtn.addEventListener('click', () => createCard(seniorsContainer, 'senior'));
   addStaffBtn.addEventListener('click', () => createCard(staffContainer, 'staff'));
 
   updateButtons();
 });
 </script>
+
 
       <!-- end LEFT COLUMN (team) -->
 
