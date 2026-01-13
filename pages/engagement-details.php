@@ -570,7 +570,8 @@ $totalEngagements = count($engagements);
               <h6 class="fw-semibold mb-0" style="color: rgb(0,66,0);">Final Due Date</h6>
             </div>
             <p style="color: rgb(0,66,0);">
-              <?php echo htmlspecialchars(formatDate($eng['eng_final_due']) ?? 'N/A'); ?>
+              <?php //echo htmlspecialchars(formatDate($eng['eng_final_due']) ?? 'N/A'); ?>
+              N/A
             </p>
           </div>
         </div>
