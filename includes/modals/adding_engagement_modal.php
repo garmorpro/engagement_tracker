@@ -140,9 +140,24 @@ foreach ($dateFields as $field => $label):
 <h6 class="fw-semibold mt-5">Client Information</h6>
 <hr>
 
-<div class="col-md-6"><input class="form-control" name="eng_poc" placeholder="POC"></div>
-<div class="col-md-6"><input class="form-control" name="eng_location" placeholder="Location"></div>
-<div class="col-md-12"><input class="form-control" name="eng_scope" placeholder="Scope"></div>
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">POC</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_poc"
+         value="">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Location</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_location"
+         value="">
+</div>
+
+
+<div class="col-md-12">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Scope</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_scope"
+         value="">
+</div>
 
 <!-- =====================
      IMPORTANT DATES & MILESTONES
