@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include 'db.php'; // your DB connection
+include '../includes/db.php'; // your DB connection
 
 $eng_id = (int)($_POST['eng_id'] ?? 0);
 $type = $_POST['type'] ?? '';
