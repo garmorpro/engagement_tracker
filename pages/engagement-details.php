@@ -295,7 +295,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
        PREPARE INSERT
     ============================ */
     $stmt = $conn->prepare("
-    INSERT INTO engagements ( 41
+    INSERT INTO engagements (
         eng_idno, eng_name, eng_manager, eng_senior, eng_staff,
         eng_soc1_senior1_dol, eng_soc2_senior1_dol, eng_soc1_senior2_dol, eng_soc2_senior2_dol,
         eng_soc1_staff1_dol, eng_soc2_staff1_dol, eng_soc1_staff2_dol, eng_soc2_staff2_dol,
