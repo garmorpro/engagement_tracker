@@ -31,8 +31,8 @@ if ($role === 'Manager') {
 
 // Insert new team member into engagement_team
 $stmt = $conn->prepare("
-    INSERT INTO engagement_team (eng_id, emp_name, role, audit_type, emp_dol)
-    VALUES (?, ?, ?, NULL, NULL)
+    INSERT INTO engagement_team (eng_id, emp_name, role)
+    VALUES (?, ?, ?)
 ");
 
 if (!$stmt) {
