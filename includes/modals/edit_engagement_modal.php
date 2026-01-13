@@ -325,9 +325,10 @@ function getDOL($eng, $audit, $role, $index) {
 <script>
 document.addEventListener('DOMContentLoaded', () => {
 
-  // Get selected audit types from hidden input
   const getSelectedAudits = () => {
-    const audits = document.querySelector('.eng_audit_input').value.split(',');
+    const auditsInput = document.querySelector('.eng_audit_input');
+    if (!auditsInput) return [];
+    const audits = auditsInput.value.split(',');
     return audits.map(a => a.trim()).filter(a => a.includes('SOC 1') || a.includes('SOC 2'));
   };
 
@@ -337,42 +338,44 @@ document.addEventListener('DOMContentLoaded', () => {
     input.addEventListener('input', () => {
       const containerId = `dol-${input.dataset.role.toLowerCase()}-${input.dataset.index}`;
       const container = document.getElementById(containerId);
+      if (!container) return;
 
       const audits = getSelectedAudits();
-      if(audits.length === 0) return;
+      if (audits.length === 0) return;
 
       audits.forEach(audit => {
-        // Determine field name
         let soc = '';
-        if(audit.includes('SOC 1')) soc = 'soc1';
-        else if(audit.includes('SOC 2')) soc = 'soc2';
+        if (audit.includes('SOC 1')) soc = 'soc1';
+        else if (audit.includes('SOC 2')) soc = 'soc2';
 
         const fieldName = `eng_${soc}_${input.dataset.role.toLowerCase()}${input.dataset.index}_dol`;
 
-        // Check if input already exists
-        if(container.querySelector(`[name="${fieldName}"]`)) return;
+        // **Only create field if it doesn't exist**
+        if (!container.querySelector(`[name="${fieldName}"]`)) {
 
-        // Create label
-        const label = document.createElement('label');
-        label.classList.add('form-label', 'fw-semibold', 'mb-1');
-        label.style.fontSize = '12px';
-        label.textContent = `${audit} DOL`;
+          // Create label
+          const label = document.createElement('label');
+          label.classList.add('form-label', 'fw-semibold', 'mb-1');
+          label.style.fontSize = '12px';
+          label.textContent = `${audit} DOL`;
 
-        // Create input
-        const inputEl = document.createElement('input');
-        inputEl.type = 'text';
-        inputEl.name = fieldName;
-        inputEl.classList.add('form-control', 'mb-2');
-        inputEl.style.fontSize = '14px';
-        inputEl.style.backgroundColor = 'rgb(243,243,245)';
+          // Create input
+          const inputEl = document.createElement('input');
+          inputEl.type = 'text';
+          inputEl.name = fieldName;
+          inputEl.classList.add('form-control', 'mb-2');
+          inputEl.style.fontSize = '14px';
+          inputEl.style.backgroundColor = 'rgb(243,243,245)';
 
-        container.appendChild(label);
-        container.appendChild(inputEl);
+          container.appendChild(label);
+          container.appendChild(inputEl);
+        }
       });
     });
   });
 
 });
+
 </script>
 
 
