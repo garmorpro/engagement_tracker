@@ -1,15 +1,20 @@
 <?php
+header('Content-Type: application/json');
 include 'db.php'; // your DB connection
 
-$eng_id = $_POST['eng_id'];
-$type = $_POST['type']; // 'senior' or 'staff'
-$name = $_POST['name'];
-$index = (int)$_POST['index'];
+$eng_id = (int)($_POST['eng_id'] ?? 0);
+$type = $_POST['type'] ?? '';
+$name = trim($_POST['name'] ?? '');
+$index = (int)($_POST['index'] ?? 0);
 
-// Determine column
-$column = $type . $index; // e.g., senior1 or staff2
-$sql = "UPDATE engagements SET `eng_$column` = ? WHERE eng_idno = ?";
-$stmt = $conn->prepare($sql);
+// Validate
+if (!in_array($type, ['senior', 'staff']) || $index < 1 || $index > 2 || $eng_id <= 0 || $name === '') {
+    echo json_encode(['success' => false, 'error' => 'Invalid input']);
+    exit;
+}
+
+$column = 'eng_' . $type . $index; // e.g., eng_senior1
+$stmt = $conn->prepare("UPDATE engagements SET `$column` = ? WHERE eng_idno = ?");
 $stmt->bind_param("si", $name, $eng_id);
 $success = $stmt->execute();
 
