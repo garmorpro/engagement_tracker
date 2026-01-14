@@ -23,43 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     }
 }
 
-$eng_id = (int) $_GET['eng_id'];
-$finalDue = null;
-
-if ($eng_id) {
-    $final_due = "
-        SELECT milestone_type, due_date
-        FROM engagement_milestones
-        WHERE eng_id = ?
-          AND milestone_type LIKE 'final_report_due%'
-        ORDER BY ms_id ASC
-    ";
-    $stmt = $conn->prepare($final_due);
-    $stmt->bind_param("i", $eng_id);
-    $stmt->execute();
-    $res = $stmt->get_result();
-
-    $dates = [];
-    while ($row = $res->fetch_assoc()) {
-        if (!empty($row['due_date'])) {
-            $dates[$row['milestone_type']] = $row['due_date'];
-        }
-    }
-    $stmt->close();
-
-    if (!empty($dates)) {
-        // If SOC1 & SOC2 exist, take the earliest or latest? (choose earliest here)
-        $finalDue = min($dates);
-    }
-}
-
-// Helper function to format date
-function formatDate($date) {
-    if (!$date) return null;
-    $dt = DateTime::createFromFormat('Y-m-d', $date);
-    return $dt ? $dt->format('M d, Y') : null;
-}
-
 
 if (isset($_GET['eng_id'])) {
 
@@ -668,7 +631,17 @@ $totalEngagements = count($engagements);
               <h6 class="fw-semibold mb-0" style="color: rgb(0,66,0);">Final Due Date</h6>
             </div>
             <p style="color: rgb(0,66,0);">
-              <?= htmlspecialchars(formatDate($finalDue) ?? 'N/A'); ?>
+              <script>
+                fetch('get_final_due.php?eng_id=<?= $eng_id ?>')
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('finalDueDisplay').textContent =
+      data.final_due ? new Date(data.final_due).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : 'N/A';
+  });
+
+              </script>
+              <span id="finalDueDisplay">Loading...</span>
+
             </p>
           </div>
         </div>
