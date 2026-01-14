@@ -867,38 +867,35 @@ document.addEventListener('DOMContentLoaded', () => {
   function getTeamMembers() {
     const membersMap = new Map();
 
-    // 1️⃣ First, add all DOM members (everyone visible on page)
-    const collect = (cards, type) => {
-        cards.forEach((card, index) => {
-            let empId = card.getAttribute('data-emp-id') || `new-${type}-${index}`;
-            const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
-            if (!name) return;
-
-            // Only add if emp_id not already in map
-            if (!membersMap.has(empId)) {
-                membersMap.set(empId, {
-                    emp_id: empId,
-                    name,
-                    type: type.toLowerCase(),
-                    role: type.charAt(0).toUpperCase() + type.slice(1)
-                });
-            }
-        });
+    // Helper to add member
+    const addMember = (empId, name, type) => {
+        // Use emp_id if available, otherwise use name as temporary key
+        const key = empId || name;
+        if (!membersMap.has(key)) {
+            membersMap.set(key, {
+                emp_id: empId || key, // keep emp_id if exists, else temp key
+                name,
+                type: type.toLowerCase(),
+                role: type.charAt(0).toUpperCase() + type.slice(1)
+            });
+        }
     };
 
+    // 1️⃣ Collect all members from DOM
+    const collect = (cards, type) => {
+        cards.forEach((card, index) => {
+            const empId = card.getAttribute('data-emp-id') || '';
+            const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
+            if (!name) return;
+            addMember(empId, name, type);
+        });
+    };
     collect(seniorCards, 'Senior');
     collect(staffCards, 'Staff');
 
-    // 2️⃣ Add any members from existingDOLData who are not in the DOM yet
+    // 2️⃣ Collect all members from existing DOL data
     existingDOLData.forEach(row => {
-        if (!membersMap.has(row.emp_id)) {
-            membersMap.set(row.emp_id, {
-                emp_id: row.emp_id,
-                name: row.name,
-                type: row.type.toLowerCase(),
-                role: row.type.charAt(0).toUpperCase() + row.type.slice(1)
-            });
-        }
+        addMember(row.emp_id, row.name, row.type);
     });
 
     return Array.from(membersMap.values());
