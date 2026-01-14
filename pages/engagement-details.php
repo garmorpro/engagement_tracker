@@ -991,24 +991,35 @@ if ($eng_id) {
                 ?>
 
 
-              <!-- Internal Planning Call -->
+              <?php
+// Make sure $internalPlanning is defined safely
+$internalPlanning = $milestones['internal_planning_call'] ?? [
+    'ms_id' => 0,
+    'is_completed' => 'N',
+    'color' => '#888',
+    'textClass' => ''
+];
+$completed = ($internalPlanning['is_completed'] ?? 'N') === 'Y';
+?>
+
+<!-- Internal Planning Call -->
 <div class="d-flex align-items-center position-relative">
   <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center milestone-toggle"
          data-ms-id="<?= $internalPlanning['ms_id']; ?>"
-         style="width:44px;height:44px;background-color: <?= $internalPlanning['color']; ?>;cursor:pointer;">
+         style="width:44px;height:44px;background-color: <?= $completed ? '#4CAF50' : '#f44336'; ?>;cursor:pointer;">
       <i class="bi bi-telephone"></i>
     </div>
-    <small class="text-muted mt-1"><?= $internalPlanning['is_completed'] === 'Y' ? 'Completed' : 'Pending'; ?></small>
+    <small class="text-muted mt-1 toggle-status-text"><?= $completed ? 'Completed' : 'Pending'; ?></small>
   </div>
 
   <div class="flex-grow-1">
     <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
       <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
         <span class="fw-semibold">Internal Planning Call</span>
-        <span class="fw-semibold <?= $internalPlanning['textClass']; ?>"
-              style="color: <?= $internalPlanning['color']; ?>;">
-          <?= $internalPlanning['is_completed'] === 'Y' ? 'Completed' : 'Pending'; ?>
+        <span class="fw-semibold toggle-status-text"
+              style="color: <?= $completed ? '#4CAF50' : '#f44336'; ?>;">
+          <?= $completed ? 'Completed' : 'Pending'; ?>
         </span>
       </div>
     </div>
@@ -1017,44 +1028,43 @@ if ($eng_id) {
 <!-- end Internal Planning Call -->
 
 <script>
-  document.querySelectorAll('.milestone-toggle').forEach(circle => {
-  circle.addEventListener('click', async e => {
-    const msId = e.currentTarget.getAttribute('data-ms-id');
-    if (!msId) return;
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.milestone-toggle').forEach(el => {
+    el.addEventListener('click', async () => {
+      const msId = el.dataset.msId;
+      if (!msId || msId === '0') return;
 
-    try {
-      const formData = new FormData();
-      formData.append('ms_id', msId);
+      const statusEl = el.closest('.d-flex').querySelectorAll('.toggle-status-text');
+      // Toggle value
+      const newValue = el.dataset.completed === 'Y' ? 'N' : 'Y';
 
-      const response = await fetch('../includes/toggle_milestone.php', { method: 'POST', body: formData });
-      const data = await response.json();
+      try {
+        const formData = new FormData();
+        formData.append('ms_id', msId);
+        formData.append('is_completed', newValue);
 
-      if (data.success) {
-        // Toggle UI
-        const newStatus = data.new_status; // 'Y' or 'N'
-        const textSpan = e.currentTarget.closest('.d-flex.align-items-center').querySelector('.fw-semibold:last-child');
-        const smallLabel = e.currentTarget.nextElementSibling;
+        const res = await fetch('update_milestone_status.php', { method: 'POST', body: formData });
+        const data = await res.json();
 
-        if (newStatus === 'Y') {
-          textSpan.textContent = 'Completed';
-          textSpan.style.color = 'green';
-          smallLabel.textContent = 'Completed';
+        if (data.success) {
+          // Update circle color and text
+          el.style.backgroundColor = newValue === 'Y' ? '#4CAF50' : '#f44336';
+          statusEl.forEach(s => {
+            s.textContent = newValue === 'Y' ? 'Completed' : 'Pending';
+            s.style.color = newValue === 'Y' ? '#4CAF50' : '#f44336';
+          });
+          // Store new completed status
+          el.dataset.completed = newValue;
         } else {
-          textSpan.textContent = 'Pending';
-          textSpan.style.color = 'gray';
-          smallLabel.textContent = 'Pending';
+          alert('Failed to update milestone: ' + (data.error || 'Unknown error'));
         }
-
-      } else {
-        alert('Failed to toggle milestone: ' + (data.error || 'Unknown error'));
+      } catch (err) {
+        console.error(err);
+        alert('Failed to update milestone: network error');
       }
-    } catch (err) {
-      console.error(err);
-      alert('Network or server error while toggling milestone.');
-    }
+    });
   });
 });
-
 </script>
 
 
