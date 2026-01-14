@@ -857,9 +857,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===============================
   const existingDOLData = <?php echo json_encode($dolData); ?>;
 
-  // Collect all seniors and staff from PHP DOM
-  const seniorCards = Array.from(document.querySelectorAll('#seniorsContainer .card'));
-  const staffCards  = Array.from(document.querySelectorAll('#staffContainer .card'));
+  const seniorsContainer = document.getElementById('seniorsContainer');
+  const staffContainer   = document.getElementById('staffContainer');
+  const managerContainer = document.getElementById('managerContainer');
+  const dolButtonsContainer = document.getElementById('dolButtonsContainer');
+
+  const addSeniorBtn  = document.getElementById('addSeniorBtn');
+  const addStaffBtn   = document.getElementById('addStaffBtn');
+  const addManagerBtn = document.getElementById('addManagerBtn');
+
+  let tempIdCounter = -1; // For new DOM-only members
 
   // ===============================
   // Merge team members (DOL + DOM) without duplicates
@@ -868,15 +875,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const membersMap = new Map();
 
     const addMember = (empId, name, type) => {
-        // Skip if name or type is missing
         if (!name || !type) return;
-
-        // Ensure empId is valid
         if (empId === undefined || empId === null) return;
 
         const typeLower = type.toLowerCase();
 
-        // Use emp_id as the unique key
         if (!membersMap.has(empId)) {
             membersMap.set(empId, {
                 emp_id: empId,
@@ -887,12 +890,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 1️⃣ Collect members only from existing DOL data (DB)
-    existingDOLData.forEach(row => {
-        addMember(row.emp_id, row.name, row.type);
-    });
+    existingDOLData.forEach(row => addMember(row.emp_id, row.name, row.type));
 
-    // Sort: seniors first, then staff, alphabetically
     return Array.from(membersMap.values()).sort((a, b) => {
         if (a.type === b.type) return a.name.localeCompare(b.name);
         return a.type === 'senior' ? -1 : 1;
@@ -907,29 +906,13 @@ document.addEventListener('DOMContentLoaded', () => {
       .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2')
   ));
 
-  const seniorsContainer = document.getElementById('seniorsContainer');
-  const staffContainer   = document.getElementById('staffContainer');
-  const managerContainer = document.getElementById('managerContainer');
-  const dolButtonsContainer = document.getElementById('dolButtonsContainer');
-
-  const addSeniorBtn  = document.getElementById('addSeniorBtn');
-  const addStaffBtn   = document.getElementById('addStaffBtn');
-  const addManagerBtn = document.getElementById('addManagerBtn');
-
-  // Get existing DOL value for a member
-  function getExistingDOL(empId, auditType) {
-    const row = existingDOLData.find(r => r.emp_id == empId);
-    return row && row[auditType] ? row[auditType] : '';
-  }
-
   // ===============================
   // DOL BUTTON
   // ===============================
   function updateDOLButtons() {
     dolButtonsContainer.innerHTML = '';
-
     const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
-    if (members.length === 0) return;
+    if (!members.length) return;
 
     const btn = document.createElement('a');
     btn.href = 'javascript:void(0)';
@@ -940,11 +923,15 @@ document.addEventListener('DOMContentLoaded', () => {
     dolButtonsContainer.appendChild(btn);
   }
 
+  function getExistingDOL(empId, auditType) {
+    const row = existingDOLData.find(r => r.emp_id == empId);
+    return row && row[auditType] ? row[auditType] : '';
+  }
+
   function openDOLModal() {
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
 
-    // HEADER
     const header = document.createElement('div');
     header.className = 'mb-3 p-4 border rounded';
     header.style.background = 'rgb(240,246,254)';
@@ -959,14 +946,11 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     modalBody.appendChild(header);
 
-    // TEAM MEMBERS
     const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
     if (!members.length) {
       modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
       return;
     }
-
-    let tempIdCounter = -1; // for new DOM-only members
 
     members.forEach(member => {
       const isSenior = member.type === 'senior';
@@ -974,7 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
       card.className = 'mb-3 p-3 border rounded';
       card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
-      let empIdForInput = member.emp_id || tempIdCounter--;
+      const empIdForInput = member.emp_id || tempIdCounter--;
 
       let inputs = '';
       auditTypes.forEach(audit => {
@@ -996,7 +980,9 @@ document.addEventListener('DOMContentLoaded', () => {
     new bootstrap.Modal(document.getElementById('dolModal')).show();
   }
 
+  // ===============================
   // SAVE DOL
+  // ===============================
   document.getElementById('dolForm').addEventListener('submit', async e => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -1005,32 +991,19 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('../includes/save_dol.php', { method: 'POST', body: formData });
       const text = await response.text();
+      let data = JSON.parse(text);
 
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (err) {
-        console.error('Invalid JSON response from server:', text);
-        alert('Save failed: server returned invalid response.');
-        return;
-      }
-
-      if (data.success) {
-        location.reload();
-      } else {
-        alert('Save failed: ' + (data.error || 'Unknown error'));
-      }
+      if (data.success) location.reload();
+      else alert('Save failed: ' + (data.error || 'Unknown error'));
     } catch (err) {
-      console.error('Fetch error:', err);
+      console.error(err);
       alert('Save failed: network or server error.');
     }
   });
 
   // ===============================
-  // TEAM BUTTONS (Add Senior / Staff)
+  // TEAM BUTTONS (Add Manager / Senior / Staff)
   // ===============================
-  let tempIdCounter = -1;
-
   function getNextIndex(container) {
     const cards = container.querySelectorAll('.card');
     return cards.length < 2 ? cards.length + 1 : null;
@@ -1042,31 +1015,65 @@ document.addEventListener('DOMContentLoaded', () => {
     addManagerBtn.style.display = managerContainer.querySelector('.card') ? 'none' : 'inline-block';
   }
 
-  function addTeamMember(type) {
-    const container = type === 'senior' ? seniorsContainer : staffContainer;
+  function addTeamMember(type, container) {
     const nextIndex = getNextIndex(container);
-    if (!nextIndex) return; // max reached
-
-    const card = document.createElement('div');
-    card.className = 'card mb-2 p-2 border rounded';
-    card.setAttribute('data-index', nextIndex);
-    card.setAttribute('data-emp-id', tempIdCounter--);
+    if (!nextIndex) return;
 
     const roleName = type.charAt(0).toUpperCase() + type.slice(1);
-    card.innerHTML = `
-      <h6 class="fw-semibold">${roleName}</h6>
-      <input type="text" class="form-control mt-1" placeholder="Enter ${roleName} Name">
-    `;
 
+    const card = document.createElement('div');
+    card.className = 'mb-3 p-3 border rounded'; // match existing card style
+    card.setAttribute('data-index', nextIndex);
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'form-control mt-1';
+    input.placeholder = `Enter ${roleName} Name`;
+
+    const label = document.createElement('h6');
+    label.className = 'fw-semibold';
+    label.textContent = roleName;
+
+    card.appendChild(label);
+    card.appendChild(input);
     container.appendChild(card);
+
     updateButtons();
+
+    // Save to DB when pressing Enter
+    input.addEventListener('keydown', async e => {
+      if (e.key === 'Enter') {
+        const name = input.value.trim();
+        if (!name) return;
+
+        const formData = new FormData();
+        formData.append('eng_id', engId);
+        formData.append('type', type);
+        formData.append('name', name);
+
+        try {
+          const res = await fetch('../includes/add_team_member.php', { method: 'POST', body: formData });
+          const data = await res.json();
+          if (data.success) {
+            // Update DOM to match new emp_id from DB
+            input.value = name;
+            card.setAttribute('data-emp-id', data.emp_id || '');
+          } else {
+            alert('Failed to add ' + roleName + ': ' + (data.error || 'Unknown error'));
+          }
+        } catch (err) {
+          console.error(err);
+          alert('Failed to add ' + roleName + ': network or server error.');
+        }
+      }
+    });
   }
 
-  // Attach button click handlers
-  addSeniorBtn.addEventListener('click', () => addTeamMember('senior'));
-  addStaffBtn.addEventListener('click', () => addTeamMember('staff'));
+  addSeniorBtn.addEventListener('click', () => addTeamMember('senior', seniorsContainer));
+  addStaffBtn.addEventListener('click', () => addTeamMember('staff', staffContainer));
+  addManagerBtn.addEventListener('click', () => addTeamMember('manager', managerContainer));
 
-  // Initial button state
+  // Initial setup
   updateButtons();
   updateDOLButtons();
 
@@ -1075,6 +1082,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+
 
 
 
