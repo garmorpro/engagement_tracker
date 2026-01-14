@@ -992,7 +992,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let inputs = '';
       auditTypes.forEach(audit => {
-        const dolValue = getExistingDOL(member.emp_id, audit) || '';
+        const dolValue = getExistingDOL(member.empId, audit) || '';
         inputs += `
           <div class="mb-2">
             <label class="form-label small text-muted">${audit} Division of Labor</label>
