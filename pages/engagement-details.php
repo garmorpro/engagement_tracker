@@ -854,7 +854,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const existingDOLData = <?php echo json_encode($dolData); ?>;
 
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
-  const auditTypes = rawAuditTypes.map(t => t.trim().split(' ').slice(0,2).join(' '));
+  const auditTypes = rawAuditTypes
+  .join(',')                // flatten if comma-separated
+  .toUpperCase()
+  .split(',')
+  .map(t => t.trim())
+  .filter(t => t.startsWith('SOC'))
+  .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2');
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer   = document.getElementById('staffContainer');
@@ -927,7 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalBody.appendChild(header);
 
     getTeamMembers().forEach(member => {
-      const isSenior = member.type === 'Senior';
+      const isSenior = member.type === 'senior';
 
       const card = document.createElement('div');
       card.className = 'mb-3 p-3 border rounded';
