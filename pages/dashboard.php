@@ -222,15 +222,57 @@ $totalEngagements = count($engagements);
 
     <!-- Search bar -->
           <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
-              <div class="p-3 border d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15); border-radius: 15px;">
-                  <div class="input-group flex-grow-1 me-3">
-                      <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
-                          <i class="bi bi-search"></i>
-                      </span>
-                      <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);;" placeholder="Search...">
-                  </div>
-              </div>
-          </div>
+  <div class="p-3 border d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15); border-radius: 15px;">
+    <div class="input-group flex-grow-1 me-3">
+      <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
+          <i class="bi bi-search"></i>
+      </span>
+      <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);" placeholder="Search..." id="engagementSearch">
+    </div>
+  </div>
+</div>
+
+<!-- Container to show results -->
+<div id="searchResults" class="mt-3"></div>
+
+<script>
+const searchInput = document.getElementById('engagementSearch');
+const resultsContainer = document.getElementById('searchResults');
+let timeout = null;
+
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.trim();
+
+  // Only search if at least 3 characters
+  if (query.length < 3) {
+    resultsContainer.innerHTML = '';
+    return;
+  }
+
+  // Debounce to avoid too many requests
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    fetch(`../includes/search_engagements.php?q=${encodeURIComponent(query)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.length === 0) {
+          resultsContainer.innerHTML = '<p style="color: #888;">No results found</p>';
+          return;
+        }
+
+        // Build list of results
+        let html = '<ul class="list-group">';
+        data.forEach(row => {
+          html += `<li class="list-group-item">${row.eng_name} (${row.eng_idno})</li>`;
+        });
+        html += '</ul>';
+        resultsContainer.innerHTML = html;
+      });
+  }, 300); // 300ms debounce
+});
+</script>
+
+
     <!-- end search bar -->
   
     <!-- Board sections -->
