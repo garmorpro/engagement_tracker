@@ -867,39 +867,46 @@ document.addEventListener('DOMContentLoaded', () => {
   function getTeamMembers() {
     const membersMap = new Map();
 
-    // Helper to add member
+    // Helper to add member to map
     const addMember = (empId, name, type) => {
-        // Use emp_id if available, otherwise use name as temporary key
-        const key = empId || name;
+        if (!name) return; // skip empty names
+        const typeLower = type.toLowerCase();
+        const key = empId || `${name}_${typeLower}`;
+
         if (!membersMap.has(key)) {
             membersMap.set(key, {
-                emp_id: empId || key, // keep emp_id if exists, else temp key
+                emp_id: empId || '',
                 name,
-                type: type.toLowerCase(),
+                type: typeLower,
                 role: type.charAt(0).toUpperCase() + type.slice(1)
             });
         }
     };
 
     // 1️⃣ Collect all members from DOM
-    const collect = (cards, type) => {
-        cards.forEach((card, index) => {
+    const collectFromDOM = (cards, type) => {
+        cards.forEach(card => {
             const empId = card.getAttribute('data-emp-id') || '';
             const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
-            if (!name) return;
             addMember(empId, name, type);
         });
     };
-    collect(seniorCards, 'Senior');
-    collect(staffCards, 'Staff');
+
+    collectFromDOM(seniorCards, 'Senior');
+    collectFromDOM(staffCards, 'Staff');
 
     // 2️⃣ Collect all members from existing DOL data
     existingDOLData.forEach(row => {
         addMember(row.emp_id, row.name, row.type);
     });
 
-    return Array.from(membersMap.values());
+    // 3️⃣ Return array of members sorted by type (optional)
+    return Array.from(membersMap.values()).sort((a, b) => {
+        if (a.type === b.type) return a.name.localeCompare(b.name);
+        return a.type === 'senior' ? -1 : 1; // seniors first
+    });
 }
+
 
 
 
