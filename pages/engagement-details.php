@@ -946,7 +946,7 @@ let instructionHTML = `
       ? '<span class="badge text-bg-secondary me-2" style="background-color: rgb(66, 92, 213) !important;">SOC 2</span>' 
       : ''}
     ${auditTypes.includes('SOC 1') 
-      ? '<span class="badge text-bg-secondary">SOC 1</span>' 
+      ? '<span class="badge text-bg-secondary" style="background-color: rgb(66, 92, 213) !important;">SOC 1</span>' 
       : ''}
   </div>
 
