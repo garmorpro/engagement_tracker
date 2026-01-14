@@ -894,7 +894,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===============================
   function updateDOLButtons() {
     dolButtonsContainer.innerHTML = '';
-    if (getTeamMembers().length === 0) return;
+    // if (getTeamMembers().length === 0) return;
 
     const btn = document.createElement('a');
     btn.href = 'javascript:void(0)';
