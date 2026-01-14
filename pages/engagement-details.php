@@ -835,47 +835,10 @@ $totalEngagements = count($engagements);
 </div>
 
 <script>
-  document.querySelectorAll('.delete-team-member').forEach(btn => {
-  btn.addEventListener('click', async e => {
-    const card = e.target.closest('.card');
-    const name = card.getAttribute('data-name');
-
-    if (!confirm(`Are you sure you want to delete ${name}?`)) return;
-
-    const formData = new FormData();
-    formData.append('eng_id', "<?php echo $eng['eng_id']; ?>");
-    formData.append('name', name);
-
-    try {
-      const res = await fetch('../includes/delete_team_member.php', { method: 'POST', body: formData });
-      const data = await res.json();
-
-      if (data.success) card.remove();
-      else alert('Failed to delete: ' + (data.error || 'Unknown error'));
-    } catch (err) {
-      console.error(err);
-      alert('Failed to delete: network or server error.');
-    }
-  });
-});
+  
 
 
 </script>
-
-
-
-
-<!-- Modal for this engagement -->
-<?php include_once '../includes/team_management_section.php'; ?>
-
-
-
-
-
-
-
-
-
 
 
       <!-- end LEFT COLUMN (team) -->
@@ -1372,21 +1335,10 @@ $totalEngagements = count($engagements);
   <!-- end sub lower bay -->
 
 
-<!-- Modal for this engagement -->
-<?php include_once '../includes/modals/edit_engagement_modal.php'; ?>
-
-<!-- Modal for Adding Engagement -->
-<?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
-
-<!-- Modal for this engagement -->
-<?php include_once '../includes/modals/add_edit_dol.php'; ?>
-
-
-
-
-
-
-
+  <?php include_once '../includes/team_management_section.php'; ?>
+  <?php include_once '../includes/modals/edit_engagement_modal.php'; ?>
+  <?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
+  <?php include_once '../includes/modals/add_edit_dol.php'; ?>
 
 
     <div class="mt-5"></div>

@@ -32,6 +32,32 @@ $dolData = array_values($teamData);
 ?>
 
 <script>
+
+document.querySelectorAll('.delete-team-member').forEach(btn => {
+  btn.addEventListener('click', async e => {
+    const card = e.target.closest('.card');
+    const name = card.getAttribute('data-name');
+
+    if (!confirm(`Are you sure you want to delete ${name}?`)) return;
+
+    const formData = new FormData();
+    formData.append('eng_id', "<?php echo $eng['eng_id']; ?>");
+    formData.append('name', name);
+
+    try {
+      const res = await fetch('../includes/delete_team_member.php', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (data.success) card.remove();
+      else alert('Failed to delete: ' + (data.error || 'Unknown error'));
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete: network or server error.');
+    }
+  });
+});
+
+
   document.addEventListener('DOMContentLoaded', () => {
 
   const engId = "<?php echo $eng['eng_id']; ?>";
