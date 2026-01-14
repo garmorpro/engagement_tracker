@@ -1008,7 +1008,7 @@ function openDOLModal() {
   /* --------------------------------
      SHOW MODAL
   -------------------------------- */
-  new bootstrap.Modal(document.getElementById('dolModal')).show();
+  new bootstrap.Modal(document.getElementById('dolModalBody')).show();
 }
 
 
