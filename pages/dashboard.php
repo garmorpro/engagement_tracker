@@ -115,7 +115,7 @@ require_once '../includes/functions.php';
                             $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                             ?>
 
-                            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
+                            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_id']); ?>"
                                class="text-decoration-none text-reset d-block">
                                 
                                 <!-- ✅ DRAGGABLE CARD -->
