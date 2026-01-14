@@ -957,42 +957,62 @@ document.addEventListener('DOMContentLoaded', () => {
     dolButtonsContainer.appendChild(btn);
   }
 
-  function getTeamMembers() {
-    const membersMap = new Map();
+  function openDOLModal() {
+  const modalBody = document.getElementById('dolModalBody');
+  modalBody.innerHTML = '';
 
-    const addMember = (empId, name, type) => {
-        // Skip if name or type is missing
-        if (!name || !type) return;
+  // HEADER
+  const header = document.createElement('div');
+  header.className = 'mb-3 p-4 border rounded';
+  header.style.background = 'rgb(240,246,254)';
+  header.innerHTML = `
+    <div class="fw-bold mb-2">Audit Types</div>
+    ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
+    <div class="mt-2 text-muted" style="font-size:13px">
+      ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
+      ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
+      ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
+    </div>
+  `;
+  modalBody.appendChild(header);
 
-        // Ensure empId is valid (accept 0 or any number/string)
-        if (empId === undefined || empId === null) return;
+  // TEAM MEMBERS
+  const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
+  if (!members.length) {
+    modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
+    return;
+  }
 
-        const typeLower = type.toLowerCase();
+  let tempIdCounter = -1; // for new DOM-only members
 
-        // Use emp_id as the unique key
-        if (!membersMap.has(empId)) {
-            membersMap.set(empId, {
-                emp_id: empId,
-                name,
-                type: typeLower,
-                role: type.charAt(0).toUpperCase() + type.slice(1)
-            });
-        }
-    };
+  members.forEach(member => {
+    const isSenior = member.type === 'senior';
+    const card = document.createElement('div');
+    card.className = 'mb-3 p-3 border rounded';
+    card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
-    // 1️⃣ Collect members only from existing DOL data (DB)
-    existingDOLData.forEach(row => {
-        addMember(row.emp_id, row.name, row.type);
+    // Ensure numeric emp_id for PHP
+    let empIdForInput = member.emp_id || tempIdCounter--;
+    
+    let inputs = '';
+    auditTypes.forEach(audit => {
+      const dolValue = getExistingDOL(member.emp_id, audit) || '';
+      inputs += `
+        <div class="mb-2">
+          <label class="form-label small text-muted">${audit} Division of Labor</label>
+          <input type="text" class="form-control"
+            name="dol[${empIdForInput}][${audit}]"
+            value="${dolValue}">
+        </div>
+      `;
     });
 
-    // Sort: seniors first, then staff, alphabetically
-    return Array.from(membersMap.values()).sort((a, b) => {
-        if (a.type === b.type) return a.name.localeCompare(b.name);
-        return a.type === 'senior' ? -1 : 1;
-    });
+    card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputs}`;
+    modalBody.appendChild(card);
+  });
+
+  new bootstrap.Modal(document.getElementById('dolModal')).show();
 }
-
-
 
 
   // SAVE DOL
