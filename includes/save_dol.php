@@ -12,9 +12,8 @@ if (!$eng_id || !is_array($dol)) {
 }
 
 foreach ($dol as $emp_id => $audits) {
-    // For new "temporary" IDs, skip insert/update
+    // Skip "temporary" IDs (empty or non-numeric)
     if (!is_numeric($emp_id)) continue;
-
     $emp_id = intval($emp_id);
     if (!is_array($audits)) continue;
 
@@ -35,37 +34,24 @@ foreach ($dol as $emp_id => $audits) {
         $dolValue  = trim((string)$dolValue);
         $dolValue  = ($dolValue === '') ? null : $dolValue;
 
-        // Check if a row already exists for this employee + audit_type
-        $check = $conn->prepare("
-            SELECT emp_id 
-            FROM engagement_team 
-            WHERE eng_id = ? AND emp_name = ? AND role = ? AND audit_type LIKE CONCAT(?, '%')
-            LIMIT 1
+        // Update by emp_id first
+        $update = $conn->prepare("
+            UPDATE engagement_team
+            SET emp_dol = ?
+            WHERE eng_id = ? AND emp_id = ? AND audit_type LIKE CONCAT(?, '%')
         ");
-        $check->bind_param("isss", $eng_id, $empName, $roleName, $auditType);
-        $check->execute();
-        $result = $check->get_result();
-        $existing = $result->fetch_assoc();
-        $check->close();
+        $update->bind_param("siis", $dolValue, $eng_id, $emp_id, $auditType);
+        $update->execute();
+        $affected = $update->affected_rows;
+        $update->close();
 
-        if ($existing) {
-            // Update existing row
-            $update = $conn->prepare("
-                UPDATE engagement_team
-                SET emp_dol = ?
-                WHERE eng_id = ? AND emp_name = ? AND role = ? AND audit_type LIKE CONCAT(?, '%')
-                LIMIT 1
-            ");
-            $update->bind_param("sisss", $dolValue, $eng_id, $empName, $roleName, $auditType);
-            $update->execute();
-            $update->close();
-        } else {
-            // Insert new row if missing
+        // If no row was updated, insert new
+        if ($affected === 0) {
             $insert = $conn->prepare("
-                INSERT INTO engagement_team (eng_id, emp_name, role, audit_type, emp_dol)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO engagement_team (eng_id, emp_id, emp_name, role, audit_type, emp_dol)
+                VALUES (?, ?, ?, ?, ?, ?)
             ");
-            $insert->bind_param("issss", $eng_id, $empName, $roleName, $auditType, $dolValue);
+            $insert->bind_param("iissss", $eng_id, $emp_id, $empName, $roleName, $auditType, $dolValue);
             $insert->execute();
             $insert->close();
         }
