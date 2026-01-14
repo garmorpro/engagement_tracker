@@ -820,6 +820,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const maxStaff = 2;
   const engId = "<?php echo $eng['eng_id']; ?>";
 
+  // Pass the engagement's audit types from PHP
+  const auditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>; // e.g., ["SOC 1","SOC 2"]
+
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer = document.getElementById('staffContainer');
   const managerContainer = document.getElementById('managerContainer');
@@ -895,19 +898,32 @@ document.addEventListener('DOMContentLoaded', () => {
     modalBody.innerHTML = '';
     const members = getTeamMembers(); // only seniors & staff
 
-    members.forEach((member,idx)=>{
+    members.forEach((member, idx) => {
       const card = document.createElement('div');
       card.className='dol-card mb-3 p-3 border rounded';
+      let inputsHTML = '';
+
+      // Only show inputs for audit types present in this engagement
+      if(auditTypes.includes('SOC 1')){
+        inputsHTML += `
+          <div class="mb-2">
+            <label class="form-label">SOC 1 DOL</label>
+            <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 1]" value="${member.dol['SOC 1'] || ''}">
+          </div>
+        `;
+      }
+      if(auditTypes.includes('SOC 2')){
+        inputsHTML += `
+          <div class="mb-2">
+            <label class="form-label">SOC 2 DOL</label>
+            <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 2]" value="${member.dol['SOC 2'] || ''}">
+          </div>
+        `;
+      }
+
       card.innerHTML = `
         <div class="fw-bold mb-2">${member.role}: ${member.name}</div>
-        <div class="mb-2">
-          <label class="form-label">SOC 1 DOL</label>
-          <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 1]" value="${member.dol['SOC 1'] || ''}">
-        </div>
-        <div class="mb-2">
-          <label class="form-label">SOC 2 DOL</label>
-          <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 2]" value="${member.dol['SOC 2'] || ''}">
-        </div>
+        ${inputsHTML}
       `;
       modalBody.appendChild(card);
     });
@@ -985,7 +1001,6 @@ document.addEventListener('DOMContentLoaded', () => {
     card.classList.add('card','mb-4',`${type}-card`);
     if(type!=='manager') card.setAttribute('data-index',index);
 
-    // Style by type
     if(type==='manager') card.style = "border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);";
     else if(type==='senior') card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
     else card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
@@ -1037,6 +1052,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateDOLButtons();
 });
 </script>
+
 
 
 
