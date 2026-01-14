@@ -5,7 +5,45 @@ require_once '../includes/functions.php';
 
 
 
+function getMilestones($audit_type) {
+    $audit_type = strtolower($audit_type); // make it case-insensitive
+    $milestones = [];
 
+    // SOC 1 or SOC 2 individually
+    if (strpos($audit_type, 'soc 1') !== false || strpos($audit_type, 'soc 2') !== false) {
+        $milestones = [
+            'internal_planning_call',
+            'irl_due_date',
+            'client_planning_call',
+            'section_3_requested',
+            'fieldwork',
+            'leadsheet_due',
+            'draft_report_due',
+            'final_report_due',
+            'archive_date'
+        ];
+    }
+
+    // Both SOC 1 and SOC 2 together
+    if (strpos($audit_type, 'soc 1') !== false && strpos($audit_type, 'soc 2') !== false) {
+        $milestones = [
+            'internal_planning_call',
+            'irl_due_date',
+            'client_planning_call',
+            'section_3_requested',
+            'fieldwork',
+            'leadsheet_due_soc_1',
+            'leadsheet_due_soc_2',
+            'draft_report_due_soc_1',
+            'draft_report_due_soc_2',
+            'final_report_due_soc_1',
+            'final_report_due_soc_2',
+            'archive_date'
+        ];
+    }
+
+    return $milestones;
+}
 
 
 
@@ -100,6 +138,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
     if ($stmt->execute()) {
         header("Location: dashboard.php?message=Engagement added successfully");
         exit;
+        if ($stmt->execute()) {
+    $engIdInserted = $conn->insert_id; // get the auto-increment eng_id
+
+    $milestones = getMilestones($audit_type);
+
+    $stmtMilestone = $conn->prepare("
+        INSERT INTO engagement_milestones (eng_id, milestone_type) VALUES (?, ?)
+    ");
+
+    foreach ($milestones as $ms) {
+        $stmtMilestone->bind_param("is", $engIdInserted, $ms);
+        $stmtMilestone->execute();
+    }
+
+    header("Location: dashboard.php?message=Engagement added successfully");
+    exit;
+}
     } else {
         echo "<div class='alert alert-danger'>
             Failed to add engagement: " . htmlspecialchars($stmt->error) . "
