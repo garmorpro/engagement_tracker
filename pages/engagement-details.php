@@ -933,7 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const headerCard = document.createElement('div');
     headerCard.className='dol-card mb-3 p-3 border rounded bg-light';
     let instructionHTML = `<div class="fw-bold mb-2">Audit Type</div>
-      <div>Internal Audit${auditTypes.includes('SOC 2')?', SOC 2':''}${auditTypes.includes('SOC 1')?', SOC 1':''}</div>
+      <div>${auditTypes.includes('SOC 2')?', SOC 2':''}${auditTypes.includes('SOC 1')?', SOC 1':''}</div>
       <div style="font-size:0.9em;">`;
 
     const parts = [];
