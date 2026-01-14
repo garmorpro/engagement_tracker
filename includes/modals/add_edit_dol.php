@@ -1,6 +1,6 @@
 <!-- Add DOL Modal -->
 <div class="modal fade" id="addDOLModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
 
       <form id="addDOLForm" method="post">
@@ -80,7 +80,7 @@
 
 <!-- Edit DOL Modal -->
 <div class="modal fade" id="editDOLModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
 
       <form id="editDOLForm" method="post">
