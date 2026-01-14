@@ -1059,7 +1059,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!msId || msId === '0') return;
 
       const statusEl = el.closest('.d-flex').querySelectorAll('.toggle-status-text');
-      // Toggle value
       const newValue = el.dataset.completed === 'Y' ? 'N' : 'Y';
 
       try {
@@ -1071,15 +1070,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const data = await res.json();
 
         if (data.success) {
-          // Update circle color and text
+          // Optional: update UI immediately
           el.style.backgroundColor = newValue === 'Y' ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
           statusEl.forEach(s => {
             s.textContent = newValue === 'Y' ? 'Completed' : 'Pending';
             s.style.color = newValue === 'Y' ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
-            location.reload(); // Refresh to update other dependent statuses
           });
-          // Store new completed status
           el.dataset.completed = newValue;
+
+          // ✅ Refresh the page
+          location.reload();
         } else {
           alert('Failed to update milestone: ' + (data.error || 'Unknown error'));
         }
@@ -1091,6 +1091,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
+
 
 
               <!-- IRL Due -->
