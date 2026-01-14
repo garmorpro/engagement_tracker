@@ -814,25 +814,48 @@ $totalEngagements = count($engagements);
   </div>
 </div>
 
+<?php
+// Fetch team from DB for this engagement
+$teamData = [];
+$result = $mysqli->query("SELECT emp_id, eng_id, emp_name, role, audit_type, emp_dol FROM engagement_team WHERE eng_id = " . intval($eng['eng_id']));
+while($row = $result->fetch_assoc()){
+    // Normalize role: manager/senior/staff
+    $roleType = strtolower($row['role']);
+    if($roleType === 'manager') continue; // manager handled separately
+    $teamData[$roleType][$row['emp_name']] = $teamData[$roleType][$row['emp_name']] ?? [];
+    $auditKey = trim(explode(' ', $row['audit_type'])[0] . ' ' . explode(' ', $row['audit_type'])[1]); // e.g., "SOC 1"
+    $teamData[$roleType][$row['emp_name']][$auditKey] = $row['emp_dol'];
+}
+
+// Convert to JS-friendly array with index
+$dolData = [];
+foreach(['senior','staff'] as $type){
+    if(!empty($teamData[$type])){
+        $i = 1;
+        foreach($teamData[$type] as $name => $dols){
+            $dolData[] = array_merge([
+                'type' => $type,
+                'index' => $i,
+                'name' => $name
+            ], $dols);
+            $i++;
+        }
+    }
+}
+?>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const maxSeniors = 2;
   const maxStaff = 2;
   const engId = "<?php echo $eng['eng_id']; ?>";
 
-  // Pass engagement's audit types from PHP and normalize them to just "SOC 1" or "SOC 2"
+  // Engagement audit types normalized to "SOC 1" / "SOC 2"
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
-  const auditTypes = rawAuditTypes.map(type => {
-    return type.trim().split(' ').slice(0,2).join(' ');
-  });
+  const auditTypes = rawAuditTypes.map(type => type.trim().split(' ').slice(0,2).join(' '));
 
-  // Pass existing DOL data from PHP
-  const existingDOL = <?php echo json_encode($dolData ?? []); ?>;
-  // $dolData should be something like:
-  // [
-  //   { type: 'senior', index: 1, name: 'John Doe', 'SOC 1': 'Alice', 'SOC 2': 'Bob' },
-  //   { type: 'staff', index: 1, name: 'Jane Smith', 'SOC 1': 'Charlie' }
-  // ]
+  // Existing DOL data from PHP
+  const existingDOL = <?php echo json_encode($dolData); ?>;
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer = document.getElementById('staffContainer');
@@ -844,41 +867,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const addStaffBtn = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
 
-  // Get all team members (including existing DOLs)
+  // Get all team members including existing DOLs
   function getTeamMembers(){
     const members = [];
-
-    const collect = (container, type) => {
+    const collect = (container,type)=>{
       container.querySelectorAll('.card').forEach((card,i)=>{
-        const index = type === 'manager' ? 1 : parseInt(card.getAttribute('data-index')) || (i+1);
+        const index = type==='manager'?1:parseInt(card.getAttribute('data-index')) || (i+1);
         const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || card.querySelector('.new-name')?.value || '';
-        const dolEntry = existingDOL.find(d => d.type === type && d.index === index) || {};
+        const dolEntry = existingDOL.find(d=>d.type===type && d.index===index) || {};
         const dol = {};
         if(dolEntry['SOC 1']) dol['SOC 1'] = dolEntry['SOC 1'];
         if(dolEntry['SOC 2']) dol['SOC 2'] = dolEntry['SOC 2'];
-
-        if(type !== 'manager'){
-          members.push({ role: type === 'senior' ? 'Senior' : 'Staff', name, type, index, dol });
-        }
+        if(type!=='manager') members.push({ role: type==='senior'?'Senior':'Staff', name, type, index, dol });
       });
     };
-
-    collect(seniorsContainer, 'senior');
-    collect(staffContainer, 'staff');
-
+    collect(seniorsContainer,'senior');
+    collect(staffContainer,'staff');
     return members;
   }
 
   function hasAnyDOL(){
-    const teamMembers = getTeamMembers();
-    return teamMembers.some(m => Object.keys(m.dol).length > 0);
+    return getTeamMembers().some(m=>Object.keys(m.dol).length>0);
   }
 
   function updateDOLButtons(){
     dolButtonsContainer.innerHTML = '';
     const teamMembers = getTeamMembers();
-    if(teamMembers.length === 0) return;
-
+    if(teamMembers.length===0) return;
     const btn = document.createElement('a');
     btn.href="javascript:void(0);";
     btn.className="text-decoration-none text-warning fw-semibold";
@@ -893,59 +908,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
     const members = getTeamMembers();
-
-    members.forEach((member, idx) => {
+    members.forEach((member,idx)=>{
       const card = document.createElement('div');
       card.className='dol-card mb-3 p-3 border rounded';
       let inputsHTML = '';
-
       if(auditTypes.includes('SOC 1')){
-        inputsHTML += `
-          <div class="mb-2">
-            <label class="form-label">SOC 1 DOL</label>
-            <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 1]" value="${member.dol['SOC 1'] || ''}">
-          </div>
-        `;
+        inputsHTML += `<div class="mb-2">
+          <label class="form-label">SOC 1 DOL</label>
+          <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 1]" value="${member.dol['SOC 1']||''}">
+        </div>`;
       }
       if(auditTypes.includes('SOC 2')){
-        inputsHTML += `
-          <div class="mb-2">
-            <label class="form-label">SOC 2 DOL</label>
-            <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 2]" value="${member.dol['SOC 2'] || ''}">
-          </div>
-        `;
+        inputsHTML += `<div class="mb-2">
+          <label class="form-label">SOC 2 DOL</label>
+          <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 2]" value="${member.dol['SOC 2']||''}">
+        </div>`;
       }
-
-      card.innerHTML = `
-        <div class="fw-bold mb-2">${member.role}: ${member.name}</div>
-        ${inputsHTML}
-      `;
+      card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputsHTML}`;
       modalBody.appendChild(card);
     });
-
-    const modal = new bootstrap.Modal(document.getElementById('dolModal'));
-    modal.show();
+    new bootstrap.Modal(document.getElementById('dolModal')).show();
   }
 
   document.getElementById('dolForm').addEventListener('submit', function(e){
     e.preventDefault();
     const formData = new FormData(this);
     formData.append('eng_id', engId);
-
-    fetch('../includes/save_dol.php',{
-      method:'POST',
-      body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data.success){
-        bootstrap.Modal.getInstance(document.getElementById('dolModal')).hide();
-        location.reload();
-      } else {
-        alert('Error saving DOL: ' + (data.error || 'Unknown error'));
-      }
-    })
-    .catch(err => alert('AJAX Error: ' + err));
+    fetch('../includes/save_dol.php',{ method:'POST', body: formData })
+      .then(res=>res.json())
+      .then(data=>{
+        if(data.success){
+          bootstrap.Modal.getInstance(document.getElementById('dolModal')).hide();
+          location.reload();
+        } else {
+          alert('Error saving DOL: '+(data.error||'Unknown error'));
+        }
+      })
+      .catch(err=>alert('AJAX Error: '+err));
   });
 
   function getNextIndex(container){
@@ -956,32 +955,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateButtons(){
-    addSeniorBtn.style.display = getNextIndex(seniorsContainer) ? 'inline-block' : 'none';
-    addStaffBtn.style.display = getNextIndex(staffContainer) ? 'inline-block' : 'none';
-    addManagerBtn.style.display = managerContainer.querySelector('.card') ? 'none' : 'inline-block';
+    addSeniorBtn.style.display = getNextIndex(seniorsContainer)?'inline-block':'none';
+    addStaffBtn.style.display = getNextIndex(staffContainer)?'inline-block':'none';
+    addManagerBtn.style.display = managerContainer.querySelector('.card')?'none':'inline-block';
     if(noTeamMsg){
-      if(managerContainer.querySelector('.card') || seniorsContainer.querySelector('.card') || staffContainer.querySelector('.card')){
-        noTeamMsg.style.display = 'none';
-      } else {
-        noTeamMsg.style.display = 'block';
-      }
+      noTeamMsg.style.display = (managerContainer.querySelector('.card')||seniorsContainer.querySelector('.card')||staffContainer.querySelector('.card'))?'none':'block';
     }
   }
 
-  function saveToDB(type, name, index){
+  function saveToDB(type,name,index){
     if(!engId || !type || !name) return;
     const xhr = new XMLHttpRequest();
     xhr.open('POST','../includes/save_team_member.php',true);
     xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
     xhr.onload = function(){
       if(xhr.status===200){
-        let response = {};
-        try { response = JSON.parse(xhr.responseText); } catch(e){ alert('Invalid server response'); return; }
-        if(!response.success) alert('Error saving to DB: ' + (response.error || 'Unknown error'));
+        let response={};
+        try{ response = JSON.parse(xhr.responseText); }catch(e){ alert('Invalid server response'); return; }
+        if(!response.success) alert('Error saving to DB: '+(response.error||'Unknown error'));
         updateDOLButtons();
-      } else {
-        alert('HTTP Error: ' + xhr.status);
-      }
+      } else { alert('HTTP Error: '+xhr.status); }
     };
     xhr.send(`eng_id=${engId}&type=${type.toLowerCase()}&name=${encodeURIComponent(name)}&index=${index}`);
   }
@@ -989,46 +982,38 @@ document.addEventListener('DOMContentLoaded', () => {
   function createCard(container,type){
     const index = type==='manager'?1:getNextIndex(container);
     if(!index) return;
-
     const card = document.createElement('div');
     card.classList.add('card','mb-4',`${type}-card`);
     if(type!=='manager') card.setAttribute('data-index',index);
 
-    if(type==='manager') card.style = "border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);";
-    else if(type==='senior') card.style = "border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
-    else card.style = "border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
+    if(type==='manager') card.style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);";
+    else if(type==='senior') card.style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
+    else card.style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
 
-    card.innerHTML = `
-      <div class="card-body p-3">
-        <div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
-            ${type.charAt(0).toUpperCase()+type.slice(1)} ${type==='manager'?'':index}
-          </h6>
-        </div>
-        <input type="text" class="form-control mb-2 new-name" placeholder="Enter ${type} name">
+    card.innerHTML = `<div class="card-body p-3">
+      <div class="d-flex align-items-center mb-3">
+        <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
+          ${type.charAt(0).toUpperCase()+type.slice(1)} ${type==='manager'?'':index}
+        </h6>
       </div>
-    `;
-
+      <input type="text" class="form-control mb-2 new-name" placeholder="Enter ${type} name">
+    </div>`;
     container.appendChild(card);
 
     const input = card.querySelector('.new-name');
     input.addEventListener('keypress', function(e){
       if(e.key==='Enter'){
-        const name = this.value.trim();
+        const name=this.value.trim();
         if(!name) return;
-
         saveToDB(type,name,index);
-
-        this.parentElement.innerHTML = `
-          <div class="d-flex align-items-center mb-3">
-            <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
-              ${type.charAt(0).toUpperCase()+type.slice(1)} ${type==='manager'?'':index}
-            </h6>
-          </div>
-          <h6 class="fw-semibold" style="color: ${type==='manager'?'rgb(0,37,132)':type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size:20px;">
-            ${name}
+        this.parentElement.innerHTML=`<div class="d-flex align-items-center mb-3">
+          <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
+            ${type.charAt(0).toUpperCase()+type.slice(1)} ${type==='manager'?'':index}
           </h6>
-        `;
+        </div>
+        <h6 class="fw-semibold" style="color: ${type==='manager'?'rgb(0,37,132)':type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size:20px;">
+          ${name}
+        </h6>`;
         updateButtons();
       }
     });
@@ -1045,6 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateDOLButtons();
 });
 </script>
+
 
 
 
