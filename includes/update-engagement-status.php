@@ -11,7 +11,7 @@ if (!isset($input['eng_id'], $input['status'])) {
 include 'db.php';
 
 $stmt = $conn->prepare(
-  "UPDATE engagements SET eng_status = ? WHERE eng_idno = ?"
+  "UPDATE engagements SET eng_status = ? WHERE eng_id = ?"
 );
 $stmt->bind_param("ss", $input['status'], $input['eng_id']);
 
