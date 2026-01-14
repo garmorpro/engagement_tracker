@@ -104,7 +104,6 @@ $auditTypes = [
               'eng_start_period' => 'Start Period',
               'eng_end_period'   => 'End Period',
               'eng_as_of_date'   => 'As Of Date',
-              'eng_archive'            => 'Archive Date',
               'eng_last_communication' => 'Last Communication'
             ];
             foreach($dateFields as $field => $label): ?>
@@ -136,15 +135,8 @@ $auditTypes = [
             </div>
 
             <!-- =====================
-                 SECTION 3 / NOTES
+                NOTES
             ===================== -->
-            <div class="col-md-6">
-              <label class="form-label fw-semibold" style="font-size:12px;">Section 3 Requested</label>
-              <select class="form-select" name="eng_section_3_requested">
-                <option value="N">No</option>
-                <option value="Y">Yes</option>
-              </select>
-            </div>
 
             <div class="col-12">
               <label class="form-label fw-semibold" style="font-size:12px;">Notes</label>
