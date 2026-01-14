@@ -885,8 +885,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     };
-    collect(seniorsContainer, 'senior');
-    collect(staffContainer, 'staff');
+    collect(seniorsContainer, 'Senior');
+    collect(staffContainer, 'Staff');
     return members;
   }
 
