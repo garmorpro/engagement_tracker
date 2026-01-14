@@ -1000,6 +1000,47 @@ $totalEngagements = count($engagements);
 </div>
 <!-- end Internal Planning Call -->
 
+<script>
+  document.querySelectorAll('.milestone-toggle').forEach(circle => {
+  circle.addEventListener('click', async e => {
+    const msId = e.currentTarget.getAttribute('data-ms-id');
+    if (!msId) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('ms_id', msId);
+
+      const response = await fetch('../includes/toggle_milestone.php', { method: 'POST', body: formData });
+      const data = await response.json();
+
+      if (data.success) {
+        // Toggle UI
+        const newStatus = data.new_status; // 'Y' or 'N'
+        const textSpan = e.currentTarget.closest('.d-flex.align-items-center').querySelector('.fw-semibold:last-child');
+        const smallLabel = e.currentTarget.nextElementSibling;
+
+        if (newStatus === 'Y') {
+          textSpan.textContent = 'Completed';
+          textSpan.style.color = 'green';
+          smallLabel.textContent = 'Completed';
+        } else {
+          textSpan.textContent = 'Pending';
+          textSpan.style.color = 'gray';
+          smallLabel.textContent = 'Pending';
+        }
+
+      } else {
+        alert('Failed to toggle milestone: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network or server error while toggling milestone.');
+    }
+  });
+});
+
+</script>
+
 
               <!-- IRL Due -->
                 <div class="d-flex align-items-center position-relative mt-3">
