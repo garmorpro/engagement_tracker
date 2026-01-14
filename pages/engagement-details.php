@@ -560,9 +560,11 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
   });
 </script>
 
-                <span id="finalDueDisplay" style="font-size: 16px;"></span>
+                <div id="finalDueContainer" style="font-family: sans-serif;">
+  <span id="finalDueDisplay" style="font-size: 16px;"></span>
   <div style="font-size: 20px; font-weight: bold;" id="daysCount"></div>
   <div style="font-size: 12px;" id="daysLabel"></div>
+</div>
 
 
               </div>
