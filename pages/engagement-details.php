@@ -921,6 +921,9 @@ document.addEventListener('DOMContentLoaded', () => {
     instructionHTML += parts.join(' • ');
     instructionHTML += '</div>';
 
+    // --- Full raw audit types from the engagement table ---
+    instructionHTML += `<div class="mt-2" style="font-size:0.9em; color:#555;">Full Audit Types: ${rawAuditTypes.join(', ')}</div>`;
+
     headerCard.innerHTML = instructionHTML;
     modalBody.appendChild(headerCard);
 
