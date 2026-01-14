@@ -1040,7 +1040,7 @@ if ($result && $result->num_rows) {
         <div class="flex-grow-1">
             <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
                 <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                    <span class="fw-semibold"><?= htmlspecialchars($internalPlanning['milestone_type']); ?></span>
+                    <span class="fw-semibold"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $internalPlanning['milestone_type']))); ?></span>
                     <span class="fw-semibold toggle-status-text" style="color: <?= $circleColor; ?>;">
                         <?= $completed ? 'Completed' : 'Pending'; ?> • <?= htmlspecialchars($dueDate); ?>
                     </span>
