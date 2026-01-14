@@ -851,6 +851,10 @@ $dolData = array_values($teamData);
 document.addEventListener('DOMContentLoaded', () => {
 
   const engId = "<?php echo $eng['eng_id']; ?>";
+
+  // ===============================
+  // PHP: All team members including DOL
+  // ===============================
   const existingDOLData = <?php echo json_encode($dolData); ?>;
 
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
@@ -867,11 +871,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // HELPERS
   // ===============================
   function getTeamMembers() {
+    // Include all seniors/staff from the existing DOL data
+    // If a member has no DOL yet, still include them
     return existingDOLData.map(row => ({
       emp_id: row.emp_id,
       name: row.name,
       type: row.type.toLowerCase(), // 'senior' or 'staff'
-      role: row.type.charAt(0).toUpperCase() + row.type.slice(1)
+      role: row.type.charAt(0).toUpperCase() + row.type.slice(1) // Senior / Staff
     }));
   }
 
@@ -885,7 +891,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===============================
   function updateDOLButtons() {
     dolButtonsContainer.innerHTML = '';
-    if (getTeamMembers().length === 0) return;
+
+    const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
+    if (members.length === 0) return; // no button if no senior/staff
 
     const btn = document.createElement('a');
     btn.href = 'javascript:void(0)';
@@ -896,13 +904,14 @@ document.addEventListener('DOMContentLoaded', () => {
     dolButtonsContainer.appendChild(btn);
   }
 
+  // ===============================
+  // OPEN DOL MODAL
+  // ===============================
   function openDOLModal() {
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
 
-    // ===============================
-    // HEADER
-    // ===============================
+    // ===== HEADER =====
     const header = document.createElement('div');
     header.className = 'mb-3 p-4 border rounded';
     header.style.background = 'rgb(240,246,254)';
@@ -917,10 +926,9 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     modalBody.appendChild(header);
 
-    // ===============================
-    // TEAM MEMBERS
-    // ===============================
-    const members = getTeamMembers();
+    // ===== TEAM MEMBERS =====
+    const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
+
     if (!members.length) {
       modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
       return;
@@ -969,7 +977,9 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(err => alert('AJAX error: ' + err));
   });
 
-  // Initialize
+  // ===============================
+  // INITIALIZE
+  // ===============================
   updateDOLButtons();
   console.log('Audit Types:', auditTypes);
   console.log('Team Members:', getTeamMembers());
