@@ -929,56 +929,82 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openDOLModal() {
-    const modalBody = document.getElementById('dolModalBody');
-    modalBody.innerHTML = '';
+  const modalBody = document.getElementById('dolModalBody');
+  modalBody.innerHTML = '';
 
-    const header = document.createElement('div');
-    header.className = 'mb-3 p-4 border rounded';
-    header.style.background = 'rgb(240,246,254)';
-    header.innerHTML = `
-      <div class="fw-bold mb-2">Audit Types</div>
-      ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
-      <div class="mt-2 text-muted" style="font-size:13px">
-        ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
-        ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
-        ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
-      </div>
-    `;
-    modalBody.appendChild(header);
+  // HEADER
+  const header = document.createElement('div');
+  header.className = 'mb-3 p-4 border rounded';
+  header.style.background = 'rgb(240,246,254)';
+  header.innerHTML = `
+    <div class="fw-bold mb-2">Audit Types</div>
+    ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
+    <div class="mt-2 text-muted" style="font-size:13px">
+      ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
+      ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
+      ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
+    </div>
+  `;
+  modalBody.appendChild(header);
 
-    const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
-    if (!members.length) {
-      modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
-      return;
-    }
-
-    members.forEach(member => {
-      const isSenior = member.type === 'senior';
-      const card = document.createElement('div');
-      card.className = 'mb-3 p-3 border rounded';
-      card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
-
-      const empIdForInput = member.emp_id || tempIdCounter--;
-
-      let inputs = '';
-      auditTypes.forEach(audit => {
-        const dolValue = getExistingDOL(member.emp_id, audit) || '';
-        inputs += `
-          <div class="mb-2">
-            <label class="form-label small text-muted">${audit} Division of Labor</label>
-            <input type="text" class="form-control"
-              name="dol[${empIdForInput}][${audit}]"
-              value="${dolValue}">
-          </div>
-        `;
+  // Deduplicate members by emp_id
+  const membersMap = new Map();
+  existingDOLData.forEach(row => {
+    if (!membersMap.has(row.emp_id)) {
+      membersMap.set(row.emp_id, {
+        emp_id: row.emp_id,
+        name: row.name,
+        type: row.type.toLowerCase(),
+        role: row.type.charAt(0).toUpperCase() + row.type.slice(1),
+        dols: {} // store all audit DOLs here
       });
+    }
+    // Add DOLs for this audit type
+    auditTypes.forEach(audit => {
+      if (row[audit]) {
+        membersMap.get(row.emp_id).dols[audit] = row[audit];
+      }
+    });
+  });
 
-      card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputs}`;
-      modalBody.appendChild(card);
+  // Only consider senior and staff for the modal
+  const members = Array.from(membersMap.values())
+    .filter(m => m.type === 'senior' || m.type === 'staff');
+
+  if (!members.length) {
+    modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
+    return;
+  }
+
+  // Render cards
+  members.forEach(member => {
+    const isSenior = member.type === 'senior';
+    const card = document.createElement('div');
+    card.className = 'mb-3 p-3 border rounded';
+    card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
+
+    const empIdForInput = member.emp_id || tempIdCounter--;
+
+    let inputs = '';
+    auditTypes.forEach(audit => {
+      const dolValue = member.dols[audit] || '';
+      inputs += `
+        <div class="mb-2">
+          <label class="form-label small text-muted">${audit} Division of Labor</label>
+          <input type="text" class="form-control"
+            name="dol[${empIdForInput}][${audit}]"
+            value="${dolValue}">
+        </div>
+      `;
     });
 
-    new bootstrap.Modal(document.getElementById('dolModal')).show();
-  }
+    card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputs}`;
+    modalBody.appendChild(card);
+  });
+
+  new bootstrap.Modal(document.getElementById('dolModal')).show();
+}
+
 
   // ===============================
   // SAVE DOL
