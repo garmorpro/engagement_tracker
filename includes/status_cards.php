@@ -90,20 +90,24 @@
   
                           <!-- Big Number -->
                            <?php
-                            // $today = date('Y-m-d');
+                            $today = date('Y-m-d');
 
-                            // $result = $conn->query("
-                            //     SELECT COUNT(*) AS overdue_engagements 
-                            //     FROM engagements 
-                            //     WHERE eng_status = 'in-progress'
-                            //       AND eng_final_due IS NOT NULL
-                            //       AND eng_final_due < '$today'
-                            // ");                         
+// Count engagements where the earliest final_report_due is past today AND not completed
+$result = $conn->query("
+    SELECT COUNT(DISTINCT e.eng_id) AS overdue_engagements
+    FROM engagements e
+    INNER JOIN engagement_milestones m ON e.eng_id = m.eng_id
+    WHERE e.eng_status = 'in-progress'
+      AND m.milestone_type LIKE 'final_report_due%'
+      AND m.is_completed = 'N'
+      AND m.due_date < '$today'
+");
 
-                            // $row = $result->fetch_assoc();
-                            // $overdueCount = $row['overdue_engagements'] ?? 0;
+// Fetch the count
+$row = $result->fetch_assoc();
+$overdueCount = $row['overdue_engagements'] ?? 0;
                             ?>
-                          <h2 class="fw-bold" style="color: rgb(252,35,52);"><?php //echo number_format($overdueCount); ?></h2>
+                          <h2 class="fw-bold" style="color: rgb(252,35,52);"><?php echo number_format($overdueCount); ?></h2>
   
                           <!-- Decorative Icon behind -->
                           <i class="bi bi-exclamation-triangle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,35,52,0.15);     z-index: 0;"></i>
