@@ -28,7 +28,7 @@ $finalDue = null;
 
 if ($eng_id) {
     $final_due = "
-        SELECT due_date
+        SELECT milestone_type, due_date
         FROM engagement_milestones
         WHERE eng_id = ?
           AND milestone_type LIKE 'final_report_due%'
