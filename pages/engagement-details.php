@@ -528,10 +528,12 @@ $totalEngagements = count($engagements);
               <div class="d-flex flex-column align-items-center justify-content-center"
                    style="width: 120px; height: 80px; border-radius: 10px; background-color: #fff; text-align: center;">
                   
-                <div id="finalDueContainer" style="font-family: sans-serif;">
-  <!-- <span id="finalDueDisplay" style="font-size: 16px;"></span> -->
-  <div style="font-size: 20px; font-weight: bold;" id="daysCount"></div>
-  <div style="font-size: 12px;" id="daysLabel"></div>
+                <div id="finalDueContainer" style="font-family: sans-serif; text-align: center;">
+  <span id="finalDueDisplay" style="display:block; font-size:16px;"></span>
+  <div id="completionContainer" style="display:flex; flex-direction:column; align-items:center;">
+    <div id="daysCount" style="font-size:20px; font-weight:bold;"></div>
+    <div id="daysLabel" style="font-size:12px;"></div>
+  </div>
 </div>
 
 <script>
@@ -544,10 +546,13 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
 
     // If milestone is completed
     if (data.is_completed === 'Y') {
-      dueDisplay.innerHTML = '<i class="bi bi-check2-circle"></i>';
-      daysCount.textContent = 'Completed';
-      daysCount.style.color = 'green';
-      daysLabel.textContent = '';
+      // Big green check circle
+      daysCount.innerHTML = '<i class="bi bi-check2-circle" style="font-size: 48px; color: green;"></i>';
+      // Small "Completed" text below
+      daysLabel.textContent = 'Completed';
+      daysLabel.style.fontSize = '14px';
+      daysLabel.style.color = 'green';
+      dueDisplay.textContent = ''; // hide the due date
       return;
     }
 
@@ -562,6 +567,8 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
       daysLabel.textContent = data.days_info.label;
       daysCount.style.color = data.days_info.color;
       daysLabel.style.color = data.days_info.color;
+      daysCount.style.fontSize = '20px';
+      daysLabel.style.fontSize = '12px';
     }
   });
 </script>
