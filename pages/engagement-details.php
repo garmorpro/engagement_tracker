@@ -862,39 +862,6 @@ $totalEngagements = count($engagements);
 
 </script>
 
-<?php
-// ===============================
-// FETCH TEAM + DOL DATA
-// ===============================
-$teamData = [];
-$result = $conn->query("
-  SELECT emp_id, emp_name, role, audit_type, emp_dol
-  FROM engagement_team
-  WHERE eng_id = " . intval($eng['eng_id'])
-);
-
-while ($row = $result->fetch_assoc()) {
-  $roleType = strtolower($row['role']);
-  if ($roleType === 'manager') continue;
-
-  $empName = trim($row['emp_name'] ?? '');
-  if ($empName === '') continue;
-
-  $auditTypeString = trim($row['audit_type'] ?? '');
-  $parts = explode(' ', $auditTypeString);
-  $auditKey = count($parts) >= 2 ? $parts[0] . ' ' . $parts[1] : '';
-
-  // if ($auditKey === '') continue;
-
-  $teamData[$row['emp_id']]['emp_id'] = $row['emp_id'];
-  $teamData[$row['emp_id']]['name']   = $empName;
-  $teamData[$row['emp_id']]['type']   = $roleType;
-  $teamData[$row['emp_id']][$auditKey] = $row['emp_dol'];
-}
-
-$dolData = array_values($teamData);
-?>
-
 
 
 
