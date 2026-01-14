@@ -147,11 +147,11 @@ require_once '../includes/functions.php';
                                         <!-- RIGHT -->
                                         <div class="d-flex align-items-center gap-3 text-secondary">
                                             <span style="font-size: 14px;">
-                                                <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
+                                                <i class="bi bi-people"></i>&nbsp;<?php //echo htmlspecialchars($eng['eng_manager']); ?>
                                             </span>
                                 
-                                            <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
-                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                            <span style="font-size: 14px; color: <?php //echo $dateColor; ?>;">
+                                                <i class="bi bi-calendar2"></i>&nbsp;<?php //echo htmlspecialchars($finalDueDate); ?>
                                             </span> <br>
                                 
                                             <?php if (!empty($eng['eng_audit_type'])): ?>
