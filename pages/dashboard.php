@@ -670,7 +670,7 @@ require_once '../includes/functions.php';
 
     <div class="mt-5"></div>
 
-
+<?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -899,7 +899,7 @@ require_once '../includes/functions.php';
 
 
 
-<?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
+
 
 </body>
 </html>
