@@ -632,15 +632,21 @@ $totalEngagements = count($engagements);
             </div>
             <p style="color: rgb(0,66,0);">
               <script>
-                fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
+fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
   .then(res => res.json())
   .then(data => {
     document.getElementById('finalDueDisplay').textContent =
-      data.final_due ? new Date(data.final_due).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : 'N/A';
+      data.final_due 
+        ? new Date(data.final_due + 'T00:00').toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }) 
+        : 'N/A';
   });
+</script>
+<span id="finalDueDisplay">Loading...</span>
 
-              </script>
-              <span id="finalDueDisplay">Loading...</span>
 
             </p>
           </div>
