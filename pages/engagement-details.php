@@ -836,7 +836,7 @@ while ($row = $result->fetch_assoc()) {
   $parts = explode(' ', $auditTypeString);
   $auditKey = count($parts) >= 2 ? $parts[0] . ' ' . $parts[1] : '';
 
-  if ($auditKey === '') continue;
+  // if ($auditKey === '') continue;
 
   $teamData[$row['emp_id']]['emp_id'] = $row['emp_id'];
   $teamData[$row['emp_id']]['name']   = $empName;
