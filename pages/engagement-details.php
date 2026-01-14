@@ -979,7 +979,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // TEAM MEMBERS
   // Filter to only members that have a real emp_id
   const members = getTeamMembers()
-    .filter(m => (m.type === 'senior' || m.type === 'staff') && m.emp_id);
+    .filter(m => (m.type === 'senior' || m.type === 'staff') && m.empId);
 
   if (!members.length) {
     modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
