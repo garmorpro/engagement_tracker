@@ -1,27 +1,40 @@
 <?php
-header('Content-Type: application/json');
+// CRITICAL: no whitespace before this file
+ob_start();
+
 ini_set('display_errors', 0);
 error_reporting(0);
 
-include 'db.php';
+header('Content-Type: application/json');
 
-$eng_id = intval($_POST['eng_id'] ?? 0);
+require 'db.php';
+
+$eng_id = isset($_POST['eng_id']) ? intval($_POST['eng_id']) : 0;
 $dol    = $_POST['dol'] ?? [];
 
-if (!$eng_id || empty($dol)) {
-    echo json_encode(['success' => false, 'error' => 'Invalid input']);
+if (!$eng_id || !is_array($dol)) {
+    ob_clean();
+    echo json_encode([
+        'success' => false,
+        'error'   => 'Invalid input'
+    ]);
     exit;
 }
 
 foreach (['senior', 'staff'] as $role) {
 
-    if (empty($dol[$role])) continue;
+    if (empty($dol[$role]) || !is_array($dol[$role])) {
+        continue;
+    }
 
     foreach ($dol[$role] as $idx => $auditData) {
 
-        // 🔑 FIX: JS index is zero-based → SQL OFFSET must match
-        $offset = intval($idx);
+        $index = intval($idx);
+        if (!is_array($auditData)) continue;
 
+        /* ================================
+           FETCH EMPLOYEE BY ROLE + ORDER
+        ================================= */
         $stmt = $conn->prepare("
             SELECT emp_name
             FROM engagement_team
@@ -31,24 +44,29 @@ foreach (['senior', 'staff'] as $role) {
             LIMIT 1 OFFSET ?
         ");
 
-        if (!$stmt) continue;
-
         $roleName = ucfirst($role);
-        $stmt->bind_param("isi", $eng_id, $roleName, $offset);
+        $stmt->bind_param("isi", $eng_id, $roleName, $index);
         $stmt->execute();
         $result = $stmt->get_result();
         $emp = $result->fetch_assoc();
+        $stmt->close();
 
-        if (!$emp || empty($emp['emp_name'])) continue;
+        if (!$emp || empty($emp['emp_name'])) {
+            continue;
+        }
 
         $emp_name = $emp['emp_name'];
 
+        /* ================================
+           UPDATE EACH AUDIT TYPE DOL
+        ================================= */
         foreach ($auditData as $auditType => $dolValue) {
 
-            $auditType = trim($auditType); // "SOC 1" / "SOC 2"
-            $dolValue  = trim($dolValue);
+            $auditType = trim($auditType);     // "SOC 1" / "SOC 2"
+            $dolValue  = trim((string)$dolValue);
 
-            if ($dolValue === '') continue;
+            // Convert empty string → NULL
+            $dolValue = ($dolValue === '') ? null : $dolValue;
 
             $update = $conn->prepare("
                 UPDATE engagement_team
@@ -60,8 +78,6 @@ foreach (['senior', 'staff'] as $role) {
                 LIMIT 1
             ");
 
-            if (!$update) continue;
-
             $update->bind_param(
                 "sisss",
                 $dolValue,
@@ -72,9 +88,11 @@ foreach (['senior', 'staff'] as $role) {
             );
 
             $update->execute();
+            $update->close();
         }
     }
 }
 
+ob_clean();
 echo json_encode(['success' => true]);
 exit;
