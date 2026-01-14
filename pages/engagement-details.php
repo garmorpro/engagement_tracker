@@ -557,14 +557,14 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
     }
 
     // Display final due date
-    dueDisplay.textContent = data.final_due 
-      ? new Date(data.final_due + 'T00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
-      : 'N/A';
+    // dueDisplay.textContent = data.final_due 
+    //   ? new Date(data.final_due + 'T00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+    //   : 'N/A';
 
     // Display days until/overdue
     if (data.days_info.days !== undefined) {
       daysCount.textContent = data.days_info.days;
-      // daysLabel.textContent = data.days_info.label;
+      daysLabel.textContent = data.days_info.label;
       daysCount.style.color = data.days_info.color;
       daysLabel.style.color = data.days_info.color;
       daysCount.style.fontSize = '20px';
