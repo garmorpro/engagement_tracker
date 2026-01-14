@@ -868,21 +868,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const membersMap = new Map();
 
     const addMember = (empId, name, type) => {
-        if (!name) return;
+        // Skip if name or type is missing
+        if (!name || !type) return;
+
+        // Ensure empId is valid (accept 0 or any number/string)
+        if (empId === undefined || empId === null) return;
+
         const typeLower = type.toLowerCase();
 
-        // Generate a temporary key
-        const key = empId || `${name}_${typeLower}`;
-
-        // If empId exists, remove any previous entry with the same name+type
-        if (empId && membersMap.has(`${name}_${typeLower}`)) {
-            membersMap.delete(`${name}_${typeLower}`);
-        }
-
-        // Only add if key not already in map
-        if (!membersMap.has(key)) {
-            membersMap.set(key, {
-                emp_id: empId || '',
+        // Use emp_id as the unique key
+        if (!membersMap.has(empId)) {
+            membersMap.set(empId, {
+                emp_id: empId,
                 name,
                 type: typeLower,
                 role: type.charAt(0).toUpperCase() + type.slice(1)
@@ -890,28 +887,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 1️⃣ Collect members from DOM
-    const collectFromDOM = (cards, type) => {
-        cards.forEach(card => {
-            const empId = card.getAttribute('data-emp-id') || '';
-            const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
-            addMember(empId, name, type);
-        });
-    };
-
-    collectFromDOM(seniorCards, 'Senior');
-    collectFromDOM(staffCards, 'Staff');
-
-    // 2️⃣ Collect members from existing DOL data
+    // 1️⃣ Collect members only from existing DOL data (DB)
     existingDOLData.forEach(row => {
         addMember(row.emp_id, row.name, row.type);
     });
 
+    // Sort: seniors first, then staff, alphabetically
     return Array.from(membersMap.values()).sort((a, b) => {
         if (a.type === b.type) return a.name.localeCompare(b.name);
         return a.type === 'senior' ? -1 : 1;
     });
 }
+
 
 
 
