@@ -854,36 +854,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const existingDOLData = <?php echo json_encode($dolData); ?>;
 
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
-  const auditTypes = rawAuditTypes
-  .join(',')                // flatten if comma-separated
-  .toUpperCase()
-  .split(',')
-  .map(t => t.trim())
-  .filter(t => t.startsWith('SOC'))
-  .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2');
+  const auditTypes = Array.from(new Set(
+    rawAuditTypes
+      .map(t => t.trim().toUpperCase())
+      .filter(t => t.startsWith('SOC'))
+      .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2')
+  ));
 
-  const seniorsContainer = document.getElementById('seniorsContainer');
-  const staffContainer   = document.getElementById('staffContainer');
-  const managerContainer = document.getElementById('managerContainer');
   const dolButtonsContainer = document.getElementById('dolButtonsContainer');
-
-  const addSeniorBtn  = document.getElementById('addSeniorBtn');
-  const addStaffBtn   = document.getElementById('addStaffBtn');
-  const addManagerBtn = document.getElementById('addManagerBtn');
 
   // ===============================
   // HELPERS
   // ===============================
   function getTeamMembers() {
-  // Build team members directly from PHP-provided data
-  return existingDOLData.map(row => ({
-    emp_id: row.emp_id,
-    name: row.name,
-    type: row.type.toLowerCase(), // 'senior' or 'staff'
-    role: row.type.charAt(0).toUpperCase() + row.type.slice(1) // 'Senior' or 'Staff'
-  }));
-}
-
+    return existingDOLData.map(row => ({
+      emp_id: row.emp_id,
+      name: row.name,
+      type: row.type.toLowerCase(), // 'senior' or 'staff'
+      role: row.type.charAt(0).toUpperCase() + row.type.slice(1)
+    }));
+  }
 
   function getExistingDOL(empId, auditType) {
     const row = existingDOLData.find(r => r.emp_id == empId);
@@ -891,11 +881,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===============================
-  // DOL BUTTON (ONE BUTTON ONLY)
+  // DOL BUTTON
   // ===============================
   function updateDOLButtons() {
     dolButtonsContainer.innerHTML = '';
-    // if (getTeamMembers().length === 0) return;
+    if (getTeamMembers().length === 0) return;
 
     const btn = document.createElement('a');
     btn.href = 'javascript:void(0)';
@@ -907,89 +897,60 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openDOLModal() {
-  const modalBody = document.getElementById('dolModalBody');
-  modalBody.innerHTML = '';
+    const modalBody = document.getElementById('dolModalBody');
+    modalBody.innerHTML = '';
 
-  /* ===============================
-     HEADER
-  =============================== */
-  const header = document.createElement('div');
-  header.className = 'mb-3 p-4 border rounded';
-  header.style.background = 'rgb(240,246,254)';
-  header.innerHTML = `
-    <div class="fw-bold mb-2">Audit Types</div>
-    ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
-    <div class="mt-2 text-muted" style="font-size:13px">
-      ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
-      ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
-      ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
-    </div>
-  `;
-  modalBody.appendChild(header);
-
-  /* ===============================
-     TEAM MEMBERS
-  =============================== */
-  const members = getTeamMembers();
-
-  if (!members.length) {
-    modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
-  }
-
-  members.forEach(member => {
-
-    const isSenior = member.type?.toLowerCase() === 'senior';
-
-    const card = document.createElement('div');
-    card.className = 'mb-3 p-3 border rounded';
-    card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
-
-    let inputs = '';
-
-    if (auditTypes.includes('SOC 1')) {
-      inputs += `
-        <div class="mb-2">
-          <label class="form-label small text-muted">SOC 1 Division of Labor</label>
-          <input
-            type="text"
-            class="form-control"
-            name="dol[${member.emp_id}][SOC 1]"
-            placeholder="CO1, CO2, CO3"
-            value="${getExistingDOL(member.emp_id, 'SOC 1') || ''}">
-        </div>
-      `;
-    }
-
-    if (auditTypes.includes('SOC 2')) {
-      inputs += `
-        <div class="mb-2">
-          <label class="form-label small text-muted">SOC 2 Division of Labor</label>
-          <input
-            type="text"
-            class="form-control"
-            name="dol[${member.emp_id}][SOC 2]"
-            placeholder="CC1, CC2, CC3"
-            value="${getExistingDOL(member.emp_id, 'SOC 2') || ''}">
-        </div>
-      `;
-    }
-
-    card.innerHTML = `
-      <div class="fw-bold mb-2">
-        ${isSenior ? 'Senior' : 'Staff'}: ${member.name}
+    // ===============================
+    // HEADER
+    // ===============================
+    const header = document.createElement('div');
+    header.className = 'mb-3 p-4 border rounded';
+    header.style.background = 'rgb(240,246,254)';
+    header.innerHTML = `
+      <div class="fw-bold mb-2">Audit Types</div>
+      ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
+      <div class="mt-2 text-muted" style="font-size:13px">
+        ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
+        ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
+        ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
       </div>
-      ${inputs}
     `;
+    modalBody.appendChild(header);
 
-    modalBody.appendChild(card);
-  });
+    // ===============================
+    // TEAM MEMBERS
+    // ===============================
+    const members = getTeamMembers();
+    if (!members.length) {
+      modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
+      return;
+    }
 
-  new bootstrap.Modal(document.getElementById('dolModal')).show();
-}
+    members.forEach(member => {
+      const isSenior = member.type === 'senior';
+      const card = document.createElement('div');
+      card.className = 'mb-3 p-3 border rounded';
+      card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
-console.log('Audit Types:', auditTypes);
-console.log('Team Members:', getTeamMembers());
+      let inputs = '';
+      auditTypes.forEach(audit => {
+        inputs += `
+          <div class="mb-2">
+            <label class="form-label small text-muted">${audit} Division of Labor</label>
+            <input type="text" class="form-control"
+              name="dol[${member.emp_id}][${audit}]"
+              placeholder="${audit === 'SOC 1' ? 'CO1, CO2' : 'CC1, CC2'}"
+              value="${getExistingDOL(member.emp_id, audit) || ''}">
+          </div>
+        `;
+      });
 
+      card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputs}`;
+      modalBody.appendChild(card);
+    });
+
+    new bootstrap.Modal(document.getElementById('dolModal')).show();
+  }
 
   // ===============================
   // SAVE DOL
@@ -999,34 +960,22 @@ console.log('Team Members:', getTeamMembers());
     const formData = new FormData(e.target);
     formData.append('eng_id', engId);
 
-    fetch('../includes/save_dol.php', { method:'POST', body:formData })
+    fetch('../includes/save_dol.php', { method:'POST', body: formData })
       .then(r => r.json())
       .then(r => {
         if (r.success) location.reload();
         else alert('Save failed');
-      });
+      })
+      .catch(err => alert('AJAX error: ' + err));
   });
 
-  // ===============================
-  // TEAM BUTTONS (UNCHANGED)
-  // ===============================
-  function getNextIndex(container) {
-    for (let i = 1; i <= 2; i++) {
-      if (!container.querySelector(`.card[data-index="${i}"]`)) return i;
-    }
-    return null;
-  }
-
-  function updateButtons() {
-    addSeniorBtn.style.display = getNextIndex(seniorsContainer) ? 'inline-block' : 'none';
-    addStaffBtn.style.display  = getNextIndex(staffContainer) ? 'inline-block' : 'none';
-    addManagerBtn.style.display = managerContainer.querySelector('.card') ? 'none' : 'inline-block';
-  }
-
-  updateButtons();
+  // Initialize
   updateDOLButtons();
+  console.log('Audit Types:', auditTypes);
+  console.log('Team Members:', getTeamMembers());
 });
 </script>
+
 
 
 
