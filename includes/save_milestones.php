@@ -1,5 +1,5 @@
 <?php
-include '../db.php';
+include 'db.php';
 header('Content-Type: application/json');
 
 // Turn off PHP notices in output (prevents fetch JSON errors)
