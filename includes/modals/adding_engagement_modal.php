@@ -19,7 +19,6 @@ $auditTypes = [
 <div class="modal fade" id="addModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
     <div class="modal-content">
-
       <form method="POST">
         <input type="hidden" name="action" value="add">
 
@@ -28,6 +27,9 @@ $auditTypes = [
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
 
+        <!-- =====================
+             SCROLLABLE BODY
+        ===================== -->
         <div class="modal-body">
           <div class="row g-3">
 
@@ -150,6 +152,7 @@ $auditTypes = [
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary">Add Engagement</button>
         </div>
+
       </form>
     </div>
   </div>
