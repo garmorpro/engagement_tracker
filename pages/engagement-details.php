@@ -982,25 +982,92 @@ modalBody.appendChild(headerCard);
 
     // --- DOL cards for each member ---
     const members = getTeamMembers();
-    members.forEach((member,idx)=>{
-      const card = document.createElement('div');
-      card.className='dol-card mb-3 p-3 border rounded';
-      let inputsHTML = '';
-      if(auditTypes.includes('SOC 1')){
-        inputsHTML += `<div class="mb-2" style="background-color: pink;">
-          <label class="form-label">SOC 1 Division of Labor <span style="font-size: 12px;">(e.g., C01, C02, CO3)</span></label>
-          <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 1]" value="${member.dol['SOC 1']||''}">
-        </div>`;
+
+members.forEach((member, idx) => {
+
+  /* =============================
+     ROLE-BASED STYLE DEFINITIONS
+  ============================= */
+  const styles = member.type === 'senior'
+    ? {
+        bg: '#f6f0ff',
+        border: '#dcc8ff',
+        header: '#5a2dbd',
+        subText: '#7a5dbb',
+        inputBorder: '#bfa6ff',
+        inputFocus: '#7b3fe4'
       }
-      if(auditTypes.includes('SOC 2')){
-        inputsHTML += `<div class="mb-2">
-          <label class="form-label">SOC 2 Division of Labor <span style="font-size: 12px;">(e.g., CC1, CC2, CC3)</span></label>
-          <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 2]" value="${member.dol['SOC 2']||''}">
-        </div>`;
-      }
-      card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputsHTML}`;
-      modalBody.appendChild(card);
-    });
+    : {
+        bg: '#f0fbf4',
+        border: '#bfe8cf',
+        header: '#1f7a3f',
+        subText: '#4d8f68',
+        inputBorder: '#8fd3ac',
+        inputFocus: '#2fa66a'
+      };
+
+  /* =============================
+     CARD CONTAINER
+  ============================= */
+  const card = document.createElement('div');
+  card.className = 'dol-card mb-3 p-3 border rounded';
+  card.style.backgroundColor = styles.bg;
+  card.style.borderColor = styles.border;
+
+  /* =============================
+     INPUT SECTIONS
+  ============================= */
+  let inputsHTML = '';
+
+  if (auditTypes.includes('SOC 1')) {
+    inputsHTML += `
+      <div class="mb-2">
+        <label class="form-label" style="color:${styles.subText};">
+          SOC 1 Division of Labor
+          <span style="font-size:12px;">(e.g., CO1, CO2, CO3)</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          style="border-color:${styles.inputBorder};"
+          onfocus="this.style.borderColor='${styles.inputFocus}'"
+          onblur="this.style.borderColor='${styles.inputBorder}'"
+          name="dol[${member.type}][${idx}][SOC 1]"
+          value="${member.dol['SOC 1'] || ''}">
+      </div>`;
+  }
+
+  if (auditTypes.includes('SOC 2')) {
+    inputsHTML += `
+      <div class="mb-2">
+        <label class="form-label" style="color:${styles.subText};">
+          SOC 2 Division of Labor
+          <span style="font-size:12px;">(e.g., CC1, CC2, CC3)</span>
+        </label>
+        <input
+          type="text"
+          class="form-control"
+          style="border-color:${styles.inputBorder};"
+          onfocus="this.style.borderColor='${styles.inputFocus}'"
+          onblur="this.style.borderColor='${styles.inputBorder}'"
+          name="dol[${member.type}][${idx}][SOC 2]"
+          value="${member.dol['SOC 2'] || ''}">
+      </div>`;
+  }
+
+  /* =============================
+     FINAL CARD HTML
+  ============================= */
+  card.innerHTML = `
+    <div class="fw-bold mb-2" style="color:${styles.header}; font-size:14px;">
+      ${member.role}: ${member.name}
+    </div>
+    ${inputsHTML}
+  `;
+
+  modalBody.appendChild(card);
+});
+
 
     new bootstrap.Modal(document.getElementById('dolModal')).show();
   }
