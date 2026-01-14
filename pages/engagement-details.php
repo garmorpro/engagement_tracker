@@ -1022,38 +1022,40 @@ function formatMilestoneName($type) {
             break;
         }
     }
-    $circleColor = $allCompleted ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
 
-    // For single milestones, grab the one record
+    $bigIcon   = $allCompleted ? 'bi-check2-circle' : 'bi-circle';
+    $bigColor  = $allCompleted ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+
+    // Single milestone reference
     $single = !$isGrouped ? $items[0] : null;
 ?>
 
 <div class="d-flex align-items-center position-relative mb-3">
 
     <!-- BIG ICON -->
-    <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
-        <div class="rounded-circle text-white d-flex align-items-center justify-content-center
-             <?= !$isGrouped ? 'milestone-toggle' : '' ?>"
-             <?= !$isGrouped ? 'data-ms-id="'.$single['ms_id'].'" data-completed="'.$single['is_completed'].'"' : '' ?>
-             style="width:44px;height:44px;background-color: <?= $circleColor; ?>;cursor:<?= !$isGrouped ? 'pointer' : 'default'; ?>;">
-            <i class="bi bi-telephone"></i>
-        </div>
+    <div class="me-3">
+        <i class="bi <?= $bigIcon; ?> milestone-toggle"
+           <?= !$isGrouped ? 'data-ms-id="'.$single['ms_id'].'" data-completed="'.$single['is_completed'].'"' : '' ?>
+           style="font-size:36px;color:<?= $bigColor; ?>;cursor:<?= !$isGrouped ? 'pointer' : 'default'; ?>;">
+        </i>
     </div>
 
     <div class="flex-grow-1">
         <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
             <div class="card-body py-3 px-4">
 
-                <!-- TITLE -->
-                <div class="fw-semibold mb-2">
-                    <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
-                </div>
-
                 <?php if ($isGrouped): ?>
-                    <!-- GROUPED SOC MILESTONES -->
+
+                    <!-- TITLE -->
+                    <div class="fw-semibold mb-2">
+                        <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
+                    </div>
+
+                    <!-- GROUPED SOC ROWS -->
                     <?php foreach ($items as $m): ?>
                         <?php
                             $completed = ($m['is_completed'] ?? 'N') === 'Y';
+                            $icon  = $completed ? 'bi-check2-circle' : 'bi-circle';
                             $color = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
 
                             $label = stripos($m['milestone_type'], 'soc_1') !== false ? 'SOC 1' : 'SOC 2';
@@ -1067,23 +1069,26 @@ function formatMilestoneName($type) {
 
                         <div class="d-flex justify-content-between align-items-center py-1">
                             <div class="d-flex align-items-center gap-2">
-                                <div class="rounded-circle milestone-toggle"
-                                     data-ms-id="<?= $m['ms_id']; ?>"
-                                     data-completed="<?= $m['is_completed']; ?>"
-                                     style="width:22px;height:22px;background-color: <?= $color; ?>;cursor:pointer;">
-                                </div>
+                                <i class="bi <?= $icon; ?> milestone-toggle"
+                                   data-ms-id="<?= $m['ms_id']; ?>"
+                                   data-completed="<?= $m['is_completed']; ?>"
+                                   style="font-size:20px;color:<?= $color; ?>;cursor:pointer;">
+                                </i>
                                 <span class="fw-semibold"><?= $label; ?></span>
                             </div>
 
-                            <span class="toggle-status-text fw-semibold" style="color: <?= $color; ?>;">
+                            <span class="fw-semibold" style="color:<?= $color; ?>;">
                                 <?= htmlspecialchars($dueDate); ?>
                             </span>
                         </div>
                     <?php endforeach; ?>
 
                 <?php else: ?>
-                    <!-- SINGLE MILESTONE -->
+                    <!-- SINGLE MILESTONE ROW -->
                     <?php
+                        $completed = ($single['is_completed'] ?? 'N') === 'Y';
+                        $color = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+
                         $dueDate = 'No due date';
                         if (!empty($single['due_date'])) {
                             $d = DateTime::createFromFormat('Y-m-d', $single['due_date']);
@@ -1091,10 +1096,16 @@ function formatMilestoneName($type) {
                         }
                     ?>
 
-                    <div class="fw-semibold toggle-status-text"
-                         style="color: <?= $circleColor; ?>;">
-                        <?= htmlspecialchars($dueDate); ?>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="fw-semibold">
+                            <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
+                        </div>
+
+                        <div class="fw-semibold" style="color:<?= $color; ?>;">
+                            <?= htmlspecialchars($dueDate); ?>
+                        </div>
                     </div>
+
                 <?php endif; ?>
 
             </div>
@@ -1102,6 +1113,7 @@ function formatMilestoneName($type) {
     </div>
 </div>
 <?php endforeach; ?>
+
 
 
 
