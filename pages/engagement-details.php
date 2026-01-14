@@ -870,6 +870,11 @@ $totalEngagements = count($engagements);
                   <i class="bi bi-calendar2" style="color: rgb(223,50,0);"></i>
                 </div>
                 <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Engagement Timeline</h6>
+
+                <!-- BUTTON TO OPEN MODAL -->
+            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#milestonesModal">
+                Edit Milestone Dates
+            </button>
               </div>
 
                 
