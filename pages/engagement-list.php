@@ -6,17 +6,33 @@ require_once '../includes/functions.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     $engId = $_POST['delete_eng_id'];
 
-    $stmt = $conn->prepare("DELETE FROM engagements WHERE eng_idno = ?");
-    $stmt->bind_param("s", $engId);
+    // 1️⃣ Delete team members assigned to this engagement
+    $stmtTeam = $conn->prepare("DELETE FROM engagement_team WHERE eng_id = ?");
+    $stmtTeam->bind_param("i", $engId);
+    $stmtTeam->execute();
+    $stmtTeam->close();
 
-    if ($stmt->execute()) {
+    // 2️⃣ Delete milestones assigned to this engagement
+    $stmtMilestones = $conn->prepare("DELETE FROM engagement_milestones WHERE eng_id = ?");
+    $stmtMilestones->bind_param("i", $engId);
+    $stmtMilestones->execute();
+    $stmtMilestones->close();
+
+    // 3️⃣ Delete the engagement itself
+    $stmtEng = $conn->prepare("DELETE FROM engagements WHERE eng_id = ?");
+    $stmtEng->bind_param("i", $engId);
+
+    if ($stmtEng->execute()) {
         // Redirect to avoid resubmission and show success message
         header("Location: dashboard.php?message=Engagement deleted successfully");
         exit;
     } else {
-        echo "<div class='alert alert-danger'>Failed to delete engagement.</div>";
+        echo "<div class='alert alert-danger'>Failed to delete engagement: " . htmlspecialchars($stmtEng->error) . "</div>";
     }
+
+    $stmtEng->close();
 }
+
 
 // Handle editing engagement
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
