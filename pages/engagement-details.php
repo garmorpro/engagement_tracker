@@ -27,14 +27,14 @@ $eng_id = (int) $_GET['eng_id'];
 $finalDue = null;
 
 if ($eng_id) {
-    $query = "
+    $final_due = "
         SELECT due_date
         FROM engagement_milestones
         WHERE eng_id = ?
           AND milestone_type LIKE 'final_report_due%'
         ORDER BY ms_id ASC
     ";
-    $stmt = $conn->prepare($query);
+    $stmt = $conn->prepare($final_due);
     $stmt->bind_param("i", $eng_id);
     $stmt->execute();
     $res = $stmt->get_result();
