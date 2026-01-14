@@ -23,12 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     }
 }
 
-$eng_id = $eng['eng_id'] ?? 0;
+$eng_id = (int) $_GET['eng_id'];
 $finalDue = null;
 
 if ($eng_id) {
     $query = "
-        SELECT milestone_type, due_date
+        SELECT due_date
         FROM engagement_milestones
         WHERE eng_id = ?
           AND milestone_type LIKE 'final_report_due%'
