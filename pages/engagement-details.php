@@ -911,105 +911,89 @@ document.addEventListener('DOMContentLoaded', () => {
     dolButtonsContainer.appendChild(btn);
   }
 
-  // ===============================
-// OPEN DOL MODAL (FULLY FIXED)
-// ===============================
-function openDOLModal() {
-
+  function openDOLModal() {
   const modalBody = document.getElementById('dolModalBody');
   modalBody.innerHTML = '';
 
-  /* --------------------------------
-     NORMALIZE AUDIT TYPES
-  -------------------------------- */
-  const normalizedAuditTypes = auditTypes
-    .join(',')                  // flatten array
-    .toUpperCase()
-    .split(',')
-    .map(t => t.trim())
-    .filter(t => t.startsWith('SOC'))
-    .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2');
-
-  const hasSOC1 = normalizedAuditTypes.includes('SOC 1');
-  const hasSOC2 = normalizedAuditTypes.includes('SOC 2');
-
-  /* --------------------------------
+  /* ===============================
      HEADER
-  -------------------------------- */
+  =============================== */
   const header = document.createElement('div');
   header.className = 'mb-3 p-4 border rounded';
   header.style.background = 'rgb(240,246,254)';
   header.innerHTML = `
     <div class="fw-bold mb-2">Audit Types</div>
-    ${normalizedAuditTypes.map(a =>
-      `<span class="badge me-2" style="background:#425cd5">${a}</span>`
-    ).join('')}
+    ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
     <div class="mt-2 text-muted" style="font-size:13px">
-      ${hasSOC1 ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
-      ${hasSOC1 && hasSOC2 ? ' • ' : ''}
-      ${hasSOC2 ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
+      ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
+      ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
+      ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
     </div>
   `;
   modalBody.appendChild(header);
 
-  /* --------------------------------
+  /* ===============================
      TEAM MEMBERS
-  -------------------------------- */
-  getTeamMembers().forEach(member => {
+  =============================== */
+  const members = getTeamMembers();
 
-    const empId = member.emp_id;
-    const role  = member.role || member.type || 'Staff';
-    const name  = member.name || '';
+  if (!members.length) {
+    modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
+  }
 
-    const isSenior = role.toLowerCase() === 'senior';
+  members.forEach(member => {
+
+    const isSenior = member.type?.toLowerCase() === 'senior';
 
     const card = document.createElement('div');
     card.className = 'mb-3 p-3 border rounded';
     card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
-    let inputsHTML = '';
+    let inputs = '';
 
-    if (hasSOC1) {
-      inputsHTML += `
+    if (auditTypes.includes('SOC 1')) {
+      inputs += `
         <div class="mb-2">
           <label class="form-label small text-muted">SOC 1 Division of Labor</label>
           <input
             type="text"
             class="form-control"
-            name="dol[${empId}][SOC 1]"
+            name="dol[${member.emp_id}][SOC 1]"
             placeholder="CO1, CO2, CO3"
-            value="${getExistingDOL(empId, 'SOC 1') || ''}">
+            value="${getExistingDOL(member.emp_id, 'SOC 1') || ''}">
         </div>
       `;
     }
 
-    if (hasSOC2) {
-      inputsHTML += `
+    if (auditTypes.includes('SOC 2')) {
+      inputs += `
         <div class="mb-2">
           <label class="form-label small text-muted">SOC 2 Division of Labor</label>
           <input
             type="text"
             class="form-control"
-            name="dol[${empId}][SOC 2]"
+            name="dol[${member.emp_id}][SOC 2]"
             placeholder="CC1, CC2, CC3"
-            value="${getExistingDOL(empId, 'SOC 2') || ''}">
+            value="${getExistingDOL(member.emp_id, 'SOC 2') || ''}">
         </div>
       `;
     }
 
     card.innerHTML = `
-      <div class="fw-bold mb-2">${role}: ${name}</div>
-      ${inputsHTML || '<div class="text-muted small">No applicable audit types</div>'}
+      <div class="fw-bold mb-2">
+        ${isSenior ? 'Senior' : 'Staff'}: ${member.name}
+      </div>
+      ${inputs}
     `;
 
     modalBody.appendChild(card);
   });
 
-  /* --------------------------------
-     SHOW MODAL
-  -------------------------------- */
-  new bootstrap.Modal(document.getElementById('dolModalBody')).show();
+  new bootstrap.Modal(document.getElementById('dolModal')).show();
 }
+
+console.log('Audit Types:', auditTypes);
+console.log('Team Members:', getTeamMembers());
 
 
   // ===============================
