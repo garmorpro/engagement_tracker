@@ -1032,7 +1032,7 @@ members.forEach((member, idx) => {
           style="border-color:${styles.inputBorder};"
           onfocus="this.style.borderColor='${styles.inputFocus}'"
           onblur="this.style.borderColor='${styles.inputBorder}'"
-          name="dol[${member.type}][${idx}][SOC 1]"
+          name="dol"
           value="${member.dol['SOC 1'] || ''}">
       </div>`;
   }
@@ -1050,7 +1050,7 @@ members.forEach((member, idx) => {
           style="border-color:${styles.inputBorder};"
           onfocus="this.style.borderColor='${styles.inputFocus}'"
           onblur="this.style.borderColor='${styles.inputBorder}'"
-          name="dol[${member.type}][${idx}][SOC 2]"
+          name="dol"
           value="${member.dol['SOC 2'] || ''}">
       </div>`;
   }
