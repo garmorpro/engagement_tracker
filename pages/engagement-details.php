@@ -861,42 +861,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const seniorCards = Array.from(document.querySelectorAll('#seniorsContainer .card'));
   const staffCards  = Array.from(document.querySelectorAll('#staffContainer .card'));
 
+  // ===============================
   // Merge team members (DOL + DOM) without duplicates
+  // ===============================
   function getTeamMembers() {
     const membersMap = new Map();
 
-    const collect = (cards, type) => {
-      cards.forEach(card => {
-        const empId = card.getAttribute('data-emp-id') || '';
-        const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
-        if (!name) return;
-
-        // Only add if not already added
-        if (!membersMap.has(empId)) {
-          const existing = existingDOLData.find(r => r.emp_id == empId);
-          membersMap.set(empId || `new-${type}-${membersMap.size}`, {
-            emp_id: empId || `new-${type}-${membersMap.size}`,
-            name: existing?.name || name,
-            type: type.toLowerCase(),
-            role: type.charAt(0).toUpperCase() + type.slice(1)
-          });
-        }
-      });
+    // Helper to add a member
+    const addMember = (empId, name, type, role) => {
+      if (!membersMap.has(empId)) {
+        membersMap.set(empId, { emp_id: empId, name, type, role });
+      }
     };
 
+    // Collect from DOM
+    const collect = (cards, type) => {
+      cards.forEach(card => {
+        const empId = card.getAttribute('data-emp-id') || `new-${type}-${membersMap.size}`;
+        const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
+        if (!name) return;
+        addMember(empId, name, type.toLowerCase(), type.charAt(0).toUpperCase() + type.slice(1));
+      });
+    };
     collect(seniorCards, 'Senior');
     collect(staffCards, 'Staff');
 
-    // Include members from existingDOLData that might not be in DOM yet
-    existingDOLData.forEach(r => {
-      if (!membersMap.has(r.emp_id)) {
-        membersMap.set(r.emp_id, {
-          emp_id: r.emp_id,
-          name: r.name,
-          type: r.type.toLowerCase(),
-          role: r.type.charAt(0).toUpperCase() + r.type.slice(1)
-        });
-      }
+    // Collect from existing DOL data
+    existingDOLData.forEach(row => {
+      const empId = row.emp_id;
+      const name = row.name;
+      const type = row.type.toLowerCase();
+      const role = row.type.charAt(0).toUpperCase() + row.type.slice(1);
+      addMember(empId, name, type, role);
     });
 
     return Array.from(membersMap.values());
@@ -919,6 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const addStaffBtn   = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
 
+  // Get existing DOL value for a member
   function getExistingDOL(empId, auditType) {
     const row = existingDOLData.find(r => r.emp_id == empId);
     return row && row[auditType] ? row[auditType] : '';
@@ -977,13 +974,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let inputs = '';
       auditTypes.forEach(audit => {
+        // Only show DOL value once per member
+        const dolValue = getExistingDOL(member.emp_id, audit) || '';
         inputs += `
           <div class="mb-2">
             <label class="form-label small text-muted">${audit} Division of Labor</label>
             <input type="text" class="form-control"
               name="dol[${member.emp_id}][${audit}]"
               placeholder="${audit === 'SOC 1' ? 'CO1, CO2' : 'CC1, CC2'}"
-              value="${getExistingDOL(member.emp_id, audit) || ''}">
+              value="${dolValue}">
           </div>
         `;
       });
