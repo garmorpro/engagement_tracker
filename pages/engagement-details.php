@@ -980,7 +980,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <label class="form-label small text-muted">${audit} Division of Labor</label>
             <input type="text" class="form-control"
               name="dol[${member.emp_id}][${audit}]"
-              placeholder="${audit === 'SOC 1' ? 'CO1, CO2' : 'CC1, CC2'}"
+              placeholder="${audit === 'SOC 1' ? '' : ''}"
               value="${getExistingDOL(member.emp_id, audit) || ''}">
           </div>
         `;
