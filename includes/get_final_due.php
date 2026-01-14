@@ -7,7 +7,7 @@ $completed = false;
 
 if ($eng_id && isset($conn)) {
     $stmt = $conn->prepare("
-        SELECT due_date, completed
+        SELECT due_date, is_completed AS completed
         FROM engagement_milestones
         WHERE eng_id = ?
           AND milestone_type LIKE 'final_report_due%'
