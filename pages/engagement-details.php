@@ -912,60 +912,105 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===============================
-  // OPEN DOL MODAL
-  // ===============================
-  function openDOLModal() {
-    const modalBody = document.getElementById('dolModalBody');
-    modalBody.innerHTML = '';
+// OPEN DOL MODAL (FULLY FIXED)
+// ===============================
+function openDOLModal() {
 
-    const header = document.createElement('div');
-    header.className = 'mb-3 p-4 border rounded';
-    header.style.background = 'rgb(240,246,254)';
-    header.innerHTML = `
-      <div class="fw-bold mb-2">Audit Types</div>
-      ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
-      <div class="mt-2 text-muted" style="font-size:13px">
-        ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., C01, C02, CO3)' : ''}
-        ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
-        ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2, CC3)' : ''}
-      </div>
-    `;
-    modalBody.appendChild(header);
+  const modalBody = document.getElementById('dolModalBody');
+  modalBody.innerHTML = '';
 
-    getTeamMembers().forEach(member => {
-      const isSenior = member.type === 'Senior';
+  /* --------------------------------
+     NORMALIZE AUDIT TYPES
+  -------------------------------- */
+  const normalizedAuditTypes = auditTypes
+    .join(',')                  // flatten array
+    .toUpperCase()
+    .split(',')
+    .map(t => t.trim())
+    .filter(t => t.startsWith('SOC'))
+    .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2');
 
-      const card = document.createElement('div');
-      card.className = 'mb-3 p-3 border rounded';
-      card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
+  const hasSOC1 = normalizedAuditTypes.includes('SOC 1');
+  const hasSOC2 = normalizedAuditTypes.includes('SOC 2');
 
-      let inputs = '';
-      if (auditTypes.includes('SOC 1')) {
-        inputs += `
-          <input class="form-control mb-2"
-            name="dol[${member.emp_id}][SOC 1]"
-            placeholder="SOC 1 (CO1, CO2...)"
-            value="${getExistingDOL(member.emp_id, 'SOC 1')}">
-        `;
-      }
-      if (auditTypes.includes('SOC 2')) {
-        inputs += `
-          <input class="form-control"
-            name="dol[${member.emp_id}][SOC 2]"
-            placeholder="SOC 2 (CC1, CC2...)"
-            value="${getExistingDOL(member.emp_id, 'SOC 2')}">
-        `;
-      }
-console.log('Audit Types:', auditTypes);
-      card.innerHTML = `
-        <div class="fw-bold mb-2">${member.role}: ${member.name}</div>
-        ${inputs}
+  /* --------------------------------
+     HEADER
+  -------------------------------- */
+  const header = document.createElement('div');
+  header.className = 'mb-3 p-4 border rounded';
+  header.style.background = 'rgb(240,246,254)';
+  header.innerHTML = `
+    <div class="fw-bold mb-2">Audit Types</div>
+    ${normalizedAuditTypes.map(a =>
+      `<span class="badge me-2" style="background:#425cd5">${a}</span>`
+    ).join('')}
+    <div class="mt-2 text-muted" style="font-size:13px">
+      ${hasSOC1 ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
+      ${hasSOC1 && hasSOC2 ? ' • ' : ''}
+      ${hasSOC2 ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
+    </div>
+  `;
+  modalBody.appendChild(header);
+
+  /* --------------------------------
+     TEAM MEMBERS
+  -------------------------------- */
+  getTeamMembers().forEach(member => {
+
+    const empId = member.emp_id;
+    const role  = member.role || member.type || 'Staff';
+    const name  = member.name || '';
+
+    const isSenior = role.toLowerCase() === 'senior';
+
+    const card = document.createElement('div');
+    card.className = 'mb-3 p-3 border rounded';
+    card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
+
+    let inputsHTML = '';
+
+    if (hasSOC1) {
+      inputsHTML += `
+        <div class="mb-2">
+          <label class="form-label small text-muted">SOC 1 Division of Labor</label>
+          <input
+            type="text"
+            class="form-control"
+            name="dol[${empId}][SOC 1]"
+            placeholder="CO1, CO2, CO3"
+            value="${getExistingDOL(empId, 'SOC 1') || ''}">
+        </div>
       `;
-      modalBody.appendChild(card);
-    });
+    }
 
-    new bootstrap.Modal(document.getElementById('dolModal')).show();
-  }
+    if (hasSOC2) {
+      inputsHTML += `
+        <div class="mb-2">
+          <label class="form-label small text-muted">SOC 2 Division of Labor</label>
+          <input
+            type="text"
+            class="form-control"
+            name="dol[${empId}][SOC 2]"
+            placeholder="CC1, CC2, CC3"
+            value="${getExistingDOL(empId, 'SOC 2') || ''}">
+        </div>
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="fw-bold mb-2">${role}: ${name}</div>
+      ${inputsHTML || '<div class="text-muted small">No applicable audit types</div>'}
+    `;
+
+    modalBody.appendChild(card);
+  });
+
+  /* --------------------------------
+     SHOW MODAL
+  -------------------------------- */
+  new bootstrap.Modal(document.getElementById('dolModal')).show();
+}
+
 
   // ===============================
   // SAVE DOL
