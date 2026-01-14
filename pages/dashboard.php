@@ -222,18 +222,19 @@ $totalEngagements = count($engagements);
 
     <!-- Search bar -->
           <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
-  <div class="p-3 border d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15); border-radius: 15px;">
+  <div class="p-3 border d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15); border-radius: 15px; position: relative;">
     <div class="input-group flex-grow-1 me-3">
       <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
           <i class="bi bi-search"></i>
       </span>
-      <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);" placeholder="Search..." id="engagementSearch">
+      <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);" placeholder="Search..." id="engagementSearch" autocomplete="off">
     </div>
+
+    <!-- Dropdown results -->
+    <div id="searchResults" class="dropdown-menu w-100" style="display: none; max-height: 300px; overflow-y: auto; position: absolute; top: 100%; left: 0; z-index: 1000;"></div>
   </div>
 </div>
 
-<!-- Container to show results -->
-<div id="searchResults" class="mt-3"></div>
 
 <script>
 const searchInput = document.getElementById('engagementSearch');
@@ -245,31 +246,53 @@ searchInput.addEventListener('input', () => {
 
   // Only search if at least 3 characters
   if (query.length < 3) {
+    resultsContainer.style.display = 'none';
     resultsContainer.innerHTML = '';
     return;
   }
 
-  // Debounce to avoid too many requests
   clearTimeout(timeout);
   timeout = setTimeout(() => {
     fetch(`../includes/search_engagements.php?q=${encodeURIComponent(query)}`)
       .then(res => res.json())
       .then(data => {
         if (data.length === 0) {
-          resultsContainer.innerHTML = '<p style="color: #888;">No results found</p>';
+          resultsContainer.innerHTML = '<div class="dropdown-item text-muted">No results found</div>';
+          resultsContainer.style.display = 'block';
           return;
         }
 
-        // Build list of results
-        let html = '<ul class="list-group">';
+        // Build dropdown items
+        let html = '';
         data.forEach(row => {
-          html += `<li class="list-group-item">${row.eng_name} (${row.eng_idno})</li>`;
+          html += `<div class="dropdown-item" style="cursor:pointer;" data-eng-id="${row.eng_id}">
+                      ${row.eng_name} (${row.eng_idno})
+                   </div>`;
         });
-        html += '</ul>';
         resultsContainer.innerHTML = html;
+        resultsContainer.style.display = 'block';
+
+        // Optional: click handler for each item
+        const items = resultsContainer.querySelectorAll('.dropdown-item');
+        items.forEach(item => {
+          item.addEventListener('click', () => {
+            searchInput.value = item.textContent;
+            resultsContainer.style.display = 'none';
+            // Here you can add code to load engagement details if needed
+            console.log('Selected engagement ID:', item.dataset.engId);
+          });
+        });
       });
-  }, 300); // 300ms debounce
+  }, 300);
 });
+
+// Hide dropdown if clicked outside
+document.addEventListener('click', (e) => {
+  if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+    resultsContainer.style.display = 'none';
+  }
+});
+
 </script>
 
 
