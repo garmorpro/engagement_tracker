@@ -992,13 +992,13 @@ if ($eng_id) {
 
 
               <?php
-// Fetch all internal planning call milestones for open engagements
+// Fetch all milestones for the current engagement
 $query = "
     SELECT em.ms_id, em.eng_id, em.milestone_type, em.is_completed, em.due_date, e.eng_name
     FROM engagement_milestones em
     JOIN engagements e ON em.eng_id = e.eng_id
     WHERE em.eng_id = {$eng_id}
-    ORDER BY e.eng_name, em.due_date
+    ORDER BY em.ms_id
 ";
 $result = $conn->query($query);
 
@@ -1008,30 +1008,61 @@ if ($result && $result->num_rows) {
         $milestonesList[] = $row;
     }
 }
+
+// Group milestones by base type (remove _soc_1 / _soc_2)
+$groupedMilestones = [];
+foreach ($milestonesList as $m) {
+    $baseType = preg_replace('/_soc_\d$/i', '', $m['milestone_type']);
+    if (!isset($groupedMilestones[$baseType])) {
+        $groupedMilestones[$baseType] = [
+            'base_type' => $baseType,
+            'soc_1' => null,
+            'soc_2' => null,
+        ];
+    }
+    if (stripos($m['milestone_type'], 'soc_1') !== false) {
+        $groupedMilestones[$baseType]['soc_1'] = $m;
+    } elseif (stripos($m['milestone_type'], 'soc_2') !== false) {
+        $groupedMilestones[$baseType]['soc_2'] = $m;
+    } else {
+        $groupedMilestones[$baseType]['soc_1'] = $m; // default if not SOC-specific
+    }
+}
 ?>
 
-<?php foreach ($milestonesList as $internalPlanning): ?>
+<?php foreach ($groupedMilestones as $group): ?>
     <?php
-    $completed = ($internalPlanning['is_completed'] ?? 'N') === 'Y';
+    // Determine completion status: consider completed if both are completed, otherwise Pending
+    $completedSoc1 = ($group['soc_1']['is_completed'] ?? 'N') === 'Y';
+    $completedSoc2 = ($group['soc_2']['is_completed'] ?? 'N') === 'Y';
+    $completed = $completedSoc1 && $completedSoc2;
 
-    // Format the due date
-    $dueDateRaw = $internalPlanning['due_date'] ?? null;
-    if ($dueDateRaw) {
-        $dueDateObj = DateTime::createFromFormat('Y-m-d', $dueDateRaw);
-        $dueDate = $dueDateObj ? $dueDateObj->format('M d, Y') : 'Invalid date';
-    } else {
-        $dueDate = 'No due date';
-    }
-
-    // Circle color based on completion
+    // Circle color
     $circleColor = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+
+    // Format due dates
+    $dueDates = [];
+    if (!empty($group['soc_1'])) {
+        $date = $group['soc_1']['due_date'] ?? null;
+        if ($date) {
+            $dateObj = DateTime::createFromFormat('Y-m-d', $date);
+            $dueDates[] = $dateObj ? $dateObj->format('M d, Y') : 'Invalid date';
+        }
+    }
+    if (!empty($group['soc_2'])) {
+        $date = $group['soc_2']['due_date'] ?? null;
+        if ($date) {
+            $dateObj = DateTime::createFromFormat('Y-m-d', $date);
+            $dueDates[] = $dateObj ? $dateObj->format('M d, Y') : 'Invalid date';
+        }
+    }
+    $dueDateText = implode(' • ', $dueDates);
     ?>
 
-    <!-- Internal Planning Call -->
     <div class="d-flex align-items-center position-relative mb-3">
         <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
             <div class="rounded-circle text-white d-flex align-items-center justify-content-center milestone-toggle"
-                 data-ms-id="<?= $internalPlanning['ms_id']; ?>"
+                 data-ms-id="<?= htmlspecialchars($group['soc_1']['ms_id'] ?? $group['soc_2']['ms_id']); ?>"
                  style="width:44px;height:44px;background-color: <?= $circleColor; ?>;cursor:pointer;">
                 <i class="bi bi-telephone"></i>
             </div>
@@ -1040,15 +1071,16 @@ if ($result && $result->num_rows) {
         <div class="flex-grow-1">
             <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
                 <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                    <span class="fw-semibold"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $internalPlanning['milestone_type']))); ?></span>
+                    <span class="fw-semibold"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $group['base_type']))); ?></span>
                     <span class="fw-semibold toggle-status-text" style="color: <?= $circleColor; ?>;">
-                        <?= htmlspecialchars($dueDate); ?>
+                        <?= htmlspecialchars($dueDateText ?: 'No due date'); ?>
                     </span>
                 </div>
             </div>
         </div>
     </div>
 <?php endforeach; ?>
+
 
 
 <script>
@@ -1094,57 +1126,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-            
-
-
-              <?php
-              function yesNoStatus($flag, $yesText = 'Completed', $noText = 'Not requested yet') {
-                  $isYes = ($flag === 'Y');
-                          
-                  return [
-                      'color'     => $isYes ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
-                      'textClass' => $isYes ? 'text-success' : 'text-danger',
-                      'text'      => $isYes ? $yesText : $noText
-                  ];
-              }
-              ?>
-              
-              <?php
-              $section3Requested = yesNoStatus(
-                  $eng['eng_section_3_requested'] ?? 'N',
-                  'Completed',
-                  'Not requested yet'
-              );
-              ?>
-
-              <!-- Section 3 Requested -->
-                <div class="d-flex align-items-center position-relative mt-3">
-                  <div class="d-flex flex-column align-items-center me-3">
-
-                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                         style="width:44px;height:44px;background-color: <?= $section3Requested['color']; ?>;">
-                      <i class="bi bi-file-earmark-text"></i>
-                    </div>
-
-                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                  </div>
-
-                  <div class="flex-grow-1">
-                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-
-                        <span class="fw-semibold">Section 3 Requested</span>
-
-                        <span class="fw-semibold <?= $section3Requested['textClass']; ?>"
-                              style="color: <?= $section3Requested['color']; ?>;">
-                          <?= $section3Requested['text']; ?>
-                        </span>
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <!-- end Section 3 requested -->
+    
 
               
 
