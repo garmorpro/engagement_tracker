@@ -346,7 +346,7 @@ $totalEngagements = count($engagements);
                             <!-- DELETE -->
                             <form method="POST" style="display:inline-block;" 
                                   onsubmit="return confirm('Are you sure you want to delete this engagement?');">
-                                <input type="hidden" name="delete_eng_id" value="<?php echo $eng['eng_idno']; ?>">
+                                <input type="hidden" name="delete_eng_id" value="<?php echo $eng['eng_id']; ?>">
                                 <button type="submit" class="btn btn-sm btn-outline-danger action-btn delete-btn" title="Delete">
                                     <i class="bi bi-trash"></i>
                                 </button>
