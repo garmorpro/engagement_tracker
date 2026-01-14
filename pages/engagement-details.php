@@ -1025,7 +1025,7 @@ function formatMilestoneName($type) {
     }
 
     $circleColor = $allCompleted ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
-    $bigIcon     = $allCompleted ? 'bi-check2-circle' : 'bi-circle';
+    $bigIcon     = $allCompleted ? 'bi-check-lg' : '';
 
     // Single milestone record
     $single = !$isGrouped ? $items[0] : null;
@@ -1161,7 +1161,6 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('ms_id', msId);
       formData.append('is_completed', newValue);
 
-      // 🔥 archive_date special case
       if (isArchive && newValue === 'Y') {
         formData.append('set_today', '1');
       }
@@ -1174,29 +1173,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const data = await res.json();
         if (!data.success) {
-          alert(data.error || 'Failed to update');
+          alert(data.error || 'Failed to update milestone');
           return;
         }
 
-        // Update UI immediately
-        const bgColor = newValue === 'Y'
-          ? 'rgb(51,175,88)'
-          : 'rgb(229,50,71)';
-
-        const icon = newValue === 'Y'
-          ? 'bi-check-lg'
-          : '';
-
-        el.style.backgroundColor = bgColor;
-        el.innerHTML = `<i class="bi ${icon}" style="color:white;"></i>`;
-        el.dataset.completed = newValue;
-
-        // Update date text if returned
-        if (data.date) {
-          const dateEl = el.closest('.card-body')
-            ?.querySelector('.fw-semibold:last-child');
-          if (dateEl) dateEl.textContent = data.date;
-        }
+        // ✅ HARD REFRESH so everything re-renders cleanly
+        window.location.reload();
 
       } catch (e) {
         console.error(e);
@@ -1206,6 +1188,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
+
 
 
 
