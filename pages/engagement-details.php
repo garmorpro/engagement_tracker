@@ -857,7 +857,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===============================
   const existingDOLData = <?php echo json_encode($dolData); ?>;
 
-  // Collect all seniors and staff from PHP DOM (if you have them in the page)
+  // Collect all seniors and staff from PHP DOM
   const seniorCards = Array.from(document.querySelectorAll('#seniorsContainer .card'));
   const staffCards  = Array.from(document.querySelectorAll('#staffContainer .card'));
 
@@ -867,7 +867,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const collect = (cards, type) => {
       cards.forEach(card => {
-        const empId = card.getAttribute('data-emp-id') || ''; // may be empty for new
+        const empId = card.getAttribute('data-emp-id') || '';
         const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
         if (!name) return;
 
@@ -901,13 +901,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
-  const auditTypes = rawAuditTypes
-    .join(',')                // flatten if comma-separated
-    .toUpperCase()
-    .split(',')
-    .map(t => t.trim())
-    .filter(t => t.startsWith('SOC'))
-    .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2');
+  const auditTypes = Array.from(new Set(
+    rawAuditTypes
+      .map(t => t.trim().toUpperCase())
+      .filter(t => t.startsWith('SOC'))
+      .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2')
+  ));
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer   = document.getElementById('staffContainer');
@@ -929,8 +928,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateDOLButtons() {
     dolButtonsContainer.innerHTML = '';
 
+    // Show DOL button if there is at least 1 senior or staff
     const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
-    if (members.length === 0) return; // hide if no senior/staff
+    if (members.length === 0) return;
 
     const btn = document.createElement('a');
     btn.href = 'javascript:void(0)';
@@ -962,6 +962,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // TEAM MEMBERS
     const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
+
     if (!members.length) {
       modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
       return;
@@ -980,7 +981,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <label class="form-label small text-muted">${audit} Division of Labor</label>
             <input type="text" class="form-control"
               name="dol[${member.emp_id}][${audit}]"
-              placeholder="${audit === 'SOC 1' ? '' : ''}"
+              placeholder="${audit === 'SOC 1' ? 'CO1, CO2' : 'CC1, CC2'}"
               value="${getExistingDOL(member.emp_id, audit) || ''}">
           </div>
         `;
@@ -993,7 +994,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new bootstrap.Modal(document.getElementById('dolModal')).show();
   }
 
-  // SAVE DOL (unchanged)
+  // SAVE DOL
   document.getElementById('dolForm').addEventListener('submit', e => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -1007,7 +1008,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   });
 
-  // TEAM BUTTONS (unchanged)
+  // TEAM BUTTONS (UNCHANGED)
   function getNextIndex(container) {
     for (let i = 1; i <= 2; i++) {
       if (!container.querySelector(`.card[data-index="${i}"]`)) return i;
@@ -1028,6 +1029,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+
 
 
 
