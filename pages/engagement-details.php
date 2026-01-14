@@ -817,295 +817,162 @@ $totalEngagements = count($engagements);
 <?php
 // Fetch team from DB for this engagement
 $teamData = [];
-$result = $conn->query("SELECT emp_id, eng_id, emp_name, role, audit_type, emp_dol FROM engagement_team WHERE eng_id = " . intval($eng['eng_id']));
+$result = $conn->query("
+  SELECT emp_id, emp_name, role, audit_type, emp_dol
+  FROM engagement_team
+  WHERE eng_id = " . intval($eng['eng_id'])
+);
 
 while($row = $result->fetch_assoc()){
-    // Normalize role: manager/senior/staff
     $roleType = strtolower($row['role']);
-    if($roleType === 'manager') continue; // managers do not have DOL
+    if($roleType === 'manager') continue;
 
-    $empName = $row['emp_name'] ?? '';
+    $empId   = $row['emp_id'];
+    $empName = trim($row['emp_name'] ?? '');
     if($empName === '') continue;
 
-    $teamData[$roleType][$empName] = $teamData[$roleType][$empName] ?? [];
+    $auditType = trim($row['audit_type'] ?? '');
+    if(!$auditType) continue;
 
-    // Safely handle audit_type (avoid null & undefined index)
-    $auditTypeString = $row['audit_type'] ?? '';
-    $parts = explode(' ', $auditTypeString);
+    $auditKey = implode(' ', array_slice(explode(' ', $auditType), 0, 2));
 
-    $auditKey = '';
-    if(count($parts) >= 2){
-        $auditKey = trim($parts[0] . ' ' . $parts[1]); // e.g., "SOC 1"
-    } elseif(count($parts) === 1){
-        $auditKey = trim($parts[0]); // fallback to single word if somehow only one
-    } else {
-        $auditKey = ''; // nothing, skip
-    }
-
-    if($auditKey !== ''){
-        $teamData[$roleType][$empName][$auditKey] = $row['emp_dol'];
-    }
+    $teamData[$empId]['name'] = $empName;
+    $teamData[$empId]['role'] = $roleType;
+    $teamData[$empId][$auditKey] = $row['emp_dol'];
 }
 
-// Convert to JS-friendly array with index
+// Convert to JS-safe array
 $dolData = [];
-foreach(['senior','staff'] as $type){
-    if(!empty($teamData[$type])){
-        $i = 1;
-        foreach($teamData[$type] as $name => $dols){
-            $dolData[] = array_merge([
-                'type' => $type,
-                'index' => $i,
-                'name' => $name
-            ], $dols);
-            $i++;
-        }
-    }
+foreach($teamData as $empId => $data){
+    $dolData[] = array_merge(['emp_id' => $empId], $data);
 }
 ?>
 
-
 <script>
+const existingDOLData = <?php echo json_encode($dolData); ?>;
+
 document.addEventListener('DOMContentLoaded', () => {
-  const maxSeniors = 2;
-  const maxStaff = 2;
+
   const engId = "<?php echo $eng['eng_id']; ?>";
 
-  // Engagement audit types normalized to "SOC 1" / "SOC 2"
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
-  const auditTypes = rawAuditTypes.map(type => type.trim().split(' ').slice(0,2).join(' '));
+  const auditTypes = rawAuditTypes.map(t => t.trim().split(' ').slice(0,2).join(' '));
 
   const seniorsContainer = document.getElementById('seniorsContainer');
-  const staffContainer = document.getElementById('staffContainer');
+  const staffContainer   = document.getElementById('staffContainer');
   const managerContainer = document.getElementById('managerContainer');
-  const noTeamMsg = document.getElementById('noTeamMsg');
   const dolButtonsContainer = document.getElementById('dolButtonsContainer');
 
-  const addSeniorBtn = document.getElementById('addSeniorBtn');
-  const addStaffBtn = document.getElementById('addStaffBtn');
+  const addSeniorBtn  = document.getElementById('addSeniorBtn');
+  const addStaffBtn   = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
 
-  // Fetch all team members from the page (cards) with emp_id if exists
   function getTeamMembers() {
     const members = [];
-    const collect = (container, type) => {
-      container.querySelectorAll('.card').forEach((card, i) => {
-        const empId = card.getAttribute('data-emp-id') || null;
-        const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || card.querySelector('.new-name')?.value.trim() || '';
-        if (type !== 'manager' && name) {
-          members.push({ role: type==='senior'?'Senior':'Staff', type, empId, name });
+    [['senior', seniorsContainer], ['staff', staffContainer]].forEach(([type, container]) => {
+      container.querySelectorAll('.card').forEach(card => {
+        const empId = card.dataset.empId;
+        const name  = card.querySelector('h6.fw-semibold')?.textContent.trim();
+        if(empId && name){
+          members.push({ empId, name, type, role: type === 'senior' ? 'Senior' : 'Staff' });
         }
       });
-    };
-    collect(seniorsContainer, 'senior');
-    collect(staffContainer, 'staff');
+    });
     return members;
   }
 
-  function hasAnyDOL() {
-    // Check if any input in the modal has a value
-    const inputs = document.querySelectorAll('#dolModalBody input');
-    return Array.from(inputs).some(input => input.value.trim() !== '');
-  }
-
-  function updateDOLButtons() {
+  function updateDOLButtons(){
     dolButtonsContainer.innerHTML = '';
-    const teamMembers = getTeamMembers();
-    if (teamMembers.length === 0) return;
+    if(getTeamMembers().length === 0) return;
+
     const btn = document.createElement('a');
-    btn.href = "javascript:void(0);";
-    btn.className = "text-decoration-none text-warning fw-semibold";
-    btn.innerHTML = hasAnyDOL()
-      ? '<i class="bi bi-pencil-square me-1"></i> Edit DOL'
-      : '<i class="bi bi-plus-circle me-1"></i> Add DOL';
-    btn.addEventListener('click', openDOLModal);
+    btn.href = 'javascript:void(0)';
+    btn.className = 'text-decoration-none text-warning fw-semibold';
+    btn.innerHTML = '<i class="bi bi-diagram-3 me-1"></i> DOL';
+    btn.onclick = openDOLModal;
+
     dolButtonsContainer.appendChild(btn);
   }
 
-  function openDOLModal() {
+  function getExistingDOL(empId, audit){
+    const record = existingDOLData.find(r => r.emp_id == empId);
+    return record && record[audit] ? record[audit] : '';
+  }
+
+  function openDOLModal(){
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
 
-    // Header card
-    const headerCard = document.createElement('div');
-    headerCard.className = 'dol-card mb-3 p-4 border rounded';
-    headerCard.style.background = 'rgb(240,246,254)';
-    headerCard.style.borderColor = 'rgb(196,218,252)';
-    headerCard.style.boxShadow = '0 4px 12px rgba(31, 60, 255, 0.08)';
-
-    let instructionHTML = `
-      <div class="fw-bold mb-2" style="font-size:14px; color:#233889;">Audit Type</div>
-      <div class="mb-2">
-        ${auditTypes.includes('SOC 2') ? '<span class="badge text-bg-secondary me-2" style="background-color: rgb(66, 92, 213) !important;">SOC 2</span>' : ''}
-        ${auditTypes.includes('SOC 1') ? '<span class="badge text-bg-secondary" style="background-color: rgb(66, 92, 213) !important;">SOC 1</span>' : ''}
+    const header = document.createElement('div');
+    header.className = 'mb-3 p-3 border rounded';
+    header.style.background = '#f0f6fe';
+    header.innerHTML = `
+      <div class="fw-bold mb-2">Audit Type</div>
+      ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
+      <div class="mt-2 text-muted" style="font-size:13px">
+        ${auditTypes.includes('SOC 1') ? 'SOC 1 → CO1, CO2, CO3' : ''}
+        ${auditTypes.includes('SOC 2') ? ' &nbsp;•&nbsp; SOC 2 → CC1, CC2, CC3' : ''}
       </div>
-      <div style="font-size:13px; color:#5f6b8a;">`;
+    `;
+    modalBody.appendChild(header);
 
-    const parts = [];
-    if (auditTypes.includes('SOC 1')) parts.push('Use <strong>CO</strong> prefix for SOC 1 (e.g., CO1, CO2, CO3)');
-    if (auditTypes.includes('SOC 2')) parts.push('Use <strong>CC</strong> prefix for SOC 2 (e.g., CC1, CC2, CC3)');
+    getTeamMembers().forEach(member => {
 
-    instructionHTML += parts.join(' &nbsp;•&nbsp; ') + '</div>';
-    headerCard.innerHTML = instructionHTML;
-    modalBody.appendChild(headerCard);
-
-    const members = getTeamMembers();
-
-    members.forEach((member, idx) => {
-      const styles = member.type === 'senior'
-        ? { bg:'#f6f0ff', border:'#dcc8ff', header:'#5a2dbd', subText:'#7a5dbb', inputBorder:'#bfa6ff', inputFocus:'#7b3fe4' }
-        : { bg:'#f0fbf4', border:'#bfe8cf', header:'#1f7a3f', subText:'#4d8f68', inputBorder:'#8fd3ac', inputFocus:'#2fa66a' };
-
+      const isSenior = member.type === 'senior';
       const card = document.createElement('div');
-      card.className = 'dol-card mb-3 p-3 border rounded';
-      card.style.backgroundColor = styles.bg;
-      card.style.borderColor = styles.border;
+      card.className = 'mb-3 p-3 border rounded';
+      card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
-      let inputsHTML = '';
-      if (auditTypes.includes('SOC 1')) {
-        inputsHTML += `
-          <div class="mb-2">
-            <label class="form-label" style="color:${styles.subText};">
-              SOC 1 Division of Labor
-              <span style="font-size:12px;">(e.g., CO1, CO2, CO3)</span>
-            </label>
-            <input type="text" class="form-control" style="border-color:${styles.inputBorder};" 
-              onfocus="this.style.borderColor='${styles.inputFocus}'" 
-              onblur="this.style.borderColor='${styles.inputBorder}'" 
-              name="dol[${member.empId}][SOC 1]" value="">
-          </div>`;
+      let inputs = '';
+
+      if(auditTypes.includes('SOC 1')){
+        inputs += `
+          <label class="form-label">SOC 1</label>
+          <input class="form-control mb-2"
+            name="dol[${member.empId}][SOC 1]"
+            value="${getExistingDOL(member.empId,'SOC 1')}">
+        `;
       }
-      if (auditTypes.includes('SOC 2')) {
-        inputsHTML += `
-          <div class="mb-2">
-            <label class="form-label" style="color:${styles.subText};">
-              SOC 2 Division of Labor
-              <span style="font-size:12px;">(e.g., CC1, CC2, CC3)</span>
-            </label>
-            <input type="text" class="form-control" style="border-color:${styles.inputBorder};" 
-              onfocus="this.style.borderColor='${styles.inputFocus}'" 
-              onblur="this.style.borderColor='${styles.inputBorder}'" 
-              name="dol[${member.empId}][SOC 2]" value="">
-          </div>`;
+
+      if(auditTypes.includes('SOC 2')){
+        inputs += `
+          <label class="form-label">SOC 2</label>
+          <input class="form-control mb-2"
+            name="dol[${member.empId}][SOC 2]"
+            value="${getExistingDOL(member.empId,'SOC 2')}">
+        `;
       }
 
       card.innerHTML = `
-        <div class="fw-bold mb-2" style="color:${styles.header}; font-size:14px;">
-          ${member.role}: ${member.name}
-        </div>
-        ${inputsHTML}
+        <div class="fw-bold mb-2">${member.role}: ${member.name}</div>
+        ${inputs}
       `;
+
       modalBody.appendChild(card);
     });
 
     new bootstrap.Modal(document.getElementById('dolModal')).show();
   }
 
-  document.getElementById('dolForm').addEventListener('submit', function(e) {
+  document.getElementById('dolForm').addEventListener('submit', e => {
     e.preventDefault();
-    const formData = new FormData(this);
+    const formData = new FormData(e.target);
     formData.append('eng_id', engId);
 
-    fetch('../includes/save_dol.php', { method:'POST', body: formData })
-      .then(res => res.json())
-      .then(data => {
-        if(data.success){
+    fetch('../includes/save_dol.php',{ method:'POST', body: formData })
+      .then(r => r.json())
+      .then(d => {
+        if(d.success){
           bootstrap.Modal.getInstance(document.getElementById('dolModal')).hide();
           location.reload();
-        } else {
-          alert('Error saving DOL: ' + (data.error || 'Unknown'));
-        }
-      })
-      .catch(err => alert('AJAX Error: ' + err));
+        } else alert(d.error || 'Save failed');
+      });
   });
 
-  function getNextIndex(container){
-    for(let i=1;i<=2;i++){
-      if(!container.querySelector(`.card[data-index='${i}']`)) return i;
-    }
-    return null;
-  }
-
-  function updateButtons(){
-    addSeniorBtn.style.display = getNextIndex(seniorsContainer)?'inline-block':'none';
-    addStaffBtn.style.display = getNextIndex(staffContainer)?'inline-block':'none';
-    addManagerBtn.style.display = managerContainer.querySelector('.card')?'none':'inline-block';
-    if(noTeamMsg){
-      noTeamMsg.style.display = (managerContainer.querySelector('.card')||seniorsContainer.querySelector('.card')||staffContainer.querySelector('.card'))?'none':'block';
-    }
-  }
-
-  function saveToDB(type,name,index){
-    if(!engId || !type || !name) return;
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST','../includes/save_team_member.php',true);
-    xhr.setRequestHeader('Content-type','application/x-www-form-urlencoded');
-    xhr.onload = function(){
-      if(xhr.status===200){
-        let response={};
-        try{ response = JSON.parse(xhr.responseText); }catch(e){ alert('Invalid server response'); return; }
-        if(!response.success) alert('Error saving to DB: '+(response.error||'Unknown error'));
-        else {
-          const card = document.querySelector(`.${type}-card[data-index='${index}']`);
-          if(card && response.empId) card.setAttribute('data-emp-id', response.empId);
-        }
-        updateDOLButtons();
-      } else { alert('HTTP Error: '+xhr.status); }
-    };
-    xhr.send(`eng_id=${engId}&type=${type.toLowerCase()}&name=${encodeURIComponent(name)}&index=${index}`);
-  }
-
-  function createCard(container,type){
-    const index = type==='manager'?1:getNextIndex(container);
-    if(!index) return;
-    const card = document.createElement('div');
-    card.classList.add('card','mb-4',`${type}-card`);
-    if(type!=='manager') card.setAttribute('data-index',index);
-
-    if(type==='manager') card.style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);";
-    else if(type==='senior') card.style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);";
-    else card.style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);";
-
-    card.innerHTML = `<div class="card-body p-3">
-      <div class="d-flex align-items-center mb-3">
-        <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
-          ${type.charAt(0).toUpperCase()+type.slice(1)} ${type==='manager'?'':index}
-        </h6>
-      </div>
-      <input type="text" class="form-control mb-2 new-name" placeholder="Enter ${type} name">
-    </div>`;
-    container.appendChild(card);
-
-    const input = card.querySelector('.new-name');
-    input.addEventListener('keypress', function(e){
-      if(e.key==='Enter'){
-        const name=this.value.trim();
-        if(!name) return;
-        saveToDB(type,name,index);
-        this.parentElement.innerHTML=`<div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: ${type==='manager'?'rgb(21,87,242)':type==='senior'?'rgb(123,0,240)':'rgb(69,166,81)'}; font-weight:600 !important; font-size:12px !important;">
-            ${type.charAt(0).toUpperCase()+type.slice(1)} ${type==='manager'?'':index}
-          </h6>
-        </div>
-        <h6 class="fw-semibold" style="color: ${type==='manager'?'rgb(0,37,132)':type==='senior'?'rgb(74,0,133)':'rgb(0,42,0)'}; font-size:20px;">
-          ${name}
-        </h6>`;
-        updateButtons();
-      }
-    });
-
-    updateButtons();
-    updateDOLButtons();
-  }
-
-  addSeniorBtn.addEventListener('click',()=>createCard(seniorsContainer,'senior'));
-  addStaffBtn.addEventListener('click',()=>createCard(staffContainer,'staff'));
-  addManagerBtn.addEventListener('click',()=>createCard(managerContainer,'manager'));
-
-  updateButtons();
   updateDOLButtons();
 });
 </script>
+
 
 
 
