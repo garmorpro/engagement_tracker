@@ -987,7 +987,7 @@ modalBody.appendChild(headerCard);
       card.className='dol-card mb-3 p-3 border rounded';
       let inputsHTML = '';
       if(auditTypes.includes('SOC 1')){
-        inputsHTML += `<div class="mb-2">
+        inputsHTML += `<div class="mb-2" style="background-color: pink;">
           <label class="form-label">SOC 1 Division of Labor <span style="font-size: 12px;">(e.g., C01, C02, CO3)</span></label>
           <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 1]" value="${member.dol['SOC 1']||''}">
         </div>`;
