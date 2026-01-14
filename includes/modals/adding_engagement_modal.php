@@ -248,35 +248,4 @@ foreach ($dateFields as $field => $label):
 </div>
 
 
-<style>
-/* Hover effect */
-.status-card:hover {
-  background: #f0f4ff;
-  border-color: #c2d5ff;
-  cursor: pointer;
-}
 
-/* Selected effect */
-.status-card.selected {
-  background: #e0e9ff;
-  border-color: #5b7be6;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const statusCards = document.querySelectorAll('.status-card');
-  const statusInput = document.querySelector('.eng_status_input');
-
-  statusCards.forEach(card => {
-    card.addEventListener('click', () => {
-      // Remove selected from all
-      statusCards.forEach(c => c.classList.remove('selected'));
-      // Add selected to clicked
-      card.classList.add('selected');
-      // Update hidden input
-      statusInput.value = card.dataset.status;
-    });
-  });
-});
-</script>
