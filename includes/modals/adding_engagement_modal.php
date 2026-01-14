@@ -109,30 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- =====================
      STATUS
 ===================== -->
-<?php
-$statuses = [
-  'planning' => [
-    'label' => 'Planning',
-    'icon'  => 'bi-calendar-event'
-  ],
-  'fieldwork' => [
-    'label' => 'Fieldwork',
-    'icon'  => 'bi-clipboard-data'
-  ],
-  'review' => [
-    'label' => 'Review',
-    'icon'  => 'bi-search'
-  ],
-  'issued' => [
-    'label' => 'Issued',
-    'icon'  => 'bi-check-circle'
-  ],
-  'archived' => [
-    'label' => 'Archived',
-    'icon'  => 'bi-archive'
-  ]
-];
-?>
 
 <div class="col-12 mb-3 engagement-status-container">
   <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
@@ -212,6 +188,7 @@ foreach ($dateFields as $field => $label):
 
 <?php
 $dateFields = [
+  'eng_archive'            => 'Archive Date',
   'eng_last_communication' => 'Last Communication'
 ];
 foreach ($dateFields as $field => $label):
@@ -223,6 +200,18 @@ foreach ($dateFields as $field => $label):
          value="">
 </div>
 <?php endforeach; ?>
+
+<!-- =====================
+     Y / N SELECTS
+===================== -->
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Section 3 Requested</label>
+  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_section_3_requested">
+    <option value="N">No</option>
+    <option value="Y">Yes</option>
+  </select>
+</div>
 
 <!-- =====================
      NOTES
