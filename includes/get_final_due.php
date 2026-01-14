@@ -1,5 +1,4 @@
 <?php
-date_default_timezone_set('America/Chicago');
 require 'db.php'; // your DB connection
 
 $eng_id = isset($_GET['eng_id']) ? (int)$_GET['eng_id'] : 0;

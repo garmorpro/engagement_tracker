@@ -1,5 +1,4 @@
 <?php
-date_default_timezone_set('America/Chicago');
 declare(strict_types=1);
 
 error_reporting(E_ALL);

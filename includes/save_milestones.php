@@ -1,5 +1,4 @@
 <?php
-date_default_timezone_set('America/Chicago');
 include 'db.php';
 
 // Turn off any PHP warnings / notices being sent to browser
