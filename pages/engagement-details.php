@@ -1000,6 +1000,14 @@ $internalPlanning = $milestones['internal_planning_call'] ?? [
     'textClass' => ''
 ];
 $completed = ($internalPlanning['is_completed'] ?? 'N') === 'Y';
+// Format the due date
+$dueDateRaw = $internalPlanning['due_date'] ?? null;
+if ($dueDateRaw) {
+    $dueDateObj = DateTime::createFromFormat('Y-m-d', $dueDateRaw);
+    $dueDate = $dueDateObj ? $dueDateObj->format('M d, Y') : 'Invalid date';
+} else {
+    $dueDate = 'No due date';
+}
 ?>
 
 <!-- Internal Planning Call -->
@@ -1007,10 +1015,10 @@ $completed = ($internalPlanning['is_completed'] ?? 'N') === 'Y';
   <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
     <div class="rounded-circle text-white d-flex align-items-center justify-content-center milestone-toggle"
          data-ms-id="<?= $internalPlanning['ms_id']; ?>"
-         style="width:44px;height:44px;background-color: <?= $completed ? '#4CAF50' : '#f44336'; ?>;cursor:pointer;">
+         style="width:44px;height:44px;background-color: <?= $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)'; ?>;cursor:pointer;">
       <i class="bi bi-telephone"></i>
     </div>
-    <small class="text-muted mt-1 toggle-status-text"><?= $completed ? 'Completed' : 'Pending'; ?></small>
+    <!-- <small class="text-muted mt-1 toggle-status-text"><?= //$completed ? 'Completed' : 'Pending'; ?></small> -->
   </div>
 
   <div class="flex-grow-1">
@@ -1018,9 +1026,9 @@ $completed = ($internalPlanning['is_completed'] ?? 'N') === 'Y';
       <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
         <span class="fw-semibold">Internal Planning Call</span>
         <span class="fw-semibold toggle-status-text"
-              style="color: <?= $completed ? '#4CAF50' : '#f44336'; ?>;">
-          <?= $completed ? 'Completed' : 'Pending'; ?>
-        </span>
+              style="color: <?= $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)'; ?>;">
+        <?= $completed ? 'Completed' : 'Pending'; ?> • <?= htmlspecialchars($dueDate); ?>
+</span>
       </div>
     </div>
   </div>
@@ -1048,10 +1056,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (data.success) {
           // Update circle color and text
-          el.style.backgroundColor = newValue === 'Y' ? '#4CAF50' : '#f44336';
+          el.style.backgroundColor = newValue === 'Y' ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
           statusEl.forEach(s => {
             s.textContent = newValue === 'Y' ? 'Completed' : 'Pending';
-            s.style.color = newValue === 'Y' ? '#4CAF50' : '#f44336';
+            s.style.color = newValue === 'Y' ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
           });
           // Store new completed status
           el.dataset.completed = newValue;
