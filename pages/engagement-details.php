@@ -529,7 +529,7 @@ $totalEngagements = count($engagements);
                    style="width: 120px; height: 80px; border-radius: 10px; background-color: #fff; text-align: center;">
                   
                 <div id="finalDueContainer" style="font-family: sans-serif;">
-  <span id="finalDueDisplay" style="font-size: 16px;"></span>
+  <!-- <span id="finalDueDisplay" style="font-size: 16px;"></span> -->
   <div style="font-size: 20px; font-weight: bold;" id="daysCount"></div>
   <div style="font-size: 12px;" id="daysLabel"></div>
 </div>
