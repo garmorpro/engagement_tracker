@@ -924,28 +924,39 @@ if ($eng_id) {
 
         <script>
         document.getElementById('milestonesForm')?.addEventListener('submit', async e => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            formData.append('eng_id', <?= $eng_id ?>);
+    e.preventDefault();
+    const formData = new FormData(e.target);
 
-            try {
-                const res = await fetch('../includes/save_milestones.php', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await res.json();
-                if (data.success) {
-                    alert('Milestones updated successfully');
-                    window.location.reload();
-                } else {
-                    alert(data.error || 'Failed to save milestones');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Network error');
-            }
+    try {
+        const res = await fetch('../includes/save_milestones.php', {
+            method: 'POST',
+            body: formData
         });
+
+        const text = await res.text();
+        console.log('Server response:', text);
+
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch(err) {
+            console.error('Invalid JSON:', text);
+            alert('Server returned invalid response');
+            return;
+        }
+
+        if (data.success) {
+            alert('Milestones updated successfully');
+            window.location.reload();
+        } else {
+            alert(data.error || 'Failed to save milestones');
+        }
+    } catch (err) {
+        console.error('Fetch error:', err);
+        alert('Network error');
+    }
+});
+
         </script>
 
                 
