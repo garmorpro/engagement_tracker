@@ -958,58 +958,62 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function openDOLModal() {
-    const modalBody = document.getElementById('dolModalBody');
-    modalBody.innerHTML = '';
+  const modalBody = document.getElementById('dolModalBody');
+  modalBody.innerHTML = '';
 
-    // HEADER
-    const header = document.createElement('div');
-    header.className = 'mb-3 p-4 border rounded';
-    header.style.background = 'rgb(240,246,254)';
-    header.innerHTML = `
-      <div class="fw-bold mb-2">Audit Types</div>
-      ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
-      <div class="mt-2 text-muted" style="font-size:13px">
-        ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
-        ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
-        ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
-      </div>
-    `;
-    modalBody.appendChild(header);
+  // HEADER
+  const header = document.createElement('div');
+  header.className = 'mb-3 p-4 border rounded';
+  header.style.background = 'rgb(240,246,254)';
+  header.innerHTML = `
+    <div class="fw-bold mb-2">Audit Types</div>
+    ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
+    <div class="mt-2 text-muted" style="font-size:13px">
+      ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
+      ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
+      ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
+    </div>
+  `;
+  modalBody.appendChild(header);
 
-    // TEAM MEMBERS
-    const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
+  // TEAM MEMBERS
+  const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
+  if (!members.length) {
+    modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
+    return;
+  }
 
-    if (!members.length) {
-      modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
-      return;
-    }
+  let tempIdCounter = -1; // for new DOM-only members
 
-    members.forEach(member => {
-      const isSenior = member.type === 'senior';
-      const card = document.createElement('div');
-      card.className = 'mb-3 p-3 border rounded';
-      card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
+  members.forEach(member => {
+    const isSenior = member.type === 'senior';
+    const card = document.createElement('div');
+    card.className = 'mb-3 p-3 border rounded';
+    card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
-      let inputs = '';
-      auditTypes.forEach(audit => {
-        const dolValue = getExistingDOL(member.empId, audit) || '';
-        inputs += `
-          <div class="mb-2">
-            <label class="form-label small text-muted">${audit} Division of Labor</label>
-            <input type="text" class="form-control"
-              name="dol[${member.empId}][${audit}]"
-              placeholder="${audit === 'SOC 1' ? '' : ''}"
-              value="${dolValue}">
-          </div>
-        `;
-      });
-
-      card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputs}`;
-      modalBody.appendChild(card);
+    // Ensure numeric emp_id for PHP
+    let empIdForInput = member.emp_id || tempIdCounter--;
+    
+    let inputs = '';
+    auditTypes.forEach(audit => {
+      const dolValue = getExistingDOL(member.emp_id, audit) || '';
+      inputs += `
+        <div class="mb-2">
+          <label class="form-label small text-muted">${audit} Division of Labor</label>
+          <input type="text" class="form-control"
+            name="dol[${empIdForInput}][${audit}]"
+            value="${dolValue}">
+        </div>
+      `;
     });
 
-    new bootstrap.Modal(document.getElementById('dolModal')).show();
-  }
+    card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputs}`;
+    modalBody.appendChild(card);
+  });
+
+  new bootstrap.Modal(document.getElementById('dolModal')).show();
+}
+
 
   // SAVE DOL
   document.getElementById('dolForm').addEventListener('submit', e => {
