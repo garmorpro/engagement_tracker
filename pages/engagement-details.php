@@ -772,38 +772,45 @@ $totalEngagements = count($engagements);
       </div>
 
       <!-- Staff Container -->
-      <div id="staffContainer">
-        <?php 
-        $i = 1;
-        if (!empty($team['Staff'])): 
-          foreach ($team['Staff'] as $staff): ?>
-            <div class="card mb-4 staff-card" data-index="<?php echo $i; ?>" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
-              <div class="card-body p-3">
-                <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
-                </div>
-                <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-                  <?php echo htmlspecialchars($staff['emp_name']); ?>
-                </h6>
+<div id="staffContainer">
+  <?php 
+  $i = 1;
+  if (!empty($team['Staff'])): 
+    foreach ($team['Staff'] as $staff): ?>
+      <div class="card mb-4 staff-card" data-index="<?php echo $i; ?>" data-name="<?php echo htmlspecialchars($staff['emp_name']); ?>" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
+        <div class="card-body p-3 position-relative">
 
-                <?php if (!empty($staff['audit_dols']['SOC 1'])): ?>
-                  <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-                    <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 1']); ?>
-                  </p>
-                <?php endif; ?>
+          <!-- Trash Icon -->
+          <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 delete-team-member" style="border:none; background:transparent;">
+            <i class="bi bi-trash"></i>
+          </button>
 
-                <?php if (!empty($staff['audit_dols']['SOC 2'])): ?>
-                  <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
-                    <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 2']); ?>
-                  </p>
-                <?php endif; ?>
-              </div>
-            </div>
-        <?php 
-          $i++;
-          endforeach; 
-        endif; ?>
+          <div class="d-flex align-items-center mb-3">
+            <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
+          </div>
+          <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
+            <?php echo htmlspecialchars($staff['emp_name']); ?>
+          </h6>
+
+          <?php if (!empty($staff['audit_dols']['SOC 1'])): ?>
+            <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
+              <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 1']); ?>
+            </p>
+          <?php endif; ?>
+
+          <?php if (!empty($staff['audit_dols']['SOC 2'])): ?>
+            <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
+              <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 2']); ?>
+            </p>
+          <?php endif; ?>
+        </div>
       </div>
+  <?php 
+    $i++;
+    endforeach; 
+  endif; ?>
+</div>
+
 
       <!-- No team assigned message -->
       <?php if (empty($team['Manager']) && empty($team['Senior']) && empty($team['Staff'])): ?>
