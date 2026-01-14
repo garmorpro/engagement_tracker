@@ -823,9 +823,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // Pass engagement's audit types from PHP and normalize them to just "SOC 1" or "SOC 2"
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
   const auditTypes = rawAuditTypes.map(type => {
-    // Take only first two words, e.g. "SOC 1 Type 1" => "SOC 1"
     return type.trim().split(' ').slice(0,2).join(' ');
   });
+
+  // Pass existing DOL data from PHP
+  const existingDOL = <?php echo json_encode($dolData ?? []); ?>;
+  // $dolData should be something like:
+  // [
+  //   { type: 'senior', index: 1, name: 'John Doe', 'SOC 1': 'Alice', 'SOC 2': 'Bob' },
+  //   { type: 'staff', index: 1, name: 'Jane Smith', 'SOC 1': 'Charlie' }
+  // ]
 
   const seniorsContainer = document.getElementById('seniorsContainer');
   const staffContainer = document.getElementById('staffContainer');
@@ -837,54 +844,40 @@ document.addEventListener('DOMContentLoaded', () => {
   const addStaffBtn = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
 
-  // Get all team members (excluding managers for DOL)
+  // Get all team members (including existing DOLs)
   function getTeamMembers(){
     const members = [];
 
-    seniorsContainer.querySelectorAll('.card').forEach((card,i)=>{
-      const dol = {};
-      card.querySelectorAll('p').forEach(p=>{
-        const label = p.querySelector('strong')?.textContent.trim().replace(':','') || '';
-        dol[label] = p.textContent.replace(`${label}:`,'').trim();
-      });
-      members.push({
-        role:'Senior', 
-        name: card.querySelector('h6.fw-semibold')?.textContent.trim() || '', 
-        type:'senior', 
-        index: i+1,
-        dol
-      });
-    });
+    const collect = (container, type) => {
+      container.querySelectorAll('.card').forEach((card,i)=>{
+        const index = type === 'manager' ? 1 : parseInt(card.getAttribute('data-index')) || (i+1);
+        const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || card.querySelector('.new-name')?.value || '';
+        const dolEntry = existingDOL.find(d => d.type === type && d.index === index) || {};
+        const dol = {};
+        if(dolEntry['SOC 1']) dol['SOC 1'] = dolEntry['SOC 1'];
+        if(dolEntry['SOC 2']) dol['SOC 2'] = dolEntry['SOC 2'];
 
-    staffContainer.querySelectorAll('.card').forEach((card,i)=>{
-      const dol = {};
-      card.querySelectorAll('p').forEach(p=>{
-        const label = p.querySelector('strong')?.textContent.trim().replace(':','') || '';
-        dol[label] = p.textContent.replace(`${label}:`,'').trim();
+        if(type !== 'manager'){
+          members.push({ role: type === 'senior' ? 'Senior' : 'Staff', name, type, index, dol });
+        }
       });
-      members.push({
-        role:'Staff', 
-        name: card.querySelector('h6.fw-semibold')?.textContent.trim() || '', 
-        type:'staff', 
-        index: i+1,
-        dol
-      });
-    });
+    };
+
+    collect(seniorsContainer, 'senior');
+    collect(staffContainer, 'staff');
 
     return members;
   }
 
-  // Check if any DOL exists (excluding managers)
   function hasAnyDOL(){
-    const cards = [...seniorsContainer.querySelectorAll('.card'), ...staffContainer.querySelectorAll('.card')];
-    return cards.some(c=>c.querySelector('p'));
+    const teamMembers = getTeamMembers();
+    return teamMembers.some(m => Object.keys(m.dol).length > 0);
   }
 
-  // Update Add/Edit DOL buttons
   function updateDOLButtons(){
     dolButtonsContainer.innerHTML = '';
     const teamMembers = getTeamMembers();
-    if(teamMembers.length === 0) return; // no senior/staff, hide button
+    if(teamMembers.length === 0) return;
 
     const btn = document.createElement('a');
     btn.href="javascript:void(0);";
@@ -896,18 +889,16 @@ document.addEventListener('DOMContentLoaded', () => {
     dolButtonsContainer.appendChild(btn);
   }
 
-  // Open DOL modal and populate dynamically
   function openDOLModal(){
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
-    const members = getTeamMembers(); // only seniors & staff
+    const members = getTeamMembers();
 
     members.forEach((member, idx) => {
       const card = document.createElement('div');
       card.className='dol-card mb-3 p-3 border rounded';
       let inputsHTML = '';
 
-      // Only show inputs for audit types present in this engagement
       if(auditTypes.includes('SOC 1')){
         inputsHTML += `
           <div class="mb-2">
@@ -936,7 +927,6 @@ document.addEventListener('DOMContentLoaded', () => {
     modal.show();
   }
 
-  // Handle DOL form submission
   document.getElementById('dolForm').addEventListener('submit', function(e){
     e.preventDefault();
     const formData = new FormData(this);
@@ -950,7 +940,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       if(data.success){
         bootstrap.Modal.getInstance(document.getElementById('dolModal')).hide();
-        location.reload(); // refresh team cards to show updated DOL
+        location.reload();
       } else {
         alert('Error saving DOL: ' + (data.error || 'Unknown error'));
       }
@@ -958,7 +948,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch(err => alert('AJAX Error: ' + err));
   });
 
-  // Helpers for team cards
   function getNextIndex(container){
     for(let i=1;i<=2;i++){
       if(!container.querySelector(`.card[data-index='${i}']`)) return i;
