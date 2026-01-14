@@ -51,7 +51,7 @@ require_once '../includes/functions.php';
     </div>
   <!-- Header -->
 
-  <?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
+  
 
   <div class="mt-4"></div>
 
@@ -899,7 +899,7 @@ require_once '../includes/functions.php';
 
 
 
-
+<?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
 
 </body>
 </html>
