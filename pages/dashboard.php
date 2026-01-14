@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
        EXECUTE
     ============================ */
     if ($stmt->execute()) {
-        header("Location: engagement-details.php?eng_id=" . urlencode($engId) . "&message=Engagement added successfully");
+        header("Location: dashboard.php?message=Engagement added successfully");
         exit;
     } else {
         echo "<div class='alert alert-danger'>

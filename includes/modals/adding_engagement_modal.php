@@ -109,6 +109,30 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- =====================
      STATUS
 ===================== -->
+<?php
+$statuses = [
+  'planning' => [
+    'label' => 'Planning',
+    'icon'  => 'bi-calendar-event'
+  ],
+  'fieldwork' => [
+    'label' => 'Fieldwork',
+    'icon'  => 'bi-clipboard-data'
+  ],
+  'review' => [
+    'label' => 'Review',
+    'icon'  => 'bi-search'
+  ],
+  'issued' => [
+    'label' => 'Issued',
+    'icon'  => 'bi-check-circle'
+  ],
+  'archived' => [
+    'label' => 'Archived',
+    'icon'  => 'bi-archive'
+  ]
+];
+?>
 
 <div class="col-12 mb-3 engagement-status-container">
   <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
@@ -157,43 +181,6 @@ foreach ($dateFields as $field => $label):
 <?php endforeach; ?>
 
 <!-- =====================
-     TEAM MEMBERS
-===================== -->
-
-<!-- <h6 class="fw-semibold mt-5">Team Members</h6>
-<hr>
-
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Manager</label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_manager"
-         value="">
-</div>
-
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Senior(s)</label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_senior"
-         value="">
-</div>
-
-<div class="col-md-12">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff</label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff"
-         value="">
-</div>
-
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Senior DOL</label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_senior_dol"
-         value="">
-</div>
-
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Staff DOL</label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_staff_dol"
-         value="">
-</div> -->
-
-<!-- =====================
      CLIENT INFO
 ===================== -->
 
@@ -218,45 +205,6 @@ foreach ($dateFields as $field => $label):
   <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_scope"
          value="">
 </div>
-
-<!-- =====================
-     IMPORTANT DATES & MILESTONES
-===================== -->
-
-<!-- <h6 class="fw-semibold mt-5">Important Dates & Milestones</h6>
-<hr> -->
-
-<?php
-// $pairs = [
-//   'eng_internal_planning_call' => 'eng_completed_internal_planning',
-//   'eng_irl_due'                => 'eng_irl_sent',
-//   'eng_client_planning_call'   => 'eng_completed_client_planning',
-//   'eng_fieldwork'              => 'eng_fieldwork_complete',
-//   'eng_leadsheet_due'          => 'eng_leadsheet_complete',
-//   'eng_draft_due'              => 'eng_draft_sent',
-//   'eng_final_due'              => 'eng_final_sent'
-// ];
-// foreach ($pairs as $date => $yn):
-// $checked = (($eng[$yn] ?? 'N') === 'Y');
-?>
-<!-- <div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php //echo ucwords(str_replace('_',' ',$date)); ?></label>
-  <div class="d-flex align-items-center gap-2">
-
-    <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
-           name="<?php //echo $date; ?>"
-           value="">
-
-    <div class="yn-toggle <?php //echo $checked ? 'active' : ''; ?>"
-         onclick="toggleYN(this)">
-      <?php //echo $checked ? '✓ Y' : 'N'; ?>
-    </div>
-
-    <input type="hidden" name="<?php //echo $yn; ?>" value="<?php //echo $checked ? 'Y' : 'N'; ?>">
-
-  </div>
-</div> -->
-<?php //endforeach; ?>
 
 <!-- =====================
      DATE ONLY

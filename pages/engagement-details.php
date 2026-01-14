@@ -877,295 +877,295 @@ $totalEngagements = count($engagements);
 
                   $eng_id = $eng['eng_id'] ?? 0; // make sure this is set
 
-$milestones = [];
-if ($eng_id) {
-    $stmt = $conn->prepare("SELECT ms_id, milestone_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
-    $stmt->bind_param("i", $eng_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    while ($row = $result->fetch_assoc()) {
-        $milestones[$row['milestone_type']] = $row;
-    }
-    $stmt->close();
-}
-
-                function timelineDate($dateValue) {
-                    $hasDate = !empty($dateValue);
-
-                    return [
-                        'color'     => $hasDate ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
-                        'textClass' => $hasDate ? 'text-success' : 'text-danger',
-                        'text'      => $hasDate
-                            ? htmlspecialchars(date('M j, Y', strtotime($dateValue)))
-                            : null
-                    ];
+                $milestones = [];
+                if ($eng_id) {
+                    $stmt = $conn->prepare("SELECT ms_id, milestone_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
+                    $stmt->bind_param("i", $eng_id);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
+                        $milestones[$row['milestone_type']] = $row;
+                    }
+                    $stmt->close();
                 }
-                ?>
-
-                <?php
-                $internalPlanning = timelineDate($eng['eng_internal_planning_call'] ?? null);
-                $irlDue           = timelineDate($eng['eng_irl_due'] ?? null);
-                $clientPlanning   = timelineDate($eng['eng_client_planning_call'] ?? null);
-                $fieldwork        = timelineDate($eng['eng_fieldwork'] ?? null);
-                $leadsheetStart   = timelineDate($eng['eng_leadsheet_start'] ?? null);
-                $leadsheetDue     = timelineDate($eng['eng_leadsheet_due'] ?? null);
-                $draftDue         = timelineDate($eng['eng_draft_due'] ?? null);
-                $finalDue         = timelineDate($eng['eng_final_due'] ?? null);
-                $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
-                ?>
-
-                <div class="timeline position-relative">
-
-                <?php
-                function timelineStatus($scheduledDate, $completedFlag) {
-                    $isCompleted = ($completedFlag === 'Y');
-                    $hasDate     = !empty($scheduledDate);
-                            
-                    return [
-                        'color'     => $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
-                        'textClass' => $isCompleted ? 'text-success' : 'text-danger',
-                        'text'      => $hasDate
-                            ? htmlspecialchars(date('M j, Y', strtotime($scheduledDate)))
-                            : null
-                    ];
+                
+                                function timelineDate($dateValue) {
+                                    $hasDate = !empty($dateValue);
+                                
+                                    return [
+                                        'color'     => $hasDate ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
+                                        'textClass' => $hasDate ? 'text-success' : 'text-danger',
+                                        'text'      => $hasDate
+                                            ? htmlspecialchars(date('M j, Y', strtotime($dateValue)))
+                                            : null
+                                    ];
+                                }
+                                ?>
+                
+                                <?php
+                                $internalPlanning = timelineDate($eng['eng_internal_planning_call'] ?? null);
+                                $irlDue           = timelineDate($eng['eng_irl_due'] ?? null);
+                                $clientPlanning   = timelineDate($eng['eng_client_planning_call'] ?? null);
+                                $fieldwork        = timelineDate($eng['eng_fieldwork'] ?? null);
+                                $leadsheetStart   = timelineDate($eng['eng_leadsheet_start'] ?? null);
+                                $leadsheetDue     = timelineDate($eng['eng_leadsheet_due'] ?? null);
+                                $draftDue         = timelineDate($eng['eng_draft_due'] ?? null);
+                                $finalDue         = timelineDate($eng['eng_final_due'] ?? null);
+                                $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
+                                ?>
+                
+                                <div class="timeline position-relative">
+                              
+                                <?php
+                                function timelineStatus($scheduledDate, $completedFlag) {
+                                    $isCompleted = ($completedFlag === 'Y');
+                                    $hasDate     = !empty($scheduledDate);
+                                            
+                                    return [
+                                        'color'     => $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
+                                        'textClass' => $isCompleted ? 'text-success' : 'text-danger',
+                                        'text'      => $hasDate
+                                            ? htmlspecialchars(date('M j, Y', strtotime($scheduledDate)))
+                                            : null
+                                    ];
+                                }
+                                ?>
+                                
+                                <?php
+                                $internalPlanning = timelineStatus(
+                                    $eng['eng_internal_planning_call'] ?? null,
+                                    $eng['eng_completed_internal_planning'] ?? 'N'
+                                );
+                                            
+                                $irlDue = timelineStatus(
+                                    $eng['eng_irl_due'] ?? null,
+                                    $eng['eng_irl_sent'] ?? 'N'
+                                );
+                                            
+                                $clientPlanning = timelineStatus(
+                                    $eng['eng_client_planning_call'] ?? null,
+                                    $eng['eng_completed_client_planning'] ?? 'N'
+                                );
+                                            
+                                $fieldwork = timelineStatus(
+                                    $eng['eng_fieldwork'] ?? null,
+                                    $eng['eng_fieldwork_complete'] ?? 'N'
+                                );
+                                            
+                                $leadsheetDue = timelineStatus(
+                                    $eng['eng_leadsheet_due'] ?? null,
+                                    $eng['eng_leadsheet_complete'] ?? 'N'
+                                );
+                                            
+                                $draftDue = timelineStatus(
+                                    $eng['eng_draft_due'] ?? null,
+                                    $eng['eng_draft_sent'] ?? 'N'
+                                );
+                                            
+                                $finalDue = timelineStatus(
+                                    $eng['eng_final_due'] ?? null,
+                                    $eng['eng_final_sent'] ?? 'N'
+                                );
+                                ?>
+                
+                              
+                              <?php
+                $query = "
+                    SELECT em.ms_id, em.eng_id, em.milestone_type, em.is_completed, em.due_date
+                    FROM engagement_milestones em
+                    WHERE em.eng_id = {$eng_id}
+                    ORDER BY em.ms_id
+                ";
+                $result = $conn->query($query);
+                              
+                $milestones = [];
+                while ($row = $result->fetch_assoc()) {
+                    $baseType = preg_replace('/_soc_\d$/i', '', $row['milestone_type']);
+                    $milestones[$baseType][] = $row;
+                }
+                
+                function formatMilestoneName($type) {
+                    return ucwords(str_replace('_', ' ', $type));
                 }
                 ?>
                 
+                <?php foreach ($milestones as $baseType => $items): ?>
                 <?php
-                $internalPlanning = timelineStatus(
-                    $eng['eng_internal_planning_call'] ?? null,
-                    $eng['eng_completed_internal_planning'] ?? 'N'
-                );
-                            
-                $irlDue = timelineStatus(
-                    $eng['eng_irl_due'] ?? null,
-                    $eng['eng_irl_sent'] ?? 'N'
-                );
-                            
-                $clientPlanning = timelineStatus(
-                    $eng['eng_client_planning_call'] ?? null,
-                    $eng['eng_completed_client_planning'] ?? 'N'
-                );
-                            
-                $fieldwork = timelineStatus(
-                    $eng['eng_fieldwork'] ?? null,
-                    $eng['eng_fieldwork_complete'] ?? 'N'
-                );
-                            
-                $leadsheetDue = timelineStatus(
-                    $eng['eng_leadsheet_due'] ?? null,
-                    $eng['eng_leadsheet_complete'] ?? 'N'
-                );
-                            
-                $draftDue = timelineStatus(
-                    $eng['eng_draft_due'] ?? null,
-                    $eng['eng_draft_sent'] ?? 'N'
-                );
-                            
-                $finalDue = timelineStatus(
-                    $eng['eng_final_due'] ?? null,
-                    $eng['eng_final_sent'] ?? 'N'
-                );
-                ?>
-
-
-              <?php
-$query = "
-    SELECT em.ms_id, em.eng_id, em.milestone_type, em.is_completed, em.due_date
-    FROM engagement_milestones em
-    WHERE em.eng_id = {$eng_id}
-    ORDER BY em.ms_id
-";
-$result = $conn->query($query);
-
-$milestones = [];
-while ($row = $result->fetch_assoc()) {
-    $baseType = preg_replace('/_soc_\d$/i', '', $row['milestone_type']);
-    $milestones[$baseType][] = $row;
-}
-
-function formatMilestoneName($type) {
-    return ucwords(str_replace('_', ' ', $type));
-}
-?>
-
-<?php foreach ($milestones as $baseType => $items): ?>
-<?php
-    $isGrouped = count($items) > 1;
-    $isArchive = ($baseType === 'archive_date');
-
-    $allCompleted = true;
-    foreach ($items as $i) {
-        if (($i['is_completed'] ?? 'N') !== 'Y') {
-            $allCompleted = false;
-            break;
-        }
-    }
-
-    $circleColor = $allCompleted ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
-    $bigIcon     = $allCompleted ? 'bi-check-lg' : '';
-
-    // Single milestone record
-    $single = !$isGrouped ? $items[0] : null;
-?>
-
-<div class="d-flex align-items-center position-relative mb-3">
-
-    <!-- BIG ICON -->
-    <div class="rounded-circle d-flex align-items-center justify-content-center text-white
-    <?= (!$isGrouped || $isArchive) ? 'milestone-toggle' : '' ?>"
-    <?= (!$isGrouped || $isArchive)
-        ? 'data-ms-id="'.$single['ms_id'].'"
-           data-completed="'.$single['is_completed'].'"
-           data-archive="'.($isArchive ? '1' : '0').'"'
-        : '' ?>
-    style="
-        width:44px;
-        height:44px;
-        background-color: <?= $circleColor; ?>;
-        cursor: <?= (!$isGrouped || $isArchive) ? 'pointer' : 'default'; ?>;
-    ">
-    <i class="bi <?= $bigIcon; ?>" style="font-size:18px;"></i>
-</div>
-
-    <!-- CARD -->
-    <div class="flex-grow-1">
-        <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-            <div class="card-body py-3 px-4">
-
-                <?php if ($isGrouped): ?>
-                    <!-- TITLE -->
-                    <div class="fw-semibold mb-2">
-                        <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
-                    </div>
-
-                    <!-- GROUPED SOC ITEMS -->
-                    <?php foreach ($items as $m): ?>
-                        <?php
-                            $completed = ($m['is_completed'] ?? 'N') === 'Y';
-                            $color     = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
-                            $icon      = $completed ? 'bi-check-lg' : '';
-
-                            $label = stripos($m['milestone_type'], 'soc_1') !== false ? 'SOC 1' : 'SOC 2';
-
-                            $dueDate = 'No due date';
-                            if (!empty($m['due_date'])) {
-                                $d = DateTime::createFromFormat('Y-m-d', $m['due_date']);
-                                $dueDate = $d ? $d->format('M d, Y') : 'Invalid date';
-                            }
-                        ?>
-
-                        <div class="d-flex justify-content-between align-items-center py-1">
-
-                            <!-- LEFT -->
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="rounded-circle milestone-toggle d-flex align-items-center justify-content-center text-white"
-                                     data-ms-id="<?= $m['ms_id']; ?>"
-                                     data-completed="<?= $m['is_completed']; ?>"
-                                     style="
-                                        width:22px;
-                                        height:22px;
-                                        background-color: <?= $color; ?>;
-                                        cursor:pointer;
-                                     ">
-                                    <i class="bi <?= $icon; ?>" style="font-size:12px;"></i>
-                                </div>
-                                <span class="fw-semibold"><?= $label; ?></span>
-                            </div>
-
-                            <!-- RIGHT -->
-                            <span class="fw-semibold" style="color: <?= $color; ?>;">
-                                <?= htmlspecialchars($dueDate); ?>
-                            </span>
-                        </div>
-
-                    <?php endforeach; ?>
-
-                <?php else: ?>
-                    <!-- SINGLE MILESTONE ROW -->
-                    <?php
-                        $completed = ($single['is_completed'] ?? 'N') === 'Y';
-                        $color     = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
-
-                        $dueDate = 'No due date';
-                        if (!empty($single['due_date'])) {
-                            $d = DateTime::createFromFormat('Y-m-d', $single['due_date']);
-                            $dueDate = $d ? $d->format('M d, Y') : 'Invalid date';
+                    $isGrouped = count($items) > 1;
+                    $isArchive = ($baseType === 'archive_date');
+                
+                    $allCompleted = true;
+                    foreach ($items as $i) {
+                        if (($i['is_completed'] ?? 'N') !== 'Y') {
+                            $allCompleted = false;
+                            break;
                         }
-                    ?>
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <!-- LEFT -->
-                        <div class="fw-semibold">
-                            <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
+                    }
+                  
+                    $circleColor = $allCompleted ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+                    $bigIcon     = $allCompleted ? 'bi-check-lg' : '';
+                  
+                    // Single milestone record
+                    $single = !$isGrouped ? $items[0] : null;
+                ?>
+                
+                <div class="d-flex align-items-center position-relative mb-3">
+                  
+                    <!-- BIG ICON -->
+                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white
+                    <?= (!$isGrouped || $isArchive) ? 'milestone-toggle' : '' ?>"
+                    <?= (!$isGrouped || $isArchive)
+                        ? 'data-ms-id="'.$single['ms_id'].'"
+                           data-completed="'.$single['is_completed'].'"
+                           data-archive="'.($isArchive ? '1' : '0').'"'
+                        : '' ?>
+                    style="
+                        width:44px;
+                        height:44px;
+                        background-color: <?= $circleColor; ?>;
+                        cursor: <?= (!$isGrouped || $isArchive) ? 'pointer' : 'default'; ?>;
+                    ">
+                    <i class="bi <?= $bigIcon; ?>" style="font-size:18px;"></i>
+                </div>
+                  
+                    <!-- CARD -->
+                    <div class="flex-grow-1">
+                        <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                            <div class="card-body py-3 px-4">
+                  
+                                <?php if ($isGrouped): ?>
+                                    <!-- TITLE -->
+                                    <div class="fw-semibold mb-2">
+                                        <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
+                                    </div>
+                                
+                                    <!-- GROUPED SOC ITEMS -->
+                                    <?php foreach ($items as $m): ?>
+                                        <?php
+                                            $completed = ($m['is_completed'] ?? 'N') === 'Y';
+                                            $color     = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+                                            $icon      = $completed ? 'bi-check-lg' : '';
+                                    
+                                            $label = stripos($m['milestone_type'], 'soc_1') !== false ? 'SOC 1' : 'SOC 2';
+                                    
+                                            $dueDate = 'No due date';
+                                            if (!empty($m['due_date'])) {
+                                                $d = DateTime::createFromFormat('Y-m-d', $m['due_date']);
+                                                $dueDate = $d ? $d->format('M d, Y') : 'Invalid date';
+                                            }
+                                        ?>
+                
+                                        <div class="d-flex justify-content-between align-items-center py-1">
+                                          
+                                            <!-- LEFT -->
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="rounded-circle milestone-toggle d-flex align-items-center justify-content-center text-white"
+                                                     data-ms-id="<?= $m['ms_id']; ?>"
+                                                     data-completed="<?= $m['is_completed']; ?>"
+                                                     style="
+                                                        width:22px;
+                                                        height:22px;
+                                                        background-color: <?= $color; ?>;
+                                                        cursor:pointer;
+                                                     ">
+                                                    <i class="bi <?= $icon; ?>" style="font-size:12px;"></i>
+                                                </div>
+                                                <span class="fw-semibold"><?= $label; ?></span>
+                                            </div>
+                                          
+                                            <!-- RIGHT -->
+                                            <span class="fw-semibold" style="color: <?= $color; ?>;">
+                                                <?= htmlspecialchars($dueDate); ?>
+                                            </span>
+                                        </div>
+                                          
+                                    <?php endforeach; ?>
+                                          
+                                <?php else: ?>
+                                    <!-- SINGLE MILESTONE ROW -->
+                                    <?php
+                                        $completed = ($single['is_completed'] ?? 'N') === 'Y';
+                                        $color     = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+                                
+                                        $dueDate = 'No due date';
+                                        if (!empty($single['due_date'])) {
+                                            $d = DateTime::createFromFormat('Y-m-d', $single['due_date']);
+                                            $dueDate = $d ? $d->format('M d, Y') : 'Invalid date';
+                                        }
+                                    ?>
+                
+                                    <div class="d-flex justify-content-between align-items-center">
+                                      
+                                        <!-- LEFT -->
+                                        <div class="fw-semibold">
+                                            <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
+                                        </div>
+                                      
+                                        <!-- RIGHT -->
+                                        <div class="fw-semibold" style="color: <?= $color; ?>;">
+                                            <?= htmlspecialchars($dueDate); ?>
+                                        </div>
+                                      
+                                    </div>
+                                <?php endif; ?>
+                                      
+                            </div>
                         </div>
-
-                        <!-- RIGHT -->
-                        <div class="fw-semibold" style="color: <?= $color; ?>;">
-                            <?= htmlspecialchars($dueDate); ?>
-                        </div>
-
                     </div>
-                <?php endif; ?>
-
-            </div>
-        </div>
-    </div>
-</div>
-<?php endforeach; ?>
-
-
-
-
-
-
-
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.milestone-toggle').forEach(el => {
-    el.addEventListener('click', async () => {
-
-      const msId      = el.dataset.msId;
-      const completed = el.dataset.completed;
-      const isArchive = el.dataset.archive === '1';
-
-      if (!msId) return;
-
-      const newValue = completed === 'Y' ? 'N' : 'Y';
-
-      const formData = new FormData();
-      formData.append('ms_id', msId);
-      formData.append('is_completed', newValue);
-
-      if (isArchive && newValue === 'Y') {
-        formData.append('set_today', '1');
-      }
-
-      try {
-        const res = await fetch('../includes/toggle_milestone.php', {
-          method: 'POST',
-          body: formData
-        });
-
-        const data = await res.json();
-        if (!data.success) {
-          alert(data.error || 'Failed to update milestone');
-          return;
-        }
-
-        // ✅ HARD REFRESH so everything re-renders cleanly
-        window.location.reload();
-
-      } catch (e) {
-        console.error(e);
-        alert('Network error');
-      }
-    });
-  });
-});
-</script>
+                </div>
+                <?php endforeach; ?>
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                                      
+                <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                  document.querySelectorAll('.milestone-toggle').forEach(el => {
+                    el.addEventListener('click', async () => {
+                    
+                      const msId      = el.dataset.msId;
+                      const completed = el.dataset.completed;
+                      const isArchive = el.dataset.archive === '1';
+                    
+                      if (!msId) return;
+                    
+                      const newValue = completed === 'Y' ? 'N' : 'Y';
+                    
+                      const formData = new FormData();
+                      formData.append('ms_id', msId);
+                      formData.append('is_completed', newValue);
+                    
+                      if (isArchive && newValue === 'Y') {
+                        formData.append('set_today', '1');
+                      }
+                    
+                      try {
+                        const res = await fetch('../includes/toggle_milestone.php', {
+                          method: 'POST',
+                          body: formData
+                        });
+                      
+                        const data = await res.json();
+                        if (!data.success) {
+                          alert(data.error || 'Failed to update milestone');
+                          return;
+                        }
+                      
+                        // ✅ HARD REFRESH so everything re-renders cleanly
+                        window.location.reload();
+                      
+                      } catch (e) {
+                        console.error(e);
+                        alert('Network error');
+                      }
+                    });
+                  });
+                });
+                </script>
 
               </div>
 
