@@ -544,7 +544,6 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
 
     // If milestone is completed
     if (data.is_completed === 'Y') {
-      dueDisplay.innerHTML = '✅';
       daysCount.textContent = 'Completed';
       daysCount.style.color = 'green';
       daysLabel.textContent = '';
