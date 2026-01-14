@@ -992,94 +992,84 @@ if ($eng_id) {
 
 
               <?php
-// Fetch all milestones for the current engagement
 $query = "
-    SELECT em.ms_id, em.eng_id, em.milestone_type, em.is_completed, em.due_date, e.eng_name
+    SELECT em.ms_id, em.eng_id, em.milestone_type, em.is_completed, em.due_date
     FROM engagement_milestones em
-    JOIN engagements e ON em.eng_id = e.eng_id
     WHERE em.eng_id = {$eng_id}
     ORDER BY em.ms_id
 ";
 $result = $conn->query($query);
 
-$milestonesList = [];
-if ($result && $result->num_rows) {
-    while ($row = $result->fetch_assoc()) {
-        $milestonesList[] = $row;
-    }
-}
-
-// Group milestones by base type (remove _soc_1 / _soc_2)
-$groupedMilestones = [];
-foreach ($milestonesList as $m) {
-    $baseType = preg_replace('/_soc_\d$/i', '', $m['milestone_type']);
-    if (!isset($groupedMilestones[$baseType])) {
-        $groupedMilestones[$baseType] = [
-            'base_type' => $baseType,
-            'soc_1' => null,
-            'soc_2' => null,
-        ];
-    }
-    if (stripos($m['milestone_type'], 'soc_1') !== false) {
-        $groupedMilestones[$baseType]['soc_1'] = $m;
-    } elseif (stripos($m['milestone_type'], 'soc_2') !== false) {
-        $groupedMilestones[$baseType]['soc_2'] = $m;
-    } else {
-        $groupedMilestones[$baseType]['soc_1'] = $m; // default if not SOC-specific
-    }
+$milestones = [];
+while ($row = $result->fetch_assoc()) {
+    $baseType = preg_replace('/_soc_\d$/i', '', $row['milestone_type']);
+    $milestones[$baseType][] = $row;
 }
 ?>
 
-<?php foreach ($groupedMilestones as $group): ?>
-    <?php
-    // Determine completion status: consider completed if both are completed, otherwise Pending
-    $completedSoc1 = ($group['soc_1']['is_completed'] ?? 'N') === 'Y';
-    $completedSoc2 = ($group['soc_2']['is_completed'] ?? 'N') === 'Y';
-    $completed = $completedSoc1 && $completedSoc2;
-
-    // Circle color
-    $circleColor = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
-
-    // Format due dates
-    $dueDates = [];
-    if (!empty($group['soc_1'])) {
-        $date = $group['soc_1']['due_date'] ?? null;
-        if ($date) {
-            $dateObj = DateTime::createFromFormat('Y-m-d', $date);
-            $dueDates[] = $dateObj ? $dateObj->format('M d, Y') : 'Invalid date';
+<?php foreach ($milestones as $baseType => $items): ?>
+<?php
+    $allCompleted = true;
+    foreach ($items as $i) {
+        if (($i['is_completed'] ?? 'N') !== 'Y') {
+            $allCompleted = false;
+            break;
         }
     }
-    if (!empty($group['soc_2'])) {
-        $date = $group['soc_2']['due_date'] ?? null;
-        if ($date) {
-            $dateObj = DateTime::createFromFormat('Y-m-d', $date);
-            $dueDates[] = $dateObj ? $dateObj->format('M d, Y') : 'Invalid date';
-        }
-    }
-    $dueDateText = implode(' • ', $dueDates);
-    ?>
+    $circleColor = $allCompleted ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+?>
 
-    <div class="d-flex align-items-center position-relative mb-3">
-        <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
-            <div class="rounded-circle text-white d-flex align-items-center justify-content-center milestone-toggle"
-                 data-ms-id="<?= htmlspecialchars($group['soc_1']['ms_id'] ?? $group['soc_2']['ms_id']); ?>"
-                 style="width:44px;height:44px;background-color: <?= $circleColor; ?>;cursor:pointer;">
-                <i class="bi bi-telephone"></i>
-            </div>
+<div class="d-flex align-items-center position-relative mb-3">
+    <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
+        <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
+             style="width:44px;height:44px;background-color: <?= $circleColor; ?>;">
+            <i class="bi bi-telephone"></i>
         </div>
+    </div>
 
-        <div class="flex-grow-1">
-            <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                    <span class="fw-semibold"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $group['base_type']))); ?></span>
-                    <span class="fw-semibold toggle-status-text" style="color: <?= $circleColor; ?>;">
-                        <?= htmlspecialchars($dueDateText ?: 'No due date'); ?>
-                    </span>
+    <div class="flex-grow-1">
+        <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+            <div class="card-body py-3 px-4">
+                <div class="fw-semibold mb-2">
+                    <?= htmlspecialchars(ucwords(str_replace('_', ' ', $baseType))); ?>
                 </div>
+
+                <?php foreach ($items as $m): ?>
+                    <?php
+                        $completed = ($m['is_completed'] ?? 'N') === 'Y';
+                        $color = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+
+                        $label = stripos($m['milestone_type'], 'soc_1') !== false ? 'SOC 1' : 'SOC 2';
+
+                        $dueDate = 'No due date';
+                        if (!empty($m['due_date'])) {
+                            $d = DateTime::createFromFormat('Y-m-d', $m['due_date']);
+                            $dueDate = $d ? $d->format('M d, Y') : 'Invalid date';
+                        }
+                    ?>
+
+                    <div class="d-flex justify-content-between align-items-center py-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle milestone-toggle"
+                                 data-ms-id="<?= $m['ms_id']; ?>"
+                                 data-completed="<?= $m['is_completed']; ?>"
+                                 style="width:22px;height:22px;background-color: <?= $color; ?>;cursor:pointer;">
+                            </div>
+                            <span class="fw-semibold"><?= $label; ?></span>
+                        </div>
+
+                        <span class="toggle-status-text fw-semibold" style="color: <?= $color; ?>;">
+                            <?= htmlspecialchars($dueDate); ?>
+                        </span>
+                    </div>
+                <?php endforeach; ?>
+
             </div>
         </div>
     </div>
+</div>
 <?php endforeach; ?>
+
 
 
 
