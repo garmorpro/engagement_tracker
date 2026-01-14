@@ -110,6 +110,17 @@ document.addEventListener('DOMContentLoaded', () => {
      STATUS
 ===================== -->
 
+<?php
+$statuses = [
+    'planning'  => ['label' => 'Planning',  'icon' => 'bi-calendar-event'],
+    'fieldwork' => ['label' => 'Fieldwork', 'icon' => 'bi-clipboard-data'],
+    'review'    => ['label' => 'Review',    'icon' => 'bi-search'],
+    'issued'    => ['label' => 'Issued',    'icon' => 'bi-check-circle'],
+    'archived'  => ['label' => 'Archived',  'icon' => 'bi-archive']
+];
+?>
+
+
 <div class="col-12 mb-3 engagement-status-container">
   <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
   <div class="d-flex gap-2 flex-wrap">
@@ -128,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     <div style="font-size:12px;"><?php echo $s['label']; ?></div>
   </div>
 <?php endforeach; ?>
+
 
   </div>
   <input type="hidden" name="eng_status" class="eng_status_input" value="">
