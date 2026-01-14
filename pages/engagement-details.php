@@ -992,48 +992,65 @@ if ($eng_id) {
 
 
               <?php
-// Make sure $internalPlanning is defined safely
-$internalPlanning = $milestones['internal_planning_call'] ?? [
-    'ms_id' => 0,
-    'is_completed' => 'N',
-    'color' => '#888',
-    'textClass' => ''
-];
-$completed = ($internalPlanning['is_completed'] ?? 'N') === 'Y';
-// Format the due date
-$dueDateRaw = $internalPlanning['due_date'] ?? null;
-if ($dueDateRaw) {
-    $dueDateObj = DateTime::createFromFormat('Y-m-d', $dueDateRaw);
-    $dueDate = $dueDateObj ? $dueDateObj->format('M d, Y') : 'Invalid date';
-} else {
-    $dueDate = 'No due date';
+// Fetch all internal planning call milestones for open engagements
+$query = "
+    SELECT em.ms_id, em.eng_id, em.is_completed, em.due_date, e.eng_name
+    FROM engagement_milestones em
+    JOIN engagements e ON em.eng_id = e.eng_id
+    WHERE em.milestone_type = 'internal_planning_call'
+    ORDER BY e.eng_name, em.due_date
+";
+$result = $conn->query($query);
+
+$milestonesList = [];
+if ($result && $result->num_rows) {
+    while ($row = $result->fetch_assoc()) {
+        $milestonesList[] = $row;
+    }
 }
 ?>
 
-<!-- Internal Planning Call -->
-<div class="d-flex align-items-center position-relative">
-  <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
-    <div class="rounded-circle text-white d-flex align-items-center justify-content-center milestone-toggle"
-         data-ms-id="<?= $internalPlanning['ms_id']; ?>"
-         style="width:44px;height:44px;background-color: <?= $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)'; ?>;cursor:pointer;">
-      <i class="bi bi-telephone"></i>
-    </div>
-    <!-- <small class="text-muted mt-1 toggle-status-text"><?= //$completed ? 'Completed' : 'Pending'; ?></small> -->
-  </div>
+<?php foreach ($milestonesList as $internalPlanning): ?>
+    <?php
+    $completed = ($internalPlanning['is_completed'] ?? 'N') === 'Y';
 
-  <div class="flex-grow-1">
-    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-        <span class="fw-semibold">Internal Planning Call</span>
-        <span class="fw-semibold toggle-status-text"
-              style="color: <?= $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)'; ?>;">
-        <?= $completed ? 'Completed' : 'Pending'; ?> • <?= htmlspecialchars($dueDate); ?>
-</span>
-      </div>
+    // Format the due date
+    $dueDateRaw = $internalPlanning['due_date'] ?? null;
+    if ($dueDateRaw) {
+        $dueDateObj = DateTime::createFromFormat('Y-m-d', $dueDateRaw);
+        $dueDate = $dueDateObj ? $dueDateObj->format('M d, Y') : 'Invalid date';
+    } else {
+        $dueDate = 'No due date';
+    }
+
+    // Circle color based on completion
+    $circleColor = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+    ?>
+
+    <!-- Internal Planning Call -->
+    <div class="d-flex align-items-center position-relative mb-3">
+        <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
+            <div class="rounded-circle text-white d-flex align-items-center justify-content-center milestone-toggle"
+                 data-ms-id="<?= $internalPlanning['ms_id']; ?>"
+                 style="width:44px;height:44px;background-color: <?= $circleColor; ?>;cursor:pointer;">
+                <i class="bi bi-telephone"></i>
+            </div>
+            <small class="text-muted mt-1 toggle-status-text"><?= $completed ? 'Completed' : 'Pending'; ?></small>
+        </div>
+
+        <div class="flex-grow-1">
+            <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+                <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+                    <span class="fw-semibold"><?= htmlspecialchars($internalPlanning['eng_name']); ?> – Internal Planning Call</span>
+                    <span class="fw-semibold toggle-status-text" style="color: <?= $circleColor; ?>;">
+                        <?= $completed ? 'Completed' : 'Pending'; ?> • <?= htmlspecialchars($dueDate); ?>
+                    </span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-<!-- end Internal Planning Call -->
+<?php endforeach; ?>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
