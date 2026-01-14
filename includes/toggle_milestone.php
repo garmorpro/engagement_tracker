@@ -8,8 +8,8 @@ if (!$ms_id) {
     exit;
 }
 
-// Get current status
-$stmt = $conn->prepare("SELECT is_completed FROM engagement_milestones WHERE ms_id = ?");
+// Get current milestone info
+$stmt = $conn->prepare("SELECT eng_id, milestone_type, is_completed FROM engagement_milestones WHERE ms_id = ?");
 $stmt->bind_param("i", $ms_id);
 $stmt->execute();
 $res = $stmt->get_result();
@@ -21,11 +21,17 @@ if (!$row) {
     exit;
 }
 
-$newStatus = ($row['is_completed'] === 'Y') ? 'N' : 'Y';
+$eng_id        = $row['eng_id'];
+$milestoneType = $row['milestone_type'];
+$newStatus     = ($row['is_completed'] === 'Y') ? 'N' : 'Y';
 
-// Update status
-$update = $conn->prepare("UPDATE engagement_milestones SET is_completed = ? WHERE ms_id = ?");
-$update->bind_param("si", $newStatus, $ms_id);
+// Update all milestones for the same engagement and milestone_type
+$update = $conn->prepare("
+    UPDATE engagement_milestones 
+    SET is_completed = ? 
+    WHERE eng_id = ? AND milestone_type = ?
+");
+$update->bind_param("sis", $newStatus, $eng_id, $milestoneType);
 $update->execute();
 $update->close();
 
