@@ -721,55 +721,68 @@ $totalEngagements = count($engagements);
         </a>
       </div>
 
-      <!-- Manager Card -->
       <div id="managerContainer">
-        <?php if (!empty($team['Manager'])): ?>
-          <div class="card mb-4" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
-            <div class="card-body p-3">
-              <div class="d-flex align-items-center mb-3">
-                <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
-              </div>
-              <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-                <?php echo htmlspecialchars(array_values($team['Manager'])[0]['emp_name']); ?>
-              </h6>
-            </div>
-          </div>
-        <?php endif; ?>
-      </div>
+  <?php if (!empty($team['Manager'])): 
+        $manager = array_values($team['Manager'])[0]; ?>
+    <div class="card mb-4" data-name="<?php echo htmlspecialchars($manager['emp_name']); ?>" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
+      <div class="card-body p-3 position-relative">
 
-      <!-- Seniors Container -->
+        <!-- Trash Icon -->
+        <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 delete-team-member" style="border:none; background:transparent;">
+          <i class="bi bi-trash"></i>
+        </button>
+
+        <div class="d-flex align-items-center mb-3">
+          <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
+        </div>
+        <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
+          <?php echo htmlspecialchars($manager['emp_name']); ?>
+        </h6>
+      </div>
+    </div>
+  <?php endif; ?>
+</div>
+
+
       <div id="seniorsContainer">
-        <?php 
-        $i = 1;
-        if (!empty($team['Senior'])): 
-          foreach ($team['Senior'] as $senior): ?>
-            <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
-              <div class="card-body p-3">
-                <div class="d-flex align-items-center mb-3">
-                  <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
-                </div>
-                <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-                  <?php echo htmlspecialchars($senior['emp_name']); ?>
-                </h6>
+  <?php 
+  $i = 1;
+  if (!empty($team['Senior'])): 
+    foreach ($team['Senior'] as $senior): ?>
+      <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" data-name="<?php echo htmlspecialchars($senior['emp_name']); ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
+        <div class="card-body p-3 position-relative">
 
-                <?php if (!empty($senior['audit_dols']['SOC 1'])): ?>
-                  <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-                    <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 1']); ?>
-                  </p>
-                <?php endif; ?>
+          <!-- Trash Icon -->
+          <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 delete-team-member" style="border:none; background:transparent;">
+            <i class="bi bi-trash"></i>
+          </button>
 
-                <?php if (!empty($senior['audit_dols']['SOC 2'])): ?>
-                  <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
-                    <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 2']); ?>
-                  </p>
-                <?php endif; ?>
-              </div>
-            </div>
-        <?php 
-          $i++;
-          endforeach; 
-        endif; ?>
+          <div class="d-flex align-items-center mb-3">
+            <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
+          </div>
+          <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+            <?php echo htmlspecialchars($senior['emp_name']); ?>
+          </h6>
+
+          <?php if (!empty($senior['audit_dols']['SOC 1'])): ?>
+            <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
+              <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 1']); ?>
+            </p>
+          <?php endif; ?>
+
+          <?php if (!empty($senior['audit_dols']['SOC 2'])): ?>
+            <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
+              <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 2']); ?>
+            </p>
+          <?php endif; ?>
+        </div>
       </div>
+  <?php 
+    $i++;
+    endforeach; 
+  endif; ?>
+</div>
+
 
       <!-- Staff Container -->
 <div id="staffContainer">
@@ -820,6 +833,34 @@ $totalEngagements = count($engagements);
     </div>
   </div>
 </div>
+
+<script>
+  document.querySelectorAll('.delete-team-member').forEach(btn => {
+  btn.addEventListener('click', async e => {
+    const card = e.target.closest('.card');
+    const name = card.getAttribute('data-name');
+
+    if (!confirm(`Are you sure you want to delete ${name}?`)) return;
+
+    const formData = new FormData();
+    formData.append('eng_id', "<?php echo $eng['eng_id']; ?>");
+    formData.append('name', name);
+
+    try {
+      const res = await fetch('../includes/delete_team_member.php', { method: 'POST', body: formData });
+      const data = await res.json();
+
+      if (data.success) card.remove();
+      else alert('Failed to delete: ' + (data.error || 'Unknown error'));
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete: network or server error.');
+    }
+  });
+});
+
+
+</script>
 
 <?php
 // ===============================
