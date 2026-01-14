@@ -1058,6 +1058,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update DOM to match new emp_id from DB
             input.value = name;
             card.setAttribute('data-emp-id', data.emp_id || '');
+            location.reload();
           } else {
             alert('Failed to add ' + roleName + ': ' + (data.error || 'Unknown error'));
           }
