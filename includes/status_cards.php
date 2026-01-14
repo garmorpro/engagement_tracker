@@ -125,31 +125,29 @@ $overdueCount = $row['overdue_engagements'] ?? 0;
                       <h6 class="card-title mb-2" style="color: rgb(104,115,128);">Due This Week</h6>
   
                       <?php
-                        // // Get the current date
-                        // $today = date('Y-m-d');                     
+                        // Get today
+$today = date('Y-m-d');
 
-                        // // Calculate the start (Sunday) and end (Saturday) of the current week
-                        // $startOfWeek = date('Y-m-d', strtotime('last sunday', strtotime($today)));
-                        // $endOfWeek   = date('Y-m-d', strtotime('next saturday', strtotime($today)));                        
+// Calculate start (Sunday) and end (Saturday) of current week
+$dayOfWeek = date('w', strtotime($today)); // 0 (Sun) - 6 (Sat)
+$startOfWeek = date('Y-m-d', strtotime($today . ' -' . $dayOfWeek . ' days')); // Sunday
+$endOfWeek = date('Y-m-d', strtotime($startOfWeek . ' +6 days')); // Saturday
 
-                        // // If today is Sunday, last sunday returns last week, so adjust
-                        // if (date('w', strtotime($today)) == 0) { 
-                        //     $startOfWeek = $today;
-                        // }                       
+// Count engagements with final_report_due this week and not completed
+$result = $conn->query("
+    SELECT COUNT(DISTINCT e.eng_id) AS thisWeekEngagements
+    FROM engagements e
+    INNER JOIN engagement_milestones m ON e.eng_id = m.eng_id
+    WHERE e.eng_status = 'in-progress'
+      AND m.milestone_type LIKE 'final_report_due%'
+      AND m.is_completed = 'N'
+      AND m.due_date BETWEEN '$startOfWeek' AND '$endOfWeek'
+");
 
-                        // // Query engagements with eng_final_due in this week
-                        // $result = $conn->query("
-                        //     SELECT COUNT(*) AS thisWeekEngagements
-                        //     FROM engagements
-                        //     WHERE eng_status = 'in-progress'
-                        //       AND eng_final_due IS NOT NULL
-                        //       AND eng_final_due BETWEEN '$startOfWeek' AND '$endOfWeek'
-                        // ");                     
-
-                        // $row = $result->fetch_assoc();
-                        // $thisWeekCount = $row['thisWeekEngagements'] ?? 0;
+$row = $result->fetch_assoc();
+$thisWeekCount = $row['thisWeekEngagements'] ?? 0;
                         ?>
-                      <h2 class="fw-bold" style="color: rgb(172,63,255);"><?php //echo number_format($thisWeekCount); ?></h2>
+                      <h2 class="fw-bold" style="color: rgb(172,63,255);"><?php echo number_format($thisWeekCount); ?></h2>
 
                       <i class="bi bi-calendar2 position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(172,63,255,0.15); z-index: 0;"></i>
   
