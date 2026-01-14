@@ -528,27 +528,30 @@ $totalEngagements = count($engagements);
               <div class="d-flex flex-column align-items-center justify-content-center"
                    style="width: 120px; height: 80px; border-radius: 10px; background-color: #fff; text-align: center;">
                   
-                <?php
-if (!empty($eng['eng_final_due'])) {
-    // Make sure we treat the DB date as local date (no time shift)
-    $finalDue = DateTime::createFromFormat('Y-m-d', $eng['eng_final_due']);
-    
-    // Today's date
-    $today = new DateTime('today'); // sets time to 00:00:00 local
+                <script>
+                  fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
+  .then(res => res.json())
+  .then(data => {
+    // Display final due date
+    document.getElementById('finalDueDisplay').textContent =
+      data.final_due 
+        ? new Date(data.final_due + 'T00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+        : 'N/A';
 
-    // Difference in days
-    $diff = $today->diff($finalDue);
-    $days = (int)$diff->format('%r%a'); // negative if past
-
-    if ($days < 0) {
-        echo "<div style='font-size: 20px; font-weight: bold; color: #e53e3e;'>" . abs($days) . "</div>";
-        echo "<div style='font-size: 12px; color: #e53e3e;'>Days Overdue</div>";
-    } else {
-        echo "<div style='font-size: 20px; font-weight: bold; color: #000;'>" . $days . "</div>";
-        echo "<div style='font-size: 12px; color: #000;'>Days Until Due</div>";
+    // Display days until/overdue
+    if (data.days_info.days !== undefined) {
+      document.getElementById('daysCount').textContent = data.days_info.days;
+      document.getElementById('daysLabel').textContent = data.days_info.label;
+      document.getElementById('daysCount').style.color = data.days_info.color;
+      document.getElementById('daysLabel').style.color = data.days_info.color;
     }
-}
-?>
+  });
+
+                </script>
+
+                <span id="finalDueDisplay">Loading...</span>
+<div style="font-size:20px; font-weight:bold;" id="daysCount"></div>
+<div style="font-size:12px;" id="daysLabel"></div>
 
 
               </div>
