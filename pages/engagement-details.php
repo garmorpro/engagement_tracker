@@ -1076,6 +1076,7 @@ document.addEventListener('DOMContentLoaded', () => {
           statusEl.forEach(s => {
             s.textContent = newValue === 'Y' ? 'Completed' : 'Pending';
             s.style.color = newValue === 'Y' ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+            location.reload(); // Refresh to update other dependent statuses
           });
           // Store new completed status
           el.dataset.completed = newValue;
