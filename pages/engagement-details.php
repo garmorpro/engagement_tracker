@@ -943,17 +943,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (auditTypes.includes('SOC 1')) {
         inputs += `
           <input class="form-control mb-2"
-            name="dol[${member.empId}][SOC 1]"
+            name="dol[${member.emp_id}][SOC 1]"
             placeholder="SOC 1 (CO1, CO2...)"
-            value="${getExistingDOL(member.empId, 'SOC 1')}">
+            value="${getExistingDOL(member.emp_id, 'SOC 1')}">
         `;
       }
       if (auditTypes.includes('SOC 2')) {
         inputs += `
           <input class="form-control"
-            name="dol[${member.empId}][SOC 2]"
+            name="dol[${member.emp_id}][SOC 2]"
             placeholder="SOC 2 (CC1, CC2...)"
-            value="${getExistingDOL(member.empId, 'SOC 2')}">
+            value="${getExistingDOL(member.emp_id, 'SOC 2')}">
         `;
       }
 
