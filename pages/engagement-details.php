@@ -863,19 +863,21 @@ $totalEngagements = count($engagements);
           <!-- end TOP ROW (client information) -->
           
           <!-- BOTTOM ROW (timeline) -->
-            <div class="card flex-grow-1" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,  255);   ">
-              <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-4">
+            <div class="card flex-grow-1" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: #fff;">
+    <div class="card-body p-4">
+        <div class="d-flex align-items-center mb-4 justify-content-between">
+            <div class="d-flex align-items-center">
                 <div class="icon-square me-2" style="background-color: rgb(252,237,215); height: 40px; width: 40px;">
-                  <i class="bi bi-calendar2" style="color: rgb(223,50,0);"></i>
+                    <i class="bi bi-calendar2" style="color: rgb(223,50,0);"></i>
                 </div>
-                <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Engagement Timeline</h6>
+                <h6 class="fw-semibold mb-0" style="color: #000; font-size: 20px;">Engagement Timeline</h6>
+            </div>
 
-                <!-- BUTTON TO OPEN MODAL -->
-            <button class="btn float-end" style="border: none;" data-bs-toggle="modal" data-bs-target="#milestonesModal">
+            <!-- FLOATED BUTTON -->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#milestonesModal">
                 Edit Milestone Dates
             </button>
-              </div>
+        </div>
 
                 
                 <?php
