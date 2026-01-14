@@ -329,7 +329,7 @@ $totalEngagements = count($engagements);
                     <td>
                         <div class="d-flex gap-1">
                             <!-- VIEW -->
-                            <a href="engagement-details.php?eng_id=<?php echo $eng['eng_idno']; ?>" 
+                            <a href="engagement-details.php?eng_id=<?php echo $eng['eng_id']; ?>" 
                                class="btn btn-sm btn-outline-primary action-btn view-btn" 
                                title="View">
                               <i class="bi bi-eye"></i>
@@ -338,7 +338,7 @@ $totalEngagements = count($engagements);
                             <!-- EDIT -->
                             <button class="btn btn-sm btn-outline-warning action-btn edit-btn" 
                                     data-bs-toggle="modal" 
-                                    data-bs-target="#editModal-<?php echo $eng['eng_idno']; ?>" 
+                                    data-bs-target="#editModal-<?php echo $eng['eng_id']; ?>" 
                                     title="Edit">
                               <i class="bi bi-pencil-square"></i>
                             </button>
