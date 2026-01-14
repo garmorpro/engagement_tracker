@@ -861,9 +861,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const seniorCards = Array.from(document.querySelectorAll('#seniorsContainer .card'));
   const staffCards  = Array.from(document.querySelectorAll('#staffContainer .card'));
 
-  // Merge team members (DOL + non-DOL)
+  // Merge team members (DOL + DOM) without duplicates
   function getTeamMembers() {
-    const members = [];
+    const membersMap = new Map();
 
     const collect = (cards, type) => {
       cards.forEach(card => {
@@ -871,24 +871,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
         if (!name) return;
 
-        // Check if already in existingDOLData
-        const existing = existingDOLData.find(r => r.emp_id == empId);
-        members.push({
-          emp_id: empId || `new-${type}-${members.length}`, // temporary id for new members
-          name: existing?.name || name,
-          type: type.toLowerCase(), // 'senior' or 'staff'
-          role: type.charAt(0).toUpperCase() + type.slice(1)
-        });
+        // Only add if not already added
+        if (!membersMap.has(empId)) {
+          const existing = existingDOLData.find(r => r.emp_id == empId);
+          membersMap.set(empId || `new-${type}-${membersMap.size}`, {
+            emp_id: empId || `new-${type}-${membersMap.size}`,
+            name: existing?.name || name,
+            type: type.toLowerCase(),
+            role: type.charAt(0).toUpperCase() + type.slice(1)
+          });
+        }
       });
     };
 
     collect(seniorCards, 'Senior');
     collect(staffCards, 'Staff');
 
-    // Include members from existingDOLData that might not be in the DOM yet
+    // Include members from existingDOLData that might not be in DOM yet
     existingDOLData.forEach(r => {
-      if (!members.some(m => m.emp_id == r.emp_id)) {
-        members.push({
+      if (!membersMap.has(r.emp_id)) {
+        membersMap.set(r.emp_id, {
           emp_id: r.emp_id,
           name: r.name,
           type: r.type.toLowerCase(),
@@ -897,7 +899,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    return members;
+    return Array.from(membersMap.values());
   }
 
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
@@ -928,7 +930,6 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateDOLButtons() {
     dolButtonsContainer.innerHTML = '';
 
-    // Show DOL button if there is at least 1 senior or staff
     const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
     if (members.length === 0) return;
 
@@ -1029,6 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 </script>
+
 
 
 
