@@ -1,18 +1,14 @@
 <?php
-// CRITICAL: no whitespace before this file starts
-ob_start();
+header('Content-Type: application/json');
 ini_set('display_errors', 0);
 error_reporting(0);
 
-header('Content-Type: application/json');
-
 include 'db.php';
 
-$eng_id = isset($_POST['eng_id']) ? intval($_POST['eng_id']) : 0;
+$eng_id = intval($_POST['eng_id'] ?? 0);
 $dol    = $_POST['dol'] ?? [];
 
 if (!$eng_id || empty($dol)) {
-    ob_clean();
     echo json_encode(['success' => false, 'error' => 'Invalid input']);
     exit;
 }
@@ -23,9 +19,9 @@ foreach (['senior', 'staff'] as $role) {
 
     foreach ($dol[$role] as $idx => $auditData) {
 
-        $index = intval($idx);
+        // 🔑 FIX: JS index is zero-based → SQL OFFSET must match
+        $offset = intval($idx);
 
-        // Fetch employee name by role + order
         $stmt = $conn->prepare("
             SELECT emp_name
             FROM engagement_team
@@ -35,8 +31,10 @@ foreach (['senior', 'staff'] as $role) {
             LIMIT 1 OFFSET ?
         ");
 
+        if (!$stmt) continue;
+
         $roleName = ucfirst($role);
-        $stmt->bind_param("isi", $eng_id, $roleName, $index);
+        $stmt->bind_param("isi", $eng_id, $roleName, $offset);
         $stmt->execute();
         $result = $stmt->get_result();
         $emp = $result->fetch_assoc();
@@ -62,6 +60,8 @@ foreach (['senior', 'staff'] as $role) {
                 LIMIT 1
             ");
 
+            if (!$update) continue;
+
             $update->bind_param(
                 "sisss",
                 $dolValue,
@@ -76,6 +76,5 @@ foreach (['senior', 'staff'] as $role) {
     }
 }
 
-ob_clean();
 echo json_encode(['success' => true]);
 exit;
