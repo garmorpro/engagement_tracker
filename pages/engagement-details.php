@@ -901,7 +901,7 @@ $totalEngagements = count($engagements);
 
 $milestones = [];
 if ($eng_id) {
-    $stmt = $conn->prepare("SELECT ms_id, milestone_type, audit_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
+    $stmt = $conn->prepare("SELECT ms_id, milestone_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
     $stmt->bind_param("i", $eng_id);
     $stmt->execute();
     $result = $stmt->get_result();
