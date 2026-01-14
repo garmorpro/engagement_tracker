@@ -78,23 +78,6 @@
 
 
 
-<?php
-// Assume $eng_id is the engagement ID for the modal
-$eng_id = $_GET['eng_id'] ?? 0;
-
-// Fetch team members from DB
-$sql = "SELECT * FROM engagement_team WHERE eng_id = ? ORDER BY role, id";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $eng_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-// Separate seniors and staff
-$team = ['Senior' => [], 'Staff' => []];
-while ($row = $result->fetch_assoc()) {
-    $team[$row['role']][] = $row;
-}
-?>
 
 
 
