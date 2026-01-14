@@ -865,19 +865,34 @@ document.addEventListener('DOMContentLoaded', () => {
   // Merge team members (DOL + DOM) without duplicates
   // ===============================
   function getTeamMembers() {
-    // Only use existing DOL data from PHP (which comes from DB)
-    return existingDOLData
-        .filter(row => row.emp_id) // only include members with a real emp_id
-        .map(row => ({
-            emp_id: row.emp_id,
-            name: row.name,
-            type: row.type.toLowerCase(),
-            role: row.type.charAt(0).toUpperCase() + row.type.slice(1)
-        }))
-        .sort((a, b) => {
-            if (a.type === b.type) return a.name.localeCompare(b.name);
-            return a.type === 'senior' ? -1 : 1;
-        });
+    const membersMap = new Map();
+
+    const addMember = (empId, name, type) => {
+        // Only include members with a real emp_id from the DB
+        if (!empId || !name) return;
+        const typeLower = type.toLowerCase();
+
+        // Use emp_id as the unique key
+        if (!membersMap.has(empId)) {
+            membersMap.set(empId, {
+                emp_id: empId,
+                name,
+                type: typeLower,
+                role: type.charAt(0).toUpperCase() + type.slice(1)
+            });
+        }
+    };
+
+    // 1️⃣ Collect members only from existing DOL data (DB)
+    existingDOLData.forEach(row => {
+        addMember(row.emp_id, row.name, row.type);
+    });
+
+    // Sort: seniors first, then staff, alphabetically
+    return Array.from(membersMap.values()).sort((a, b) => {
+        if (a.type === b.type) return a.name.localeCompare(b.name);
+        return a.type === 'senior' ? -1 : 1;
+    });
 }
 
 
