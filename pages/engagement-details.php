@@ -1042,7 +1042,7 @@ if ($result && $result->num_rows) {
                 <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
                     <span class="fw-semibold"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $internalPlanning['milestone_type']))); ?></span>
                     <span class="fw-semibold toggle-status-text" style="color: <?= $circleColor; ?>;">
-                        <?= $completed ? 'Completed' : 'Pending'; ?> • <?= htmlspecialchars($dueDate); ?>
+                        <?= htmlspecialchars($dueDate); ?>
                     </span>
                 </div>
             </div>
