@@ -930,23 +930,55 @@ document.addEventListener('DOMContentLoaded', () => {
     modalBody.innerHTML = '';
 
     // --- Header card with audit type instructions ---
-    const headerCard = document.createElement('div');
-    headerCard.className='dol-card mb-3 p-3 border rounded bg-light';
-    let instructionHTML = `<div class="fw-bold mb-2">Audit Type</div>
-      <div>${auditTypes.includes('SOC 2')?'SOC 2':''}${auditTypes.includes('SOC 1')?', SOC 1':''}</div>
-      <div style="font-size:0.9em;">`;
+const headerCard = document.createElement('div');
+headerCard.className = 'dol-card mb-3 p-4 border rounded';
+headerCard.style.background = 'linear-gradient(135deg, #f5f8ff 0%, #eef3ff 100%)';
+headerCard.style.borderColor = '#d6e0ff';
+headerCard.style.boxShadow = '0 4px 12px rgba(31, 60, 255, 0.08)';
 
-    const parts = [];
-    if(auditTypes.includes('SOC 1')) parts.push('Use CO prefix for SOC 1 (e.g., CO1, CO2, CO3)');
-    if(auditTypes.includes('SOC 2')) parts.push('Use CC prefix for SOC 2 (e.g., CC1, CC2, CC3)');
-    instructionHTML += parts.join(' • ');
-    instructionHTML += '</div>';
+let instructionHTML = `
+  <div class="fw-bold mb-2" style="font-size:14px; color:#1f3cff;">
+    Audit Type
+  </div>
 
-    // --- Full raw audit types from the engagement table ---
-    instructionHTML += `<div class="mt-2" style="font-size:0.9em; color:#555;">Full Audit Types: ${rawAuditTypes.join(', ')}</div>`;
+  <div class="mb-2">
+    ${auditTypes.includes('SOC 2') 
+      ? '<span class="badge rounded-pill bg-primary-subtle text-primary me-2">SOC 2</span>' 
+      : ''}
+    ${auditTypes.includes('SOC 1') 
+      ? '<span class="badge rounded-pill bg-info-subtle text-info">SOC 1</span>' 
+      : ''}
+  </div>
 
-    headerCard.innerHTML = instructionHTML;
-    modalBody.appendChild(headerCard);
+  <div style="font-size:13px; color:#5f6b8a;">
+`;
+
+const parts = [];
+if (auditTypes.includes('SOC 1')) {
+  parts.push('Use <strong>CO</strong> prefix for SOC 1 (e.g., CO1, CO2, CO3)');
+}
+if (auditTypes.includes('SOC 2')) {
+  parts.push('Use <strong>CC</strong> prefix for SOC 2 (e.g., CC1, CC2, CC3)');
+}
+
+instructionHTML += parts.join(' &nbsp;•&nbsp; ');
+instructionHTML += '</div>';
+
+headerCard.innerHTML = instructionHTML;
+modalBody.appendChild(headerCard);
+
+
+    // const parts = [];
+    // if(auditTypes.includes('SOC 1')) parts.push('Use CO prefix for SOC 1 (e.g., CO1, CO2, CO3)');
+    // if(auditTypes.includes('SOC 2')) parts.push('Use CC prefix for SOC 2 (e.g., CC1, CC2, CC3)');
+    // instructionHTML += parts.join(' • ');
+    // instructionHTML += '</div>';
+
+    // // --- Full raw audit types from the engagement table ---
+    // instructionHTML += `<div class="mt-2" style="font-size:0.9em; color:#555;">Full Audit Types: ${rawAuditTypes.join(', ')}</div>`;
+
+    // headerCard.innerHTML = instructionHTML;
+    // modalBody.appendChild(headerCard);
 
     // --- DOL cards for each member ---
     const members = getTeamMembers();
