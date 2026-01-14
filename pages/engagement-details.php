@@ -1184,8 +1184,8 @@ document.addEventListener('DOMContentLoaded', () => {
           : 'rgb(229,50,71)';
 
         const icon = newValue === 'Y'
-          ? 'bi-check2-circle'
-          : 'bi-circle';
+          ? 'bi-check-lg'
+          : '';
 
         el.style.backgroundColor = bgColor;
         el.innerHTML = `<i class="bi ${icon}" style="color:white;"></i>`;
