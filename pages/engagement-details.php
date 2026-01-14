@@ -1016,59 +1016,69 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function addTeamMember(type, container) {
-    const nextIndex = getNextIndex(container);
-    if (!nextIndex) return;
+  const nextIndex = getNextIndex(container);
+  if (!nextIndex) return;
 
-    const roleName = type.charAt(0).toUpperCase() + type.slice(1);
+  const roleName = type.charAt(0).toUpperCase() + type.slice(1);
 
-    const card = document.createElement('div');
-    card.className = 'mb-3 p-3 border rounded'; // match existing card style
-    card.setAttribute('data-index', nextIndex);
+  // Create card that matches existing card styles
+  const card = document.createElement('div');
+  card.className = 'card mb-3 p-3 border rounded'; // match existing cards
+  card.setAttribute('data-index', nextIndex);
 
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'form-control mt-1';
-    input.placeholder = `Enter ${roleName} Name`;
+  // Inner content container to match existing card padding
+  const inner = document.createElement('div');
+  inner.className = 'd-flex flex-column';
 
-    const label = document.createElement('h6');
-    label.className = 'fw-semibold';
-    label.textContent = roleName;
+  // Label (role)
+  const label = document.createElement('div');
+  label.className = 'fw-bold mb-2';
+  label.textContent = roleName;
 
-    card.appendChild(label);
-    card.appendChild(input);
-    container.appendChild(card);
+  // Input
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'form-control';
+  input.placeholder = `Enter ${roleName} Name`;
 
-    updateButtons();
+  inner.appendChild(label);
+  inner.appendChild(input);
+  card.appendChild(inner);
+  container.appendChild(card);
 
-    // Save to DB when pressing Enter
-    input.addEventListener('keydown', async e => {
-      if (e.key === 'Enter') {
-        const name = input.value.trim();
-        if (!name) return;
+  updateButtons();
 
-        const formData = new FormData();
-        formData.append('eng_id', engId);
-        formData.append('type', type);
-        formData.append('name', name);
+  // Save to DB when pressing Enter
+  input.addEventListener('keydown', async e => {
+    if (e.key === 'Enter') {
+      const name = input.value.trim();
+      if (!name) return;
 
-        try {
-          const res = await fetch('../includes/save_team_member.php', { method: 'POST', body: formData });
-          const data = await res.json();
-          if (data.success) {
-            // Update DOM to match new emp_id from DB
-            input.value = name;
-            card.setAttribute('data-emp-id', data.emp_id || '');
-            location.reload();
-          } else {
-            alert('Failed to add ' + roleName + ': ' + (data.error || 'Unknown error'));
-          }
-        } catch (err) {
-          console.error(err);
-          alert('Failed to add ' + roleName + ': network or server error.');
+      const formData = new FormData();
+      formData.append('eng_id', engId);
+      formData.append('type', type);
+      formData.append('name', name);
+
+      try {
+        const res = await fetch('../includes/save_team_member.php', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (data.success) {
+          // Refresh the page to show the new member properly styled
+          location.reload();
+        } else {
+          alert('Failed to add ' + roleName + ': ' + (data.error || 'Unknown error'));
         }
+      } catch (err) {
+        console.error(err);
+        alert('Failed to add ' + roleName + ': network or server error.');
       }
-    });
-  }
+    }
+  });
+
+  // Auto-focus input
+  input.focus();
+}
+
 
   addSeniorBtn.addEventListener('click', () => addTeamMember('senior', seniorsContainer));
   addStaffBtn.addEventListener('click', () => addTeamMember('staff', staffContainer));
