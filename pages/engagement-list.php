@@ -6,7 +6,21 @@ require_once '../includes/functions.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     $engId = (int)$_POST['delete_eng_id'];
 
-    // 1️⃣ Delete team members
+    // Temporarily disable foreign key checks
+    $conn->query("SET FOREIGN_KEY_CHECKS=0");
+
+    // 1️⃣ Delete the engagement itself first
+    $stmtEng = $conn->prepare("DELETE FROM engagements WHERE eng_id = ?");
+    if ($stmtEng) {
+        $stmtEng->bind_param("i", $engId);
+        $stmtEng->execute();
+        if ($stmtEng->error) {
+            echo "<div class='alert alert-danger'>Failed to delete engagement: " . htmlspecialchars($stmtEng->error) . "</div>";
+        }
+        $stmtEng->close();
+    }
+
+    // 2️⃣ Delete team members
     $stmtTeam = $conn->prepare("DELETE FROM engagement_team WHERE eng_id = ?");
     if ($stmtTeam) {
         $stmtTeam->bind_param("i", $engId);
@@ -17,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
         $stmtTeam->close();
     }
 
-    // 2️⃣ Delete milestones
+    // 3️⃣ Delete milestones
     $stmtMilestones = $conn->prepare("DELETE FROM engagement_milestones WHERE eng_id = ?");
     if ($stmtMilestones) {
         $stmtMilestones->bind_param("i", $engId);
@@ -28,21 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
         $stmtMilestones->close();
     }
 
-    // 3️⃣ Delete the engagement itself
-    $stmtEng = $conn->prepare("DELETE FROM engagements WHERE eng_id = ?");
-    if ($stmtEng) {
-        $stmtEng->bind_param("i", $engId);
-        $stmtEng->execute();
+    // Re-enable foreign key checks
+    $conn->query("SET FOREIGN_KEY_CHECKS=1");
 
-        if ($stmtEng->error) {
-            echo "<div class='alert alert-danger'>Failed to delete engagement: " . htmlspecialchars($stmtEng->error) . "</div>";
-        } else {
-            header("Location: dashboard.php?message=Engagement deleted successfully");
-            exit;
-        }
-
-        $stmtEng->close();
-    }
+    // Redirect after deletion
+    header("Location: dashboard.php?message=Engagement deleted successfully");
+    exit;
 }
 
 
