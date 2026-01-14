@@ -1,25 +1,34 @@
 <?php
-include 'db.php'; // Make sure this file exists and $conn is valid
+include 'db.php';
 
-$eng_id = isset($eng) && isset($eng['eng_id']) ? (int)$eng['eng_id'] : 0;
+// Turn off any PHP warnings / notices being sent to browser
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
 
-$milestonesData = [];
+header('Content-Type: application/json');
 
-if ($eng_id > 0 && isset($conn)) {
-    $stmt = $conn->prepare("SELECT ms_id, milestone_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
+$response = ['success' => false, 'error' => 'Unknown error'];
+
+$eng_id = isset($_POST['eng_id']) ? (int)$_POST['eng_id'] : 0;
+$due_dates = $_POST['due_date'] ?? [];
+
+if ($eng_id && is_array($due_dates)) {
+    $stmt = $conn->prepare("UPDATE engagement_milestones SET due_date = ? WHERE ms_id = ? AND eng_id = ?");
     if ($stmt) {
-        $stmt->bind_param("i", $eng_id);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        while ($row = $res->fetch_assoc()) {
-            $milestonesData[$row['ms_id']] = $row;
+        foreach ($due_dates as $ms_id => $date) {
+            $ms_id = (int)$ms_id;
+            $date = $date ?: null; // allow empty string → NULL
+            $stmt->bind_param("sii", $date, $ms_id, $eng_id);
+            $stmt->execute();
         }
         $stmt->close();
+        $response['success'] = true;
+        unset($response['error']);
     } else {
-        echo "<p>Error preparing milestone query: " . htmlspecialchars($conn->error) . "</p>";
+        $response['error'] = $conn->error;
     }
 }
-function formatMilestoneName($type) {
-    return ucwords(str_replace('_', ' ', (string)$type));
-}
-?>
+
+// Make sure **nothing else** is output before this
+echo json_encode($response);
+exit;
