@@ -932,7 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Header card with audit type instructions ---
 const headerCard = document.createElement('div');
 headerCard.className = 'dol-card mb-3 p-4 border rounded';
-headerCard.style.background = 'rgb(247,241,254)';
+headerCard.style.background = 'rgb(240,246,254)';
 headerCard.style.borderColor = 'rgb(196,218,252)';
 headerCard.style.boxShadow = '0 4px 12px rgba(31, 60, 255, 0.08)';
 
