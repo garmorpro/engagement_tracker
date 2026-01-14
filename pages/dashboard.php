@@ -244,7 +244,6 @@ let timeout = null;
 searchInput.addEventListener('input', () => {
   const query = searchInput.value.trim();
 
-  // Only search if at least 3 characters
   if (query.length < 3) {
     resultsContainer.style.display = 'none';
     resultsContainer.innerHTML = '';
@@ -262,7 +261,6 @@ searchInput.addEventListener('input', () => {
           return;
         }
 
-        // Build dropdown items
         let html = '';
         data.forEach(row => {
           html += `<div class="dropdown-item" style="cursor:pointer;" data-eng-id="${row.eng_id}">
@@ -272,14 +270,14 @@ searchInput.addEventListener('input', () => {
         resultsContainer.innerHTML = html;
         resultsContainer.style.display = 'block';
 
-        // Optional: click handler for each item
+        // Redirect to engagement_details.php on click
         const items = resultsContainer.querySelectorAll('.dropdown-item');
         items.forEach(item => {
           item.addEventListener('click', () => {
-            searchInput.value = item.textContent;
-            resultsContainer.style.display = 'none';
-            // Here you can add code to load engagement details if needed
-            console.log('Selected engagement ID:', item.dataset.engId);
+            const engId = item.dataset.engId;
+            if (engId) {
+              window.location.href = `engagement_details.php?eng_id=${engId}`;
+            }
           });
         });
       });
@@ -292,6 +290,7 @@ document.addEventListener('click', (e) => {
     resultsContainer.style.display = 'none';
   }
 });
+
 
 </script>
 
