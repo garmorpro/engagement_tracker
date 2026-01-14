@@ -1014,6 +1014,7 @@ function formatMilestoneName($type) {
 <?php foreach ($milestones as $baseType => $items): ?>
 <?php
     $isGrouped = count($items) > 1;
+    $isArchive = ($baseType === 'archive_date');
 
     $allCompleted = true;
     foreach ($items as $i) {
@@ -1033,19 +1034,21 @@ function formatMilestoneName($type) {
 <div class="d-flex align-items-center position-relative mb-3">
 
     <!-- BIG ICON -->
-    <div class="me-3 position-relative z-1">
-        <div class="rounded-circle d-flex align-items-center justify-content-center text-white
-            <?= !$isGrouped ? 'milestone-toggle' : '' ?>"
-            <?= !$isGrouped ? 'data-ms-id="'.$single['ms_id'].'" data-completed="'.$single['is_completed'].'"' : '' ?>
-            style="
-                width:44px;
-                height:44px;
-                background-color: <?= $circleColor; ?>;
-                cursor: <?= !$isGrouped ? 'pointer' : 'default'; ?>;
-            ">
-            <i class="bi <?= $bigIcon; ?>" style="font-size:18px;"></i>
-        </div>
-    </div>
+    <div class="rounded-circle d-flex align-items-center justify-content-center text-white
+    <?= (!$isGrouped || $isArchive) ? 'milestone-toggle' : '' ?>"
+    <?= (!$isGrouped || $isArchive)
+        ? 'data-ms-id="'.$single['ms_id'].'"
+           data-completed="'.$single['is_completed'].'"
+           data-archive="'.($isArchive ? '1' : '0').'"'
+        : '' ?>
+    style="
+        width:44px;
+        height:44px;
+        background-color: <?= $circleColor; ?>;
+        cursor: <?= (!$isGrouped || $isArchive) ? 'pointer' : 'default'; ?>;
+    ">
+    <i class="bi <?= $bigIcon; ?>" style="font-size:18px;"></i>
+</div>
 
     <!-- CARD -->
     <div class="flex-grow-1">
