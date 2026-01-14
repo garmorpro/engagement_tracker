@@ -1042,7 +1042,9 @@ if ($eng_id) {
                 <?php foreach ($milestones as $baseType => $items): ?>
                 <?php
                     $isGrouped = count($items) > 1;
-                    $isArchive = ($baseType === 'archive_date');
+                    // $isArchive = ($baseType === 'archive_date');
+                    $isToggle = ($baseType === 'archive_date' || $baseType === 'section_3_requested');
+
                 
                     $allCompleted = true;
                     foreach ($items as $i) {
@@ -1063,20 +1065,20 @@ if ($eng_id) {
                   
                     <!-- BIG ICON -->
                     <div class="rounded-circle d-flex align-items-center justify-content-center text-white me-2
-                    <?= (!$isGrouped || $isArchive) ? 'milestone-toggle' : '' ?>"
-                    <?= (!$isGrouped || $isArchive)
-                        ? 'data-ms-id="'.$single['ms_id'].'"
-                           data-completed="'.$single['is_completed'].'"
-                           data-archive="'.($isArchive ? '1' : '0').'"'
-                        : '' ?>
-                    style="
-                        width:44px;
-                        height:44px;
-                        background-color: <?= $circleColor; ?>;
-                        cursor: <?= (!$isGrouped || $isArchive) ? 'pointer' : 'default'; ?>;
-                    ">
-                    <i class="bi <?= $bigIcon; ?>" style="font-size:18px;"></i>
-                </div>
+<?= (!$isGrouped || $isToggle) ? 'milestone-toggle' : '' ?>"
+<?= (!$isGrouped || $isToggle)
+    ? 'data-ms-id="'.$single['ms_id'].'"
+       data-completed="'.$single['is_completed'].'"
+       data-toggle-type="'.($baseType).'"'
+    : '' ?>
+style="
+    width:44px;
+    height:44px;
+    background-color: <?= $circleColor; ?>;
+    cursor: <?= (!$isGrouped || $isToggle) ? 'pointer' : 'default'; ?>;
+">
+<i class="bi <?= $bigIcon; ?>" style="font-size:18px;"></i>
+</div>
                   
                     <!-- CARD -->
                     <div class="flex-grow-1">
@@ -1174,47 +1176,47 @@ if ($eng_id) {
                                       
                 <script>
                 document.addEventListener('DOMContentLoaded', () => {
-                  document.querySelectorAll('.milestone-toggle').forEach(el => {
-                    el.addEventListener('click', async () => {
-                    
-                      const msId      = el.dataset.msId;
-                      const completed = el.dataset.completed;
-                      const isArchive = el.dataset.archive === '1';
-                    
-                      if (!msId) return;
-                    
-                      const newValue = completed === 'Y' ? 'N' : 'Y';
-                    
-                      const formData = new FormData();
-                      formData.append('ms_id', msId);
-                      formData.append('is_completed', newValue);
-                    
-                      if (isArchive && newValue === 'Y') {
-                        formData.append('set_today', '1');
-                      }
-                    
-                      try {
-                        const res = await fetch('../includes/toggle_milestone.php', {
-                          method: 'POST',
-                          body: formData
-                        });
-                      
-                        const data = await res.json();
-                        if (!data.success) {
-                          alert(data.error || 'Failed to update milestone');
-                          return;
-                        }
-                      
-                        // ✅ HARD REFRESH so everything re-renders cleanly
-                        window.location.reload();
-                      
-                      } catch (e) {
-                        console.error(e);
-                        alert('Network error');
-                      }
-                    });
-                  });
-                });
+  document.querySelectorAll('.milestone-toggle').forEach(el => {
+    el.addEventListener('click', async () => {
+    
+      const msId = el.dataset.msId;
+      const completed = el.dataset.completed;
+      const toggleType = el.dataset.toggleType;
+
+      if (!msId) return;
+
+      const newValue = completed === 'Y' ? 'N' : 'Y';
+
+      const formData = new FormData();
+      formData.append('ms_id', msId);
+      formData.append('is_completed', newValue);
+
+      // if toggle is archive_date or section_3_requested, set today when marking complete
+      if ((toggleType === 'archive_date' || toggleType === 'section_3_requested') && newValue === 'Y') {
+        formData.append('set_today', '1');
+      }
+
+      try {
+        const res = await fetch('../includes/toggle_milestone.php', {
+          method: 'POST',
+          body: formData
+        });
+      
+        const data = await res.json();
+        if (!data.success) {
+          alert(data.error || 'Failed to update milestone');
+          return;
+        }
+
+        window.location.reload(); // refresh to reflect changes
+      
+      } catch (e) {
+        console.error(e);
+        alert('Network error');
+      }
+    });
+  });
+});
                 </script>
 
               </div>

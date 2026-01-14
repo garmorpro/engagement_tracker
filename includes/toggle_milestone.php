@@ -27,10 +27,15 @@ if ($setToday && $is_completed === 'Y') {
 
 $stmt = $conn->prepare($sql);
 
-if ($setToday && $is_completed === 'Y') {
-    $stmt->bind_param('i', $ms_id);
+if (isset($_POST['set_today']) && $_POST['set_today'] == '1') {
+    $today = date('Y-m-d');
+    $stmt = $conn->prepare("UPDATE engagement_milestones SET is_completed = ?, due_date = ? WHERE ms_id = ?");
+    $stmt->bind_param("ssi", $newValue, $today, $ms_id);
+    $stmt->execute();
 } else {
-    $stmt->bind_param('si', $is_completed, $ms_id);
+    $stmt = $conn->prepare("UPDATE engagement_milestones SET is_completed = ? WHERE ms_id = ?");
+    $stmt->bind_param("si", $newValue, $ms_id);
+    $stmt->execute();
 }
 
 $stmt->execute();
