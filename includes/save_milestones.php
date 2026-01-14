@@ -1,6 +1,7 @@
 <?php
-// save_milestones.php
 include 'db.php';
+header('Content-Type: application/json'); // important
+
 $response = ['success' => false];
 
 $eng_id = $_POST['eng_id'] ?? 0;
@@ -15,4 +16,6 @@ if ($eng_id && !empty($due_dates)) {
     $response['success'] = true;
 }
 
+// Make sure NOTHING else is printed!
 echo json_encode($response);
+exit;
