@@ -818,7 +818,7 @@ $totalEngagements = count($engagements);
 $eng_id = $_GET['eng_id'] ?? 0;
 
 // Fetch team members and DOLs
-$sql = "SELECT * FROM engagement_team WHERE eng_id = ? ORDER BY role, id";
+$sql = "SELECT * FROM engagement_team WHERE eng_id = ? ORDER BY role, emp_id";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $eng_id);
 $stmt->execute();
