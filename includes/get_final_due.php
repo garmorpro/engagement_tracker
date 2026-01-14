@@ -3,11 +3,11 @@ require 'db.php'; // DB connection
 
 $eng_id = isset($_GET['eng_id']) ? (int)$_GET['eng_id'] : 0;
 $finalDue = null;
+$completed = false;
 
-// Fetch the earliest final_report_due date
 if ($eng_id && isset($conn)) {
     $stmt = $conn->prepare("
-        SELECT due_date
+        SELECT due_date, completed
         FROM engagement_milestones
         WHERE eng_id = ?
           AND milestone_type LIKE 'final_report_due%'
@@ -19,7 +19,10 @@ if ($eng_id && isset($conn)) {
         $res = $stmt->get_result();
         $dates = [];
         while ($row = $res->fetch_assoc()) {
-            if (!empty($row['due_date'])) $dates[] = $row['due_date'];
+            if (!empty($row['due_date'])) {
+                $dates[] = $row['due_date'];
+                if ($row['completed']) $completed = true;
+            }
         }
         $stmt->close();
 
@@ -28,10 +31,10 @@ if ($eng_id && isset($conn)) {
 }
 
 // Calculate days until or overdue
-$today = new DateTime(); // current date
+$today = new DateTime();
 $output = [];
 
-if ($finalDue) {
+if ($finalDue && !$completed) {
     $dueDate = new DateTime($finalDue);
     $diff = $today->diff($dueDate);
     $days = (int)$diff->format('%r%a'); // negative if past
@@ -53,5 +56,6 @@ if ($finalDue) {
 
 echo json_encode([
     'final_due' => $finalDue ?? null,
+    'completed' => $completed,
     'days_info' => $output
 ]);

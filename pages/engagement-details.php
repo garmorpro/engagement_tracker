@@ -529,29 +529,40 @@ $totalEngagements = count($engagements);
                    style="width: 120px; height: 80px; border-radius: 10px; background-color: #fff; text-align: center;">
                   
                 <script>
-                  fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
+fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
   .then(res => res.json())
   .then(data => {
+    const dueDisplay = document.getElementById('finalDueDisplay');
+    const daysCount = document.getElementById('daysCount');
+    const daysLabel = document.getElementById('daysLabel');
+
+    // If milestone completed
+    if (data.completed) {
+      dueDisplay.innerHTML = '✅';
+      daysCount.textContent = 'Completed';
+      daysCount.style.color = 'green';
+      daysLabel.textContent = '';
+      return;
+    }
+
     // Display final due date
-    document.getElementById('finalDueDisplay').textContent =
-      data.final_due 
-        ? new Date(data.final_due + 'T00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
-        : 'N/A';
+    dueDisplay.textContent = data.final_due 
+      ? new Date(data.final_due + 'T00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+      : 'N/A';
 
     // Display days until/overdue
     if (data.days_info.days !== undefined) {
-      document.getElementById('daysCount').textContent = data.days_info.days;
-      document.getElementById('daysLabel').textContent = data.days_info.label;
-      document.getElementById('daysCount').style.color = data.days_info.color;
-      document.getElementById('daysLabel').style.color = data.days_info.color;
+      daysCount.textContent = data.days_info.days;
+      daysLabel.textContent = data.days_info.label;
+      daysCount.style.color = data.days_info.color;
+      daysLabel.style.color = data.days_info.color;
     }
   });
+</script>
 
-                </script>
-
-                <span id="finalDueDisplay">Loading...</span>
-<div style="font-size:20px; font-weight:bold;" id="daysCount"></div>
-<div style="font-size:12px;" id="daysLabel"></div>
+                <span id="finalDueDisplay" style="font-size: 16px;"></span>
+  <div style="font-size: 20px; font-weight: bold;" id="daysCount"></div>
+  <div style="font-size: 12px;" id="daysLabel"></div>
 
 
               </div>
