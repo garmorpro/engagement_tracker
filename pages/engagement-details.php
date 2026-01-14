@@ -1052,7 +1052,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('name', name);
 
         try {
-          const res = await fetch('../includes/add_team_member.php', { method: 'POST', body: formData });
+          const res = await fetch('../includes/save_team_member.php', { method: 'POST', body: formData });
           const data = await res.json();
           if (data.success) {
             // Update DOM to match new emp_id from DB
