@@ -689,156 +689,150 @@ $totalEngagements = count($engagements);
   <!-- next section (main) -->
     <div class="row align-items-stretch mt-4" style="margin-left: 200px; margin-right: 200px;">
 
+      <!-- LEFT COLUMN (team) -->
+          <div class="col-md-4 d-flex">
+            <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
+              <div class="card-body p-4">
 
-        <!-- LEFT COLUMN (team) -->
-<div class="col-md-4 d-flex">
-  <div class="card w-100" style="border-color: rgb(229,231,235); border-radius: 15px; background-color: rgb(255,255,255);">
-    <div class="card-body p-4">
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div class="d-flex align-items-center">
+                    <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
+                      <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
+                    </div>
+                    <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
+                  </div>
 
-      <!-- Header -->
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex align-items-center">
-          <div class="icon-square me-2" style="background-color: rgb(222,234,252); height: 40px; width: 40px;">
-            <i class="bi bi-people" style="color: rgb(0,42,241);"></i>
+                  <!-- Add/Edit DOL Buttons -->
+                  <div id="dolButtonsContainer" class="d-flex gap-2"></div>
+                </div>
+
+                <!-- Add Buttons -->
+                <div class="d-flex mb-3 gap-3">
+                  <a href="javascript:void(0);" id="addManagerBtn" class="text-decoration-none text-blue fw-semibold">
+                    <i class="bi bi-plus-circle me-1"></i> Add Manager
+                  </a>
+                  <a href="javascript:void(0);" id="addSeniorBtn" class="text-decoration-none text-purple fw-semibold">
+                    <i class="bi bi-plus-circle me-1"></i> Add Senior
+                  </a>
+                  <a href="javascript:void(0);" id="addStaffBtn" class="text-decoration-none text-success fw-semibold">
+                    <i class="bi bi-plus-circle me-1"></i> Add Staff
+                  </a>
+                </div>
+
+                <div id="managerContainer">
+            <?php if (!empty($team['Manager'])): 
+                  $manager = array_values($team['Manager'])[0]; ?>
+              <div class="card mb-4" data-name="<?php echo htmlspecialchars($manager['emp_name']); ?>" style="border-color: rgb(190,215,252); border-radius: 20px;          background-color: rgb(230,240,252);">
+                <div class="card-body p-3 position-relative">
+            
+                  <!-- Trash Icon -->
+                  <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 delete-team-member" style="border:none;          background:transparent;">
+                    <i class="bi bi-trash"></i>
+                  </button>
+            
+                  <div class="d-flex align-items-center mb-3">
+                    <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
+                  </div>
+                  <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
+                    <?php echo htmlspecialchars($manager['emp_name']); ?>
+                  </h6>
+                </div>
+              </div>
+            <?php endif; ?>
           </div>
-          <h6 class="fw-semibold mb-0" style="color: rgb(0,0,0); font-size: 20px !important;">Team</h6>
-        </div>
-
-        <!-- Add/Edit DOL Buttons -->
-        <div id="dolButtonsContainer" class="d-flex gap-2"></div>
-      </div>
-
-      <!-- Add Buttons -->
-      <div class="d-flex mb-3 gap-3">
-        <a href="javascript:void(0);" id="addManagerBtn" class="text-decoration-none text-blue fw-semibold">
-          <i class="bi bi-plus-circle me-1"></i> Add Manager
-        </a>
-        <a href="javascript:void(0);" id="addSeniorBtn" class="text-decoration-none text-purple fw-semibold">
-          <i class="bi bi-plus-circle me-1"></i> Add Senior
-        </a>
-        <a href="javascript:void(0);" id="addStaffBtn" class="text-decoration-none text-success fw-semibold">
-          <i class="bi bi-plus-circle me-1"></i> Add Staff
-        </a>
-      </div>
-
-      <div id="managerContainer">
-  <?php if (!empty($team['Manager'])): 
-        $manager = array_values($team['Manager'])[0]; ?>
-    <div class="card mb-4" data-name="<?php echo htmlspecialchars($manager['emp_name']); ?>" style="border-color: rgb(190,215,252); border-radius: 20px; background-color: rgb(230,240,252);">
-      <div class="card-body p-3 position-relative">
-
-        <!-- Trash Icon -->
-        <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 delete-team-member" style="border:none; background:transparent;">
-          <i class="bi bi-trash"></i>
-        </button>
-
-        <div class="d-flex align-items-center mb-3">
-          <h6 class="mb-0 text-uppercase" style="color: rgb(21,87,242); font-weight: 600 !important; font-size: 12px !important;">Manager</h6>
-        </div>
-        <h6 class="fw-semibold" style="color: rgb(0,37,132); font-size: 20px;">
-          <?php echo htmlspecialchars($manager['emp_name']); ?>
-        </h6>
-      </div>
-    </div>
-  <?php endif; ?>
-</div>
-
-
-      <div id="seniorsContainer">
-  <?php 
-  $i = 1;
-  if (!empty($team['Senior'])): 
-    foreach ($team['Senior'] as $senior): ?>
-      <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" data-name="<?php echo htmlspecialchars($senior['emp_name']); ?>" style="border-color: rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
-        <div class="card-body p-3 position-relative">
-
-          <!-- Trash Icon -->
-          <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 delete-team-member" style="border:none; background:transparent;">
-            <i class="bi bi-trash"></i>
-          </button>
-
-          <div class="d-flex align-items-center mb-3">
-            <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></h6>
+            
+            
+                <div id="seniorsContainer">
+            <?php 
+            $i = 1;
+            if (!empty($team['Senior'])): 
+              foreach ($team['Senior'] as $senior): ?>
+                <div class="card mb-4 senior-card" data-index="<?php echo $i; ?>" data-name="<?php echo htmlspecialchars($senior['emp_name']); ?>" style="border-color:           rgb(228,209,253); border-radius: 20px; background-color: rgb(242,235,253);">
+                  <div class="card-body p-3 position-relative">
+              
+                    <!-- Trash Icon -->
+                    <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 delete-team-member" style="border:none;          background:transparent;">
+                      <i class="bi bi-trash"></i>
+                    </button>
+              
+                    <div class="d-flex align-items-center mb-3">
+                      <h6 class="mb-0 text-uppercase" style="color: rgb(123,0,240); font-weight: 600 !important; font-size: 12px !important;">Senior <?php echo $i; ?></          h6>
+                    </div>
+                    <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
+                      <?php echo htmlspecialchars($senior['emp_name']); ?>
+                    </h6>
+              
+                    <?php if (!empty($senior['audit_dols']['SOC 1'])): ?>
+                      <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
+                        <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 1']); ?>
+                      </p>
+                    <?php endif; ?>
+                    
+                    <?php if (!empty($senior['audit_dols']['SOC 2'])): ?>
+                      <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
+                        <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 2']); ?>
+                      </p>
+                    <?php endif; ?>
+                  </div>
+                </div>
+            <?php 
+              $i++;
+              endforeach; 
+            endif; ?>
           </div>
-          <h6 class="fw-semibold" style="color: rgb(74,0,133); font-size: 20px;">
-            <?php echo htmlspecialchars($senior['emp_name']); ?>
-          </h6>
-
-          <?php if (!empty($senior['audit_dols']['SOC 1'])): ?>
-            <p class="pt-2" style="color: rgb(97,0,206); font-size: 12px;">
-              <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 1']); ?>
-            </p>
-          <?php endif; ?>
-
-          <?php if (!empty($senior['audit_dols']['SOC 2'])): ?>
-            <p class="pt-1" style="color: rgb(97,0,206); font-size: 12px;">
-              <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($senior['audit_dols']['SOC 2']); ?>
-            </p>
-          <?php endif; ?>
-        </div>
-      </div>
-  <?php 
-    $i++;
-    endforeach; 
-  endif; ?>
-</div>
-
-
-      <!-- Staff Container -->
-<div id="staffContainer">
-  <?php 
-  $i = 1;
-  if (!empty($team['Staff'])): 
-    foreach ($team['Staff'] as $staff): ?>
-      <div class="card mb-4 staff-card" data-index="<?php echo $i; ?>" data-name="<?php echo htmlspecialchars($staff['emp_name']); ?>" style="border-color: rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
-        <div class="card-body p-3 position-relative">
-
-          <!-- Trash Icon -->
-          <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 delete-team-member" style="border:none; background:transparent;">
-            <i class="bi bi-trash"></i>
-          </button>
-
-          <div class="d-flex align-items-center mb-3">
-            <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></h6>
+          
+          
+                <!-- Staff Container -->
+          <div id="staffContainer">
+            <?php 
+            $i = 1;
+            if (!empty($team['Staff'])): 
+              foreach ($team['Staff'] as $staff): ?>
+                <div class="card mb-4 staff-card" data-index="<?php echo $i; ?>" data-name="<?php echo htmlspecialchars($staff['emp_name']); ?>" style="border-color:           rgb(198,246,210); border-radius: 20px; background-color: rgb(234,252,239);">
+                  <div class="card-body p-3 position-relative">
+              
+                    <!-- Trash Icon -->
+                    <button type="button" class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 delete-team-member" style="border:none;          background:transparent;">
+                      <i class="bi bi-trash"></i>
+                    </button>
+              
+                    <div class="d-flex align-items-center mb-3">
+                      <h6 class="mb-0 text-uppercase" style="color: rgb(69,166,81); font-weight: 600 !important; font-size: 12px !important;">Staff <?php echo $i; ?></         h6>
+                    </div>
+                    <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
+                      <?php echo htmlspecialchars($staff['emp_name']); ?>
+                    </h6>
+              
+                    <?php if (!empty($staff['audit_dols']['SOC 1'])): ?>
+                      <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
+                        <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 1']); ?>
+                      </p>
+                    <?php endif; ?>
+                    
+                    <?php if (!empty($staff['audit_dols']['SOC 2'])): ?>
+                      <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
+                        <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 2']); ?>
+                      </p>
+                    <?php endif; ?>
+                  </div>
+                </div>
+            <?php 
+              $i++;
+              endforeach; 
+            endif; ?>
           </div>
-          <h6 class="fw-semibold" style="color: rgb(0,42,0); font-size: 20px;">
-            <?php echo htmlspecialchars($staff['emp_name']); ?>
-          </h6>
 
-          <?php if (!empty($staff['audit_dols']['SOC 1'])): ?>
-            <p class="pt-2" style="color: rgb(0,142,0); font-size: 12px;">
-              <strong>SOC 1 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 1']); ?>
-            </p>
-          <?php endif; ?>
 
-          <?php if (!empty($staff['audit_dols']['SOC 2'])): ?>
-            <p class="pt-1" style="color: rgb(0,142,0); font-size: 12px;">
-              <strong>SOC 2 DOL:</strong> <?php echo htmlspecialchars($staff['audit_dols']['SOC 2']); ?>
-            </p>
-          <?php endif; ?>
+              <!-- No team assigned message -->
+              <?php if (empty($team['Manager']) && empty($team['Senior']) && empty($team['Staff'])): ?>
+                <p id="noTeamMsg" class="text-muted" style="font-style: italic;">No team assigned yet.</p>
+              <?php endif; ?>
+              
+            </div>
+          </div>
         </div>
-      </div>
-  <?php 
-    $i++;
-    endforeach; 
-  endif; ?>
-</div>
 
-
-      <!-- No team assigned message -->
-      <?php if (empty($team['Manager']) && empty($team['Senior']) && empty($team['Staff'])): ?>
-        <p id="noTeamMsg" class="text-muted" style="font-style: italic;">No team assigned yet.</p>
-      <?php endif; ?>
-
-    </div>
-  </div>
-</div>
-
-<script>
-  
-
-
-</script>
 
 
       <!-- end LEFT COLUMN (team) -->
@@ -982,27 +976,30 @@ $totalEngagements = count($engagements);
 
 
               <!-- Internal Planning Call -->
-                <div class="d-flex align-items-center position-relative">
-                  <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
-                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                         style="width:44px;height:44px;background-color: <?= $internalPlanning['color']; ?>;">
-                      <i class="bi bi-telephone"></i>
-                    </div>
-                  </div>
+<div class="d-flex align-items-center position-relative">
+  <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
+    <div class="rounded-circle text-white d-flex align-items-center justify-content-center milestone-toggle"
+         data-ms-id="<?= $internalPlanning['ms_id']; ?>"
+         style="width:44px;height:44px;background-color: <?= $internalPlanning['color']; ?>;cursor:pointer;">
+      <i class="bi bi-telephone"></i>
+    </div>
+    <small class="text-muted mt-1"><?= $internalPlanning['is_completed'] === 'Y' ? 'Completed' : 'Pending'; ?></small>
+  </div>
 
-                  <div class="flex-grow-1">
-                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                        <span class="fw-semibold">Internal Planning Call</span>
-                        <span class="fw-semibold <?= $internalPlanning['textClass']; ?>"
-                              style="color: <?= $internalPlanning['color']; ?>;">
-                          <?= $internalPlanning['text'] ?? 'Internal planning call not found'; ?>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <!-- end Internal Planning Call -->
+  <div class="flex-grow-1">
+    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
+        <span class="fw-semibold">Internal Planning Call</span>
+        <span class="fw-semibold <?= $internalPlanning['textClass']; ?>"
+              style="color: <?= $internalPlanning['color']; ?>;">
+          <?= $internalPlanning['is_completed'] === 'Y' ? 'Completed' : 'Pending'; ?>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end Internal Planning Call -->
+
 
               <!-- IRL Due -->
                 <div class="d-flex align-items-center position-relative mt-3">
