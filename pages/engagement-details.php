@@ -23,28 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     }
 }
 
-// // Check if eng_idno is in the URL
-// if (isset($_GET['eng_id'])) {
-//     $eng_id = $_GET['eng_id'];
-
-//     $stmt = $conn->prepare("SELECT * FROM engagements WHERE eng_idno = ?");
-//     $stmt->bind_param("s", $eng_id);
-//     $stmt->execute();
-//     $result = $stmt->get_result();
-
-//     if ($result->num_rows > 0) {
-//         $eng = $result->fetch_assoc();
-//     } else {
-//         echo "<div class='alert alert-warning'>Engagement not found.</div>";
-//         exit;
-//     }
-
-//     $stmt->close();
-// } else {
-//     echo "<div class='alert alert-danger'>No engagement specified.</div>";
-//     exit;
-// }
-
 
 if (isset($_GET['eng_id'])) {
 
