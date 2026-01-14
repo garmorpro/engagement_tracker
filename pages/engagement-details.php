@@ -874,7 +874,7 @@ $totalEngagements = count($engagements);
             </div>
 
             <!-- FLOATED BUTTON -->
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#milestonesModal">
+            <button class="btn" style="border: none;" data-bs-toggle="modal" data-bs-target="#milestonesModal">
                 Edit Milestone Dates
             </button>
         </div>
