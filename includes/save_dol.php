@@ -27,48 +27,22 @@ foreach ($dol as $emp_id => $audits) {
     $stmt->close();
 
     if (!$emp) continue; // skip if employee not found
-    $empName  = $emp['emp_name'];
-    $roleName = $emp['role'];
 
-    // Update or insert DOL for each audit type
+    // Update DOL for each audit type
     foreach ($audits as $auditType => $dolValue) {
         $auditType = trim($auditType);
         $dolValue  = trim((string)$dolValue);
         $dolValue  = ($dolValue === '') ? null : $dolValue;
 
-        // Check if this audit_type already exists for this emp
-        $check = $conn->prepare("
-            SELECT emp_id 
-            FROM engagement_team 
+        // Only update existing rows; do NOT insert
+        $update = $conn->prepare("
+            UPDATE engagement_team
+            SET emp_dol = ?
             WHERE eng_id = ? AND emp_id = ? AND audit_type LIKE CONCAT(?, '%')
-            LIMIT 1
         ");
-        $check->bind_param("iis", $eng_id, $emp_id_int, $auditType);
-        $check->execute();
-        $result = $check->get_result();
-        $existing = $result->fetch_assoc();
-        $check->close();
-
-        if ($existing) {
-            // Update existing DOL
-            $update = $conn->prepare("
-                UPDATE engagement_team
-                SET emp_dol = ?
-                WHERE eng_id = ? AND emp_id = ? AND audit_type LIKE CONCAT(?, '%')
-            ");
-            $update->bind_param("siis", $dolValue, $eng_id, $emp_id_int, $auditType);
-            $update->execute();
-            $update->close();
-        } else {
-            // Insert new audit_type row for existing team member
-            $insert = $conn->prepare("
-                INSERT INTO engagement_team (eng_id, emp_id, emp_name, role, audit_type, emp_dol)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ");
-            $insert->bind_param("iissss", $eng_id, $emp_id_int, $empName, $roleName, $auditType, $dolValue);
-            $insert->execute();
-            $insert->close();
-        }
+        $update->bind_param("siis", $dolValue, $eng_id, $emp_id_int, $auditType);
+        $update->execute();
+        $update->close();
     }
 }
 
