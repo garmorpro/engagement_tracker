@@ -875,20 +875,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // HELPERS
   // ===============================
   function getTeamMembers() {
-    const members = [];
-    const collect = (container, type) => {
-      container.querySelectorAll('.card').forEach(card => {
-        const empId = card.getAttribute('data-emp-id');
-        const name = card.querySelector('h6.fw-semibold')?.textContent.trim();
-        if (empId && name) {
-          members.push({ empId, name, type, role: type === 'senior' ? 'Senior' : 'Staff' });
-        }
-      });
-    };
-    collect(seniorsContainer, 'Senior');
-    collect(staffContainer, 'Staff');
-    return members;
-  }
+  // Build team members directly from PHP-provided data
+  return existingDOLData.map(row => ({
+    emp_id: row.emp_id,
+    name: row.name,
+    type: row.type.toLowerCase(), // 'senior' or 'staff'
+    role: row.type.charAt(0).toUpperCase() + row.type.slice(1) // 'Senior' or 'Staff'
+  }));
+}
+
 
   function getExistingDOL(empId, auditType) {
     const row = existingDOLData.find(r => r.emp_id == empId);
