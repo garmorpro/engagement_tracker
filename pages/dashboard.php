@@ -221,7 +221,7 @@ $totalEngagements = count($engagements);
     <?php include_once '../includes/status_cards.php'; ?>
 
     <!-- Search bar -->
-          <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
+          <!-- <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
               <div class="p-3 border d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15); border-radius: 15px;">
                   <div class="input-group flex-grow-1 me-3">
                       <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
@@ -229,12 +229,11 @@ $totalEngagements = count($engagements);
                       </span>
                       <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);;" placeholder="Search...">
                   </div>
-                  <!-- Filter button -->
                   <button class="btn filter-btn d-flex" >
                     <i class="bi bi-funnel me-1"></i> Filter
                   </button>
               </div>
-          </div>
+          </div> -->
     <!-- end search bar -->
   
     <!-- Board sections -->
