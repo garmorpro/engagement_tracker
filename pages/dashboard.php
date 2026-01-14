@@ -236,7 +236,7 @@ require_once '../includes/functions.php';
                                 $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                                 ?>
 
-                                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
+                                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_id']); ?>"
                                    class="text-decoration-none text-reset d-block">
                                     
                                     <!-- ✅ DRAGGABLE CARD -->
@@ -273,11 +273,11 @@ require_once '../includes/functions.php';
                                                 <div class="pb-2"></div>
                                     
                                                 <span style="font-size: 14px;">
-                                                    <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
+                                                    <i class="bi bi-people"></i>&nbsp;<?php //echo htmlspecialchars($eng['eng_manager']); ?>
                                                 </span><br>
                                     
-                                                <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
-                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                                <span style="font-size: 14px; color: <?php //echo $dateColor; ?>;">
+                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php //echo htmlspecialchars($finalDueDate); ?>
                                                 </span> <br>
                                     
                                                 <div class="tags pt-2">
@@ -353,7 +353,7 @@ require_once '../includes/functions.php';
                                 $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                                 ?>
 
-                                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno'] ?? ''); ?>"
+                                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_id'] ?? ''); ?>"
                                    class="text-decoration-none text-reset d-block">
                                     
                                     <!-- ✅ DRAGGABLE CARD -->
@@ -389,11 +389,11 @@ require_once '../includes/functions.php';
                                                 <div class="pb-2"></div>
                                     
                                                 <span style="font-size: 14px;">
-                                                    <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>
+                                                    <i class="bi bi-people"></i>&nbsp;<?php //echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>
                                                 </span><br>
                                     
-                                                <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
-                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                                <span style="font-size: 14px; color: <?php //echo $dateColor; ?>;">
+                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php //echo htmlspecialchars($finalDueDate); ?>
                                                 </span> <br>
                                     
                                                 <div class="tags pt-2">
@@ -475,7 +475,7 @@ require_once '../includes/functions.php';
                         // Red only if past due, otherwise black
                         $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                         ?>
-                        <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>" class="text-decoration-none text-reset d-block">
+                        <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_id']); ?>" class="text-decoration-none text-reset d-block">
                           <div class="card engagement-card-kanban mb-2"
                                draggable="true"
                                data-id="<?php echo $eng['eng_idno'] ?? ''; ?>"
@@ -498,10 +498,10 @@ require_once '../includes/functions.php';
                               <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px !important;">
                                 <span style="color: rgb(106,115,130); font-size: 14px;"><?php echo htmlspecialchars($eng['eng_idno']); ?></span><br>
                                 <div class="pb-2"></div>
-                                <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?></span><br>
+                                <span style="font-size: 14px;"><i class="bi bi-people"></i>&nbsp;<?php //echo htmlspecialchars($eng['eng_manager']); ?></span><br>
 
-                                <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
-                                    <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                <span style="font-size: 14px; color: <?php //echo $dateColor; ?>;">
+                                    <i class="bi bi-calendar2"></i>&nbsp;<?php //echo htmlspecialchars($finalDueDate); ?>
                                 </span> <br>
                         
                                 <div class="tags pt-2">
@@ -585,7 +585,7 @@ require_once '../includes/functions.php';
                             $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
                             ?>
 
-                            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_idno']); ?>"
+                            <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_id']); ?>"
                                class="text-decoration-none text-reset d-block">
                                 
                                 <!-- ✅ DRAGGABLE CARD -->
@@ -617,11 +617,11 @@ require_once '../includes/functions.php';
                                         <!-- RIGHT -->
                                         <div class="d-flex align-items-center gap-3 text-secondary">
                                             <span style="font-size: 14px;">
-                                                <i class="bi bi-people"></i>&nbsp;<?php echo htmlspecialchars($eng['eng_manager']); ?>
+                                                <i class="bi bi-people"></i>&nbsp;<?php //echo htmlspecialchars($eng['eng_manager']); ?>
                                             </span>
                                 
-                                            <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
-                                                <i class="bi bi-calendar2"></i>&nbsp;<?php echo htmlspecialchars($finalDueDate); ?>
+                                            <span style="font-size: 14px; color: <?php //echo $dateColor; ?>;">
+                                                <i class="bi bi-calendar2"></i>&nbsp;<?php //echo htmlspecialchars($finalDueDate); ?>
                                             </span> <br>
                                 
                                             <?php if (!empty($eng['eng_audit_type'])): ?>
