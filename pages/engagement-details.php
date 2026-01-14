@@ -956,7 +956,7 @@ document.addEventListener('DOMContentLoaded', () => {
             value="${getExistingDOL(member.emp_id, 'SOC 2')}">
         `;
       }
-
+console.log('Audit Types:', auditTypes);
       card.innerHTML = `
         <div class="fw-bold mb-2">${member.role}: ${member.name}</div>
         ${inputs}
