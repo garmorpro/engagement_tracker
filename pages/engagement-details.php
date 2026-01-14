@@ -905,7 +905,7 @@ if ($eng_id) {
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
-                          <input type="text" name="eng_id" value="<?= htmlspecialchars($eng_id); ?>">
+                          <input type="hidden" name="eng_id" value="<?= htmlspecialchars($eng_id); ?>">
                             <?php foreach ($milestonesData as $ms): ?>
                                 <div class="mb-3">
                                     <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'])); ?></label>
