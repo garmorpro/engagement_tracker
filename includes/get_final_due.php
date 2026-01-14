@@ -3,11 +3,11 @@ require 'db.php'; // DB connection
 
 $eng_id = isset($_GET['eng_id']) ? (int)$_GET['eng_id'] : 0;
 $finalDue = null;
-$completed = false;
+$isCompleted = 'N'; // default
 
 if ($eng_id && isset($conn)) {
     $stmt = $conn->prepare("
-        SELECT due_date, is_completed AS completed
+        SELECT due_date, is_completed
         FROM engagement_milestones
         WHERE eng_id = ?
           AND milestone_type LIKE 'final_report_due%'
@@ -21,7 +21,7 @@ if ($eng_id && isset($conn)) {
         while ($row = $res->fetch_assoc()) {
             if (!empty($row['due_date'])) {
                 $dates[] = $row['due_date'];
-                if ($row['completed']) $completed = true;
+                if ($row['is_completed'] === 'Y') $isCompleted = 'Y';
             }
         }
         $stmt->close();
@@ -30,11 +30,11 @@ if ($eng_id && isset($conn)) {
     }
 }
 
-// Calculate days until or overdue
+// Calculate days until or overdue (only if not completed)
 $today = new DateTime();
 $output = [];
 
-if ($finalDue && !$completed) {
+if ($finalDue && $isCompleted !== 'Y') {
     $dueDate = new DateTime($finalDue);
     $diff = $today->diff($dueDate);
     $days = (int)$diff->format('%r%a'); // negative if past
@@ -42,7 +42,7 @@ if ($finalDue && !$completed) {
     if ($days < 0) {
         $output = [
             'days' => abs($days),
-            'label' => 'Days Overdue',
+            'label' => 'Days Late',
             'color' => '#e53e3e'
         ];
     } else {
@@ -56,6 +56,6 @@ if ($finalDue && !$completed) {
 
 echo json_encode([
     'final_due' => $finalDue ?? null,
-    'completed' => $completed,
+    'is_completed' => $isCompleted,
     'days_info' => $output
 ]);

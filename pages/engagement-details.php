@@ -528,7 +528,13 @@ $totalEngagements = count($engagements);
               <div class="d-flex flex-column align-items-center justify-content-center"
                    style="width: 120px; height: 80px; border-radius: 10px; background-color: #fff; text-align: center;">
                   
-                <script>
+                <div id="finalDueContainer" style="font-family: sans-serif;">
+  <span id="finalDueDisplay" style="font-size: 16px;"></span>
+  <div style="font-size: 20px; font-weight: bold;" id="daysCount"></div>
+  <div style="font-size: 12px;" id="daysLabel"></div>
+</div>
+
+<script>
 fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
   .then(res => res.json())
   .then(data => {
@@ -536,8 +542,8 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
     const daysCount = document.getElementById('daysCount');
     const daysLabel = document.getElementById('daysLabel');
 
-    // If milestone completed
-    if (data.completed) {
+    // If milestone is completed
+    if (data.is_completed === 'Y') {
       dueDisplay.innerHTML = '✅';
       daysCount.textContent = 'Completed';
       daysCount.style.color = 'green';
@@ -560,11 +566,6 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
   });
 </script>
 
-                <div id="finalDueContainer" style="font-family: sans-serif;">
-  <span id="finalDueDisplay" style="font-size: 16px;"></span>
-  <div style="font-size: 20px; font-weight: bold;" id="daysCount"></div>
-  <div style="font-size: 12px;" id="daysLabel"></div>
-</div>
 
 
               </div>
