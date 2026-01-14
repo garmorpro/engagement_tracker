@@ -1035,7 +1035,6 @@ if ($result && $result->num_rows) {
                  style="width:44px;height:44px;background-color: <?= $circleColor; ?>;cursor:pointer;">
                 <i class="bi bi-telephone"></i>
             </div>
-            <small class="text-muted mt-1 toggle-status-text"><?= $completed ? 'Completed' : 'Pending'; ?></small>
         </div>
 
         <div class="flex-grow-1">
