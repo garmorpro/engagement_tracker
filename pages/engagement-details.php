@@ -815,7 +815,9 @@ $totalEngagements = count($engagements);
 </div>
 
 <?php
-// Fetch team from DB for this engagement
+// ===============================
+// FETCH TEAM + DOL DATA
+// ===============================
 $teamData = [];
 $result = $conn->query("
   SELECT emp_id, emp_name, role, audit_type, emp_dol
@@ -823,37 +825,33 @@ $result = $conn->query("
   WHERE eng_id = " . intval($eng['eng_id'])
 );
 
-while($row = $result->fetch_assoc()){
-    $roleType = strtolower($row['role']);
-    if($roleType === 'manager') continue;
+while ($row = $result->fetch_assoc()) {
+  $roleType = strtolower($row['role']);
+  if ($roleType === 'manager') continue;
 
-    $empId   = $row['emp_id'];
-    $empName = trim($row['emp_name'] ?? '');
-    if($empName === '') continue;
+  $empName = trim($row['emp_name'] ?? '');
+  if ($empName === '') continue;
 
-    $auditType = trim($row['audit_type'] ?? '');
-    if(!$auditType) continue;
+  $auditTypeString = trim($row['audit_type'] ?? '');
+  $parts = explode(' ', $auditTypeString);
+  $auditKey = count($parts) >= 2 ? $parts[0] . ' ' . $parts[1] : '';
 
-    $auditKey = implode(' ', array_slice(explode(' ', $auditType), 0, 2));
+  if ($auditKey === '') continue;
 
-    $teamData[$empId]['name'] = $empName;
-    $teamData[$empId]['role'] = $roleType;
-    $teamData[$empId][$auditKey] = $row['emp_dol'];
+  $teamData[$row['emp_id']]['emp_id'] = $row['emp_id'];
+  $teamData[$row['emp_id']]['name']   = $empName;
+  $teamData[$row['emp_id']]['type']   = $roleType;
+  $teamData[$row['emp_id']][$auditKey] = $row['emp_dol'];
 }
 
-// Convert to JS-safe array
-$dolData = [];
-foreach($teamData as $empId => $data){
-    $dolData[] = array_merge(['emp_id' => $empId], $data);
-}
+$dolData = array_values($teamData);
 ?>
 
 <script>
-const existingDOLData = <?php echo json_encode($dolData); ?>;
-
 document.addEventListener('DOMContentLoaded', () => {
 
   const engId = "<?php echo $eng['eng_id']; ?>";
+  const existingDOLData = <?php echo json_encode($dolData); ?>;
 
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
   const auditTypes = rawAuditTypes.map(t => t.trim().split(' ').slice(0,2).join(' '));
@@ -867,79 +865,88 @@ document.addEventListener('DOMContentLoaded', () => {
   const addStaffBtn   = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
 
+  // ===============================
+  // HELPERS
+  // ===============================
   function getTeamMembers() {
     const members = [];
-    [['senior', seniorsContainer], ['staff', staffContainer]].forEach(([type, container]) => {
+    const collect = (container, type) => {
       container.querySelectorAll('.card').forEach(card => {
-        const empId = card.dataset.empId;
-        const name  = card.querySelector('h6.fw-semibold')?.textContent.trim();
-        if(empId && name){
+        const empId = card.getAttribute('data-emp-id');
+        const name = card.querySelector('h6.fw-semibold')?.textContent.trim();
+        if (empId && name) {
           members.push({ empId, name, type, role: type === 'senior' ? 'Senior' : 'Staff' });
         }
       });
-    });
+    };
+    collect(seniorsContainer, 'senior');
+    collect(staffContainer, 'staff');
     return members;
   }
 
-  function updateDOLButtons(){
+  function getExistingDOL(empId, auditType) {
+    const row = existingDOLData.find(r => r.emp_id == empId);
+    return row && row[auditType] ? row[auditType] : '';
+  }
+
+  // ===============================
+  // DOL BUTTON (ONE BUTTON ONLY)
+  // ===============================
+  function updateDOLButtons() {
     dolButtonsContainer.innerHTML = '';
-    if(getTeamMembers().length === 0) return;
+    if (getTeamMembers().length === 0) return;
 
     const btn = document.createElement('a');
     btn.href = 'javascript:void(0)';
     btn.className = 'text-decoration-none text-warning fw-semibold';
     btn.innerHTML = '<i class="bi bi-diagram-3 me-1"></i> DOL';
-    btn.onclick = openDOLModal;
+    btn.addEventListener('click', openDOLModal);
 
     dolButtonsContainer.appendChild(btn);
   }
 
-  function getExistingDOL(empId, audit){
-    const record = existingDOLData.find(r => r.emp_id == empId);
-    return record && record[audit] ? record[audit] : '';
-  }
-
-  function openDOLModal(){
+  // ===============================
+  // OPEN DOL MODAL
+  // ===============================
+  function openDOLModal() {
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
 
     const header = document.createElement('div');
-    header.className = 'mb-3 p-3 border rounded';
-    header.style.background = '#f0f6fe';
+    header.className = 'mb-3 p-4 border rounded';
+    header.style.background = 'rgb(240,246,254)';
     header.innerHTML = `
-      <div class="fw-bold mb-2">Audit Type</div>
+      <div class="fw-bold mb-2">Audit Types</div>
       ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
       <div class="mt-2 text-muted" style="font-size:13px">
         ${auditTypes.includes('SOC 1') ? 'SOC 1 → CO1, CO2, CO3' : ''}
-        ${auditTypes.includes('SOC 2') ? ' &nbsp;•&nbsp; SOC 2 → CC1, CC2, CC3' : ''}
+        ${auditTypes.includes('SOC 2') ? ' • SOC 2 → CC1, CC2, CC3' : ''}
       </div>
     `;
     modalBody.appendChild(header);
 
     getTeamMembers().forEach(member => {
-
       const isSenior = member.type === 'senior';
+
       const card = document.createElement('div');
       card.className = 'mb-3 p-3 border rounded';
       card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
       let inputs = '';
-
-      if(auditTypes.includes('SOC 1')){
+      if (auditTypes.includes('SOC 1')) {
         inputs += `
-          <label class="form-label">SOC 1</label>
           <input class="form-control mb-2"
             name="dol[${member.empId}][SOC 1]"
-            value="${getExistingDOL(member.empId,'SOC 1')}">
+            placeholder="SOC 1 (CO1, CO2...)"
+            value="${getExistingDOL(member.empId, 'SOC 1')}">
         `;
       }
-
-      if(auditTypes.includes('SOC 2')){
+      if (auditTypes.includes('SOC 2')) {
         inputs += `
-          <label class="form-label">SOC 2</label>
-          <input class="form-control mb-2"
+          <input class="form-control"
             name="dol[${member.empId}][SOC 2]"
-            value="${getExistingDOL(member.empId,'SOC 2')}">
+            placeholder="SOC 2 (CC1, CC2...)"
+            value="${getExistingDOL(member.empId, 'SOC 2')}">
         `;
       }
 
@@ -947,28 +954,45 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="fw-bold mb-2">${member.role}: ${member.name}</div>
         ${inputs}
       `;
-
       modalBody.appendChild(card);
     });
 
     new bootstrap.Modal(document.getElementById('dolModal')).show();
   }
 
+  // ===============================
+  // SAVE DOL
+  // ===============================
   document.getElementById('dolForm').addEventListener('submit', e => {
     e.preventDefault();
     const formData = new FormData(e.target);
     formData.append('eng_id', engId);
 
-    fetch('../includes/save_dol.php',{ method:'POST', body: formData })
+    fetch('../includes/save_dol.php', { method:'POST', body:formData })
       .then(r => r.json())
-      .then(d => {
-        if(d.success){
-          bootstrap.Modal.getInstance(document.getElementById('dolModal')).hide();
-          location.reload();
-        } else alert(d.error || 'Save failed');
+      .then(r => {
+        if (r.success) location.reload();
+        else alert('Save failed');
       });
   });
 
+  // ===============================
+  // TEAM BUTTONS (UNCHANGED)
+  // ===============================
+  function getNextIndex(container) {
+    for (let i = 1; i <= 2; i++) {
+      if (!container.querySelector(`.card[data-index="${i}"]`)) return i;
+    }
+    return null;
+  }
+
+  function updateButtons() {
+    addSeniorBtn.style.display = getNextIndex(seniorsContainer) ? 'inline-block' : 'none';
+    addStaffBtn.style.display  = getNextIndex(staffContainer) ? 'inline-block' : 'none';
+    addManagerBtn.style.display = managerContainer.querySelector('.card') ? 'none' : 'inline-block';
+  }
+
+  updateButtons();
   updateDOLButtons();
 });
 </script>
