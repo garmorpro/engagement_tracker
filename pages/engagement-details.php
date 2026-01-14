@@ -1032,23 +1032,26 @@ if ($result && $result->num_rows) {
         <div class="d-flex flex-column align-items-center me-3 position-relative z-1">
             <div class="rounded-circle text-white d-flex align-items-center justify-content-center milestone-toggle"
                  data-ms-id="<?= $internalPlanning['ms_id']; ?>"
+                 data-completed="<?= $completed ? 'Y' : 'N' ?>"
                  style="width:44px;height:44px;background-color: <?= $circleColor; ?>;cursor:pointer;">
                 <i class="bi bi-telephone"></i>
             </div>
+            <small class="text-muted mt-1"><?= $completed ? 'Completed' : 'Pending'; ?></small>
         </div>
 
         <div class="flex-grow-1">
             <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
                 <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                    <span class="fw-semibold"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $internalPlanning['milestone_type']))); ?></span>
+                    <span class="fw-semibold"><?= htmlspecialchars(ucwords(str_replace('_', ' ', $internalPlanning['milestone_type']))); ?> (<?= htmlspecialchars($internalPlanning['eng_name']); ?>)</span>
                     <span class="fw-semibold toggle-status-text" style="color: <?= $circleColor; ?>;">
-                        <?= htmlspecialchars($dueDate); ?>
+                        <?= $completed ? 'Completed' : 'Pending'; ?> • <?= htmlspecialchars($dueDate); ?>
                     </span>
                 </div>
             </div>
         </div>
     </div>
 <?php endforeach; ?>
+
 
 
 <script>
