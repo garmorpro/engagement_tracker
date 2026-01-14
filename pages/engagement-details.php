@@ -814,26 +814,6 @@ $totalEngagements = count($engagements);
   </div>
 </div>
 
-<?php
-$eng_id = $_GET['eng_id'] ?? 0;
-
-// Fetch team members and DOLs
-$sql = "SELECT * FROM engagement_team WHERE eng_id = ? ORDER BY role, emp_id";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $eng_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$team = ['Manager'=>[], 'Senior'=>[], 'Staff'=>[]];
-while ($row = $result->fetch_assoc()) {
-    // Assume audit_dols is stored as JSON in DB
-    $row['audit_dols'] = json_decode($row['audit_dols'] ?? '{}', true);
-    $team[$row['role']][] = $row;
-}
-?>
-
-
-
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const maxSeniors = 2;
@@ -850,17 +830,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const addStaffBtn = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
 
-  // Helper: get all team members and their current DOL
+  // Get all team members (excluding managers for DOL)
   function getTeamMembers(){
     const members = [];
-    if(managerContainer.querySelector('.card')){
-      members.push({
-        role:'Manager', 
-        name: managerContainer.querySelector('h6.fw-semibold')?.textContent.trim() || '', 
-        type:'manager',
-        dol: {}
-      });
-    }
+
     seniorsContainer.querySelectorAll('.card').forEach((card,i)=>{
       const dol = {};
       card.querySelectorAll('p').forEach(p=>{
@@ -875,6 +848,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dol
       });
     });
+
     staffContainer.querySelectorAll('.card').forEach((card,i)=>{
       const dol = {};
       card.querySelectorAll('p').forEach(p=>{
@@ -889,10 +863,11 @@ document.addEventListener('DOMContentLoaded', () => {
         dol
       });
     });
+
     return members;
   }
 
-  // Check if any DOL exists
+  // Check if any DOL exists (excluding managers)
   function hasAnyDOL(){
     const cards = [...seniorsContainer.querySelectorAll('.card'), ...staffContainer.querySelectorAll('.card')];
     return cards.some(c=>c.querySelector('p'));
@@ -902,27 +877,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateDOLButtons(){
     dolButtonsContainer.innerHTML = '';
     const teamMembers = getTeamMembers();
-    const hasTeam = teamMembers.length>0;
-    const hasDOL = hasAnyDOL();
-    if(hasTeam){
-      const btn = document.createElement('a');
-      btn.href="javascript:void(0);";
-      btn.className="text-decoration-none text-warning fw-semibold";
-      if(!hasDOL){
-        btn.innerHTML='<i class="bi bi-plus-circle me-1"></i> Add DOL';
-      } else {
-        btn.innerHTML='<i class="bi bi-pencil-square me-1"></i> Edit DOL';
-      }
-      btn.addEventListener('click', openDOLModal);
-      dolButtonsContainer.appendChild(btn);
-    }
+    if(teamMembers.length === 0) return; // no senior/staff, hide button
+
+    const btn = document.createElement('a');
+    btn.href="javascript:void(0);";
+    btn.className="text-decoration-none text-warning fw-semibold";
+    btn.innerHTML = hasAnyDOL() 
+      ? '<i class="bi bi-pencil-square me-1"></i> Edit DOL'
+      : '<i class="bi bi-plus-circle me-1"></i> Add DOL';
+    btn.addEventListener('click', openDOLModal);
+    dolButtonsContainer.appendChild(btn);
   }
 
   // Open DOL modal and populate dynamically
   function openDOLModal(){
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
-    const members = getTeamMembers();
+    const members = getTeamMembers(); // only seniors & staff
 
     members.forEach((member,idx)=>{
       const card = document.createElement('div');
@@ -1066,6 +1037,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateDOLButtons();
 });
 </script>
+
 
 
 
