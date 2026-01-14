@@ -857,42 +857,26 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===============================
   const existingDOLData = <?php echo json_encode($dolData); ?>;
 
-  const seniorsContainer = document.getElementById('seniorsContainer');
-  const staffContainer   = document.getElementById('staffContainer');
-  const managerContainer = document.getElementById('managerContainer');
-  const dolButtonsContainer = document.getElementById('dolButtonsContainer');
-
-  const addSeniorBtn  = document.getElementById('addSeniorBtn');
-  const addStaffBtn   = document.getElementById('addStaffBtn');
+  // Collect all seniors and staff from PHP DOM
+  const seniorCards = Array.from(document.querySelectorAll('#seniorsContainer .card'));
+  const staffCards  = Array.from(document.querySelectorAll('#staffContainer .card'));
 
   // ===============================
-  // Audit Types
-  // ===============================
-  const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
-  const auditTypes = Array.from(new Set(
-    rawAuditTypes
-      .map(t => t.trim().toUpperCase())
-      .filter(t => t.startsWith('SOC'))
-      .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2')
-  ));
-
-  // ===============================
-  // Track temp IDs for new members
-  // ===============================
-  let tempIdCounter = -1;
-
-  // ===============================
-  // TEAM MEMBERS MERGE FUNCTION
+  // Merge team members (DOL + DOM) without duplicates
   // ===============================
   function getTeamMembers() {
     const membersMap = new Map();
 
     const addMember = (empId, name, type) => {
+        // Skip if name or type is missing
         if (!name || !type) return;
+
+        // Ensure empId is valid
         if (empId === undefined || empId === null) return;
 
         const typeLower = type.toLowerCase();
 
+        // Use emp_id as the unique key
         if (!membersMap.has(empId)) {
             membersMap.set(empId, {
                 emp_id: empId,
@@ -903,21 +887,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Collect members only from DB DOL data
+    // 1️⃣ Collect members only from existing DOL data (DB)
     existingDOLData.forEach(row => {
         addMember(row.emp_id, row.name, row.type);
     });
 
-    // Sort seniors first, then staff
+    // Sort: seniors first, then staff, alphabetically
     return Array.from(membersMap.values()).sort((a, b) => {
         if (a.type === b.type) return a.name.localeCompare(b.name);
         return a.type === 'senior' ? -1 : 1;
     });
   }
 
-  // ===============================
-  // GET EXISTING DOL VALUE
-  // ===============================
+  const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
+  const auditTypes = Array.from(new Set(
+    rawAuditTypes
+      .map(t => t.trim().toUpperCase())
+      .filter(t => t.startsWith('SOC'))
+      .map(t => t.startsWith('SOC 1') ? 'SOC 1' : 'SOC 2')
+  ));
+
+  const seniorsContainer = document.getElementById('seniorsContainer');
+  const staffContainer   = document.getElementById('staffContainer');
+  const managerContainer = document.getElementById('managerContainer');
+  const dolButtonsContainer = document.getElementById('dolButtonsContainer');
+
+  const addSeniorBtn  = document.getElementById('addSeniorBtn');
+  const addStaffBtn   = document.getElementById('addStaffBtn');
+  const addManagerBtn = document.getElementById('addManagerBtn');
+
+  // Get existing DOL value for a member
   function getExistingDOL(empId, auditType) {
     const row = existingDOLData.find(r => r.emp_id == empId);
     return row && row[auditType] ? row[auditType] : '';
@@ -928,8 +927,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===============================
   function updateDOLButtons() {
     dolButtonsContainer.innerHTML = '';
+
     const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
-    if (!members.length) return;
+    if (members.length === 0) return;
 
     const btn = document.createElement('a');
     btn.href = 'javascript:void(0)';
@@ -940,9 +940,6 @@ document.addEventListener('DOMContentLoaded', () => {
     dolButtonsContainer.appendChild(btn);
   }
 
-  // ===============================
-  // OPEN DOL MODAL
-  // ===============================
   function openDOLModal() {
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
@@ -969,13 +966,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    let tempIdCounter = -1; // for new DOM-only members
+
     members.forEach(member => {
       const isSenior = member.type === 'senior';
       const card = document.createElement('div');
       card.className = 'mb-3 p-3 border rounded';
       card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
-      const empIdForInput = member.emp_id || tempIdCounter--;
+      let empIdForInput = member.emp_id || tempIdCounter--;
 
       let inputs = '';
       auditTypes.forEach(audit => {
@@ -997,9 +996,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new bootstrap.Modal(document.getElementById('dolModal')).show();
   }
 
-  // ===============================
   // SAVE DOL
-  // ===============================
   document.getElementById('dolForm').addEventListener('submit', async e => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -1030,8 +1027,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ===============================
-  // TEAM ADD BUTTONS
+  // TEAM BUTTONS (Add Senior / Staff)
   // ===============================
+  let tempIdCounter = -1;
+
   function getNextIndex(container) {
     const cards = container.querySelectorAll('.card');
     return cards.length < 2 ? cards.length + 1 : null;
@@ -1040,12 +1039,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateButtons() {
     addSeniorBtn.style.display = getNextIndex(seniorsContainer) ? 'inline-block' : 'none';
     addStaffBtn.style.display  = getNextIndex(staffContainer) ? 'inline-block' : 'none';
+    addManagerBtn.style.display = managerContainer.querySelector('.card') ? 'none' : 'inline-block';
   }
 
   function addTeamMember(type) {
     const container = type === 'senior' ? seniorsContainer : staffContainer;
     const nextIndex = getNextIndex(container);
-    if (!nextIndex) return;
+    if (!nextIndex) return; // max reached
 
     const card = document.createElement('div');
     card.className = 'card mb-2 p-2 border rounded';
@@ -1062,9 +1062,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateButtons();
   }
 
+  // Attach button click handlers
   addSeniorBtn.addEventListener('click', () => addTeamMember('senior'));
   addStaffBtn.addEventListener('click', () => addTeamMember('staff'));
 
+  // Initial button state
   updateButtons();
   updateDOLButtons();
 
