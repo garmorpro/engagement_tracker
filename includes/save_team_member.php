@@ -5,9 +5,10 @@ include '../includes/db.php';
 $eng_id = $_POST['eng_id'] ?? '';
 $type   = $_POST['type'] ?? ''; // "manager", "senior" or "staff"
 $name   = trim($_POST['name'] ?? '');
+$auditTypes = $_POST['audit_types'] ?? []; // expect array of "SOC 1" and/or "SOC 2"
 
 // Validate input
-if (!in_array($type, ['manager','senior','staff']) || $eng_id === '' || $name === '') {
+if (!in_array($type, ['manager','senior','staff']) || $eng_id === '' || $name === '' || !is_array($auditTypes)) {
     echo json_encode(['success' => false, 'error' => 'Invalid input']);
     exit;
 }
@@ -29,10 +30,10 @@ if ($role === 'Manager') {
     }
 }
 
-// Insert new team member into engagement_team
+// Prepare insert statement
 $stmt = $conn->prepare("
-    INSERT INTO engagement_team (eng_id, emp_name, role)
-    VALUES (?, ?, ?)
+    INSERT INTO engagement_team (eng_id, emp_name, role, audit_type)
+    VALUES (?, ?, ?, ?)
 ");
 
 if (!$stmt) {
@@ -40,8 +41,18 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param("iss", $eng_id, $name, $role);
-$success = $stmt->execute();
+// Insert one row per audit type
+$allSuccess = true;
+foreach ($auditTypes as $audit) {
+    $audit = trim($audit);
+    if (!in_array($audit, ['SOC 1', 'SOC 2'])) continue;
 
-echo json_encode(['success' => $success, 'error' => $stmt->error]);
+    $stmt->bind_param("isss", $eng_id, $name, $role, $audit);
+    $success = $stmt->execute();
+    if (!$success) $allSuccess = false;
+}
+
+$stmt->close();
+
+echo json_encode(['success' => $allSuccess, 'error' => $allSuccess ? '' : $conn->error]);
 exit;
