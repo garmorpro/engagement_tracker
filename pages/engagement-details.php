@@ -879,6 +879,60 @@ $totalEngagements = count($engagements);
             </button>
         </div>
 
+        <!-- ============================
+             MILESTONE MODAL
+        ============================ -->
+        <div class="modal fade" id="milestonesModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <form id="milestonesForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Milestone Dates</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <?php foreach ($milestonesData as $ms): ?>
+                                <div class="mb-3">
+                                    <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'])); ?></label>
+                                    <input type="date" class="form-control" name="due_date[<?= $ms['ms_id']; ?>]" value="<?= htmlspecialchars($ms['due_date']); ?>">
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save Dates</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+        document.getElementById('milestonesForm')?.addEventListener('submit', async e => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            formData.append('eng_id', <?= $eng_id ?>);
+
+            try {
+                const res = await fetch('../includes/save_milestones.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    alert('Milestones updated successfully');
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to save milestones');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error');
+            }
+        });
+        </script>
+
                 
                 <?php
 
