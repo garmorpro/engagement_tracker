@@ -6,7 +6,7 @@
       <form id="addDOLForm" method="post">
 
         <!-- HEADER -->
-        <div class="modal-header border-0">
+        <div class="modal-header">
           <div class="d-flex align-items-center gap-3">
             <div class="dol-header-icon">
               <i class="bi bi-clipboard-check"></i>
@@ -62,7 +62,7 @@
         </div>
 
         <!-- FOOTER -->
-        <div class="modal-footer border-0">
+        <div class="modal-footer">
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">
             Cancel
           </button>
@@ -86,7 +86,7 @@
       <form id="editDOLForm" method="post">
 
         <!-- HEADER -->
-        <div class="modal-header border-0">
+        <div class="modal-header">
           <div class="d-flex align-items-center gap-3">
             <div class="dol-header-icon">
               <i class="bi bi-clipboard-check"></i>
@@ -142,7 +142,7 @@
         </div>
 
         <!-- FOOTER -->
-        <div class="modal-footer border-0">
+        <div class="modal-footer">
           <button type="button" class="btn btn-light" data-bs-dismiss="modal">
             Cancel
           </button>

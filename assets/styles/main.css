@@ -604,9 +604,9 @@ body {
     color: #6f42c1;
   }
 
-  .modal-xl {
+  /* .modal-xl {
     max-width: 900px;
-  }
+  } */
 
   .dol-card .form-control {
     border-radius: 10px;
