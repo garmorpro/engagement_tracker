@@ -869,30 +869,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper to add a member
     const addMember = (empId, name, type, role) => {
-      if (!membersMap.has(empId)) {
-        membersMap.set(empId, { emp_id: empId, name, type, role });
+      // Prevent duplicates by emp_id first, then by name
+      if (!empId && membersMap.has(name)) return; // already added by name
+      const key = empId || name; // use real ID if exists, else name
+      if (!membersMap.has(key)) {
+        membersMap.set(key, { emp_id: empId || key, name, type, role });
       }
     };
 
     // Collect from DOM
-    // const collect = (cards, type) => {
-    //   cards.forEach(card => {
-    //     const empId = card.getAttribute('data-emp-id') || `new-${type}-${membersMap.size}`;
-    //     const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
-    //     if (!name) return;
-    //     addMember(empId, name, type.toLowerCase(), type.charAt(0).toUpperCase() + type.slice(1));
-    //   });
-    // };
+    const collect = (cards, type) => {
+      cards.forEach(card => {
+        const empId = card.getAttribute('data-emp-id') || '';
+        const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
+        if (!name) return;
+        addMember(empId, name, type.toLowerCase(), type.charAt(0).toUpperCase() + type.slice(1));
+      });
+    };
     collect(seniorCards, 'Senior');
     collect(staffCards, 'Staff');
 
     // Collect from existing DOL data
     existingDOLData.forEach(row => {
-      const empId = row.emp_id;
-      const name = row.name;
-      const type = row.type.toLowerCase();
-      const role = row.type.charAt(0).toUpperCase() + row.type.slice(1);
-      addMember(empId, name, type, role);
+      addMember(row.emp_id, row.name, row.type.toLowerCase(), row.type.charAt(0).toUpperCase() + row.type.slice(1));
     });
 
     return Array.from(membersMap.values());
@@ -974,7 +973,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       let inputs = '';
       auditTypes.forEach(audit => {
-        // Only show DOL value once per member
         const dolValue = getExistingDOL(member.emp_id, audit) || '';
         inputs += `
           <div class="mb-2">
