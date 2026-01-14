@@ -34,13 +34,13 @@ foreach ($dol as $emp_id => $audits) {
         $dolValue  = trim((string)$dolValue);
         $dolValue  = ($dolValue === '') ? null : $dolValue;
 
-        // ✅ Update all rows for same employee name + eng_id
+        // ✅ Update row for the specific employee + audit type
         $update = $conn->prepare("
             UPDATE engagement_team
             SET emp_dol = ?
-            WHERE eng_id = ? AND emp_name = ?
+            WHERE eng_id = ? AND emp_name = ? AND audit_type = ?
         ");
-        $update->bind_param("sis", $dolValue, $eng_id, $empName);
+        $update->bind_param("siss", $dolValue, $eng_id, $empName, $auditType);
         $update->execute();
         $update->close();
     }
