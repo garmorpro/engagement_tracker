@@ -867,35 +867,42 @@ document.addEventListener('DOMContentLoaded', () => {
   function getTeamMembers() {
     const membersMap = new Map();
 
-    // Helper to add a member
-    const addMember = (empId, name, type, role) => {
-      // Prevent duplicates by emp_id first, then by name
-      if (!empId && membersMap.has(name)) return; // already added by name
-      const key = empId || name; // use real ID if exists, else name
-      if (!membersMap.has(key)) {
-        membersMap.set(key, { emp_id: empId || key, name, type, role });
-      }
-    };
+    // 1️⃣ First, add all existing DOL data (real emp_id)
+    existingDOLData.forEach(row => {
+        if (!membersMap.has(row.emp_id)) {
+            membersMap.set(row.emp_id, {
+                emp_id: row.emp_id,
+                name: row.name,
+                type: row.type.toLowerCase(),
+                role: row.type.charAt(0).toUpperCase() + row.type.slice(1)
+            });
+        }
+    });
 
-    // Collect from DOM
+    // 2️⃣ Then, collect DOM cards for any new members not in existing DOL
     const collect = (cards, type) => {
-      cards.forEach(card => {
-        const empId = card.getAttribute('data-emp-id') || '';
-        const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
-        if (!name) return;
-        addMember(empId, name, type.toLowerCase(), type.charAt(0).toUpperCase() + type.slice(1));
-      });
+        cards.forEach(card => {
+            const empId = card.getAttribute('data-emp-id') || '';
+            const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
+            if (!name) return;
+
+            // Only add if emp_id is not in existing DOL
+            if (empId && !membersMap.has(empId)) {
+                membersMap.set(empId, {
+                    emp_id: empId,
+                    name,
+                    type: type.toLowerCase(),
+                    role: type.charAt(0).toUpperCase() + type.slice(1)
+                });
+            }
+        });
     };
     collect(seniorCards, 'Senior');
     collect(staffCards, 'Staff');
 
-    // Collect from existing DOL data
-    existingDOLData.forEach(row => {
-      addMember(row.emp_id, row.name, row.type.toLowerCase(), row.type.charAt(0).toUpperCase() + row.type.slice(1));
-    });
-
     return Array.from(membersMap.values());
-  }
+}
+
 
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
   const auditTypes = Array.from(new Set(
