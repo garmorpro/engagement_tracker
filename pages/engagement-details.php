@@ -894,7 +894,23 @@ $totalEngagements = count($engagements);
                 <h6 class="fw-semibold mb-0" style="color: rgb(0,0, 0); font-size: 20px !important;">Engagement Timeline</h6>
               </div>
 
+                
                 <?php
+
+                  $eng_id = $eng['eng_id'] ?? 0; // make sure this is set
+
+$milestones = [];
+if ($eng_id) {
+    $stmt = $conn->prepare("SELECT ms_id, milestone_type, audit_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
+    $stmt->bind_param("i", $eng_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $milestones[$row['milestone_type']] = $row;
+    }
+    $stmt->close();
+}
+
                 function timelineDate($dateValue) {
                     $hasDate = !empty($dateValue);
 
