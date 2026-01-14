@@ -273,11 +273,11 @@ foreach ($dateFields as $field => $label):
   const defaultBg = '255,255,255';
   const defaultText = '76,85,100';
   const statusColors = {
+    'on-hold':  {border:'107,114,129', bg:'249,250,251', text:'56,65,82'},
     'planning':  {border:'68,125,252', bg:'240,246,254', text:'35,70,221'},
     'in-progress': {border:'241,115,19', bg:'254,247,238', text:'186,66,13'},
     'in-review':    {border:'160,77,253', bg:'249,245,254', text:'119,17,210'},
-    'complete':    {border:'79,198,95', bg:'242,253,245', text:'51,128,63'},
-    'on-hold':  {border:'107,114,129', bg:'249,250,251', text:'56,65,82'}
+    'complete':    {border:'79,198,95', bg:'242,253,245', text:'51,128,63'}
   };
 
   const applyColors = (card, status, isSelected) => {
