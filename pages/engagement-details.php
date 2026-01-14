@@ -932,8 +932,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Header card with audit type instructions ---
 const headerCard = document.createElement('div');
 headerCard.className = 'dol-card mb-3 p-4 border rounded';
-headerCard.style.background = 'linear-gradient(135deg, #f5f8ff 0%, #eef3ff 100%)';
-headerCard.style.borderColor = '#d6e0ff';
+headerCard.style.background = 'rgb(247,241,254)';
+headerCard.style.borderColor = 'rgb(196,218,252)';
 headerCard.style.boxShadow = '0 4px 12px rgba(31, 60, 255, 0.08)';
 
 let instructionHTML = `
