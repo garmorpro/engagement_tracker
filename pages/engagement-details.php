@@ -1003,18 +1003,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // SAVE DOL
-  document.getElementById('dolForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    formData.append('eng_id', engId);
+document.getElementById('dolForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  formData.append('eng_id', engId);
 
-    fetch('../includes/save_dol.php', { method:'POST', body:formData })
-      .then(r => r.json())
-      .then(r => {
-        if (r.success) location.reload();
-        else alert('Save failed');
-      });
-  });
+  try {
+    const response = await fetch('../includes/save_dol.php', { method: 'POST', body: formData });
+    const text = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(text); // try to parse JSON
+    } catch (err) {
+      console.error('Invalid JSON response from server:', text);
+      alert('Save failed: server returned invalid response.');
+      return;
+    }
+
+    if (data.success) {
+      location.reload();
+    } else {
+      alert('Save failed: ' + (data.error || 'Unknown error'));
+    }
+  } catch (err) {
+    console.error('Fetch error:', err);
+    alert('Save failed: network or server error.');
+  }
+});
+
 
   // TEAM BUTTONS (UNCHANGED)
   function getNextIndex(container) {
