@@ -4,34 +4,47 @@
 require_once '../includes/functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
-    $engId = $_POST['delete_eng_id'];
+    $engId = (int)$_POST['delete_eng_id'];
 
-    // 1️⃣ Delete team members assigned to this engagement
+    // 1️⃣ Delete team members
     $stmtTeam = $conn->prepare("DELETE FROM engagement_team WHERE eng_id = ?");
-    $stmtTeam->bind_param("i", $engId);
-    $stmtTeam->execute();
-    $stmtTeam->close();
+    if ($stmtTeam) {
+        $stmtTeam->bind_param("i", $engId);
+        $stmtTeam->execute();
+        if ($stmtTeam->error) {
+            echo "<div class='alert alert-danger'>Failed to delete team members: " . htmlspecialchars($stmtTeam->error) . "</div>";
+        }
+        $stmtTeam->close();
+    }
 
-    // 2️⃣ Delete milestones assigned to this engagement
+    // 2️⃣ Delete milestones
     $stmtMilestones = $conn->prepare("DELETE FROM engagement_milestones WHERE eng_id = ?");
-    $stmtMilestones->bind_param("i", $engId);
-    $stmtMilestones->execute();
-    $stmtMilestones->close();
+    if ($stmtMilestones) {
+        $stmtMilestones->bind_param("i", $engId);
+        $stmtMilestones->execute();
+        if ($stmtMilestones->error) {
+            echo "<div class='alert alert-danger'>Failed to delete milestones: " . htmlspecialchars($stmtMilestones->error) . "</div>";
+        }
+        $stmtMilestones->close();
+    }
 
     // 3️⃣ Delete the engagement itself
     $stmtEng = $conn->prepare("DELETE FROM engagements WHERE eng_id = ?");
-    $stmtEng->bind_param("i", $engId);
+    if ($stmtEng) {
+        $stmtEng->bind_param("i", $engId);
+        $stmtEng->execute();
 
-    if ($stmtEng->execute()) {
-        // Redirect to avoid resubmission and show success message
-        header("Location: dashboard.php?message=Engagement deleted successfully");
-        exit;
-    } else {
-        echo "<div class='alert alert-danger'>Failed to delete engagement: " . htmlspecialchars($stmtEng->error) . "</div>";
+        if ($stmtEng->error) {
+            echo "<div class='alert alert-danger'>Failed to delete engagement: " . htmlspecialchars($stmtEng->error) . "</div>";
+        } else {
+            header("Location: dashboard.php?message=Engagement deleted successfully");
+            exit;
+        }
+
+        $stmtEng->close();
     }
-
-    $stmtEng->close();
 }
+
 
 
 // Handle editing engagement
