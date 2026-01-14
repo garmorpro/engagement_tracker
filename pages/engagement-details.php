@@ -1069,8 +1069,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'form-control';
-  input.style.fontSize = '20px';
-  input.style.fontWeight = '600';
+  input.style.fontSize = '14px';
+  input.style.fontWeight = '400';
   input.style.color = type === 'manager' ? 'rgb(0,37,132)' : type === 'senior' ? 'rgb(74,0,133)' : 'rgb(0,42,0)';
   input.placeholder = `Enter ${roleName} Name`;
 
