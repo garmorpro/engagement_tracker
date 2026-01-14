@@ -544,6 +544,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
 
     // If milestone is completed
     if (data.is_completed === 'Y') {
+      dueDisplay.innerHTML = '<i class="bi bi-check2-circle"></i>';
       daysCount.textContent = 'Completed';
       daysCount.style.color = 'green';
       daysLabel.textContent = '';
@@ -659,7 +660,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
 fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
   .then(res => res.json())
   .then(data => {
-    document.getElementById('finalDueDisplay').textContent =
+    document.getElementById('final_due_display').textContent =
       data.final_due 
         ? new Date(data.final_due + 'T00:00').toLocaleDateString('en-US', { 
             month: 'short', 
@@ -669,7 +670,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
         : 'N/A';
   });
 </script>
-<span id="finalDueDisplay">Loading...</span>
+<span id="final_due_display">Loading...</span>
 
 
             </p>
