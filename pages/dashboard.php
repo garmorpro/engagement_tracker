@@ -4,25 +4,12 @@
 require_once '../includes/functions.php';
 
 
-
+// ============================
+// FUNCTION TO DETERMINE MILESTONES
+// ============================
 function getMilestones($audit_type) {
-    $audit_type = strtolower($audit_type); // make it case-insensitive
+    $audit_type = strtolower($audit_type); // case-insensitive
     $milestones = [];
-
-    // SOC 1 or SOC 2 individually
-    if (strpos($audit_type, 'soc 1') !== false || strpos($audit_type, 'soc 2') !== false) {
-        $milestones = [
-            'internal_planning_call',
-            'irl_due_date',
-            'client_planning_call',
-            'section_3_requested',
-            'fieldwork',
-            'leadsheet_due',
-            'draft_report_due',
-            'final_report_due',
-            'archive_date'
-        ];
-    }
 
     // Both SOC 1 and SOC 2 together
     if (strpos($audit_type, 'soc 1') !== false && strpos($audit_type, 'soc 2') !== false) {
@@ -41,14 +28,27 @@ function getMilestones($audit_type) {
             'archive_date'
         ];
     }
+    // SOC 1 or SOC 2 individually
+    else if (strpos($audit_type, 'soc 1') !== false || strpos($audit_type, 'soc 2') !== false) {
+        $milestones = [
+            'internal_planning_call',
+            'irl_due_date',
+            'client_planning_call',
+            'section_3_requested',
+            'fieldwork',
+            'leadsheet_due',
+            'draft_report_due',
+            'final_report_due',
+            'archive_date'
+        ];
+    }
 
     return $milestones;
 }
 
-
-
-
-// Handle adding engagement
+// ============================
+// HANDLE ADD ENGAGEMENT
+// ============================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST['action'] === 'add') {
 
     /* ============================
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
     $last_communication = nullDate('eng_last_communication');
 
     /* ============================
-       PREPARE INSERT
+       INSERT ENGAGEMENT
     ============================ */
     $stmt = $conn->prepare("
         INSERT INTO engagements (
@@ -104,14 +104,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
             eng_last_communication,
             eng_notes,
             eng_status
-        ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-        )
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
-    /* ============================
-       BIND (16 params)
-    ============================ */
     $stmt->bind_param(
         "ssssssssssssssss",
         $engId,
@@ -132,29 +127,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
         $status
     );
 
-    /* ============================
-       EXECUTE
-    ============================ */
     if ($stmt->execute()) {
+
+        // Get the inserted engagement ID
+        $engIdInserted = $conn->insert_id;
+
+        // Determine milestones for this engagement
+        $milestones = getMilestones($audit_type);
+
+        if (!empty($milestones)) {
+            $stmtMilestone = $conn->prepare("
+                INSERT INTO engagement_milestones (eng_id, milestone_type) VALUES (?, ?)
+            ");
+
+            foreach ($milestones as $ms) {
+                $stmtMilestone->bind_param("is", $engIdInserted, $ms);
+                $stmtMilestone->execute();
+            }
+        }
+
+        // Redirect AFTER milestones are inserted
         header("Location: dashboard.php?message=Engagement added successfully");
         exit;
-        if ($stmt->execute()) {
-    $engIdInserted = $conn->insert_id; // get the auto-increment eng_id
 
-    $milestones = getMilestones($audit_type);
-
-    $stmtMilestone = $conn->prepare("
-        INSERT INTO engagement_milestones (eng_id, milestone_type) VALUES (?, ?)
-    ");
-
-    foreach ($milestones as $ms) {
-        $stmtMilestone->bind_param("is", $engIdInserted, $ms);
-        $stmtMilestone->execute();
-    }
-
-    header("Location: dashboard.php?message=Engagement added successfully");
-    exit;
-}
     } else {
         echo "<div class='alert alert-danger'>
             Failed to add engagement: " . htmlspecialchars($stmt->error) . "
