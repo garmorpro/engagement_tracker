@@ -888,7 +888,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const addStaffBtn = document.getElementById('addStaffBtn');
   const addManagerBtn = document.getElementById('addManagerBtn');
 
-  // Get all team members including existing DOLs
+  // Collect team members
   function getTeamMembers(){
     const members = [];
     const collect = (container,type)=>{
@@ -929,164 +929,96 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
 
-    // --- Header card with audit type instructions ---
-const headerCard = document.createElement('div');
-headerCard.className = 'dol-card mb-3 p-4 border rounded';
-headerCard.style.background = 'rgb(240,246,254)';
-headerCard.style.borderColor = 'rgb(196,218,252)';
-headerCard.style.boxShadow = '0 4px 12px rgba(31, 60, 255, 0.08)';
+    // --- Header card ---
+    const headerCard = document.createElement('div');
+    headerCard.className = 'dol-card mb-3 p-4 border rounded';
+    headerCard.style.background = 'rgb(240,246,254)';
+    headerCard.style.borderColor = 'rgb(196,218,252)';
+    headerCard.style.boxShadow = '0 4px 12px rgba(31, 60, 255, 0.08)';
 
-let instructionHTML = `
-  <div class="fw-bold mb-2" style="font-size:14px; color:#rgb(35,56,137);">
-    Audit Type
-  </div>
+    let instructionHTML = `<div class="fw-bold mb-2" style="font-size:14px; color:#233889;">Audit Type</div>
+      <div class="mb-2">
+        ${auditTypes.includes('SOC 2') ? '<span class="badge text-bg-secondary me-2" style="background-color: rgb(66, 92, 213) !important;">SOC 2</span>' : ''}
+        ${auditTypes.includes('SOC 1') ? '<span class="badge text-bg-secondary" style="background-color: rgb(66, 92, 213) !important;">SOC 1</span>' : ''}
+      </div>
+      <div style="font-size:13px; color:#5f6b8a;">`;
 
-  <div class="mb-2">
-    ${auditTypes.includes('SOC 2') 
-      ? '<span class="badge text-bg-secondary me-2" style="background-color: rgb(66, 92, 213) !important;">SOC 2</span>' 
-      : ''}
-    ${auditTypes.includes('SOC 1') 
-      ? '<span class="badge text-bg-secondary" style="background-color: rgb(66, 92, 213) !important;">SOC 1</span>' 
-      : ''}
-  </div>
+    const parts = [];
+    if (auditTypes.includes('SOC 1')) parts.push('Use <strong>CO</strong> prefix for SOC 1 (e.g., CO1, CO2)');
+    if (auditTypes.includes('SOC 2')) parts.push('Use <strong>CC</strong> prefix for SOC 2 (e.g., CC1, CC2)');
+    instructionHTML += parts.join(' &nbsp;•&nbsp; ') + '</div>';
 
-  <div style="font-size:13px; color:#5f6b8a;">
-`;
+    headerCard.innerHTML = instructionHTML;
+    modalBody.appendChild(headerCard);
 
-const parts = [];
-if (auditTypes.includes('SOC 1')) {
-  parts.push('Use <strong>CO</strong> prefix for SOC 1 (e.g., CO1, CO2, CO3)');
-}
-if (auditTypes.includes('SOC 2')) {
-  parts.push('Use <strong>CC</strong> prefix for SOC 2 (e.g., CC1, CC2, CC3)');
-}
-
-instructionHTML += parts.join(' &nbsp;•&nbsp; ');
-instructionHTML += '</div>';
-
-headerCard.innerHTML = instructionHTML;
-modalBody.appendChild(headerCard);
-
-
-    // const parts = [];
-    // if(auditTypes.includes('SOC 1')) parts.push('Use CO prefix for SOC 1 (e.g., CO1, CO2, CO3)');
-    // if(auditTypes.includes('SOC 2')) parts.push('Use CC prefix for SOC 2 (e.g., CC1, CC2, CC3)');
-    // instructionHTML += parts.join(' • ');
-    // instructionHTML += '</div>';
-
-    // // --- Full raw audit types from the engagement table ---
-    // instructionHTML += `<div class="mt-2" style="font-size:0.9em; color:#555;">Full Audit Types: ${rawAuditTypes.join(', ')}</div>`;
-
-    // headerCard.innerHTML = instructionHTML;
-    // modalBody.appendChild(headerCard);
-
-    // --- DOL cards for each member ---
+    // --- DOL input cards ---
     const members = getTeamMembers();
+    members.forEach((member, idx) => {
+      const styles = member.type==='senior'
+        ? {bg:'#f6f0ff', border:'#dcc8ff', header:'#5a2dbd', subText:'#7a5dbb', inputBorder:'#bfa6ff', inputFocus:'#7b3fe4'}
+        : {bg:'#f0fbf4', border:'#bfe8cf', header:'#1f7a3f', subText:'#4d8f68', inputBorder:'#8fd3ac', inputFocus:'#2fa66a'};
 
-members.forEach((member, idx) => {
+      const card = document.createElement('div');
+      card.className = 'dol-card mb-3 p-3 border rounded';
+      card.style.backgroundColor = styles.bg;
+      card.style.borderColor = styles.border;
+      card.setAttribute('data-type', member.type);
 
-  /* =============================
-     ROLE-BASED STYLE DEFINITIONS
-  ============================= */
-  const styles = member.type === 'senior'
-    ? {
-        bg: '#f6f0ff',
-        border: '#dcc8ff',
-        header: '#5a2dbd',
-        subText: '#7a5dbb',
-        inputBorder: '#bfa6ff',
-        inputFocus: '#7b3fe4'
+      let inputsHTML = '';
+      if(auditTypes.includes('SOC 1')){
+        inputsHTML += `<div class="mb-2">
+          <label class="form-label" style="color:${styles.subText};">SOC 1 Division of Labor <span style="font-size:12px;">(e.g., CO1, CO2)</span></label>
+          <input type="text" class="form-control new-name" style="border-color:${styles.inputBorder};"
+            onfocus="this.style.borderColor='${styles.inputFocus}'"
+            onblur="this.style.borderColor='${styles.inputBorder}'"
+            name="dol[${member.type}][${idx}][SOC 1]" value="${member.dol['SOC 1']||''}">
+        </div>`;
       }
-    : {
-        bg: '#f0fbf4',
-        border: '#bfe8cf',
-        header: '#1f7a3f',
-        subText: '#4d8f68',
-        inputBorder: '#8fd3ac',
-        inputFocus: '#2fa66a'
-      };
+      if(auditTypes.includes('SOC 2')){
+        inputsHTML += `<div class="mb-2">
+          <label class="form-label" style="color:${styles.subText};">SOC 2 Division of Labor <span style="font-size:12px;">(e.g., CC1, CC2)</span></label>
+          <input type="text" class="form-control new-name" style="border-color:${styles.inputBorder};"
+            onfocus="this.style.borderColor='${styles.inputFocus}'"
+            onblur="this.style.borderColor='${styles.inputBorder}'"
+            name="dol[${member.type}][${idx}][SOC 2]" value="${member.dol['SOC 2']||''}">
+        </div>`;
+      }
 
-  /* =============================
-     CARD CONTAINER
-  ============================= */
-  const card = document.createElement('div');
-  card.className = 'dol-card mb-3 p-3 border rounded';
-  card.style.backgroundColor = styles.bg;
-  card.style.borderColor = styles.border;
-
-  /* =============================
-     INPUT SECTIONS
-  ============================= */
-  let inputsHTML = '';
-
-  if (auditTypes.includes('SOC 1')) {
-    inputsHTML += `
-      <div class="mb-2">
-        <label class="form-label" style="color:${styles.subText};">
-          SOC 1 Division of Labor
-          <span style="font-size:12px;">(e.g., CO1, CO2, CO3)</span>
-        </label>
-        <input
-          type="text"
-          class="form-control"
-          style="border-color:${styles.inputBorder};"
-          onfocus="this.style.borderColor='${styles.inputFocus}'"
-          onblur="this.style.borderColor='${styles.inputBorder}'"
-          name="dol[${member.type}][${idx}][SOC 1]"
-          value="${member.dol['SOC 1'] || ''}">
-      </div>`;
-  }
-
-  if (auditTypes.includes('SOC 2')) {
-    inputsHTML += `
-      <div class="mb-2">
-        <label class="form-label" style="color:${styles.subText};">
-          SOC 2 Division of Labor
-          <span style="font-size:12px;">(e.g., CC1, CC2, CC3)</span>
-        </label>
-        <input
-          type="text"
-          class="form-control"
-          style="border-color:${styles.inputBorder};"
-          onfocus="this.style.borderColor='${styles.inputFocus}'"
-          onblur="this.style.borderColor='${styles.inputBorder}'"
-          name="dol[${member.type}][${idx}][SOC 2]"
-          value="${member.dol['SOC 2'] || ''}">
-      </div>`;
-  }
-
-  /* =============================
-     FINAL CARD HTML
-  ============================= */
-  card.innerHTML = `
-    <div class="fw-bold mb-2" style="color:${styles.header}; font-size:14px;">
-      ${member.role}: ${member.name}
-    </div>
-    ${inputsHTML}
-  `;
-
-  modalBody.appendChild(card);
-});
-
+      card.innerHTML = `<div class="fw-bold mb-2" style="color:${styles.header}; font-size:14px;">${member.role}: ${member.name}</div>${inputsHTML}`;
+      modalBody.appendChild(card);
+    });
 
     new bootstrap.Modal(document.getElementById('dolModal')).show();
   }
 
+  // --- Save DOL ---
   document.getElementById('dolForm').addEventListener('submit', function(e){
     e.preventDefault();
     const formData = new FormData(this);
     formData.append('eng_id', engId);
+
+    // Include employee names
+    document.querySelectorAll('#dolModalBody .dol-card').forEach((card, idx)=>{
+      const type = card.getAttribute('data-type');
+      if(!type) return;
+      const name = card.querySelector('.new-name')?.value || card.querySelector('h6.fw-semibold')?.textContent.trim();
+      if(name) formData.append(`dol_name[${type}][${idx}]`, name);
+    });
+
     fetch('../includes/save_dol.php', { method:'POST', body: formData })
-  .then(res => res.text())
-  .then(text => {
-    console.log(text);
-    const data = JSON.parse(text);
-    if (data.success) {
-      bootstrap.Modal.getInstance(document.getElementById('dolModal')).hide();
-      location.reload();
-    }
-  })
-  .catch(err => alert('AJAX Error: ' + err));
+    .then(res => res.text())
+    .then(text => {
+      try {
+        const data = JSON.parse(text);
+        if(data.success){
+          bootstrap.Modal.getInstance(document.getElementById('dolModal')).hide();
+          location.reload();
+        } else {
+          alert('Error saving DOL: '+(data.error||'Unknown'));
+        }
+      } catch(e){ alert('AJAX parse error'); }
+    })
+    .catch(err => alert('AJAX Error: ' + err));
   });
 
   function getNextIndex(container){
@@ -1172,6 +1104,7 @@ members.forEach((member, idx) => {
   updateDOLButtons();
 });
 </script>
+
 
 
 
