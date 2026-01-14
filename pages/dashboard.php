@@ -276,7 +276,7 @@ searchInput.addEventListener('input', () => {
           item.addEventListener('click', () => {
             const engId = item.dataset.engId;
             if (engId) {
-              window.location.href = `engagement_details.php?eng_id=${engId}`;
+              window.location.href = `engagement-details.php?eng_id=${engId}`;
             }
           });
         });
