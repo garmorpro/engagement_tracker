@@ -937,16 +937,16 @@ headerCard.style.borderColor = 'rgb(196,218,252)';
 headerCard.style.boxShadow = '0 4px 12px rgba(31, 60, 255, 0.08)';
 
 let instructionHTML = `
-  <div class="fw-bold mb-2" style="font-size:14px; color:#1f3cff;">
+  <div class="fw-bold mb-2" style="font-size:14px; color:#rgb(35,56,137);">
     Audit Type
   </div>
 
   <div class="mb-2">
     ${auditTypes.includes('SOC 2') 
-      ? '<span class="badge rounded-pill bg-primary-subtle text-primary me-2">SOC 2</span>' 
+      ? '<span class="badge bg-primary-subtle me-2">SOC 2</span>' 
       : ''}
     ${auditTypes.includes('SOC 1') 
-      ? '<span class="badge rounded-pill bg-info-subtle text-info">SOC 1</span>' 
+      ? '<span class="badge bg-info-subtle">SOC 1</span>' 
       : ''}
   </div>
 
