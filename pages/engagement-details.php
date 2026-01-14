@@ -1043,7 +1043,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('ms_id', msId);
         formData.append('is_completed', newValue);
 
-        const res = await fetch('update_milestone_status.php', { method: 'POST', body: formData });
+        const res = await fetch('../includes/toggle_milestone.php', { method: 'POST', body: formData });
         const data = await res.json();
 
         if (data.success) {
