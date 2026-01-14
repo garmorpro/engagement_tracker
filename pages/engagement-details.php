@@ -977,13 +977,14 @@ document.addEventListener('DOMContentLoaded', () => {
   modalBody.appendChild(header);
 
   // TEAM MEMBERS
-  const members = getTeamMembers().filter(m => m.type === 'senior' || m.type === 'staff');
+  // Filter to only members that have a real emp_id
+  const members = getTeamMembers()
+    .filter(m => (m.type === 'senior' || m.type === 'staff') && m.emp_id);
+
   if (!members.length) {
     modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
     return;
   }
-
-  let tempCounter = 1; // for new DOM-only members
 
   members.forEach(member => {
     const isSenior = member.type === 'senior';
@@ -991,9 +992,6 @@ document.addEventListener('DOMContentLoaded', () => {
     card.className = 'mb-3 p-3 border rounded';
     card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
-    // Use emp_id if it exists, otherwise a unique "new" key
-    let empIdForInput = member.emp_id || `new_${tempCounter++}`;
-    
     let inputs = '';
     auditTypes.forEach(audit => {
       const dolValue = getExistingDOL(member.emp_id, audit) || '';
@@ -1001,7 +999,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="mb-2">
           <label class="form-label small text-muted">${audit} Division of Labor</label>
           <input type="text" class="form-control"
-            name="dol[${empIdForInput}][${audit}]"
+            name="dol[${member.emp_id}][${audit}]"
             value="${dolValue}">
         </div>
       `;
@@ -1013,6 +1011,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   new bootstrap.Modal(document.getElementById('dolModal')).show();
 }
+
 
 
 
