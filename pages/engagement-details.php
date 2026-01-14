@@ -1009,6 +1009,8 @@ while ($row = $result->fetch_assoc()) {
 
 <?php foreach ($milestones as $baseType => $items): ?>
 <?php
+    $hasMultiple = count($items) > 1;
+
     $allCompleted = true;
     foreach ($items as $i) {
         if (($i['is_completed'] ?? 'N') !== 'Y') {
@@ -1030,8 +1032,10 @@ while ($row = $result->fetch_assoc()) {
     <div class="flex-grow-1">
         <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
             <div class="card-body py-3 px-4">
+
+                <!-- Title -->
                 <div class="fw-semibold mb-2">
-                    <?= htmlspecialchars(ucwords(str_replace('_', ' ', $baseType))); ?>
+                    <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
                 </div>
 
                 <?php foreach ($items as $m): ?>
@@ -1039,7 +1043,15 @@ while ($row = $result->fetch_assoc()) {
                         $completed = ($m['is_completed'] ?? 'N') === 'Y';
                         $color = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
 
-                        $label = stripos($m['milestone_type'], 'soc_1') !== false ? 'SOC 1' : 'SOC 2';
+                        // Only show SOC labels if multiple entries exist
+                        $label = '';
+                        if ($hasMultiple) {
+                            if (stripos($m['milestone_type'], 'soc_1') !== false) {
+                                $label = 'SOC 1';
+                            } elseif (stripos($m['milestone_type'], 'soc_2') !== false) {
+                                $label = 'SOC 2';
+                            }
+                        }
 
                         $dueDate = 'No due date';
                         if (!empty($m['due_date'])) {
@@ -1055,13 +1067,17 @@ while ($row = $result->fetch_assoc()) {
                                  data-completed="<?= $m['is_completed']; ?>"
                                  style="width:22px;height:22px;background-color: <?= $color; ?>;cursor:pointer;">
                             </div>
-                            <span class="fw-semibold"><?= $label; ?></span>
+
+                            <?php if ($label): ?>
+                                <span class="fw-semibold"><?= $label; ?></span>
+                            <?php endif; ?>
                         </div>
 
                         <span class="toggle-status-text fw-semibold" style="color: <?= $color; ?>;">
                             <?= htmlspecialchars($dueDate); ?>
                         </span>
                     </div>
+
                 <?php endforeach; ?>
 
             </div>
@@ -1069,6 +1085,7 @@ while ($row = $result->fetch_assoc()) {
     </div>
 </div>
 <?php endforeach; ?>
+
 
 
 
