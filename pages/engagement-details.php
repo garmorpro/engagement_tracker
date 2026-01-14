@@ -547,7 +547,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
     // If milestone is completed
     if (data.is_completed === 'Y') {
       // Big green check circle
-      daysCount.innerHTML = '<i class="bi bi-check2-circle" style="font-size: 48px; color: green;"></i>';
+      daysCount.innerHTML = '<i class="bi bi-check2-circle" style="font-size: 30px; color: green;"></i>';
       // Small "Completed" text below
       daysLabel.textContent = 'Completed';
       daysLabel.style.fontSize = '14px';
