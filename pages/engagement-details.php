@@ -883,46 +883,17 @@ $totalEngagements = count($engagements);
              MILESTONE MODAL
         ============================ -->
         <?php
-        // ============================
-// FUNCTION TO DETERMINE MILESTONES
-// ============================
-function getMilestones($audit_type) {
-    $audit_type = strtolower($audit_type);
-    $milestones = [];
+        $milestonesData = []; // default to empty array to prevent undefined variable
 
-    // Both SOC 1 and SOC 2
-    if (strpos($audit_type, 'soc 1') !== false && strpos($audit_type, 'soc 2') !== false) {
-        $milestones = [
-            'internal_planning_call',
-            'irl_due_date',
-            'client_planning_call',
-            'section_3_requested',
-            'fieldwork',
-            'leadsheet_due_soc_1',
-            'leadsheet_due_soc_2',
-            'draft_report_due_soc_1',
-            'draft_report_due_soc_2',
-            'final_report_due_soc_1',
-            'final_report_due_soc_2',
-            'archive_date'
-        ];
+if ($eng_id) {
+    $stmt = $conn->prepare("SELECT ms_id, milestone_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
+    $stmt->bind_param("i", $eng_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    while ($row = $res->fetch_assoc()) {
+        $milestonesData[$row['ms_id']] = $row; // use ms_id as key
     }
-    // SOC 1 or SOC 2 individually
-    else if (strpos($audit_type, 'soc 1') !== false || strpos($audit_type, 'soc 2') !== false) {
-        $milestones = [
-            'internal_planning_call',
-            'irl_due_date',
-            'client_planning_call',
-            'section_3_requested',
-            'fieldwork',
-            'leadsheet_due',
-            'draft_report_due',
-            'final_report_due',
-            'archive_date'
-        ];
-    }
-
-    return $milestones;
+    $stmt->close();
 }
 ?>
         <div class="modal fade" id="milestonesModal" tabindex="-1" aria-hidden="true">
