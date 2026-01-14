@@ -6,7 +6,7 @@ error_reporting(0);
 
 header('Content-Type: application/json');
 
-include '../db.php';
+include 'db.php';
 
 $eng_id = isset($_POST['eng_id']) ? intval($_POST['eng_id']) : 0;
 $dol    = $_POST['dol'] ?? [];
