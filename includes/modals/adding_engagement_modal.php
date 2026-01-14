@@ -1,115 +1,3 @@
-<div class="modal fade" id="addModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-    <div class="modal-content">
-
-<form method="POST">
-<input type="hidden" name="action" value="add">
-
-<div class="modal-header">
-  <h5 class="modal-title">Add New Engagement</h5>
-  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-</div>
-
-<div class="modal-body">
-<div class="row g-3">
-
-<!-- =====================
-     BASIC INFORMATION
-===================== -->
-
-<h6 class="fw-semibold mt-4">Basic Information</h6>
-<hr>
-
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size:12px;">Engagement ID<sup>*</sup></label>
-  <input type="text"
-         class="form-control"
-         style="background-color:#f3f3f5;"
-         name="eng_idno"
-         value="<?php echo $nextEngId; ?>"
-         readonly>
-</div>
-
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size:12px;">Engagement Name<sup>*</sup></label>
-  <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_name">
-</div>
-
-<!-- <div class="col-md-12">
-  <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
-  <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_audit_type">
-</div> -->
-
-<div class="col-12 mb-3 engagement-audit-container">
-  <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
-  <div class="d-flex gap-2 flex-wrap">
-    
-    <?php 
-      $auditTypes = [
-        'SOC 1 Type 1' => 'bi-check-circle',
-        'SOC 1 Type 2' => 'bi-check-circle',
-        'SOC 2 Type 1' => 'bi-shield-lock',
-        'SOC 2 Type 2' => 'bi-shield-lock',
-        'PCI'  => 'bi-credit-card'
-      ];
-    ?>
-
-    <?php foreach ($auditTypes as $key => $icon): ?>
-      <div class="audit-card text-center p-2 flex-fill"
-           data-audit="<?php echo $key; ?>"
-           style="
-             cursor:pointer;
-             border:2px solid rgb(229,231,235);
-             background:#fff;
-             color:rgb(76,85,100);
-             border-radius:1rem;
-           ">
-        <i class="bi <?php echo $icon; ?>"></i>
-        <div style="font-size:12px;"><?php echo $key; ?></div>
-      </div>
-    <?php endforeach; ?>
-
-  </div>
-
-  <!-- Hidden input to store selected audit types -->
-  <input type="hidden" name="eng_audit_type" class="eng_audit_input" value="">
-</div>
-
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const auditCards = document.querySelectorAll('.audit-card');
-  const auditInput = document.querySelector('.eng_audit_input');
-
-  auditCards.forEach(card => {
-    card.addEventListener('click', () => {
-      card.classList.toggle('selected');
-
-      // Style toggle
-      if(card.classList.contains('selected')) {
-        card.style.background = 'rgb(224, 233, 255)';
-        card.style.color = '#5d5d5d';
-        card.style.borderColor = 'rgb(194, 213, 255)';
-      } else {
-        card.style.background = '#fff';
-        card.style.color = 'rgb(76,85,100)';
-        card.style.borderColor = 'rgb(229,231,235)';
-      }
-
-      // Update hidden input with selected values
-      const selected = Array.from(document.querySelectorAll('.audit-card.selected'))
-                            .map(c => c.dataset.audit);
-      auditInput.value = selected.join(',');
-    });
-  });
-});
-</script>
-
-
-<!-- =====================
-     STATUS
-===================== -->
-
 <?php
 $statuses = [
     'on-hold'  => ['label' => 'On Hold',  'icon' => 'bi-calendar-event'],
@@ -118,141 +6,167 @@ $statuses = [
     'in-review'    => ['label' => 'In Review',    'icon' => 'bi-search'],
     'complete'    => ['label' => 'Complete',    'icon' => 'bi-check-circle']
 ];
-?>
 
-
-<div class="col-12 mb-3 engagement-status-container">
-  <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
-  <div class="d-flex gap-2 flex-wrap">
-
-<?php foreach ($statuses as $key => $s): ?>
-  <div class="status-card text-center p-2 flex-fill"
-       data-status="<?php echo $key; ?>"
-       style="
-         cursor:pointer;
-         border:2px solid rgb(229,231,235);
-         background:#fff;
-         color:rgb(76,85,100);
-         border-radius:1rem;
-       ">
-    <i class="bi <?php echo $s['icon']; ?>"></i>
-    <div style="font-size:12px;"><?php echo $s['label']; ?></div>
-  </div>
-<?php endforeach; ?>
-
-
-  </div>
-  <input type="hidden" name="eng_status" class="eng_status_input" value="">
-</div>
-
-<div class="col-md-12">
-  <label class="form-label fw-semibold" style="font-size:12px;">TSC</label>
-  <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_tsc">
-</div>
-
-<!-- =====================
-     DATE ONLY
-===================== -->
-
-<?php
-$dateFields = [
-  'eng_start_period' => 'Start Period',
-  'eng_end_period'   => 'End Period',
-  'eng_as_of_date'   => 'As Of Date'
+$auditTypes = [
+    'SOC 1 Type 1' => 'bi-check-circle',
+    'SOC 1 Type 2' => 'bi-check-circle',
+    'SOC 2 Type 1' => 'bi-shield-lock',
+    'SOC 2 Type 2' => 'bi-shield-lock',
+    'PCI'  => 'bi-credit-card'
 ];
-foreach ($dateFields as $field => $label):
 ?>
-<div class="col-md-4">
-  <label class="form-label fw-semibold" style="font-size:12px;"><?php echo $label; ?></label>
-  <input type="date" class="form-control" style="background-color:#f3f3f5;" name="<?php echo $field; ?>">
+
+<div class="modal fade" id="addModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <form method="POST">
+        <input type="hidden" name="action" value="add">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Engagement</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+
+            <!-- =====================
+                 BASIC INFORMATION
+            ===================== -->
+            <h6 class="fw-semibold mt-4">Basic Information</h6>
+            <hr>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" style="font-size:12px;">Engagement ID<sup>*</sup></label>
+              <input type="text"
+                     class="form-control"
+                     style="background-color:#f3f3f5;"
+                     name="eng_idno"
+                     value="<?php echo $nextEngId; ?>"
+                     readonly>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" style="font-size:12px;">Engagement Name<sup>*</sup></label>
+              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_name">
+            </div>
+
+            <!-- =====================
+                 AUDIT TYPE MULTI-SELECT
+            ===================== -->
+            <div class="col-12 mb-3 engagement-audit-container">
+              <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
+              <div class="d-flex gap-2 flex-wrap">
+                <?php foreach($auditTypes as $key => $icon): ?>
+                  <div class="audit-card text-center p-2 flex-fill"
+                       data-audit="<?php echo $key; ?>"
+                       style="cursor:pointer; border:2px solid rgb(229,231,235); background:#fff; color:rgb(76,85,100); border-radius:1rem;">
+                    <i class="bi <?php echo $icon; ?>"></i>
+                    <div style="font-size:12px;"><?php echo $key; ?></div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+              <input type="hidden" name="eng_audit_type" class="eng_audit_input" value="">
+            </div>
+
+            <!-- =====================
+                 STATUS SINGLE-SELECT
+            ===================== -->
+            <div class="col-12 mb-3 engagement-status-container">
+              <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
+              <div class="d-flex gap-2 flex-wrap">
+                <?php foreach($statuses as $key => $s): ?>
+                  <div class="status-card text-center p-2 flex-fill"
+                       data-status="<?php echo $key; ?>"
+                       style="cursor:pointer; border:2px solid rgb(229,231,235); background:#fff; color:rgb(76,85,100); border-radius:1rem;">
+                    <i class="bi <?php echo $s['icon']; ?>"></i>
+                    <div style="font-size:12px;"><?php echo $s['label']; ?></div>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+              <input type="hidden" name="eng_status" class="eng_status_input" value="">
+            </div>
+
+            <!-- =====================
+                 TSC
+            ===================== -->
+            <div class="col-md-12">
+              <label class="form-label fw-semibold" style="font-size:12px;">TSC</label>
+              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_tsc">
+            </div>
+
+            <!-- =====================
+                 DATE FIELDS
+            ===================== -->
+            <?php
+            $dateFields = [
+              'eng_start_period' => 'Start Period',
+              'eng_end_period'   => 'End Period',
+              'eng_as_of_date'   => 'As Of Date',
+              'eng_archive'            => 'Archive Date',
+              'eng_last_communication' => 'Last Communication'
+            ];
+            foreach($dateFields as $field => $label): ?>
+              <div class="col-md-6">
+                <label class="form-label fw-semibold" style="font-size:12px;"><?php echo $label; ?></label>
+                <input type="date" class="form-control" style="background-color:#f3f3f5;" name="<?php echo $field; ?>">
+              </div>
+            <?php endforeach; ?>
+
+            <!-- =====================
+                 CLIENT INFO
+            ===================== -->
+            <h6 class="fw-semibold mt-5">Client Information</h6>
+            <hr>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" style="font-size:12px;">POC</label>
+              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_poc">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" style="font-size:12px;">Location</label>
+              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_location">
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label fw-semibold" style="font-size:12px;">Scope</label>
+              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_scope">
+            </div>
+
+            <!-- =====================
+                 SECTION 3 / NOTES
+            ===================== -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" style="font-size:12px;">Section 3 Requested</label>
+              <select class="form-select" name="eng_section_3_requested">
+                <option value="N">No</option>
+                <option value="Y">Yes</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold" style="font-size:12px;">Notes</label>
+              <textarea class="form-control" name="eng_notes" rows="4"></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Engagement</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
-<?php endforeach; ?>
-
-<!-- =====================
-     CLIENT INFO
-===================== -->
-
-<h6 class="fw-semibold mt-5">Client Information</h6>
-<hr>
-
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">POC</label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_poc"
-         value="">
-</div>
-
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Location</label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_location"
-         value="">
-</div>
-
-
-<div class="col-md-12">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Scope</label>
-  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_scope"
-         value="">
-</div>
-
-<!-- =====================
-     DATE ONLY
-===================== -->
-
-<?php
-$dateFields = [
-  'eng_archive'            => 'Archive Date',
-  'eng_last_communication' => 'Last Communication'
-];
-foreach ($dateFields as $field => $label):
-?>
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo $label; ?></label>
-  <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
-         name="<?php echo $field; ?>"
-         value="">
-</div>
-<?php endforeach; ?>
-
-<!-- =====================
-     Y / N SELECTS
-===================== -->
-
-<div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Section 3 Requested</label>
-  <select class="form-select" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_section_3_requested">
-    <option value="N">No</option>
-    <option value="Y">Yes</option>
-  </select>
-</div>
-
-<!-- =====================
-     NOTES
-===================== -->
-
-<div class="col-12">
-  <label class="form-label fw-semibold"  style="font-size: 12px; color: rgb(10,10,10);">Notes</label>
-  <textarea class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_notes" rows="4"></textarea>
-</div>
-
-</div>
-</div>
-
-<div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-  <button type="submit" class="btn btn-primary">Add Engagement</button>
-</div>
-
-</form>
-</div>
-</div>
-</div>
-
-
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
 
-  // ----- AUDIT TYPE MULTI-SELECT -----
+  // ---------- AUDIT TYPE MULTI-SELECT ----------
   const auditCards = document.querySelectorAll('#addModal .audit-card');
   const auditInput = document.querySelector('#addModal .eng_audit_input');
 
@@ -261,11 +175,12 @@ foreach ($dateFields as $field => $label):
       card.classList.toggle('selected');
       card.style.background = card.classList.contains('selected') ? '#e0e9ff' : '#fff';
       card.style.borderColor = card.classList.contains('selected') ? '#c2d5ff' : '#e5e7eb';
-      auditInput.value = [...auditCards].filter(c => c.classList.contains('selected')).map(c => c.dataset.audit).join(',');
+      const selected = [...auditCards].filter(c => c.classList.contains('selected')).map(c => c.dataset.audit);
+      auditInput.value = selected.join(',');
     });
   });
 
-  // ----- STATUS SINGLE-SELECT -----
+  // ---------- STATUS SINGLE-SELECT ----------
   const statusCards = document.querySelectorAll('#addModal .status-card');
   const statusInput = document.querySelector('#addModal .eng_status_input');
 
