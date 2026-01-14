@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-include '../includes/db.php';
+include 'db.php';
 
 $eng_id = $_POST['eng_id'] ?? '';
 $type   = $_POST['type'] ?? ''; // "manager", "senior" or "staff"
@@ -41,15 +41,23 @@ if (!$stmt) {
     exit;
 }
 
-// Insert one row per audit type
 $allSuccess = true;
-foreach ($auditTypes as $audit) {
-    $audit = trim($audit);
-    if (!in_array($audit, ['SOC 1', 'SOC 2'])) continue;
 
-    $stmt->bind_param("isss", $eng_id, $name, $role, $audit);
+if ($role === 'Manager') {
+    // Insert only once for manager
+    $stmt->bind_param("isss", $eng_id, $name, $role, $auditTypes[0] ?? ''); // optional: store first SOC type or leave blank
     $success = $stmt->execute();
     if (!$success) $allSuccess = false;
+} else {
+    // Insert one row per audit type for Senior/Staff
+    foreach ($auditTypes as $audit) {
+        $audit = trim($audit);
+        if (!in_array($audit, ['SOC 1', 'SOC 2'])) continue;
+
+        $stmt->bind_param("isss", $eng_id, $name, $role, $audit);
+        $success = $stmt->execute();
+        if (!$success) $allSuccess = false;
+    }
 }
 
 $stmt->close();
