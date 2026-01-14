@@ -818,13 +818,33 @@ $totalEngagements = count($engagements);
 // Fetch team from DB for this engagement
 $teamData = [];
 $result = $conn->query("SELECT emp_id, eng_id, emp_name, role, audit_type, emp_dol FROM engagement_team WHERE eng_id = " . intval($eng['eng_id']));
+
 while($row = $result->fetch_assoc()){
     // Normalize role: manager/senior/staff
     $roleType = strtolower($row['role']);
-    if($roleType === 'manager') continue; // manager handled separately
-    $teamData[$roleType][$row['emp_name']] = $teamData[$roleType][$row['emp_name']] ?? [];
-    $auditKey = trim(explode(' ', $row['audit_type'])[0] . ' ' . explode(' ', $row['audit_type'])[1]); // e.g., "SOC 1"
-    $teamData[$roleType][$row['emp_name']][$auditKey] = $row['emp_dol'];
+    if($roleType === 'manager') continue; // managers do not have DOL
+
+    $empName = $row['emp_name'] ?? '';
+    if($empName === '') continue;
+
+    $teamData[$roleType][$empName] = $teamData[$roleType][$empName] ?? [];
+
+    // Safely handle audit_type (avoid null & undefined index)
+    $auditTypeString = $row['audit_type'] ?? '';
+    $parts = explode(' ', $auditTypeString);
+
+    $auditKey = '';
+    if(count($parts) >= 2){
+        $auditKey = trim($parts[0] . ' ' . $parts[1]); // e.g., "SOC 1"
+    } elseif(count($parts) === 1){
+        $auditKey = trim($parts[0]); // fallback to single word if somehow only one
+    } else {
+        $auditKey = ''; // nothing, skip
+    }
+
+    if($auditKey !== ''){
+        $teamData[$roleType][$empName][$auditKey] = $row['emp_dol'];
+    }
 }
 
 // Convert to JS-friendly array with index
@@ -843,6 +863,7 @@ foreach(['senior','staff'] as $type){
     }
 }
 ?>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
