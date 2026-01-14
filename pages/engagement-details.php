@@ -1066,7 +1066,7 @@ function formatMilestoneName($type) {
                         <?php
                             $completed = ($m['is_completed'] ?? 'N') === 'Y';
                             $color     = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
-                            $icon      = $completed ? 'bi-circle-lg' : '';
+                            $icon      = $completed ? 'bi-check-lg' : '';
 
                             $label = stripos($m['milestone_type'], 'soc_1') !== false ? 'SOC 1' : 'SOC 2';
 
