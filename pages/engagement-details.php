@@ -867,12 +867,19 @@ document.addEventListener('DOMContentLoaded', () => {
   function getTeamMembers() {
     const membersMap = new Map();
 
-    // Helper to add member to map
     const addMember = (empId, name, type) => {
-        if (!name) return; // skip empty names
+        if (!name) return;
         const typeLower = type.toLowerCase();
+
+        // Generate a temporary key
         const key = empId || `${name}_${typeLower}`;
 
+        // If empId exists, remove any previous entry with the same name+type
+        if (empId && membersMap.has(`${name}_${typeLower}`)) {
+            membersMap.delete(`${name}_${typeLower}`);
+        }
+
+        // Only add if key not already in map
         if (!membersMap.has(key)) {
             membersMap.set(key, {
                 emp_id: empId || '',
@@ -883,7 +890,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 1️⃣ Collect all members from DOM
+    // 1️⃣ Collect members from DOM
     const collectFromDOM = (cards, type) => {
         cards.forEach(card => {
             const empId = card.getAttribute('data-emp-id') || '';
@@ -895,15 +902,14 @@ document.addEventListener('DOMContentLoaded', () => {
     collectFromDOM(seniorCards, 'Senior');
     collectFromDOM(staffCards, 'Staff');
 
-    // 2️⃣ Collect all members from existing DOL data
+    // 2️⃣ Collect members from existing DOL data
     existingDOLData.forEach(row => {
         addMember(row.emp_id, row.name, row.type);
     });
 
-    // 3️⃣ Return array of members sorted by type (optional)
     return Array.from(membersMap.values()).sort((a, b) => {
         if (a.type === b.type) return a.name.localeCompare(b.name);
-        return a.type === 'senior' ? -1 : 1; // seniors first
+        return a.type === 'senior' ? -1 : 1;
     });
 }
 
