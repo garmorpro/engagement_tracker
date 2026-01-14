@@ -90,20 +90,20 @@
   
                           <!-- Big Number -->
                            <?php
-                            $today = date('Y-m-d');
+                            // $today = date('Y-m-d');
 
-                            $result = $conn->query("
-                                SELECT COUNT(*) AS overdue_engagements 
-                                FROM engagements 
-                                WHERE eng_status = 'in-progress'
-                                  AND eng_final_due IS NOT NULL
-                                  AND eng_final_due < '$today'
-                            ");                         
+                            // $result = $conn->query("
+                            //     SELECT COUNT(*) AS overdue_engagements 
+                            //     FROM engagements 
+                            //     WHERE eng_status = 'in-progress'
+                            //       AND eng_final_due IS NOT NULL
+                            //       AND eng_final_due < '$today'
+                            // ");                         
 
-                            $row = $result->fetch_assoc();
-                            $overdueCount = $row['overdue_engagements'] ?? 0;
+                            // $row = $result->fetch_assoc();
+                            // $overdueCount = $row['overdue_engagements'] ?? 0;
                             ?>
-                          <h2 class="fw-bold" style="color: rgb(252,35,52);"><?php echo number_format($overdueCount); ?></h2>
+                          <h2 class="fw-bold" style="color: rgb(252,35,52);"><?php //echo number_format($overdueCount); ?></h2>
   
                           <!-- Decorative Icon behind -->
                           <i class="bi bi-exclamation-triangle position-absolute" style="font-size: 5rem; top: 100px; right: -10px; color: rgba(255,35,52,0.15);     z-index: 0;"></i>
