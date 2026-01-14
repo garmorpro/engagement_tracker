@@ -632,7 +632,7 @@ $totalEngagements = count($engagements);
             </div>
             <p style="color: rgb(0,66,0);">
               <script>
-                fetch('get_final_due.php?eng_id=<?= $eng_id ?>')
+                fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
   .then(res => res.json())
   .then(data => {
     document.getElementById('finalDueDisplay').textContent =
