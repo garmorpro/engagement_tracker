@@ -817,7 +817,7 @@ $totalEngagements = count($engagements);
 <?php
 // Fetch team from DB for this engagement
 $teamData = [];
-$result = $mysqli->query("SELECT emp_id, eng_id, emp_name, role, audit_type, emp_dol FROM engagement_team WHERE eng_id = " . intval($eng['eng_id']));
+$result = $conn->query("SELECT emp_id, eng_id, emp_name, role, audit_type, emp_dol FROM engagement_team WHERE eng_id = " . intval($eng['eng_id']));
 while($row = $result->fetch_assoc()){
     // Normalize role: manager/senior/staff
     $roleType = strtolower($row['role']);
