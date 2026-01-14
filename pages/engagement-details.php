@@ -529,19 +529,27 @@ $totalEngagements = count($engagements);
                    style="width: 120px; height: 80px; border-radius: 10px; background-color: #fff; text-align: center;">
                   
                 <?php
-                  if (!empty($eng['eng_final_due'])) {
-                      $finalDue = new DateTime($eng['eng_final_due']);
-                      $diff = $today->diff($finalDue);
-                      $days = (int)$diff->format('%r%a'); // negative if past
-                      if ($days < 0) {
-                          echo "<div style='font-size: 20px; font-weight: bold; color: #e53e3e;'>" . abs($days) . "</div>";
-                          echo "<div style='font-size: 12px; color: #e53e3e;'>Days Overdue</div>";
-                      } else {
-                          echo "<div style='font-size: 20px; font-weight: bold; color: #000;'>" . $days . "</div>";
-                          echo "<div style='font-size: 12px; color: #000;'>Days Until Due</div>";
-                      }
-                  }
-                ?>
+if (!empty($eng['eng_final_due'])) {
+    // Make sure we treat the DB date as local date (no time shift)
+    $finalDue = DateTime::createFromFormat('Y-m-d', $eng['eng_final_due']);
+    
+    // Today's date
+    $today = new DateTime('today'); // sets time to 00:00:00 local
+
+    // Difference in days
+    $diff = $today->diff($finalDue);
+    $days = (int)$diff->format('%r%a'); // negative if past
+
+    if ($days < 0) {
+        echo "<div style='font-size: 20px; font-weight: bold; color: #e53e3e;'>" . abs($days) . "</div>";
+        echo "<div style='font-size: 12px; color: #e53e3e;'>Days Overdue</div>";
+    } else {
+        echo "<div style='font-size: 20px; font-weight: bold; color: #000;'>" . $days . "</div>";
+        echo "<div style='font-size: 12px; color: #000;'>Days Until Due</div>";
+    }
+}
+?>
+
 
               </div>
                 
