@@ -950,7 +950,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // Deduplicate members by name + eng_id
   const membersMap = new Map();
   existingDOLData.forEach(row => {
-    // Unique key: name + eng_id
     const key = row.name + '_' + row.eng_id;
 
     if (!membersMap.has(key)) {
@@ -971,9 +970,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Only consider senior and staff for the modal
-  const members = Array.from(membersMap.values())
+  // Only consider senior and staff
+  let members = Array.from(membersMap.values())
     .filter(m => m.type === 'senior' || m.type === 'staff');
+
+  // SORT: seniors first, then staff
+  members.sort((a, b) => {
+    if (a.type === b.type) return a.name.localeCompare(b.name); // optional: alphabetically
+    return a.type === 'senior' ? -1 : 1;
+  });
 
   if (!members.length) {
     modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
@@ -1008,6 +1013,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   new bootstrap.Modal(document.getElementById('dolModal')).show();
 }
+
 
 
   // ===============================
