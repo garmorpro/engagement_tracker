@@ -880,24 +880,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Populate Add/Edit DOL Modal
   function populateDOLModal(action){
     const modalBody = document.getElementById(action==='add'?'addDOLModalBody':'editDOLModalBody');
-    modalBody.innerHTML = '';
-    const members = getTeamMembers();
-    members.forEach((member,idx)=>{
-      const card = document.createElement('div');
-      card.className='mb-3 p-3 border rounded';
-      card.innerHTML = `
-        <h6>${member.role}: ${member.name}</h6>
-        <div class="mb-2">
-          <label class="form-label">SOC 1 DOL</label>
-          <input type="text" class="form-control" name="dol_soc1_${idx}" placeholder="Enter SOC 1 DOL">
-        </div>
-        <div class="mb-2">
-          <label class="form-label">SOC 2 DOL</label>
-          <input type="text" class="form-control" name="dol_soc2_${idx}" placeholder="Enter SOC 2 DOL">
-        </div>
-      `;
-      modalBody.appendChild(card);
-    });
+    // modalBody.innerHTML = '';
+    // const members = getTeamMembers();
+    // members.forEach((member,idx)=>{
+    //   const card = document.createElement('div');
+    //   card.className='mb-3 p-3 border rounded';
+    //   card.innerHTML = `
+    //     <h6>${member.role}: ${member.name}</h6>
+    //     <div class="mb-2">
+    //       <label class="form-label">SOC 1 DOL</label>
+    //       <input type="text" class="form-control" name="dol_soc1_${idx}" placeholder="Enter SOC 1 DOL">
+    //     </div>
+    //     <div class="mb-2">
+    //       <label class="form-label">SOC 2 DOL</label>
+    //       <input type="text" class="form-control" name="dol_soc2_${idx}" placeholder="Enter SOC 2 DOL">
+    //     </div>
+    //   `;
+    //   modalBody.appendChild(card);
+    // });
     const modal = new bootstrap.Modal(document.getElementById(action==='add'?'addDOLModal':'editDOLModal'));
     modal.show();
   }
