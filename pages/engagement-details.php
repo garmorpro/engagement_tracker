@@ -933,7 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalBody.appendChild(header);
 
     getTeamMembers().forEach(member => {
-      const isSenior = member.type === 'senior';
+      const isSenior = member.type === 'Senior';
 
       const card = document.createElement('div');
       card.className = 'mb-3 p-3 border rounded';
