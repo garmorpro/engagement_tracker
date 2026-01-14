@@ -1005,6 +1005,10 @@ while ($row = $result->fetch_assoc()) {
     $baseType = preg_replace('/_soc_\d$/i', '', $row['milestone_type']);
     $milestones[$baseType][] = $row;
 }
+
+function formatMilestoneName($type) {
+    return ucwords(str_replace('_', ' ', $type));
+}
 ?>
 
 <?php foreach ($milestones as $baseType => $items): ?>
