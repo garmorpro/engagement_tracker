@@ -1,10 +1,7 @@
 <?php
-// CRITICAL: no whitespace before this file
 ob_start();
-
 ini_set('display_errors', 0);
 error_reporting(0);
-
 header('Content-Type: application/json');
 
 require 'db.php';
@@ -28,22 +25,18 @@ foreach (['senior', 'staff'] as $role) {
     }
 
     foreach ($dol[$role] as $idx => $auditData) {
-
         $index = intval($idx);
         if (!is_array($auditData)) continue;
 
-        /* ================================
-           FETCH EMPLOYEE BY ROLE + ORDER
-        ================================= */
+        // Determine employee name by index (match existing or empty slot)
         $stmt = $conn->prepare("
-            SELECT emp_name
+            SELECT emp_id, emp_name
             FROM engagement_team
             WHERE eng_id = ?
               AND role = ?
             ORDER BY emp_id ASC
             LIMIT 1 OFFSET ?
         ");
-
         $roleName = ucfirst($role);
         $stmt->bind_param("isi", $eng_id, $roleName, $index);
         $stmt->execute();
@@ -51,44 +44,54 @@ foreach (['senior', 'staff'] as $role) {
         $emp = $result->fetch_assoc();
         $stmt->close();
 
-        if (!$emp || empty($emp['emp_name'])) {
-            continue;
-        }
-
-        $emp_name = $emp['emp_name'];
-
-        /* ================================
-           UPDATE EACH AUDIT TYPE DOL
-        ================================= */
         foreach ($auditData as $auditType => $dolValue) {
-
-            $auditType = trim($auditType);     // "SOC 1" / "SOC 2"
+            $auditType = trim($auditType); // "SOC 1" / "SOC 2"
             $dolValue  = trim((string)$dolValue);
-
-            // Convert empty string → NULL
             $dolValue = ($dolValue === '') ? null : $dolValue;
 
-            $update = $conn->prepare("
-                UPDATE engagement_team
-                SET emp_dol = ?
-                WHERE eng_id = ?
-                  AND emp_name = ?
-                  AND role = ?
-                  AND audit_type LIKE CONCAT(?, '%')
-                LIMIT 1
-            ");
+            if ($emp && !empty($emp['emp_name'])) {
+                // UPDATE existing row
+                $update = $conn->prepare("
+                    UPDATE engagement_team
+                    SET emp_dol = ?
+                    WHERE eng_id = ?
+                      AND emp_name = ?
+                      AND role = ?
+                      AND audit_type LIKE CONCAT(?, '%')
+                    LIMIT 1
+                ");
+                $update->bind_param(
+                    "sisss",
+                    $dolValue,
+                    $eng_id,
+                    $emp['emp_name'],
+                    $roleName,
+                    $auditType
+                );
+                $update->execute();
+                $update->close();
+            } else {
+                // INSERT new row if name exists in form
+                $empName = $_POST['dol_name'][$role][$idx] ?? '';
+                $empName = trim($empName);
+                if (!$empName) continue;
 
-            $update->bind_param(
-                "sisss",
-                $dolValue,
-                $eng_id,
-                $emp_name,
-                $roleName,
-                $auditType
-            );
-
-            $update->execute();
-            $update->close();
+                $insert = $conn->prepare("
+                    INSERT INTO engagement_team
+                        (eng_id, emp_name, role, audit_type, emp_dol)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
+                $insert->bind_param(
+                    "issss",
+                    $eng_id,
+                    $empName,
+                    $roleName,
+                    $auditType,
+                    $dolValue
+                );
+                $insert->execute();
+                $insert->close();
+            }
         }
     }
 }
