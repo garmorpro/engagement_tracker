@@ -943,10 +943,10 @@ let instructionHTML = `
 
   <div class="mb-2">
     ${auditTypes.includes('SOC 2') 
-      ? '<span class="badge me-2">SOC 2</span>' 
+      ? '<span class="badge text-bg-secondary me-2">SOC 2</span>' 
       : ''}
     ${auditTypes.includes('SOC 1') 
-      ? '<span class="badge">SOC 1</span>' 
+      ? '<span class="badge text-bg-secondary">SOC 1</span>' 
       : ''}
   </div>
 
