@@ -882,6 +882,49 @@ $totalEngagements = count($engagements);
         <!-- ============================
              MILESTONE MODAL
         ============================ -->
+        <?php
+        // ============================
+// FUNCTION TO DETERMINE MILESTONES
+// ============================
+function getMilestones($audit_type) {
+    $audit_type = strtolower($audit_type);
+    $milestones = [];
+
+    // Both SOC 1 and SOC 2
+    if (strpos($audit_type, 'soc 1') !== false && strpos($audit_type, 'soc 2') !== false) {
+        $milestones = [
+            'internal_planning_call',
+            'irl_due_date',
+            'client_planning_call',
+            'section_3_requested',
+            'fieldwork',
+            'leadsheet_due_soc_1',
+            'leadsheet_due_soc_2',
+            'draft_report_due_soc_1',
+            'draft_report_due_soc_2',
+            'final_report_due_soc_1',
+            'final_report_due_soc_2',
+            'archive_date'
+        ];
+    }
+    // SOC 1 or SOC 2 individually
+    else if (strpos($audit_type, 'soc 1') !== false || strpos($audit_type, 'soc 2') !== false) {
+        $milestones = [
+            'internal_planning_call',
+            'irl_due_date',
+            'client_planning_call',
+            'section_3_requested',
+            'fieldwork',
+            'leadsheet_due',
+            'draft_report_due',
+            'final_report_due',
+            'archive_date'
+        ];
+    }
+
+    return $milestones;
+}
+?>
         <div class="modal fade" id="milestonesModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
