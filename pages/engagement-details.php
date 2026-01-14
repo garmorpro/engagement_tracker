@@ -976,7 +976,7 @@ $totalEngagements = count($engagements);
                 <div class="d-flex align-items-center position-relative mb-3">
                   
                     <!-- BIG ICON -->
-                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white
+                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white me-2
                     <?= (!$isGrouped || $isArchive) ? 'milestone-toggle' : '' ?>"
                     <?= (!$isGrouped || $isArchive)
                         ? 'data-ms-id="'.$single['ms_id'].'"
