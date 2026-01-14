@@ -564,7 +564,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
     // Display days until/overdue
     if (data.days_info.days !== undefined) {
       daysCount.textContent = data.days_info.days;
-      daysLabel.textContent = data.days_info.label;
+      // daysLabel.textContent = data.days_info.label;
       daysCount.style.color = data.days_info.color;
       daysLabel.style.color = data.days_info.color;
       daysCount.style.fontSize = '20px';
