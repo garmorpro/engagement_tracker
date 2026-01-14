@@ -879,24 +879,28 @@ $totalEngagements = count($engagements);
             </button>
         </div>
 
-        <!-- ============================
-             MILESTONE MODAL
-        ============================ -->
-       <?php
-$milestonesData = []; // default to empty array
-if ($eng_id) {
+        <?php
+// Ensure $eng_id exists
+$eng_id = $eng['eng_id'] ?? 0;
+
+// Fetch milestones safely
+$milestonesData = [];
+if ($eng_id > 0) {
     $stmt = $conn->prepare("SELECT ms_id, milestone_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
-    $stmt->bind_param("i", $eng_id);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    while ($row = $res->fetch_assoc()) {
-        $milestonesData[$row['ms_id']] = $row;
+    if ($stmt) {
+        $stmt->bind_param("i", $eng_id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        while ($row = $res->fetch_assoc()) {
+            $milestonesData[$row['ms_id']] = $row;
+        }
+        $stmt->close();
     }
-    $stmt->close();
 }
 
+// Safe helper function
 function formatMilestoneName($type) {
-    return ucwords(str_replace('_', ' ', $type));
+    return ucwords(str_replace('_', ' ', (string)$type));
 }
 ?>
 
@@ -909,12 +913,16 @@ function formatMilestoneName($type) {
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <?php foreach ($milestonesData as $ms): ?>
-                        <div class="mb-3">
-                            <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'])); ?></label>
-                            <input type="date" class="form-control" name="due_date[<?= $ms['ms_id']; ?>]" value="<?= htmlspecialchars($ms['due_date']); ?>">
-                        </div>
-                    <?php endforeach; ?>
+                    <?php if (!empty($milestonesData)): ?>
+                        <?php foreach ($milestonesData as $ms): ?>
+                            <div class="mb-3">
+                                <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'])); ?></label>
+                                <input type="date" class="form-control" name="due_date[<?= (int)$ms['ms_id']; ?>]" value="<?= htmlspecialchars($ms['due_date'] ?? ''); ?>">
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p>No milestones found for this engagement.</p>
+                    <?php endif; ?>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Save Dates</button>
@@ -930,7 +938,6 @@ document.getElementById('milestonesForm')?.addEventListener('submit', async e =>
     e.preventDefault();
 
     const formData = new FormData(e.target);
-    // Only append eng_id if not already included
     if (!formData.has('eng_id')) formData.append('eng_id', <?= $eng_id ?>);
 
     try {
@@ -939,7 +946,6 @@ document.getElementById('milestonesForm')?.addEventListener('submit', async e =>
             body: formData
         });
 
-        // Use text first to debug
         const text = await res.text();
         console.log('Server response:', text);
 
@@ -956,6 +962,7 @@ document.getElementById('milestonesForm')?.addEventListener('submit', async e =>
     }
 });
 </script>
+
 
 
                 
