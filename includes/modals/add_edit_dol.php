@@ -78,13 +78,32 @@
 
 
 
-<!-- Edit DOL Modal -->
+<?php
+// Assume $eng_id is the engagement ID for the modal
+$eng_id = $_GET['eng_id'] ?? 0;
+
+// Fetch team members from DB
+$sql = "SELECT * FROM engagement_team WHERE eng_id = ? ORDER BY role, id";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $eng_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Separate seniors and staff
+$team = ['Senior' => [], 'Staff' => []];
+while ($row = $result->fetch_assoc()) {
+    $team[$row['role']][] = $row;
+}
+?>
+
+
+
+
 <div class="modal fade" id="editDOLModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
-
       <form id="editDOLForm" method="post">
-
+        
         <!-- HEADER -->
         <div class="modal-header">
           <div class="d-flex align-items-center gap-3">
@@ -105,39 +124,41 @@
           <!-- AUDIT TYPE -->
           <div class="dol-card dol-blue mb-4">
             <div class="fw-semibold text-primary">Audit Type</div>
-            <div class="fs-5 fw-bold text-primary">SOC 1</div>
+            <div class="fs-5 fw-bold text-primary"><?= htmlspecialchars($audit_type ?? 'SOC 1') ?></div>
             <small class="text-primary">
               Use CO prefix for SOC 1 (e.g., CO1, CO2, CO3)
             </small>
           </div>
 
-          <!-- SENIOR -->
+          <!-- SENIORS -->
+          <?php foreach ($team['Senior'] as $index => $senior): ?>
           <div class="dol-card dol-purple mb-4">
             <div class="fw-bold text-purple mb-3">
-              SENIOR 1: ROBERT LEE
+              SENIOR <?= $index + 1 ?>: <?= htmlspecialchars($senior['name']) ?>
             </div>
-
             <label class="fw-semibold text-purple">
               SOC 1 Division of Labor (e.g., CO1, CO2, CO3)
             </label>
             <input type="text" class="form-control"
-                   name="edit[seniors][1][soc1]"
-                   value="CO1, CO2, CO3">
+                   name="edit[seniors][<?= $index + 1 ?>][soc1]"
+                   value="<?= htmlspecialchars($senior['soc1']) ?>">
           </div>
+          <?php endforeach; ?>
 
           <!-- STAFF -->
-          <div class="dol-card dol-green">
+          <?php foreach ($team['Staff'] as $index => $staff): ?>
+          <div class="dol-card dol-green mb-4">
             <div class="fw-bold text-success mb-3">
-              STAFF 1: EMILY CHEN
+              STAFF <?= $index + 1 ?>: <?= htmlspecialchars($staff['name']) ?>
             </div>
-
             <label class="fw-semibold text-success">
               SOC 1 Division of Labor (e.g., CO1, CO2, CO3)
             </label>
             <input type="text" class="form-control"
-                   name="edit[staff][1][soc1]"
-                   value="CO4, CO5">
+                   name="edit[staff][<?= $index + 1 ?>][soc1]"
+                   value="<?= htmlspecialchars($staff['soc1']) ?>">
           </div>
+          <?php endforeach; ?>
 
         </div>
 
@@ -155,3 +176,4 @@
     </div>
   </div>
 </div>
+
