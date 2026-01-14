@@ -946,7 +946,6 @@ if ($eng_id) {
         }
 
         if (data.success) {
-            alert('Milestones updated successfully');
             window.location.reload();
         } else {
             alert(data.error || 'Failed to save milestones');
