@@ -867,7 +867,29 @@ document.addEventListener('DOMContentLoaded', () => {
   function getTeamMembers() {
     const membersMap = new Map();
 
-    // 1️⃣ First, add all existing DOL data (real emp_id)
+    // 1️⃣ First, add all DOM members (everyone visible on page)
+    const collect = (cards, type) => {
+        cards.forEach((card, index) => {
+            let empId = card.getAttribute('data-emp-id') || `new-${type}-${index}`;
+            const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
+            if (!name) return;
+
+            // Only add if emp_id not already in map
+            if (!membersMap.has(empId)) {
+                membersMap.set(empId, {
+                    emp_id: empId,
+                    name,
+                    type: type.toLowerCase(),
+                    role: type.charAt(0).toUpperCase() + type.slice(1)
+                });
+            }
+        });
+    };
+
+    collect(seniorCards, 'Senior');
+    collect(staffCards, 'Staff');
+
+    // 2️⃣ Add any members from existingDOLData who are not in the DOM yet
     existingDOLData.forEach(row => {
         if (!membersMap.has(row.emp_id)) {
             membersMap.set(row.emp_id, {
@@ -879,29 +901,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2️⃣ Then, collect DOM cards for any new members not in existing DOL
-    const collect = (cards, type) => {
-        cards.forEach(card => {
-            const empId = card.getAttribute('data-emp-id') || '';
-            const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
-            if (!name) return;
-
-            // Only add if emp_id is not in existing DOL
-            if (empId && !membersMap.has(empId)) {
-                membersMap.set(empId, {
-                    emp_id: empId,
-                    name,
-                    type: type.toLowerCase(),
-                    role: type.charAt(0).toUpperCase() + type.slice(1)
-                });
-            }
-        });
-    };
-    collect(seniorCards, 'Senior');
-    collect(staffCards, 'Staff');
-
     return Array.from(membersMap.values());
 }
+
 
 
   const rawAuditTypes = <?php echo json_encode(explode(',', $eng['eng_audit_type'] ?? '')); ?>;
