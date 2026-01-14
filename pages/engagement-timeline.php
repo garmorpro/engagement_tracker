@@ -4,6 +4,20 @@
 require_once '../includes/functions.php';
 
 $engagements = getAllEngagements($conn);
+$milestones = getEngagementMilestones($conn);
+
+// Merge milestones into engagements array
+$engagementsWithMilestones = array_map(function($eng) use ($milestones) {
+    $id = (int)$eng['eng_id'];
+    return [
+        'id' => $id,
+        'name' => $eng['eng_name'],
+        'planningCall' => $milestones[$id]['planningCall'] ?? null,
+        'fieldworkStart' => $milestones[$id]['fieldworkStart'] ?? null,
+        'draftDue' => $milestones[$id]['draftDue'] ?? null,
+        'finalDue' => $milestones[$id]['finalDue'] ?? null
+    ];
+}, $engagements);
 
 ?>
 
@@ -136,16 +150,7 @@ $engagements = getAllEngagements($conn);
 
 
 <script>
-const engagements = <?php echo json_encode(array_map(function($eng) {
-    return [
-        'id' => (int)$eng['eng_id'],
-        'name' => $eng['eng_name'],
-        'planningCall' => $eng['eng_client_planning_call'] ?: null,
-        'fieldworkStart' => $eng['eng_fieldwork'] ?: null,
-        'draftDue' => $eng['eng_draft_due'] ?: null,
-        'finalDue' => $eng['eng_final_due'] ?: null
-    ];
-}, $engagements), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+const engagements = <?php echo json_encode($engagementsWithMilestones, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 
 console.log("Engagements loaded:", engagements);
 

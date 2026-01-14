@@ -56,3 +56,26 @@ function getNextEngagementId($conn): string
 
     return sprintf('ENG-%s-%03d', $currentYear, $nextNumber);
 }
+
+function getEngagementMilestones($conn) {
+    $sql = "SELECT eng_id, milestone_type, due_date
+            FROM engagement_milestones";
+    $result = $conn->query($sql);
+    $milestones = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $engId = (int)$row['eng_id'];
+        $type = strtolower($row['milestone_type']); // normalize type
+
+        // Map your DB milestone types to JS-friendly keys
+        if (strpos($type, 'planning call') !== false) $type = 'planningCall';
+        elseif (strpos($type, 'fieldwork') !== false) $type = 'fieldworkStart';
+        elseif (strpos($type, 'draft') !== false) $type = 'draftDue';
+        elseif (strpos($type, 'final') !== false) $type = 'finalDue';
+        else continue; // skip unknown
+
+        $milestones[$engId][$type] = $row['due_date'];
+    }
+
+    return $milestones;
+}
