@@ -888,7 +888,7 @@ $totalEngagements = count($engagements);
                     }
                     $stmt->close();
                 }
-                
+
                                 function timelineDate($dateValue) {
                                     $hasDate = !empty($dateValue);
                                 
@@ -901,7 +901,7 @@ $totalEngagements = count($engagements);
                                     ];
                                 }
                                 ?>
-                
+
                                 <?php
                                 $internalPlanning = timelineDate($eng['eng_internal_planning_call'] ?? null);
                                 $irlDue           = timelineDate($eng['eng_irl_due'] ?? null);
@@ -913,14 +913,14 @@ $totalEngagements = count($engagements);
                                 $finalDue         = timelineDate($eng['eng_final_due'] ?? null);
                                 $archiveDate      = timelineDate($eng['eng_archive'] ?? null);
                                 ?>
-                
+
                                 <div class="timeline position-relative">
                               
                                 <?php
                                 function timelineStatus($scheduledDate, $completedFlag) {
                                     $isCompleted = ($completedFlag === 'Y');
                                     $hasDate     = !empty($scheduledDate);
-                                            
+
                                     return [
                                         'color'     => $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
                                         'textClass' => $isCompleted ? 'text-success' : 'text-danger',
@@ -930,44 +930,8 @@ $totalEngagements = count($engagements);
                                     ];
                                 }
                                 ?>
+
                                 
-                                <?php
-                                $internalPlanning = timelineStatus(
-                                    $eng['eng_internal_planning_call'] ?? null,
-                                    $eng['eng_completed_internal_planning'] ?? 'N'
-                                );
-                                            
-                                $irlDue = timelineStatus(
-                                    $eng['eng_irl_due'] ?? null,
-                                    $eng['eng_irl_sent'] ?? 'N'
-                                );
-                                            
-                                $clientPlanning = timelineStatus(
-                                    $eng['eng_client_planning_call'] ?? null,
-                                    $eng['eng_completed_client_planning'] ?? 'N'
-                                );
-                                            
-                                $fieldwork = timelineStatus(
-                                    $eng['eng_fieldwork'] ?? null,
-                                    $eng['eng_fieldwork_complete'] ?? 'N'
-                                );
-                                            
-                                $leadsheetDue = timelineStatus(
-                                    $eng['eng_leadsheet_due'] ?? null,
-                                    $eng['eng_leadsheet_complete'] ?? 'N'
-                                );
-                                            
-                                $draftDue = timelineStatus(
-                                    $eng['eng_draft_due'] ?? null,
-                                    $eng['eng_draft_sent'] ?? 'N'
-                                );
-                                            
-                                $finalDue = timelineStatus(
-                                    $eng['eng_final_due'] ?? null,
-                                    $eng['eng_final_sent'] ?? 'N'
-                                );
-                                ?>
-                
                               
                               <?php
                 $query = "
@@ -983,12 +947,12 @@ $totalEngagements = count($engagements);
                     $baseType = preg_replace('/_soc_\d$/i', '', $row['milestone_type']);
                     $milestones[$baseType][] = $row;
                 }
-                
+
                 function formatMilestoneName($type) {
                     return ucwords(str_replace('_', ' ', $type));
                 }
                 ?>
-                
+
                 <?php foreach ($milestones as $baseType => $items): ?>
                 <?php
                     $isGrouped = count($items) > 1;
@@ -1008,7 +972,7 @@ $totalEngagements = count($engagements);
                     // Single milestone record
                     $single = !$isGrouped ? $items[0] : null;
                 ?>
-                
+
                 <div class="d-flex align-items-center position-relative mb-3">
                   
                     <!-- BIG ICON -->
@@ -1054,7 +1018,7 @@ $totalEngagements = count($engagements);
                                                 $dueDate = $d ? $d->format('M d, Y') : 'Invalid date';
                                             }
                                         ?>
-                
+
                                         <div class="d-flex justify-content-between align-items-center py-1">
                                           
                                             <!-- LEFT -->
@@ -1093,7 +1057,7 @@ $totalEngagements = count($engagements);
                                             $dueDate = $d ? $d->format('M d, Y') : 'Invalid date';
                                         }
                                     ?>
-                
+
                                     <div class="d-flex justify-content-between align-items-center">
                                       
                                         <!-- LEFT -->
