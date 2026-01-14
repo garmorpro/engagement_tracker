@@ -994,7 +994,7 @@ if ($eng_id) {
               <?php
 // Fetch all internal planning call milestones for open engagements
 $query = "
-    SELECT em.ms_id, em.eng_id, em.is_completed, em.due_date, e.eng_name
+    SELECT em.ms_id, em.eng_id, em.milestone_type, em.is_completed, em.due_date, e.eng_name
     FROM engagement_milestones em
     JOIN engagements e ON em.eng_id = e.eng_id
     WHERE em.milestone_type = 'internal_planning_call'
@@ -1040,7 +1040,7 @@ if ($result && $result->num_rows) {
         <div class="flex-grow-1">
             <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
                 <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                    <span class="fw-semibold"><?= htmlspecialchars($internalPlanning['eng_name']); ?> – Internal Planning Call</span>
+                    <span class="fw-semibold"><?= htmlspecialchars($internalPlanning['milestone_type']); ?></span>
                     <span class="fw-semibold toggle-status-text" style="color: <?= $circleColor; ?>;">
                         <?= $completed ? 'Completed' : 'Pending'; ?> • <?= htmlspecialchars($dueDate); ?>
                     </span>
