@@ -865,53 +865,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Merge team members (DOL + DOM) without duplicates
   // ===============================
   function getTeamMembers() {
-    const membersMap = new Map();
-
-    const addMember = (empId, name, type) => {
-        if (!name) return;
-        const typeLower = type.toLowerCase();
-
-        // Generate a temporary key
-        const key = empId || `${name}_${typeLower}`;
-
-        // If empId exists, remove any previous entry with the same name+type
-        if (empId && membersMap.has(`${name}_${typeLower}`)) {
-            membersMap.delete(`${name}_${typeLower}`);
-        }
-
-        // Only add if key not already in map
-        if (!membersMap.has(key)) {
-            membersMap.set(key, {
-                emp_id: empId || '',
-                name,
-                type: typeLower,
-                role: type.charAt(0).toUpperCase() + type.slice(1)
-            });
-        }
-    };
-
-    // 1️⃣ Collect members from DOM
-    const collectFromDOM = (cards, type) => {
-        cards.forEach(card => {
-            const empId = card.getAttribute('data-emp-id') || '';
-            const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
-            addMember(empId, name, type);
+    // Only use existing DOL data from PHP (which comes from DB)
+    return existingDOLData
+        .filter(row => row.emp_id) // only include members with a real emp_id
+        .map(row => ({
+            emp_id: row.emp_id,
+            name: row.name,
+            type: row.type.toLowerCase(),
+            role: row.type.charAt(0).toUpperCase() + row.type.slice(1)
+        }))
+        .sort((a, b) => {
+            if (a.type === b.type) return a.name.localeCompare(b.name);
+            return a.type === 'senior' ? -1 : 1;
         });
-    };
-
-    collectFromDOM(seniorCards, 'Senior');
-    collectFromDOM(staffCards, 'Staff');
-
-    // 2️⃣ Collect members from existing DOL data
-    existingDOLData.forEach(row => {
-        addMember(row.emp_id, row.name, row.type);
-    });
-
-    return Array.from(membersMap.values()).sort((a, b) => {
-        if (a.type === b.type) return a.name.localeCompare(b.name);
-        return a.type === 'senior' ? -1 : 1;
-    });
 }
+
 
 
 
@@ -979,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // TEAM MEMBERS
   // Filter to only members that have a real emp_id
   const members = getTeamMembers()
-    .filter(m => (m.type === 'senior' || m.type === 'staff') && m.empId);
+    .filter(m => (m.type === 'senior' || m.type === 'staff') && m.emp_id);
 
   if (!members.length) {
     modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
