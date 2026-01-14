@@ -997,7 +997,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="mb-2">
             <label class="form-label small text-muted">${audit} Division of Labor</label>
             <input type="text" class="form-control"
-              name="dol[${member.emp_id}][${audit}]"
+              name="dol[${member.empId}][${audit}]"
               placeholder="${audit === 'SOC 1' ? '' : ''}"
               value="${dolValue}">
           </div>
