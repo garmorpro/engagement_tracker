@@ -1189,36 +1189,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-
-
-
-
-    
-
-              
-
-              <!-- Archive Date -->
-                <div class="d-flex align-items-center position-relative mt-3">
-                  <div class="d-flex flex-column align-items-center me-3">
-                    <div class="rounded-circle text-white d-flex align-items-center justify-content-center"
-                         style="width:44px;height:44px;background-color: <?= $archiveDate['color']; ?>;">
-                      <i class="bi bi-archive"></i>
-                    </div>
-                    <div class="bg-primary" style="width:2px;flex-grow:1;margin-top:6px;"></div>
-                  </div>
-                  <div class="flex-grow-1">
-                    <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                      <div class="card-body py-3 px-4 d-flex justify-content-between align-items-center">
-                        <span class="fw-semibold">Archive Date</span>
-                        <span class="fw-semibold <?= $archiveDate['textClass']; ?>" style="color: <?= $archiveDate['color']; ?>;">
-                          <?= $archiveDate['text'] ?? 'Not archived yet'; ?>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              <!-- end Archive Date -->
-
               </div>
 
               </div>
