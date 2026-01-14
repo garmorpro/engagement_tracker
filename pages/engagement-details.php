@@ -914,13 +914,13 @@ document.addEventListener('DOMContentLoaded', () => {
       let inputsHTML = '';
       if(auditTypes.includes('SOC 1')){
         inputsHTML += `<div class="mb-2">
-          <label class="form-label">SOC 1 DOL</label>
+          <label class="form-label">SOC 1 Division of Labor <span style="font-size: 0.8em">(e.g., C01, C02, CO3)</span></label>
           <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 1]" value="${member.dol['SOC 1']||''}">
         </div>`;
       }
       if(auditTypes.includes('SOC 2')){
         inputsHTML += `<div class="mb-2">
-          <label class="form-label">SOC 2 DOL</label>
+          <label class="form-label">SOC 2 Division of Labor <span style="font-size: 0.8em">(e.g., CC1, CC2, CC3)</span></label>
           <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 2]" value="${member.dol['SOC 2']||''}">
         </div>`;
       }
