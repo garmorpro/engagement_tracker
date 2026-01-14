@@ -868,14 +868,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const membersMap = new Map();
 
     const addMember = (empId, name, type) => {
-        // Only include members with a real emp_id from the DB
-        if (!empId || !name) return;
+        if (!name) return;
         const typeLower = type.toLowerCase();
 
-        // Use emp_id as the unique key
-        if (!membersMap.has(empId)) {
-            membersMap.set(empId, {
-                emp_id: empId,
+        // Generate a temporary key
+        const key = empId || `${name}_${typeLower}`;
+
+        // If empId exists, remove any previous entry with the same name+type
+        if (empId && membersMap.has(`${name}_${typeLower}`)) {
+            membersMap.delete(`${name}_${typeLower}`);
+        }
+
+        // Only add if key not already in map
+        if (!membersMap.has(key)) {
+            membersMap.set(key, {
+                emp_id: empId || '',
                 name,
                 type: typeLower,
                 role: type.charAt(0).toUpperCase() + type.slice(1)
@@ -883,18 +890,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // 1️⃣ Collect members only from existing DOL data (DB)
+    // 1️⃣ Collect members from DOM
+    const collectFromDOM = (cards, type) => {
+        cards.forEach(card => {
+            const empId = card.getAttribute('data-emp-id') || '';
+            const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
+            addMember(empId, name, type);
+        });
+    };
+
+    collectFromDOM(seniorCards, 'Senior');
+    collectFromDOM(staffCards, 'Staff');
+
+    // 2️⃣ Collect members from existing DOL data
     existingDOLData.forEach(row => {
         addMember(row.emp_id, row.name, row.type);
     });
 
-    // Sort: seniors first, then staff, alphabetically
     return Array.from(membersMap.values()).sort((a, b) => {
         if (a.type === b.type) return a.name.localeCompare(b.name);
         return a.type === 'senior' ? -1 : 1;
     });
 }
-
 
 
 
@@ -940,59 +957,39 @@ document.addEventListener('DOMContentLoaded', () => {
     dolButtonsContainer.appendChild(btn);
   }
 
-  function openDOLModal() {
-  const modalBody = document.getElementById('dolModalBody');
-  modalBody.innerHTML = '';
+  function getTeamMembers() {
+    const membersMap = new Map();
 
-  // HEADER
-  const header = document.createElement('div');
-  header.className = 'mb-3 p-4 border rounded';
-  header.style.background = 'rgb(240,246,254)';
-  header.innerHTML = `
-    <div class="fw-bold mb-2">Audit Types</div>
-    ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
-    <div class="mt-2 text-muted" style="font-size:13px">
-      ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., CO1, CO2)' : ''}
-      ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
-      ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2)' : ''}
-    </div>
-  `;
-  modalBody.appendChild(header);
+    const addMember = (empId, name, type) => {
+        // Skip if name or type is missing
+        if (!name || !type) return;
 
-  // TEAM MEMBERS
-  // Filter to only members that have a real emp_id
-  const members = getTeamMembers()
-    .filter(m => (m.type === 'senior' || m.type === 'staff') && m.emp_id);
+        // Ensure empId is valid (accept 0 or any number/string)
+        if (empId === undefined || empId === null) return;
 
-  if (!members.length) {
-    modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
-    return;
-  }
+        const typeLower = type.toLowerCase();
 
-  members.forEach(member => {
-    const isSenior = member.type === 'senior';
-    const card = document.createElement('div');
-    card.className = 'mb-3 p-3 border rounded';
-    card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
+        // Use emp_id as the unique key
+        if (!membersMap.has(empId)) {
+            membersMap.set(empId, {
+                emp_id: empId,
+                name,
+                type: typeLower,
+                role: type.charAt(0).toUpperCase() + type.slice(1)
+            });
+        }
+    };
 
-    let inputs = '';
-    auditTypes.forEach(audit => {
-      const dolValue = getExistingDOL(member.emp_id, audit) || '';
-      inputs += `
-        <div class="mb-2">
-          <label class="form-label small text-muted">${audit} Division of Labor</label>
-          <input type="text" class="form-control"
-            name="dol[${member.emp_id}][${audit}]"
-            value="${dolValue}">
-        </div>
-      `;
+    // 1️⃣ Collect members only from existing DOL data (DB)
+    existingDOLData.forEach(row => {
+        addMember(row.emp_id, row.name, row.type);
     });
 
-    card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputs}`;
-    modalBody.appendChild(card);
-  });
-
-  new bootstrap.Modal(document.getElementById('dolModal')).show();
+    // Sort: seniors first, then staff, alphabetically
+    return Array.from(membersMap.values()).sort((a, b) => {
+        if (a.type === b.type) return a.name.localeCompare(b.name);
+        return a.type === 'senior' ? -1 : 1;
+    });
 }
 
 
