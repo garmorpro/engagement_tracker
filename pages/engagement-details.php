@@ -919,8 +919,9 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="fw-bold mb-2">Audit Types</div>
       ${auditTypes.map(a => `<span class="badge me-2" style="background:#425cd5">${a}</span>`).join('')}
       <div class="mt-2 text-muted" style="font-size:13px">
-        ${auditTypes.includes('SOC 1') ? 'SOC 1 → CO1, CO2, CO3' : ''}
-        ${auditTypes.includes('SOC 2') ? ' • SOC 2 → CC1, CC2, CC3' : ''}
+        ${auditTypes.includes('SOC 1') ? 'Use CO prefix for SOC 1 (e.g., C01, C02, CO3)' : ''}
+        ${auditTypes.includes('SOC 1') && auditTypes.includes('SOC 2') ? ' • ' : ''}
+        ${auditTypes.includes('SOC 2') ? 'Use CC prefix for SOC 2 (e.g., CC1, CC2, CC3)' : ''}
       </div>
     `;
     modalBody.appendChild(header);
