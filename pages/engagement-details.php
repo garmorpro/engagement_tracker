@@ -551,7 +551,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
       // Small "Completed" text below
       daysLabel.textContent = 'Completed';
       daysLabel.style.fontSize = '14px';
-      daysLabel.style.color = 'green';
+      daysLabel.style.fontWeight = 'bold';
       dueDisplay.textContent = ''; // hide the due date
       return;
     }
