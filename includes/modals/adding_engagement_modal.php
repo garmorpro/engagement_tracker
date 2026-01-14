@@ -112,11 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <?php
 $statuses = [
+    'on-hold'  => ['label' => 'On Hold',  'icon' => 'bi-calendar-event'],
     'planning'  => ['label' => 'Planning',  'icon' => 'bi-calendar-event'],
-    'fieldwork' => ['label' => 'Fieldwork', 'icon' => 'bi-clipboard-data'],
-    'review'    => ['label' => 'Review',    'icon' => 'bi-search'],
-    'issued'    => ['label' => 'Issued',    'icon' => 'bi-check-circle'],
-    'archived'  => ['label' => 'Archived',  'icon' => 'bi-archive']
+    'in-progress' => ['label' => 'In Progress', 'icon' => 'bi-clipboard-data'],
+    'in-review'    => ['label' => 'In Review',    'icon' => 'bi-search'],
+    'complete'    => ['label' => 'Complete',    'icon' => 'bi-check-circle']
 ];
 ?>
 
@@ -276,8 +276,8 @@ foreach ($dateFields as $field => $label):
     'planning':  {border:'68,125,252', bg:'240,246,254', text:'35,70,221'},
     'fieldwork': {border:'241,115,19', bg:'254,247,238', text:'186,66,13'},
     'review':    {border:'160,77,253', bg:'249,245,254', text:'119,17,210'},
-    'issued':    {border:'79,198,95', bg:'242,253,245', text:'51,128,63'},
-    'archived':  {border:'107,114,129', bg:'249,250,251', text:'56,65,82'}
+    'complete':    {border:'79,198,95', bg:'242,253,245', text:'51,128,63'},
+    'on-hold':  {border:'107,114,129', bg:'249,250,251', text:'56,65,82'}
   };
 
   const applyColors = (card, status, isSelected) => {
