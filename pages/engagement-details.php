@@ -947,11 +947,14 @@ document.addEventListener('DOMContentLoaded', () => {
   `;
   modalBody.appendChild(header);
 
-  // Deduplicate members by emp_id
+  // Deduplicate members by name + eng_id
   const membersMap = new Map();
   existingDOLData.forEach(row => {
-    if (!membersMap.has(row.emp_id)) {
-      membersMap.set(row.emp_id, {
+    // Unique key: name + eng_id
+    const key = row.name + '_' + row.eng_id;
+
+    if (!membersMap.has(key)) {
+      membersMap.set(key, {
         emp_id: row.emp_id,
         name: row.name,
         type: row.type.toLowerCase(),
@@ -959,10 +962,11 @@ document.addEventListener('DOMContentLoaded', () => {
         dols: {} // store all audit DOLs here
       });
     }
+
     // Add DOLs for this audit type
     auditTypes.forEach(audit => {
       if (row[audit]) {
-        membersMap.get(row.emp_id).dols[audit] = row[audit];
+        membersMap.get(key).dols[audit] = row[audit];
       }
     });
   });
