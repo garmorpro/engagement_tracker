@@ -907,6 +907,24 @@ document.addEventListener('DOMContentLoaded', () => {
   function openDOLModal(){
     const modalBody = document.getElementById('dolModalBody');
     modalBody.innerHTML = '';
+
+    // --- Header card with audit type instructions ---
+    const headerCard = document.createElement('div');
+    headerCard.className='dol-card mb-3 p-3 border rounded bg-light';
+    let instructionHTML = `<div class="fw-bold mb-2">Audit Type</div>
+      <div>Internal Audit${auditTypes.includes('SOC 2')?', SOC 2':''}${auditTypes.includes('SOC 1')?', SOC 1':''}</div>
+      <div style="font-size:0.9em;">`;
+
+    const parts = [];
+    if(auditTypes.includes('SOC 1')) parts.push('Use CO prefix for SOC 1 (e.g., CO1, CO2, CO3)');
+    if(auditTypes.includes('SOC 2')) parts.push('Use CC prefix for SOC 2 (e.g., CC1, CC2, CC3)');
+    instructionHTML += parts.join(' • ');
+    instructionHTML += '</div>';
+
+    headerCard.innerHTML = instructionHTML;
+    modalBody.appendChild(headerCard);
+
+    // --- DOL cards for each member ---
     const members = getTeamMembers();
     members.forEach((member,idx)=>{
       const card = document.createElement('div');
@@ -914,19 +932,20 @@ document.addEventListener('DOMContentLoaded', () => {
       let inputsHTML = '';
       if(auditTypes.includes('SOC 1')){
         inputsHTML += `<div class="mb-2">
-          <label class="form-label">SOC 1 Division of Labor <span style="font-size: 0.8em">(e.g., C01, C02, CO3)</span></label>
+          <label class="form-label">SOC 1 DOL</label>
           <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 1]" value="${member.dol['SOC 1']||''}">
         </div>`;
       }
       if(auditTypes.includes('SOC 2')){
         inputsHTML += `<div class="mb-2">
-          <label class="form-label">SOC 2 Division of Labor <span style="font-size: 0.8em">(e.g., CC1, CC2, CC3)</span></label>
+          <label class="form-label">SOC 2 DOL</label>
           <input type="text" class="form-control" name="dol[${member.type}][${idx}][SOC 2]" value="${member.dol['SOC 2']||''}">
         </div>`;
       }
       card.innerHTML = `<div class="fw-bold mb-2">${member.role}: ${member.name}</div>${inputsHTML}`;
       modalBody.appendChild(card);
     });
+
     new bootstrap.Modal(document.getElementById('dolModal')).show();
   }
 
@@ -1030,6 +1049,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateDOLButtons();
 });
 </script>
+
 
 
 
