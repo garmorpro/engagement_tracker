@@ -880,12 +880,18 @@ $totalEngagements = count($engagements);
         </div>
 
         <?php
-// Ensure $eng_id exists
-$eng_id = $eng['eng_id'] ?? 0;
+// ============================
+// MILESTONE MODAL
+// ============================
+
+// Make sure $eng exists
+$eng_id = isset($eng) && isset($eng['eng_id']) ? (int)$eng['eng_id'] : 0;
+
+// Initialize empty array
+$milestonesData = [];
 
 // Fetch milestones safely
-$milestonesData = [];
-if ($eng_id > 0) {
+if ($eng_id > 0 && isset($conn)) {
     $stmt = $conn->prepare("SELECT ms_id, milestone_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
     if ($stmt) {
         $stmt->bind_param("i", $eng_id);
@@ -898,7 +904,7 @@ if ($eng_id > 0) {
     }
 }
 
-// Safe helper function
+// Safe helper
 function formatMilestoneName($type) {
     return ucwords(str_replace('_', ' ', (string)$type));
 }
@@ -916,8 +922,8 @@ function formatMilestoneName($type) {
                     <?php if (!empty($milestonesData)): ?>
                         <?php foreach ($milestonesData as $ms): ?>
                             <div class="mb-3">
-                                <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'])); ?></label>
-                                <input type="date" class="form-control" name="due_date[<?= (int)$ms['ms_id']; ?>]" value="<?= htmlspecialchars($ms['due_date'] ?? ''); ?>">
+                                <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'] ?? '')); ?></label>
+                                <input type="date" class="form-control" name="due_date[<?= (int)($ms['ms_id'] ?? 0); ?>]" value="<?= htmlspecialchars($ms['due_date'] ?? ''); ?>">
                             </div>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -938,7 +944,8 @@ document.getElementById('milestonesForm')?.addEventListener('submit', async e =>
     e.preventDefault();
 
     const formData = new FormData(e.target);
-    if (!formData.has('eng_id')) formData.append('eng_id', <?= $eng_id ?>);
+    // Safe check before appending
+    if (!formData.has('eng_id')) formData.append('eng_id', <?= $eng_id ?? 0 ?>);
 
     try {
         const res = await fetch('../includes/save_milestones.php', {
@@ -949,7 +956,15 @@ document.getElementById('milestonesForm')?.addEventListener('submit', async e =>
         const text = await res.text();
         console.log('Server response:', text);
 
-        const data = JSON.parse(text);
+        let data = {};
+        try {
+            data = JSON.parse(text);
+        } catch(err) {
+            console.error('Invalid JSON:', err, text);
+            alert('Server returned invalid response');
+            return;
+        }
+
         if (data.success) {
             alert('Milestones updated successfully');
             window.location.reload();
@@ -962,6 +977,7 @@ document.getElementById('milestonesForm')?.addEventListener('submit', async e =>
     }
 });
 </script>
+
 
 
 
