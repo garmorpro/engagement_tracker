@@ -997,7 +997,7 @@ $query = "
     SELECT em.ms_id, em.eng_id, em.milestone_type, em.is_completed, em.due_date, e.eng_name
     FROM engagement_milestones em
     JOIN engagements e ON em.eng_id = e.eng_id
-    WHERE em.milestone_type = 'internal_planning_call'
+    WHERE em.eng_id = {$eng_id}
     ORDER BY e.eng_name, em.due_date
 ";
 $result = $conn->query($query);
