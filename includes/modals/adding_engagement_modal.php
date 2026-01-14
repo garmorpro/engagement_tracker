@@ -21,80 +21,141 @@
 <hr>
 
 <div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size:12px;">Engagement ID</label>
-  <input type="text" class="form-control" style="background-color:#f3f3f5;"
-         name="eng_idno" value="<?php echo $nextEngId; ?>" readonly>
+  <label class="form-label fw-semibold" style="font-size:12px;">Engagement ID<sup>*</sup></label>
+  <input type="text"
+         class="form-control"
+         style="background-color:#f3f3f5;"
+         name="eng_idno"
+         value="<?php echo $nextEngId; ?>"
+         readonly>
 </div>
 
 <div class="col-md-6">
-  <label class="form-label fw-semibold" style="font-size:12px;">Engagement Name</label>
+  <label class="form-label fw-semibold" style="font-size:12px;">Engagement Name<sup>*</sup></label>
   <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_name">
 </div>
 
-<!-- =====================
-     AUDIT TYPE (MULTI)
-===================== -->
+<!-- <div class="col-md-12">
+  <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
+  <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_audit_type">
+</div> -->
 
-<div class="col-12 mb-3">
+<div class="col-12 mb-3 engagement-audit-container">
   <label class="form-label fw-semibold" style="font-size:12px;">Audit Type</label>
   <div class="d-flex gap-2 flex-wrap">
+    
+    <?php 
+      $auditTypes = [
+        'SOC 1 Type 1' => 'bi-check-circle',
+        'SOC 1 Type 2' => 'bi-check-circle',
+        'SOC 2 Type 1' => 'bi-shield-lock',
+        'SOC 2 Type 2' => 'bi-shield-lock',
+        'PCI'  => 'bi-credit-card'
+      ];
+    ?>
 
-<?php
-$auditTypes = [
-  'SOC 1 Type 1' => 'bi-check-circle',
-  'SOC 1 Type 2' => 'bi-check-circle',
-  'SOC 2 Type 1' => 'bi-shield-lock',
-  'SOC 2 Type 2' => 'bi-shield-lock',
-  'PCI'          => 'bi-credit-card'
-];
-foreach ($auditTypes as $label => $icon):
-?>
-    <div class="audit-card text-center p-2 flex-fill"
-         data-value="<?php echo $label; ?>"
-         style="cursor:pointer;border:2px solid #e5e7eb;border-radius:1rem;">
-      <i class="bi <?php echo $icon; ?>"></i>
-      <div style="font-size:12px;"><?php echo $label; ?></div>
-    </div>
-<?php endforeach; ?>
+    <?php foreach ($auditTypes as $key => $icon): ?>
+      <div class="audit-card text-center p-2 flex-fill"
+           data-audit="<?php echo $key; ?>"
+           style="
+             cursor:pointer;
+             border:2px solid rgb(229,231,235);
+             background:#fff;
+             color:rgb(76,85,100);
+             border-radius:1rem;
+           ">
+        <i class="bi <?php echo $icon; ?>"></i>
+        <div style="font-size:12px;"><?php echo $key; ?></div>
+      </div>
+    <?php endforeach; ?>
 
   </div>
-  <input type="hidden" name="eng_audit_type" id="auditInput">
+
+  <!-- Hidden input to store selected audit types -->
+  <input type="hidden" name="eng_audit_type" class="eng_audit_input" value="">
 </div>
 
-<!-- =====================
-     STATUS (SINGLE)
-===================== -->
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const auditCards = document.querySelectorAll('.audit-card');
+  const auditInput = document.querySelector('.eng_audit_input');
+
+  auditCards.forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+
+      // Style toggle
+      if(card.classList.contains('selected')) {
+        card.style.background = 'rgb(224, 233, 255)';
+        card.style.color = '#5d5d5d';
+        card.style.borderColor = 'rgb(194, 213, 255)';
+      } else {
+        card.style.background = '#fff';
+        card.style.color = 'rgb(76,85,100)';
+        card.style.borderColor = 'rgb(229,231,235)';
+      }
+
+      // Update hidden input with selected values
+      const selected = Array.from(document.querySelectorAll('.audit-card.selected'))
+                            .map(c => c.dataset.audit);
+      auditInput.value = selected.join(',');
+    });
+  });
+});
+</script>
+
+
+<!-- =====================
+     STATUS
+===================== -->
 <?php
 $statuses = [
-  'planning'  => ['label'=>'Planning','icon'=>'bi-calendar-event'],
-  'fieldwork' => ['label'=>'Fieldwork','icon'=>'bi-clipboard-data'],
-  'review'    => ['label'=>'Review','icon'=>'bi-search'],
-  'issued'    => ['label'=>'Issued','icon'=>'bi-check-circle'],
-  'archived'  => ['label'=>'Archived','icon'=>'bi-archive']
+  'planning' => [
+    'label' => 'Planning',
+    'icon'  => 'bi-calendar-event'
+  ],
+  'fieldwork' => [
+    'label' => 'Fieldwork',
+    'icon'  => 'bi-clipboard-data'
+  ],
+  'review' => [
+    'label' => 'Review',
+    'icon'  => 'bi-search'
+  ],
+  'issued' => [
+    'label' => 'Issued',
+    'icon'  => 'bi-check-circle'
+  ],
+  'archived' => [
+    'label' => 'Archived',
+    'icon'  => 'bi-archive'
+  ]
 ];
 ?>
 
-<div class="col-12 mb-3">
+<div class="col-12 mb-3 engagement-status-container">
   <label class="form-label fw-semibold" style="font-size:12px;">Status</label>
   <div class="d-flex gap-2 flex-wrap">
 
 <?php foreach ($statuses as $key => $s): ?>
-    <div class="status-card text-center p-2 flex-fill"
-         data-value="<?php echo $key; ?>"
-         style="cursor:pointer;border:2px solid #e5e7eb;border-radius:1rem;">
-      <i class="bi <?php echo $s['icon']; ?>"></i>
-      <div style="font-size:12px;"><?php echo $s['label']; ?></div>
-    </div>
+  <div class="status-card text-center p-2 flex-fill"
+       data-status="<?php echo $key; ?>"
+       style="
+         cursor:pointer;
+         border:2px solid rgb(229,231,235);
+         background:#fff;
+         color:rgb(76,85,100);
+         border-radius:1rem;
+       ">
+    <i class="bi <?php echo $s['icon']; ?>"></i>
+    <div style="font-size:12px;"><?php echo $s['label']; ?></div>
+  </div>
 <?php endforeach; ?>
 
   </div>
-  <input type="hidden" name="eng_status" id="statusInput">
+  <input type="hidden" name="eng_status" class="eng_status_input" value="">
 </div>
-
-<!-- =====================
-     TSC
-===================== -->
 
 <div class="col-md-12">
   <label class="form-label fw-semibold" style="font-size:12px;">TSC</label>
@@ -102,20 +163,64 @@ $statuses = [
 </div>
 
 <!-- =====================
-     DATES
+     DATE ONLY
 ===================== -->
 
 <?php
-$dates = [
+$dateFields = [
   'eng_start_period' => 'Start Period',
   'eng_end_period'   => 'End Period',
   'eng_as_of_date'   => 'As Of Date'
 ];
-foreach ($dates as $f => $l):
+foreach ($dateFields as $field => $label):
 ?>
 <div class="col-md-4">
-  <label class="form-label fw-semibold" style="font-size:12px;"><?php echo $l; ?></label>
-  <input type="date" class="form-control" style="background-color:#f3f3f5;" name="<?php echo $f; ?>">
+  <label class="form-label fw-semibold" style="font-size:12px;"><?php echo $label; ?></label>
+  <input type="date" class="form-control" style="background-color:#f3f3f5;" name="<?php echo $field; ?>">
+</div>
+<?php endforeach; ?>
+
+<!-- =====================
+     CLIENT INFO
+===================== -->
+
+<h6 class="fw-semibold mt-5">Client Information</h6>
+<hr>
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">POC</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_poc"
+         value="">
+</div>
+
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Location</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_location"
+         value="">
+</div>
+
+
+<div class="col-md-12">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);">Scope</label>
+  <input type="text" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_scope"
+         value="">
+</div>
+
+<!-- =====================
+     DATE ONLY
+===================== -->
+
+<?php
+$dateFields = [
+  'eng_last_communication' => 'Last Communication'
+];
+foreach ($dateFields as $field => $label):
+?>
+<div class="col-md-6">
+  <label class="form-label fw-semibold" style="font-size: 12px; color: rgb(10,10,10);"><?php echo $label; ?></label>
+  <input type="date" class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;"
+         name="<?php echo $field; ?>"
+         value="">
 </div>
 <?php endforeach; ?>
 
@@ -124,8 +229,8 @@ foreach ($dates as $f => $l):
 ===================== -->
 
 <div class="col-12">
-  <label class="form-label fw-semibold" style="font-size:12px;">Notes</label>
-  <textarea class="form-control" style="background-color:#f3f3f5;" name="eng_notes" rows="4"></textarea>
+  <label class="form-label fw-semibold"  style="font-size: 12px; color: rgb(10,10,10);">Notes</label>
+  <textarea class="form-control" style="background-color: rgb(243,243,245); font-size: 14px;" name="eng_notes" rows="4"></textarea>
 </div>
 
 </div>
@@ -140,49 +245,3 @@ foreach ($dates as $f => $l):
 </div>
 </div>
 </div>
-
-<!-- =====================
-     JAVASCRIPT
-===================== -->
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-
-  /* AUDIT TYPE (MULTI) */
-  const auditCards = document.querySelectorAll('.audit-card');
-  const auditInput = document.getElementById('auditInput');
-
-  auditCards.forEach(card => {
-    card.addEventListener('click', () => {
-      card.classList.toggle('selected');
-      card.style.background = card.classList.contains('selected') ? '#e0e9ff' : '#fff';
-      card.style.borderColor = card.classList.contains('selected') ? '#c2d5ff' : '#e5e7eb';
-
-      auditInput.value = [...auditCards]
-        .filter(c => c.classList.contains('selected'))
-        .map(c => c.dataset.value)
-        .join(',');
-    });
-  });
-
-  /* STATUS (SINGLE) */
-  const statusCards = document.querySelectorAll('.status-card');
-  const statusInput = document.getElementById('statusInput');
-
-  statusCards.forEach(card => {
-    card.addEventListener('click', () => {
-      statusCards.forEach(c => {
-        c.classList.remove('selected');
-        c.style.background = '#fff';
-        c.style.borderColor = '#e5e7eb';
-      });
-
-      card.classList.add('selected');
-      card.style.background = '#e0e9ff';
-      card.style.borderColor = '#c2d5ff';
-      statusInput.value = card.dataset.value;
-    });
-  });
-
-});
-</script>
