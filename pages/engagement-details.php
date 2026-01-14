@@ -1076,17 +1076,17 @@ members.forEach((member, idx) => {
     e.preventDefault();
     const formData = new FormData(this);
     formData.append('eng_id', engId);
-    fetch('../includes/save_dol.php',{ method:'POST', body: formData })
-      .then(res=>res.json())
-      .then(data=>{
-        if(data.success){
-          bootstrap.Modal.getInstance(document.getElementById('dolModal')).hide();
-          location.reload();
-        } else {
-          alert('Error saving DOL: '+(data.error||'Unknown error'));
-        }
-      })
-      .catch(err=>alert('AJAX Error: '+err));
+    fetch('../includes/save_dol.php', { method:'POST', body: formData })
+  .then(res => res.text())
+  .then(text => {
+    console.log(text);
+    const data = JSON.parse(text);
+    if (data.success) {
+      bootstrap.Modal.getInstance(document.getElementById('dolModal')).hide();
+      location.reload();
+    }
+  })
+  .catch(err => alert('AJAX Error: ' + err));
   });
 
   function getNextIndex(container){
