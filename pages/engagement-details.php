@@ -983,7 +983,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  let tempIdCounter = -1; // for new DOM-only members
+  let tempCounter = 1; // for new DOM-only members
 
   members.forEach(member => {
     const isSenior = member.type === 'senior';
@@ -991,8 +991,8 @@ document.addEventListener('DOMContentLoaded', () => {
     card.className = 'mb-3 p-3 border rounded';
     card.style.background = isSenior ? '#f6f0ff' : '#f0fbf4';
 
-    // Ensure numeric emp_id for PHP
-    let empIdForInput = member.emp_id || tempIdCounter--;
+    // Use emp_id if it exists, otherwise a unique "new" key
+    let empIdForInput = member.emp_id || `new_${tempCounter++}`;
     
     let inputs = '';
     auditTypes.forEach(audit => {
@@ -1013,6 +1013,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   new bootstrap.Modal(document.getElementById('dolModal')).show();
 }
+
 
 
   // SAVE DOL
