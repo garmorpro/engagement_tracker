@@ -783,10 +783,7 @@ $totalEngagements = count($engagements);
 
     <div class="mt-5"></div>
 
-<?php include_once '../includes/team_management_section.php'; ?>
-  <?php include_once '../includes/modals/edit_engagement_modal.php'; ?>
-  <?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
-  <?php include_once '../includes/modals/add_edit_dol.php'; ?>
+<?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/engagement_status.js"></script> 
