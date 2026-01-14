@@ -879,107 +879,74 @@ $totalEngagements = count($engagements);
             </button>
         </div>
 
+        <!-- ============================
+             MILESTONE MODAL
+        ============================ -->
         <?php
-// ============================
-// MILESTONE MODAL
-// ============================
+        $milestonesData = []; // default to empty array to prevent undefined variable
 
-// Make sure $eng exists
-$eng_id = isset($eng) && isset($eng['eng_id']) ? (int)$eng['eng_id'] : 0;
-
-// Initialize empty array
-$milestonesData = [];
-
-// Fetch milestones safely
-if ($eng_id > 0 && isset($conn)) {
+if ($eng_id) {
     $stmt = $conn->prepare("SELECT ms_id, milestone_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
-    if ($stmt) {
-        $stmt->bind_param("i", $eng_id);
-        $stmt->execute();
-        $res = $stmt->get_result();
-        while ($row = $res->fetch_assoc()) {
-            $milestonesData[$row['ms_id']] = $row;
-        }
-        $stmt->close();
+    $stmt->bind_param("i", $eng_id);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    while ($row = $res->fetch_assoc()) {
+        $milestonesData[$row['ms_id']] = $row; // use ms_id as key
     }
-}
-
-// Safe helper
-function formatMilestoneName($type) {
-    return ucwords(str_replace('_', ' ', (string)$type));
+    $stmt->close();
 }
 ?>
-
-<div class="modal fade" id="milestonesModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <form id="milestonesForm">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Milestone Dates</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal fade" id="milestonesModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <form id="milestonesForm">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Milestone Dates</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                          <input type="text" name="eng_id" value="<?= htmlspecialchars($eng_id); ?>">
+                            <?php foreach ($milestonesData as $ms): ?>
+                                <div class="mb-3">
+                                    <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'])); ?></label>
+                                    <input type="date" class="form-control" name="due_date[<?= $ms['ms_id']; ?>]" value="<?= htmlspecialchars($ms['due_date']); ?>">
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save Dates</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="modal-body">
-                    <?php if (!empty($milestonesData)): ?>
-                        <?php foreach ($milestonesData as $ms): ?>
-                            <div class="mb-3">
-                                <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'] ?? '')); ?></label>
-                                <input type="date" class="form-control" name="due_date[<?= (int)($ms['ms_id'] ?? 0); ?>]" value="<?= htmlspecialchars($ms['due_date'] ?? ''); ?>">
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <p>No milestones found for this engagement.</p>
-                    <?php endif; ?>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save Dates</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
 
-<script>
-document.getElementById('milestonesForm')?.addEventListener('submit', async e => {
-    e.preventDefault();
+        <script>
+        document.getElementById('milestonesForm')?.addEventListener('submit', async e => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            formData.append('eng_id', <?= $eng_id ?>);
 
-    const formData = new FormData(e.target);
-    // Safe check before appending
-    if (!formData.has('eng_id')) formData.append('eng_id', <?= $eng_id ?? 0 ?>);
+            try {
+                const res = await fetch('../includes/save_milestones.php', {
+                    method: 'POST',
+                    body: formData
+                });
 
-    try {
-        const res = await fetch('../includes/save_milestones.php', {
-            method: 'POST',
-            body: formData
+                const data = await res.json();
+                if (data.success) {
+                    alert('Milestones updated successfully');
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to save milestones');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error');
+            }
         });
-
-        const text = await res.text();
-        console.log('Server response:', text);
-
-        let data = {};
-        try {
-            data = JSON.parse(text);
-        } catch(err) {
-            console.error('Invalid JSON:', err, text);
-            alert('Server returned invalid response');
-            return;
-        }
-
-        if (data.success) {
-            alert('Milestones updated successfully');
-            window.location.reload();
-        } else {
-            alert(data.error || 'Failed to save milestones');
-        }
-    } catch (err) {
-        console.error('Fetch error:', err);
-        alert('Network error');
-    }
-});
-</script>
-
-
-
+        </script>
 
                 
                 <?php
