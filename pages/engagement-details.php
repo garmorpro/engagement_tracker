@@ -915,7 +915,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
         <div class="d-flex align-items-center mb-4 justify-content-between">
             <div class="d-flex align-items-center">
                 <div class="icon-square me-2" style="background-color: rgb(252,237,215); height: 40px; width: 40px;">
-                    <i class="bi bi-calendar2" style="color: rgb(223,50,0);"></i>
+                    <i class="bi bi-calendar2" style="color: rgb(187, 41, 0);"></i>
                 </div>
                 <h6 class="fw-semibold mb-0" style="color: #000; font-size: 20px;">Engagement Timeline</h6>
             </div>
@@ -1026,7 +1026,7 @@ if ($eng_id) {
                                     $hasDate = !empty($dateValue);
                                 
                                     return [
-                                        'color'     => $hasDate ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
+                                        'color'     => $hasDate ? 'rgb(60,163,74)' : 'rgb(187,41,0)',
                                         'textClass' => $hasDate ? 'text-success' : 'text-danger',
                                         'text'      => $hasDate
                                             ? htmlspecialchars(date('M j, Y', strtotime($dateValue)))
@@ -1055,7 +1055,7 @@ if ($eng_id) {
                                     $hasDate     = !empty($scheduledDate);
 
                                     return [
-                                        'color'     => $isCompleted ? 'rgb(60,163,74)' : 'rgb(220,53,69)',
+                                        'color'     => $isCompleted ? 'rgb(60,163,74)' : 'rgb(187,41,0)',
                                         'textClass' => $isCompleted ? 'text-success' : 'text-danger',
                                         'text'      => $hasDate
                                             ? htmlspecialchars(date('M j, Y', strtotime($scheduledDate)))
@@ -1101,7 +1101,7 @@ if ($eng_id) {
                         }
                     }
                   
-                    $circleColor = $allCompleted ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+                    $circleColor = $allCompleted ? 'rgb(51,175,88)' : 'rgb(187,41,0)';
                     $bigIcon     = $allCompleted ? 'bi-check-lg' : '';
                   
                     // Single milestone record
@@ -1142,7 +1142,7 @@ style="
                                     <?php foreach ($items as $m): ?>
                                         <?php
                                             $completed = ($m['is_completed'] ?? 'N') === 'Y';
-                                            $color     = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+                                            $color     = $completed ? 'rgb(51,175,88)' : 'rgb(187,41,0)';
                                             $icon      = $completed ? 'bi-check-lg' : '';
                                     
                                             $label = stripos($m['milestone_type'], 'soc_1') !== false ? 'SOC 1' : 'SOC 2';
@@ -1184,7 +1184,7 @@ style="
                                     <!-- SINGLE MILESTONE ROW -->
                                     <?php
                                         $completed = ($single['is_completed'] ?? 'N') === 'Y';
-                                        $color     = $completed ? 'rgb(51,175,88)' : 'rgb(229,50,71)';
+                                        $color     = $completed ? 'rgb(51,175,88)' : 'rgb(187,41,0)';
                                 
                                         $dueDate = 'No due date';
                                         if (!empty($single['due_date'])) {
