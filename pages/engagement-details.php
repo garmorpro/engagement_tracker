@@ -875,14 +875,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Collect from DOM
-    const collect = (cards, type) => {
-      cards.forEach(card => {
-        const empId = card.getAttribute('data-emp-id') || `new-${type}-${membersMap.size}`;
-        const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
-        if (!name) return;
-        addMember(empId, name, type.toLowerCase(), type.charAt(0).toUpperCase() + type.slice(1));
-      });
-    };
+    // const collect = (cards, type) => {
+    //   cards.forEach(card => {
+    //     const empId = card.getAttribute('data-emp-id') || `new-${type}-${membersMap.size}`;
+    //     const name = card.querySelector('h6.fw-semibold')?.textContent.trim() || '';
+    //     if (!name) return;
+    //     addMember(empId, name, type.toLowerCase(), type.charAt(0).toUpperCase() + type.slice(1));
+    //   });
+    // };
     collect(seniorCards, 'Senior');
     collect(staffCards, 'Staff');
 
