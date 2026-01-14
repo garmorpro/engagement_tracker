@@ -1021,32 +1021,70 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const roleName = type.charAt(0).toUpperCase() + type.slice(1);
 
-  // Create card that matches existing card styles
+  // Create outer card with matching styles
   const card = document.createElement('div');
-  card.className = 'card mb-3 p-3 border rounded'; // match existing cards
+  card.className = 'card mb-4';
   card.setAttribute('data-index', nextIndex);
 
-  // Inner content container to match existing card padding
-  const inner = document.createElement('div');
-  inner.className = 'd-flex flex-column';
+  // Apply colors dynamically based on type
+  switch(type) {
+    case 'manager':
+      card.style.borderColor = 'rgb(190,215,252)';
+      card.style.borderRadius = '20px';
+      card.style.backgroundColor = 'rgb(230,240,252)';
+      break;
+    case 'senior':
+      card.style.borderColor = 'rgb(228,209,253)';
+      card.style.borderRadius = '20px';
+      card.style.backgroundColor = 'rgb(242,235,253)';
+      break;
+    case 'staff':
+      card.style.borderColor = 'rgb(198,246,210)';
+      card.style.borderRadius = '20px';
+      card.style.backgroundColor = 'rgb(234,252,239)';
+      break;
+  }
 
-  // Label (role)
-  const label = document.createElement('div');
-  label.className = 'fw-bold mb-2';
-  label.textContent = roleName;
+  // Card body
+  const body = document.createElement('div');
+  body.className = 'card-body p-3';
 
-  // Input
+  // Label div (role + index)
+  const labelDiv = document.createElement('div');
+  labelDiv.className = 'd-flex align-items-center mb-3';
+
+  const label = document.createElement('h6');
+  label.className = 'mb-0 text-uppercase';
+  label.style.fontWeight = '600';
+  label.style.fontSize = '12px';
+  // Color per type
+  if (type === 'manager') label.style.color = 'rgb(21,87,242)';
+  if (type === 'senior') label.style.color = 'rgb(123,0,240)';
+  if (type === 'staff') label.style.color = 'rgb(69,166,81)';
+  label.textContent = type === 'manager' ? 'Manager' : `${roleName} ${nextIndex}`;
+
+  labelDiv.appendChild(label);
+
+  // Name input styled like the card's h6
   const input = document.createElement('input');
   input.type = 'text';
   input.className = 'form-control';
+  input.style.fontSize = '20px';
+  input.style.fontWeight = '600';
+  input.style.color = type === 'manager' ? 'rgb(0,37,132)' : type === 'senior' ? 'rgb(74,0,133)' : 'rgb(0,42,0)';
   input.placeholder = `Enter ${roleName} Name`;
 
-  inner.appendChild(label);
-  inner.appendChild(input);
-  card.appendChild(inner);
+  // Append label and input to body
+  body.appendChild(labelDiv);
+  body.appendChild(input);
+
+  card.appendChild(body);
   container.appendChild(card);
 
   updateButtons();
+
+  // Auto-focus input
+  input.focus();
 
   // Save to DB when pressing Enter
   input.addEventListener('keydown', async e => {
@@ -1063,7 +1101,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await fetch('../includes/save_team_member.php', { method: 'POST', body: formData });
         const data = await res.json();
         if (data.success) {
-          // Refresh the page to show the new member properly styled
           location.reload();
         } else {
           alert('Failed to add ' + roleName + ': ' + (data.error || 'Unknown error'));
@@ -1074,9 +1111,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
-
-  // Auto-focus input
-  input.focus();
 }
 
 
