@@ -2,7 +2,7 @@
 include '../db.php';
 header('Content-Type: application/json');
 
-// Turn off error output to browser
+// Turn off PHP notices in output (prevents fetch JSON errors)
 error_reporting(E_ALL);
 ini_set('display_errors', 0);
 
@@ -26,5 +26,6 @@ if ($eng_id && !empty($due_dates)) {
     }
 }
 
+// Return JSON ONLY
 echo json_encode($response);
 exit;

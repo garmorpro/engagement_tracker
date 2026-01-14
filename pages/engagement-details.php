@@ -882,51 +882,56 @@ $totalEngagements = count($engagements);
         <!-- ============================
              MILESTONE MODAL
         ============================ -->
-        <?php
-        $milestonesData = []; // default to empty array to prevent undefined variable
-
+       <?php
+$milestonesData = []; // default to empty array
 if ($eng_id) {
     $stmt = $conn->prepare("SELECT ms_id, milestone_type, due_date, is_completed FROM engagement_milestones WHERE eng_id = ?");
     $stmt->bind_param("i", $eng_id);
     $stmt->execute();
     $res = $stmt->get_result();
     while ($row = $res->fetch_assoc()) {
-        $milestonesData[$row['ms_id']] = $row; // use ms_id as key
+        $milestonesData[$row['ms_id']] = $row;
     }
     $stmt->close();
 }
-?>
-        <div class="modal fade" id="milestonesModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                <div class="modal-content">
-                    <form id="milestonesForm">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Milestone Dates</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                          <!-- <input type="text" name="eng_id" value="<?= //htmlspecialchars($eng_id); ?>"> -->
-                            <?php foreach ($milestonesData as $ms): ?>
-                                <div class="mb-3">
-                                    <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'])); ?></label>
-                                    <input type="date" class="form-control" name="due_date[<?= $ms['ms_id']; ?>]" value="<?= htmlspecialchars($ms['due_date']); ?>">
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Save Dates</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
 
-        <script>
-        document.getElementById('milestonesForm')?.addEventListener('submit', async e => {
+function formatMilestoneName($type) {
+    return ucwords(str_replace('_', ' ', $type));
+}
+?>
+
+<div class="modal fade" id="milestonesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="milestonesForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Milestone Dates</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <?php foreach ($milestonesData as $ms): ?>
+                        <div class="mb-3">
+                            <label class="form-label"><?= htmlspecialchars(formatMilestoneName($ms['milestone_type'])); ?></label>
+                            <input type="date" class="form-control" name="due_date[<?= $ms['ms_id']; ?>]" value="<?= htmlspecialchars($ms['due_date']); ?>">
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save Dates</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('milestonesForm')?.addEventListener('submit', async e => {
     e.preventDefault();
+
     const formData = new FormData(e.target);
-    formData.append('eng_id', <?= $eng_id ?>);
+    // Only append eng_id if not already included
+    if (!formData.has('eng_id')) formData.append('eng_id', <?= $eng_id ?>);
 
     try {
         const res = await fetch('../includes/save_milestones.php', {
@@ -934,10 +939,11 @@ if ($eng_id) {
             body: formData
         });
 
+        // Use text first to debug
         const text = await res.text();
         console.log('Server response:', text);
 
-        const data = JSON.parse(text); // parse manually
+        const data = JSON.parse(text);
         if (data.success) {
             alert('Milestones updated successfully');
             window.location.reload();
@@ -949,8 +955,8 @@ if ($eng_id) {
         alert('Network error');
     }
 });
+</script>
 
-        </script>
 
                 
                 <?php
