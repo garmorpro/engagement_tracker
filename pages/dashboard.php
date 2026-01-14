@@ -284,7 +284,7 @@ $totalEngagements = count($engagements);
                                 <!-- ✅ DRAGGABLE CARD -->
                                 <div class="card engagement-card-kanban mb-2"
                                      draggable="true"
-                                     data-id="<?php echo $eng['eng_idno']; ?>"
+                                     data-id="<?php echo $eng['eng_id']; ?>"
                                      data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                      data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                      data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
@@ -405,7 +405,7 @@ $totalEngagements = count($engagements);
                                     <!-- ✅ DRAGGABLE CARD -->
                                     <div class="card engagement-card-kanban mb-2"
                                          draggable="true"
-                                         data-id="<?php echo $eng['eng_idno'] ?? ''; ?>"
+                                         data-id="<?php echo $eng['eng_id'] ?? ''; ?>"
                                          data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                          data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                          data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
@@ -522,7 +522,7 @@ $totalEngagements = count($engagements);
                                     <!-- ✅ DRAGGABLE CARD -->
                                     <div class="card engagement-card-kanban mb-2"
                                          draggable="true"
-                                         data-id="<?php echo $eng['eng_idno'] ?? ''; ?>"
+                                         data-id="<?php echo $eng['eng_id'] ?? ''; ?>"
                                          data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                          data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                          data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
@@ -641,7 +641,7 @@ $totalEngagements = count($engagements);
                         <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_id']); ?>" class="text-decoration-none text-reset d-block">
                           <div class="card engagement-card-kanban mb-2"
                                draggable="true"
-                               data-id="<?php echo $eng['eng_idno'] ?? ''; ?>"
+                               data-id="<?php echo $eng['eng_id'] ?? ''; ?>"
                                data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
@@ -754,7 +754,7 @@ $totalEngagements = count($engagements);
                                 <!-- ✅ DRAGGABLE CARD -->
                                 <div class="card engagement-card-kanban mb-2"
                                      draggable="true"
-                                     data-id="<?php echo $eng['eng_idno']; ?>"
+                                     data-id="<?php echo $eng['eng_id']; ?>"
                                      data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
                                      data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
                                      data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
