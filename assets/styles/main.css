@@ -95,7 +95,7 @@ body {
       background-color: rgb(225,228,232) !important;
     }
     .logout-btn:hover {
-        background-color: rgba(15, 62, 69, 0.9);
+        background-color: rgba(15, 62, 69, 0.9) !important;
         color: white;
     }
 
