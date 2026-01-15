@@ -572,6 +572,16 @@ let statusChart, managerChart, auditChart;
 function renderStatusChart() {
     const ctx = document.getElementById('status_distribution').getContext('2d');
     if(statusChart) statusChart.destroy();
+
+    console.log('Status Labels:', statusLabels);
+    console.log('Status Data:', statusData);
+
+    const total = statusData.reduce((a,b)=>a+b,0);
+    if(total === 0){
+        console.warn('All status counts are 0, adding dummy slice');
+        statusData[0] = 1;
+    }
+
     statusChart = new Chart(ctx, {
         type:'pie',
         data: {
@@ -604,6 +614,7 @@ function renderStatusChart() {
         }
     });
 }
+
 
 function renderManagerChart() {
     const ctx = document.getElementById('manager_workload').getContext('2d');
