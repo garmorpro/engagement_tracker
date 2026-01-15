@@ -569,7 +569,11 @@ $totalEngagements = count($engagements);
                                               style="background-color: rgba(235,236,237,1);
                                                      color: rgb(57,69,85);
                                                      font-weight: 500;">
-                                            <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
+                                            <?php
+                                            echo htmlspecialchars(
+                                                preg_replace('/\s*,\s*/', ', ', $eng['eng_audit_type'])
+                                            );
+                                            ?>
                                         </span>
                                     <?php endif; ?>
 
