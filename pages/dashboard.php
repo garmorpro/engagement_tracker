@@ -15,8 +15,12 @@ function getMilestones($audit_type) {
     if (strpos($audit_type, 'soc 1') !== false && strpos($audit_type, 'soc 2') !== false) {
         $milestones = [
             'internal_planning_call',
+            'planning_memo_soc_1',
+            'planning_memo_soc_2',
             'irl_due_date',
             'client_planning_call',
+            'conclusion_memo_soc_1',
+            'conclusion_memo_soc_2',
             'section_3_requested',
             'fieldwork',
             'leadsheet_due_soc_1',
@@ -32,8 +36,10 @@ function getMilestones($audit_type) {
     else if (strpos($audit_type, 'soc 1') !== false || strpos($audit_type, 'soc 2') !== false) {
         $milestones = [
             'internal_planning_call',
+            'planning_memo',
             'irl_due_date',
             'client_planning_call',
+            'conclusion_memo',
             'section_3_requested',
             'fieldwork',
             'leadsheet_due',
