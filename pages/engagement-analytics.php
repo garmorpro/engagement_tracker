@@ -504,8 +504,17 @@ $engagements = getAllEngagements($conn);
  <script>
 // ----------------- Prepare engagement data -----------------
 const engagements = <?php echo json_encode($engagementsWithMilestones, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
-
 console.log("Loaded engagements:", engagements);
+
+// ----------------- Status colors from PHP -----------------
+const statusColors = <?php echo json_encode([
+    'on-hold' => ['bg'=>'rgb(249,250,251)','border'=>'rgb(229,231,235)','pill'=>'rgb(105,114,129)'],
+    'planning' => ['bg'=>'rgb(238,246,254)','border'=>'rgb(187,219,253)','pill'=>'rgb(33,128,255)'],
+    'in-progress' => ['bg'=>'rgb(255,247,238)','border'=>'rgb(255,214,171)','pill'=>'rgb(255,103,0)'],
+    'in-review' => ['bg'=>'rgb(251,245,254)','border'=>'rgb(236,213,254)','pill'=>'rgb(181,72,255)'],
+    'complete' => ['bg'=>'rgb(239,253,245)','border'=>'rgb(176,248,209)','pill'=>'rgb(0,201,92)'],
+    'archived' => ['bg'=>'rgb(249,250,251)','border'=>'rgb(229,231,235)','pill'=>'rgb(105,114,129)'],
+]); ?>;
 
 // ----------------- Compute manager workload -----------------
 const managerCounts = {};
@@ -528,10 +537,19 @@ engagements.forEach(e => {
     if (statusCounts.hasOwnProperty(e.status)) statusCounts[e.status]++;
 });
 
-const statusLabels = ['On-Hold','Planning','In-Progress','In-Review','Complete'];
+// Convert status keys to human-readable labels
+const statusLabels = statusCategories.map(s => s.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()));
 const statusData = Object.values(statusCounts);
 
-// ----------------- Generate colors for manager chart with matching border -----------------
+// Generate background and border colors from statusColors
+const statusBgColors = statusCategories.map(s => {
+    return statusColors[s]?.pill ? `rgba(${statusColors[s].pill.match(/\d+/g).join(',')},0.8)` : 'rgba(0,0,0,0.2)';
+});
+const statusBorderColors = statusCategories.map(s => {
+    return statusColors[s]?.pill ? `rgba(${statusColors[s].pill.match(/\d+/g).join(',')},1)` : 'rgba(0,0,0,1)';
+});
+
+// ----------------- Generate colors for manager chart -----------------
 function randomColorPairs(count) {
     const fills = [];
     const borders = [];
@@ -539,9 +557,8 @@ function randomColorPairs(count) {
         const r = Math.floor(Math.random() * 200 + 50);
         const g = Math.floor(Math.random() * 200 + 50);
         const b = Math.floor(Math.random() * 200 + 50);
-
-        fills.push(`rgba(${r},${g},${b},0.2)`);    // fill color with lower opacity
-        borders.push(`rgba(${r},${g},${b},1)`);    // border color with full opacity
+        fills.push(`rgba(${r},${g},${b},0.2)`);
+        borders.push(`rgba(${r},${g},${b},1)`);
     }
     return { fills, borders };
 }
@@ -549,7 +566,6 @@ function randomColorPairs(count) {
 const colorPairs = randomColorPairs(managerLabels.length);
 const managerColors = colorPairs.fills;
 const managerBorders = colorPairs.borders;
-
 
 // ----------------- Render Charts -----------------
 let statusChart, managerChart;
@@ -563,21 +579,9 @@ function renderStatusChart() {
             labels: statusLabels,
             datasets:[{
                 data: statusData,
-                backgroundColor:[
-                    'rgba(107,114,128,0.8)',
-                    'rgba(68,125,252,0.8)',
-                    'rgba(241,115,19,0.8)',
-                    'rgba(160,77,253,0.8)',
-                    'rgba(79,198,95,0.8)'
-                ],
-                borderColor:[
-                    'rgba(107,114,128,1)',
-                    'rgba(68,125,252,1)',
-                    'rgba(241,115,19,1)',
-                    'rgba(160,77,253,1)',
-                    'rgba(79,198,95,1)'
-                ],
-                borderWidth:1
+                backgroundColor: statusBgColors,
+                borderColor: statusBorderColors,
+                borderWidth: 1
             }]
         },
         options: {
@@ -621,6 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderManagerChart();
 });
 </script>
+
 
 
 
