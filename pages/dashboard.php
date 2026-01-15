@@ -212,9 +212,9 @@ $totalEngagements = count($engagements);
 
           <a class="btn archive-btn btn-sm ms-3" href="archive.php"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</a>
           <a class="btn tools-btn btn-sm ms-3" href="tools.php"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</a>
-          <button class="btn new-btn btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#addModal">
+          <!-- <button class="btn new-btn btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#addModal">
             <i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement
-          </button>
+          </button> -->
         </div>
       </div>
     </div>
