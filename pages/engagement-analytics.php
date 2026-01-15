@@ -3,7 +3,7 @@
 
 require_once '../includes/functions.php';
 
-$engagements = getAllEngagements($conn);
+$engagementsWithMilestones = getAllEngagements($conn); // rename
 
 ?>
 
@@ -502,8 +502,9 @@ $engagements = getAllEngagements($conn);
 
 
  <script>
-// ----------------- Prepare engagement data -----------------
-const engagements = <?php echo json_encode($engagementsWithMilestones, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+const engagements = <?php echo !empty($engagementsWithMilestones) 
+    ? json_encode($engagementsWithMilestones, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+    : '[]'; ?>;
 
 console.log("Loaded engagements:", engagements);
 
