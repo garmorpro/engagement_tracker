@@ -6,9 +6,34 @@ session_start();
 
 // $engagements = getAllEngagements();
 
-// Function to get all engagements
-function getAllEngagements($conn) {
-    $sql = "SELECT * FROM `engagements`";
+// Function to get all engagements with manager + final due
+function getAllEngagements(mysqli $conn): array
+{
+    $sql = "
+        SELECT
+            e.*,
+
+            -- Engagement Manager
+            mgr.emp_name AS eng_manager,
+
+            -- Final Due Date (earliest final milestone)
+            MIN(ms.due_date) AS eng_final_due
+
+        FROM engagements e
+
+        -- Manager comes from engagement_team
+        LEFT JOIN engagement_team mgr
+            ON mgr.eng_id = e.eng_id
+           AND LOWER(mgr.role) = 'manager'
+
+        -- Final due comes from milestones
+        LEFT JOIN engagement_milestones ms
+            ON ms.eng_id = e.eng_id
+           AND ms.milestone_type LIKE 'final%'
+
+        GROUP BY e.eng_id
+        ORDER BY e.eng_id DESC
+    ";
 
     $result = $conn->query($sql);
 
@@ -23,6 +48,7 @@ function getAllEngagements($conn) {
 
     return $engagements;
 }
+
 
 
 // automate eng_idno
