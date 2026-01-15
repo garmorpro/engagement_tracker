@@ -16,17 +16,15 @@ function getAllEngagements(mysqli $conn): array
             -- Engagement Manager
             mgr.emp_name AS eng_manager,
 
-            -- Final Due Date (earliest final milestone)
+            -- Final Due Date
             MIN(ms.due_date) AS eng_final_due
 
         FROM engagements e
 
-        -- Manager comes from engagement_team
         LEFT JOIN engagement_team mgr
             ON mgr.eng_id = e.eng_id
            AND LOWER(mgr.role) = 'manager'
 
-        -- Final due comes from milestones
         LEFT JOIN engagement_milestones ms
             ON ms.eng_id = e.eng_id
            AND ms.milestone_type LIKE 'final%'
@@ -37,16 +35,11 @@ function getAllEngagements(mysqli $conn): array
 
     $result = $conn->query($sql);
 
-    $engagements = [];
-
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $engagements[] = $row;
-        }
-        $result->free();
+    if (!$result) {
+        return [];
     }
 
-    return $engagements;
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
 
