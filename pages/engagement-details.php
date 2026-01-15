@@ -324,6 +324,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
 }
 
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
+    $engId = (int)$_POST['delete_eng_id'];
+
+    // Temporarily disable foreign key checks
+    $conn->query("SET FOREIGN_KEY_CHECKS=0");
+
+    // 1️⃣ Delete the engagement itself first
+    $stmtEng = $conn->prepare("DELETE FROM engagements WHERE eng_id = ?");
+    if ($stmtEng) {
+        $stmtEng->bind_param("i", $engId);
+        $stmtEng->execute();
+        if ($stmtEng->error) {
+            echo "<div class='alert alert-danger'>Failed to delete engagement: " . htmlspecialchars($stmtEng->error) . "</div>";
+        }
+        $stmtEng->close();
+    }
+
+    // 2️⃣ Delete team members
+    $stmtTeam = $conn->prepare("DELETE FROM engagement_team WHERE eng_id = ?");
+    if ($stmtTeam) {
+        $stmtTeam->bind_param("i", $engId);
+        $stmtTeam->execute();
+        if ($stmtTeam->error) {
+            echo "<div class='alert alert-danger'>Failed to delete team members: " . htmlspecialchars($stmtTeam->error) . "</div>";
+        }
+        $stmtTeam->close();
+    }
+
+    // 3️⃣ Delete milestones
+    $stmtMilestones = $conn->prepare("DELETE FROM engagement_milestones WHERE eng_id = ?");
+    if ($stmtMilestones) {
+        $stmtMilestones->bind_param("i", $engId);
+        $stmtMilestones->execute();
+        if ($stmtMilestones->error) {
+            echo "<div class='alert alert-danger'>Failed to delete milestones: " . htmlspecialchars($stmtMilestones->error) . "</div>";
+        }
+        $stmtMilestones->close();
+    }
+
+    // Re-enable foreign key checks
+    $conn->query("SET FOREIGN_KEY_CHECKS=1");
+
+    // Redirect after deletion
+    header("Location: dashboard.php?message=Engagement deleted successfully");
+    exit;
+}
+
+
 
 
 $nextEngId = getNextEngagementId($conn);
@@ -412,9 +460,18 @@ $totalEngagements = count($engagements);
     </button>
 
     <!-- Delete button -->
-    <button class="btn btn-delete me-2">
+    <form method="POST"
+      style="display:inline;"
+      onsubmit="return confirm('Are you sure you want to delete this engagement?');">
+
+    <input type="hidden" name="delete_eng_id"
+           value="<?php echo $eng['eng_id'] ?? ''; ?>">
+
+    <button type="submit" class="btn btn-delete me-2">
         <i class="bi bi-trash me-1"></i> Delete
     </button>
+
+</form>
 
     <!-- <?php //if ($eng['eng_status'] === 'complete'): ?>
 <a href="engagement-details.php?eng_id=<?php //echo urlencode($eng['eng_idno']); ?>"
