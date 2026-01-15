@@ -74,6 +74,12 @@ body {
       background-color: rgb(181,72,255) !important;
       color: white !important;
     }
+    .logout-btn {
+      background-color: rgb(15,62,69) !important;
+      border-radius: 10px !important;
+      padding: 5.5px 10px !important;
+      border: none !important;
+    }
     .archive-btn {
       background-color: rgb(241,242,245) !important;
       border-radius: 10px !important;
