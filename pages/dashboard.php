@@ -3,6 +3,8 @@
 
 require_once '../includes/functions.php';
 
+require_once '../path.php';
+
 
 // ============================
 // FUNCTION TO DETERMINE MILESTONES
@@ -215,6 +217,7 @@ $totalEngagements = count($engagements);
           <!-- <button class="btn new-btn btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#addModal">
             <i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement
           </button> -->
+          <a class="btn logout-btn btn-sm ms-3" href="<?php echo BASE_URL . "/?logout=1" ?>"><i class="bi bi-box-arrow-left"></i>&nbsp;&nbsp;Logout</a>
         </div>
       </div>
     </div>
