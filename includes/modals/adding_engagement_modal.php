@@ -51,7 +51,7 @@ $auditTypes = [
 
             <div class="col-md-6">
               <label class="form-label fw-semibold" style="font-size:12px;">Engagement Name<sup>*</sup></label>
-              <input type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_name">
+              <input id="eng_name" type="text" class="form-control" style="background-color:#f3f3f5;" name="eng_name">
             </div>
 
             <!-- =====================
