@@ -504,24 +504,17 @@ $engagements = getAllEngagements($conn);
  <script>
 // ----------------- Prepare engagement data -----------------
 const engagements = <?php echo json_encode($engagementsWithMilestones, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
+
 console.log("Loaded engagements:", engagements);
 
-// ----------------- Status colors from PHP -----------------
-const statusColors = <?php echo json_encode([
-    'on-hold' => ['bg'=>'rgb(249,250,251)','border'=>'rgb(229,231,235)','pill'=>'rgb(105,114,129)'],
-    'planning' => ['bg'=>'rgb(238,246,254)','border'=>'rgb(187,219,253)','pill'=>'rgb(33,128,255)'],
-    'in-progress' => ['bg'=>'rgb(255,247,238)','border'=>'rgb(255,214,171)','pill'=>'rgb(255,103,0)'],
-    'in-review' => ['bg'=>'rgb(251,245,254)','border'=>'rgb(236,213,254)','pill'=>'rgb(181,72,255)'],
-    'complete' => ['bg'=>'rgb(239,253,245)','border'=>'rgb(176,248,209)','pill'=>'rgb(0,201,92)'],
-    'archived' => ['bg'=>'rgb(249,250,251)','border'=>'rgb(229,231,235)','pill'=>'rgb(105,114,129)'],
-]); ?>;
-
 // ----------------- Compute manager workload -----------------
+// Use the manager from the related table; fallback to 'Unassigned' if missing
 const managerCounts = {};
 engagements.forEach(e => {
     if (e.archived) return;
-    if (!managerCounts[e.manager]) managerCounts[e.manager] = 0;
-    managerCounts[e.manager]++;
+    const managerName = e.manager_name || 'Unassigned';
+    if (!managerCounts[managerName]) managerCounts[managerName] = 0;
+    managerCounts[managerName]++;
 });
 const managerLabels = Object.keys(managerCounts);
 const managerData = Object.values(managerCounts);
@@ -534,20 +527,25 @@ const statusCounts = statusCategories.reduce((acc, s) => {
 }, {});
 
 engagements.forEach(e => {
-    if (statusCounts.hasOwnProperty(e.status)) statusCounts[e.status]++;
+    const status = e.status;
+    if (statusCounts.hasOwnProperty(status)) statusCounts[status]++;
 });
 
-// Convert status keys to human-readable labels
-const statusLabels = statusCategories.map(s => s.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()));
+const statusLabels = ['On-Hold','Planning','In-Progress','In-Review','Complete'];
 const statusData = Object.values(statusCounts);
 
-// Generate background and border colors from statusColors
-const statusBgColors = statusCategories.map(s => {
-    return statusColors[s]?.pill ? `rgba(${statusColors[s].pill.match(/\d+/g).join(',')},0.8)` : 'rgba(0,0,0,0.2)';
+// ----------------- Compute audit type counts -----------------
+const auditCounts = {};
+engagements.forEach(e => {
+    if (!e.audit_types) return;
+    const audits = e.audit_types.split(',').map(a => a.trim());
+    audits.forEach(a => {
+        if (!auditCounts[a]) auditCounts[a] = 0;
+        auditCounts[a]++;
+    });
 });
-const statusBorderColors = statusCategories.map(s => {
-    return statusColors[s]?.pill ? `rgba(${statusColors[s].pill.match(/\d+/g).join(',')},1)` : 'rgba(0,0,0,1)';
-});
+const auditLabels = Object.keys(auditCounts);
+const auditData = Object.values(auditCounts);
 
 // ----------------- Generate colors for manager chart -----------------
 function randomColorPairs(count) {
@@ -557,6 +555,7 @@ function randomColorPairs(count) {
         const r = Math.floor(Math.random() * 200 + 50);
         const g = Math.floor(Math.random() * 200 + 50);
         const b = Math.floor(Math.random() * 200 + 50);
+
         fills.push(`rgba(${r},${g},${b},0.2)`);
         borders.push(`rgba(${r},${g},${b},1)`);
     }
@@ -568,7 +567,7 @@ const managerColors = colorPairs.fills;
 const managerBorders = colorPairs.borders;
 
 // ----------------- Render Charts -----------------
-let statusChart, managerChart;
+let statusChart, managerChart, auditChart;
 
 function renderStatusChart() {
     const ctx = document.getElementById('status_distribution').getContext('2d');
@@ -579,9 +578,21 @@ function renderStatusChart() {
             labels: statusLabels,
             datasets:[{
                 data: statusData,
-                backgroundColor: statusBgColors,
-                borderColor: statusBorderColors,
-                borderWidth: 1
+                backgroundColor:[
+                    'rgba(107,114,128,0.8)',
+                    'rgba(68,125,252,0.8)',
+                    'rgba(241,115,19,0.8)',
+                    'rgba(160,77,253,0.8)',
+                    'rgba(79,198,95,0.8)'
+                ],
+                borderColor:[
+                    'rgba(107,114,128,1)',
+                    'rgba(68,125,252,1)',
+                    'rgba(241,115,19,1)',
+                    'rgba(160,77,253,1)',
+                    'rgba(79,198,95,1)'
+                ],
+                borderWidth:1
             }]
         },
         options: {
@@ -619,10 +630,38 @@ function renderManagerChart() {
     });
 }
 
+// Optional: Audit type chart
+function renderAuditChart() {
+    if (!document.getElementById('audit_distribution')) return;
+    const ctx = document.getElementById('audit_distribution').getContext('2d');
+    if(auditChart) auditChart.destroy();
+    const colorPairs = randomColorPairs(auditLabels.length);
+    auditChart = new Chart(ctx, {
+        type:'bar',
+        data:{
+            labels: auditLabels,
+            datasets:[{
+                label:'Engagement Count',
+                data: auditData,
+                backgroundColor: colorPairs.fills,
+                borderColor: colorPairs.borders,
+                borderWidth:1,
+                borderRadius:{topLeft:10,topRight:10}
+            }]
+        },
+        options:{
+            responsive:true,
+            plugins:{legend:{display:false}, tooltip:{enabled:true}},
+            scales:{y:{beginAtZero:true, ticks:{stepSize:1}}}
+        }
+    });
+}
+
 // ----------------- Render on load -----------------
 document.addEventListener('DOMContentLoaded', () => {
     renderStatusChart();
     renderManagerChart();
+    renderAuditChart();
 });
 </script>
 
