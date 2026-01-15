@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST'
-    && ($_POST['action'] ?? '') === 'update_last_contact'
+    && !empty($_POST['eng_id'])
 ) {
     $engId = (int)($_POST['eng_id'] ?? 0);
 
@@ -718,6 +718,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
       <button type="submit"
               class="btn btn-sm"
               title="Update Last Communication"
+              name="update_last_contact"
               style="background: transparent; border: none;">
         <i class="bi bi-chat-fill fs-5" style="color: rgb(255,103,0);"></i>
       </button>
