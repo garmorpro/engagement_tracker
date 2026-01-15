@@ -467,126 +467,147 @@ $totalEngagements = count($engagements);
             <!-- Column 2 -->
                 <div class="col-md-4">
 
-                    <div class="card" style="border-radius: 15px; border: 2px solid rgb(247,187,118); background-color: rgb(253,244,229) !important;">
-                        <div class="card-body">
+    <div class="card"
+         style="border-radius: 15px; border: 2px solid rgb(247,187,118); background-color: rgb(253,244,229) !important;">
+        <div class="card-body">
 
-                            <!-- Header badge -->
-                            <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
-                                  style="font-size: 15px; padding: 10px 14px; background-color: rgb(241,115,19) !important;">
-                                In Progress
-                                <?php
-                                $engagements = getAllEngagements($conn);
-                                $inProgressCount = count(array_filter($engagements, fn($eng) => $eng['eng_status'] === 'in-progress'));
-                                ?>
-                                <span class="badge rounded-pill ms-2" style="color: white !important; background-color: rgb(243,155,89) !important;">
-                                    <?php echo $inProgressCount; ?>
-                                </span>
-                            </span>
+            <!-- Header badge -->
+            <span class="badge rounded-pill d-inline-flex align-items-center mb-3"
+                  style="font-size: 15px; padding: 10px 14px; background-color: rgb(241,115,19) !important;">
+                In Progress
+                <?php
+                $engagements = getAllEngagements($conn);
+                $inProgressCount = count(array_filter(
+                    $engagements,
+                    fn($eng) => $eng['eng_status'] === 'in-progress'
+                ));
+                ?>
+                <span class="badge rounded-pill ms-2"
+                      style="color: white !important; background-color: rgb(243,155,89) !important;">
+                    <?php echo $inProgressCount; ?>
+                </span>
+            </span>
 
-                            <!-- ✅ DROP ZONE -->
-                            <div class="kanban-column" data-status="in-progress">
+            <!-- DROP ZONE -->
+            <div class="kanban-column" data-status="in-progress">
 
-                                <?php
-                                $inProgressEngagements = array_filter($engagements, fn($eng) => $eng['eng_status'] === 'in-progress');
+                <?php
+                $inProgressEngagements = array_filter(
+                    $engagements,
+                    fn($eng) => $eng['eng_status'] === 'in-progress'
+                );
 
-                                if (count($inProgressEngagements) > 0):
-                                    foreach ($inProgressEngagements as $eng):
-                                        $finalDueDate = !empty($eng['eng_final_due'])
-                                            ? date('M d, Y', strtotime($eng['eng_final_due']))
-                                            : '';
+                if (!empty($inProgressEngagements)):
+                    foreach ($inProgressEngagements as $eng):
 
-                                $today = new DateTime('today');
-                                $dueDate = new DateTime($finalDueDate);
-                                                            
-                                // Red only if past due, otherwise black
-                                $dateColor = ($dueDate < $today) ? 'rgb(243,36,57)' : '#000';
-                                ?>
+                        // Final Due formatting
+                        $finalDueRaw  = $eng['eng_final_due'] ?? null;
+                        $finalDueDate = $finalDueRaw
+                            ? date('M d, Y', strtotime($finalDueRaw))
+                            : 'No Final Due';
 
-                                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_id'] ?? ''); ?>"
-                                   class="text-decoration-none text-reset d-block">
-                                    
-                                    <!-- ✅ DRAGGABLE CARD -->
-                                    <div class="card engagement-card-kanban mb-2"
-                                         draggable="true"
-                                         data-id="<?php echo $eng['eng_id'] ?? ''; ?>"
-                                         data-name="<?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>"
-                                         data-engno="<?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>"
-                                         data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
-                                         data-audit="<?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>"
-                                         data-final-due="<?php echo $finalDueDate; ?>"
-                                         style="background-color: rgb(249,250,251);
-                                                border: 1px solid rgb(208,213,219);
-                                                border-radius: 15px;
-                                                cursor: move;">
+                        // Overdue logic
+                        $today    = new DateTime('today');
+                        $dueDate  = $finalDueRaw ? new DateTime($finalDueRaw) : null;
+                        $dateColor = ($dueDate && $dueDate < $today)
+                            ? 'rgb(243,36,57)'
+                            : '#000';
+                ?>
 
-                                        <div class="card-body" style="margin-bottom: -15px !important;">
-                                    
-                                            <!-- Title row -->
-                                            <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-                                                <h6 class="card-title fw-bold mb-0">
-                                                    <?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?>
-                                                </h6>
-                                                <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
-                                            </div>
-                                    
-                                            <!-- Subtext -->
-                                            <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px !important;">
-                                                <span style="color: rgb(106,115,130); font-size: 14px !important;">
-                                                    <?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?>
-                                                </span><br>
-                                    
-                                                <div class="pb-2"></div>
-                                    
-                                                <span style="font-size: 14px;">
-                                                    <i class="bi bi-people"></i>&nbsp;<?php //echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>
-                                                </span><br>
-                                    
-                                                <span style="font-size: 14px; color: <?php //echo $dateColor; ?>;">
-                                                    <i class="bi bi-calendar2"></i>&nbsp;<?php //echo htmlspecialchars($finalDueDate); ?>
-                                                </span> <br>
-                                    
-                                                <div class="tags pt-2">
-                                                    <?php if (!empty($eng['eng_audit_type'])): ?>
-                                                        <span class="badge"
-                                                              style="background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;">
-                                                            <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
-                                                        </span>
-                                                    <?php endif; ?>
-                                                    
-                                                    <?php
-                                                    $today = date('Y-m-d');
-                                                    if (!empty($eng['eng_final_due']) && $eng['eng_final_due'] < $today):
-                                                    ?>
-                                                        <span class="badge"
-                                                              style="background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500;">
-                                                            Overdue
-                                                        </span>
-                                                    <?php endif; ?>
-                                                </div>
-                                            </p>
-                                                    
-                                        </div>
-                                    </div>
-                                </a>
-                                                    
-                                <?php
-                                    endforeach;
-                                else:
-                                ?>
+                <a href="engagement-details.php?eng_id=<?php echo urlencode($eng['eng_id']); ?>"
+                   class="text-decoration-none text-reset d-block">
 
-                                <!-- Empty state -->
-                                <div class="text-center text-muted py-4 empty-placeholder"
-                                     style="border: 1px dashed rgb(208,213,219); border-radius: 15px;">
-                                    Drop engagements here
+                    <!-- DRAGGABLE CARD -->
+                    <div class="card engagement-card-kanban mb-2"
+                         draggable="true"
+                         data-id="<?php echo $eng['eng_id']; ?>"
+                         data-name="<?php echo htmlspecialchars($eng['eng_name']); ?>"
+                         data-engno="<?php echo htmlspecialchars($eng['eng_idno']); ?>"
+                         data-manager="<?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?>"
+                         data-audit="<?php echo htmlspecialchars($eng['eng_audit_type']); ?>"
+                         data-final-due="<?php echo htmlspecialchars($finalDueRaw ?? ''); ?>"
+                         style="background-color: rgb(249,250,251);
+                                border: 1px solid rgb(208,213,219);
+                                border-radius: 15px;
+                                cursor: move;">
+
+                        <div class="card-body" style="margin-bottom: -15px !important;">
+
+                            <!-- Title -->
+                            <div class="d-flex align-items-center justify-content-between">
+                                <h6 class="card-title fw-bold mb-0">
+                                    <?php echo htmlspecialchars($eng['eng_name']); ?>
+                                </h6>
+                                <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
+                            </div>
+
+                            <!-- Details -->
+                            <p class="text-secondary" style="font-size: 16px; margin-bottom: -5px !important;">
+
+                                <span style="color: rgb(106,115,130); font-size: 14px;">
+                                    <?php echo htmlspecialchars($eng['eng_idno']); ?>
+                                </span><br>
+
+                                <div class="pb-2"></div>
+
+                                <!-- Manager -->
+                                <span style="font-size: 14px;">
+                                    <i class="bi bi-people"></i>&nbsp;
+                                    <?php echo htmlspecialchars($eng['eng_manager'] ?? 'Unassigned'); ?>
+                                </span><br>
+
+                                <!-- Final Due -->
+                                <span style="font-size: 14px; color: <?php echo $dateColor; ?>;">
+                                    <i class="bi bi-calendar2"></i>&nbsp;
+                                    <?php echo htmlspecialchars($finalDueDate); ?>
+                                </span><br>
+
+                                <!-- Tags -->
+                                <div class="tags pt-2">
+                                    <?php if (!empty($eng['eng_audit_type'])): ?>
+                                        <span class="badge"
+                                              style="background-color: rgba(235,236,237,1);
+                                                     color: rgb(57,69,85);
+                                                     font-weight: 500;">
+                                            <?php echo htmlspecialchars($eng['eng_audit_type']); ?>
+                                        </span>
+                                    <?php endif; ?>
+
+                                    <?php if ($dueDate && $dueDate < $today): ?>
+                                        <span class="badge"
+                                              style="background-color: rgb(255,226,226);
+                                                     color: rgb(201,0,18);
+                                                     font-weight: 500;">
+                                            Overdue
+                                        </span>
+                                    <?php endif; ?>
                                 </div>
-                                
-                                <?php endif; ?>
-                                
-                            </div><!-- end kanban-column -->
-                                
+
+                            </p>
+
                         </div>
                     </div>
-                </div> 
+                </a>
+
+                <?php
+                    endforeach;
+                else:
+                ?>
+
+                <!-- Empty state -->
+                <div class="text-center text-muted py-4 empty-placeholder"
+                     style="border: 1px dashed rgb(208,213,219); border-radius: 15px;">
+                    Drop engagements here
+                </div>
+
+                <?php endif; ?>
+
+            </div><!-- end kanban-column -->
+
+        </div>
+    </div>
+</div>
+
             <!-- end col 2 -->
 
             <!-- Column 3 -->
