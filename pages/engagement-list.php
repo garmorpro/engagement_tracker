@@ -345,8 +345,10 @@ $borderColor = $statusColors[$status]['border'] ?? 'rgb(200,200,200)';
 $pillColor = $statusColors[$status]['pill'] ?? 'rgb(0,0,0)';
 ?>
 
-<td style="background-color: <?= $bgColor ?>; border: 1px solid <?= $borderColor ?>; border-radius: 12px; padding: 4px 8px; text-align: center; color: <?= $pillColor ?>; font-weight: 500;">
+<td>
+  <div style="background-color: <?= $bgColor ?>; border: 1px solid <?= $borderColor ?>; border-radius: 12px; padding: 4px 8px; text-align: center; color: <?= $pillColor ?>; font-weight: 500;">
     <?= htmlspecialchars($readableStatus) ?>
+  </div>
 </td>
 
     
