@@ -13,8 +13,8 @@ function getAllEngagements(mysqli $conn): array
         SELECT
             e.*,
 
-            -- Engagement Manager
-            mgr.emp_name AS eng_manager,
+            -- Engagement Manager (single expected)
+            MAX(mgr.emp_name) AS eng_manager,
 
             -- Final Due Date
             MIN(ms.due_date) AS eng_final_due
