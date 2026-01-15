@@ -407,7 +407,7 @@ $totalEngagements = count($engagements);
           <!-- Right: Edit, Delete, (optional Archive) -->
 <div class="right d-flex align-items-center gap-2">
     <!-- Edit button -->
-    <button class="btn btn-edit me-2" data-bs-toggle="modal" data-bs-target="#editModal-<?php echo $eng['eng_idno']; ?>" title="Edit">
+    <button class="btn btn-edit me-2" data-bs-toggle="modal" data-bs-target="#editModal-<?php echo $eng['eng_id']; ?>" title="Edit">
       Edit
     </button>
 
