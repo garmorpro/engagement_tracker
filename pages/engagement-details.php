@@ -184,7 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
             eng_last_communication = ?,
             eng_notes = ?,
             eng_status = ?
-        WHERE eng_idno = ?
+        WHERE eng_id = ?
     ");
 
     /* ============================
