@@ -94,7 +94,7 @@ body {
     .filter-btn:hover {
       background-color: rgb(225,228,232) !important;
     }
-    .new-btn:hover {
+    .logout-btn:hover {
         background-color: rgba(15, 62, 69, 0.9);
         color: white;
     }
