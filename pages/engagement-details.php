@@ -1108,152 +1108,166 @@ if ($eng_id) {
                                 
                               
                               <?php
-                $query = "
-                    SELECT em.ms_id, em.eng_id, em.milestone_type, em.is_completed, em.due_date
-                    FROM engagement_milestones em
-                    WHERE em.eng_id = {$eng_id}
-                    ORDER BY em.ms_id
-                ";
-                $result = $conn->query($query);
-                              
-                $milestones = [];
-                while ($row = $result->fetch_assoc()) {
-                    $baseType = preg_replace('/_soc_\d$/i', '', $row['milestone_type']);
-                    $milestones[$baseType][] = $row;
-                }
+$query = "
+    SELECT em.ms_id, em.eng_id, em.milestone_type, em.is_completed, em.due_date
+    FROM engagement_milestones em
+    WHERE em.eng_id = {$eng_id}
+    ORDER BY em.ms_id
+";
+$result = $conn->query($query);
 
-                function formatMilestoneName($type) {
-                    return ucwords(str_replace('_', ' ', $type));
-                }
-                ?>
+$milestones = [];
+while ($row = $result->fetch_assoc()) {
+    $baseType = preg_replace('/_soc_\d$/i', '', $row['milestone_type']);
+    $milestones[$baseType][] = $row;
+}
 
-                <?php foreach ($milestones as $baseType => $items): ?>
-                <?php
-                    $isGrouped = count($items) > 1;
-                    // $isArchive = ($baseType === 'archive_date');
-                    $isToggle = ($baseType === 'archive_date' || $baseType === 'section_3_requested');
+function formatMilestoneName($type) {
+    return ucwords(str_replace('_', ' ', $type));
+}
 
-                
-                    $allCompleted = true;
-                    foreach ($items as $i) {
-                        if (($i['is_completed'] ?? 'N') !== 'Y') {
-                            $allCompleted = false;
-                            break;
-                        }
-                    }
-                  
-                    $circleColor = $allCompleted ? 'rgb(51,175,88)' : 'rgb(187,41,0)';
-                    $bigIcon     = $allCompleted ? 'bi-check-lg' : '';
-                  
-                    // Single milestone record
-                    $single = !$isGrouped ? $items[0] : null;
-                ?>
+/**
+ * CENTRALIZED STATUS / DATE DISPLAY LOGIC
+ */
+function getMilestoneDisplayText($baseType, $row) {
+    $completed = ($row['is_completed'] ?? 'N') === 'Y';
 
-                <div class="d-flex align-items-center position-relative mb-3">
-                  
-                    <!-- BIG ICON -->
-                    <div class="rounded-circle d-flex align-items-center justify-content-center text-white me-2
-<?= (!$isGrouped || $isToggle) ? 'milestone-toggle' : '' ?>"
-<?= (!$isGrouped || $isToggle)
-    ? 'data-ms-id="'.$single['ms_id'].'"
-       data-completed="'.$single['is_completed'].'"
-       data-toggle-type="'.($baseType).'"'
-    : '' ?>
-style="
-    width:44px;
-    height:44px;
-    background-color: <?= $circleColor; ?>;
-    cursor: <?= (!$isGrouped || $isToggle) ? 'pointer' : 'default'; ?>;
-">
-<i class="bi <?= $bigIcon; ?>" style="font-size:18px;"></i>
-</div>
-                  
-                    <!-- CARD -->
-                    <div class="flex-grow-1">
-                        <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
-                            <div class="card-body py-3 px-4">
-                  
-                                <?php if ($isGrouped): ?>
-                                    <!-- TITLE -->
-                                    <div class="fw-semibold mb-2">
-                                        <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
-                                    </div>
-                                
-                                    <!-- GROUPED SOC ITEMS -->
-                                    <?php foreach ($items as $m): ?>
-                                        <?php
-                                            $completed = ($m['is_completed'] ?? 'N') === 'Y';
-                                            $color     = $completed ? 'rgb(51,175,88)' : 'rgb(187,41,0)';
-                                            $icon      = $completed ? 'bi-check-lg' : '';
-                                    
-                                            $label = stripos($m['milestone_type'], 'soc_1') !== false ? 'SOC 1' : 'SOC 2';
-                                    
-                                            $dueDate = 'No due date';
-                                            if (!empty($m['due_date'])) {
-                                                $d = DateTime::createFromFormat('Y-m-d', $m['due_date']);
-                                                $dueDate = $d ? $d->format('M d, Y') : 'Invalid date';
-                                            }
-                                        ?>
+    // planning_memo & conclusion_memo
+    if (in_array($baseType, ['planning_memo', 'conclusion_memo'])) {
+        return $completed ? 'Completed' : 'Not completed';
+    }
 
-                                        <div class="d-flex justify-content-between align-items-center py-1">
-                                          
-                                            <!-- LEFT -->
-                                            <div class="d-flex align-items-center gap-2">
-                                                <div class="rounded-circle milestone-toggle d-flex align-items-center justify-content-center text-white"
-                                                     data-ms-id="<?= $m['ms_id']; ?>"
-                                                     data-completed="<?= $m['is_completed']; ?>"
-                                                     style="
-                                                        width:22px;
-                                                        height:22px;
-                                                        background-color: <?= $color; ?>;
-                                                        cursor:pointer;
-                                                     ">
-                                                    <i class="bi <?= $icon; ?>" style="font-size:12px;"></i>
-                                                </div>
-                                                <span class="fw-semibold"><?= $label; ?></span>
-                                            </div>
-                                          
-                                            <!-- RIGHT -->
-                                            <span class="fw-semibold" style="color: <?= $color; ?>;">
-                                                <?= htmlspecialchars($dueDate); ?>
-                                            </span>
-                                        </div>
-                                          
-                                    <?php endforeach; ?>
-                                          
-                                <?php else: ?>
-                                    <!-- SINGLE MILESTONE ROW -->
-                                    <?php
-                                        $completed = ($single['is_completed'] ?? 'N') === 'Y';
-                                        $color     = $completed ? 'rgb(51,175,88)' : 'rgb(187,41,0)';
-                                
-                                        $dueDate = 'No due date';
-                                        if (!empty($single['due_date'])) {
-                                            $d = DateTime::createFromFormat('Y-m-d', $single['due_date']);
-                                            $dueDate = $d ? $d->format('M d, Y') : 'Invalid date';
-                                        }
-                                    ?>
+    // section_3_requested
+    if ($baseType === 'section_3_requested') {
+        return $completed ? 'Completed' : 'Not requested';
+    }
 
-                                    <div class="d-flex justify-content-between align-items-center">
-                                      
-                                        <!-- LEFT -->
-                                        <div class="fw-semibold">
-                                            <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
-                                        </div>
-                                      
-                                        <!-- RIGHT -->
-                                        <div class="fw-semibold" style="color: <?= $color; ?>;">
-                                            <?= htmlspecialchars($dueDate); ?>
-                                        </div>
-                                      
-                                    </div>
-                                <?php endif; ?>
-                                      
+    // archive_date
+    if ($baseType === 'archive_date') {
+        if (!$completed) {
+            return 'Not archived yet';
+        }
+
+        if (!empty($row['due_date'])) {
+            $d = DateTime::createFromFormat('Y-m-d', $row['due_date']);
+            return $d ? $d->format('M d, Y') : 'Invalid date';
+        }
+
+        return 'Archived';
+    }
+
+    // default behavior
+    if (!empty($row['due_date'])) {
+        $d = DateTime::createFromFormat('Y-m-d', $row['due_date']);
+        return $d ? $d->format('M d, Y') : 'Invalid date';
+    }
+
+    return 'No due date';
+}
+?>
+
+<?php foreach ($milestones as $baseType => $items): ?>
+<?php
+    $isGrouped = count($items) > 1;
+    $isToggle  = in_array($baseType, ['archive_date', 'section_3_requested']);
+
+    $allCompleted = true;
+    foreach ($items as $i) {
+        if (($i['is_completed'] ?? 'N') !== 'Y') {
+            $allCompleted = false;
+            break;
+        }
+    }
+
+    $circleColor = $allCompleted ? 'rgb(51,175,88)' : 'rgb(187,41,0)';
+    $bigIcon     = $allCompleted ? 'bi-check-lg' : '';
+
+    $single = !$isGrouped ? $items[0] : null;
+?>
+
+<div class="d-flex align-items-center position-relative mb-3">
+
+    <!-- BIG ICON -->
+    <div class="rounded-circle d-flex align-items-center justify-content-center text-white me-2
+        <?= (!$isGrouped || $isToggle) ? 'milestone-toggle' : '' ?>"
+        <?= (!$isGrouped || $isToggle)
+            ? 'data-ms-id="'.$single['ms_id'].'"
+               data-completed="'.$single['is_completed'].'"
+               data-toggle-type="'.$baseType.'"'
+            : '' ?>
+        style="
+            width:44px;
+            height:44px;
+            background-color: <?= $circleColor; ?>;
+            cursor: <?= (!$isGrouped || $isToggle) ? 'pointer' : 'default'; ?>;
+        ">
+        <i class="bi <?= $bigIcon; ?>" style="font-size:18px;"></i>
+    </div>
+
+    <!-- CARD -->
+    <div class="flex-grow-1">
+        <div class="card border-0 shadow-sm" style="border-radius:20px;background:#f9fafb;">
+            <div class="card-body py-3 px-4">
+
+            <?php if ($isGrouped): ?>
+
+                <div class="fw-semibold mb-2">
+                    <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
+                </div>
+
+                <?php foreach ($items as $m): ?>
+                    <?php
+                        $completed = ($m['is_completed'] ?? 'N') === 'Y';
+                        $color     = $completed ? 'rgb(51,175,88)' : 'rgb(187,41,0)';
+                        $icon      = $completed ? 'bi-check-lg' : '';
+                        $label     = stripos($m['milestone_type'], 'soc_1') !== false ? 'SOC 1' : 'SOC 2';
+                        $text      = getMilestoneDisplayText($baseType, $m);
+                    ?>
+
+                    <div class="d-flex justify-content-between align-items-center py-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle milestone-toggle d-flex align-items-center justify-content-center text-white"
+                                 data-ms-id="<?= $m['ms_id']; ?>"
+                                 data-completed="<?= $m['is_completed']; ?>"
+                                 style="width:22px;height:22px;background-color:<?= $color; ?>;cursor:pointer;">
+                                <i class="bi <?= $icon; ?>" style="font-size:12px;"></i>
                             </div>
+                            <span class="fw-semibold"><?= $label; ?></span>
                         </div>
+
+                        <span class="fw-semibold" style="color:<?= $color; ?>;">
+                            <?= htmlspecialchars($text); ?>
+                        </span>
+                    </div>
+
+                <?php endforeach; ?>
+
+            <?php else: ?>
+
+                <?php
+                    $completed = ($single['is_completed'] ?? 'N') === 'Y';
+                    $color     = $completed ? 'rgb(51,175,88)' : 'rgb(187,41,0)';
+                    $text      = getMilestoneDisplayText($baseType, $single);
+                ?>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="fw-semibold">
+                        <?= htmlspecialchars(formatMilestoneName($baseType)); ?>
+                    </div>
+                    <div class="fw-semibold" style="color:<?= $color; ?>;">
+                        <?= htmlspecialchars($text); ?>
                     </div>
                 </div>
-                <?php endforeach; ?>
+
+            <?php endif; ?>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php endforeach; ?>
+
                                       
                                       
                                       
