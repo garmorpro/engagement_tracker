@@ -508,11 +508,10 @@ const engagements = <?php echo json_encode($engagementsWithMilestones, JSON_HEX_
 console.log("Loaded engagements:", engagements);
 
 // ----------------- Compute manager workload -----------------
-// Use the manager from the related table; fallback to 'Unassigned' if missing
 const managerCounts = {};
 engagements.forEach(e => {
     if (e.archived) return;
-    const managerName = e.manager_name || 'Unassigned';
+    const managerName = e.eng_manager || 'Unassigned';
     if (!managerCounts[managerName]) managerCounts[managerName] = 0;
     managerCounts[managerName]++;
 });
@@ -547,7 +546,7 @@ engagements.forEach(e => {
 const auditLabels = Object.keys(auditCounts);
 const auditData = Object.values(auditCounts);
 
-// ----------------- Generate colors for manager chart -----------------
+// ----------------- Random colors -----------------
 function randomColorPairs(count) {
     const fills = [];
     const borders = [];
@@ -630,40 +629,13 @@ function renderManagerChart() {
     });
 }
 
-// Optional: Audit type chart
-function renderAuditChart() {
-    if (!document.getElementById('audit_distribution')) return;
-    const ctx = document.getElementById('audit_distribution').getContext('2d');
-    if(auditChart) auditChart.destroy();
-    const colorPairs = randomColorPairs(auditLabels.length);
-    auditChart = new Chart(ctx, {
-        type:'bar',
-        data:{
-            labels: auditLabels,
-            datasets:[{
-                label:'Engagement Count',
-                data: auditData,
-                backgroundColor: colorPairs.fills,
-                borderColor: colorPairs.borders,
-                borderWidth:1,
-                borderRadius:{topLeft:10,topRight:10}
-            }]
-        },
-        options:{
-            responsive:true,
-            plugins:{legend:{display:false}, tooltip:{enabled:true}},
-            scales:{y:{beginAtZero:true, ticks:{stepSize:1}}}
-        }
-    });
-}
-
 // ----------------- Render on load -----------------
 document.addEventListener('DOMContentLoaded', () => {
     renderStatusChart();
     renderManagerChart();
-    renderAuditChart();
 });
 </script>
+
 
 
 
