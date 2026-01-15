@@ -298,7 +298,59 @@ $totalEngagements = count($engagements);
         <?php endif; ?>
     </td>
     <td><?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?></td>
-    <td><?php echo htmlspecialchars(ucfirst($eng['eng_status'] ?? '')); ?></td>
+
+    <?php
+// Make a readable status label
+$status = $eng['eng_status'] ?? '';
+$readableStatus = str_replace('-', ' ', $status);       // replace hyphens with spaces
+$readableStatus = ucwords($readableStatus);            // capitalize each word
+
+// Determine colors
+$statusColors = [
+    'on-hold' => [
+        'bg' => 'rgb(249,250,251)',
+        'border' => 'rgb(229,231,235)',
+        'pill' => 'rgb(105,114,129)',
+    ],
+    'planning' => [
+        'bg' => 'rgb(238,246,254)',
+        'border' => 'rgb(187,219,253)',
+        'pill' => 'rgb(33,128,255)',
+    ],
+    'in-progress' => [
+        'bg' => 'rgb(255,247,238)',
+        'border' => 'rgb(255,214,171)',
+        'pill' => 'rgb(255,103,0)',
+    ],
+    'in-review' => [
+        'bg' => 'rgb(251,245,254)',
+        'border' => 'rgb(236,213,254)',
+        'pill' => 'rgb(181,72,255)',
+    ],
+    'complete' => [
+        'bg' => 'rgb(239,253,245)',
+        'border' => 'rgb(176,248,209)',
+        'pill' => 'rgb(0,201,92)',
+    ],
+    'archived' => [
+        'bg' => 'rgb(249,250,251)',
+        'border' => 'rgb(229,231,235)',
+        'pill' => 'rgb(105,114,129)',
+    ],
+];
+
+// fallback colors if status not found
+$bgColor = $statusColors[$status]['bg'] ?? 'rgb(255,255,255)';
+$borderColor = $statusColors[$status]['border'] ?? 'rgb(200,200,200)';
+$pillColor = $statusColors[$status]['pill'] ?? 'rgb(0,0,0)';
+?>
+
+<td style="background-color: <?= $bgColor ?>; border: 1px solid <?= $borderColor ?>; border-radius: 12px; padding: 4px 8px; text-align: center; color: <?= $pillColor ?>; font-weight: 500;">
+    <?= htmlspecialchars($readableStatus) ?>
+</td>
+
+    
+    
     <?php
         $periodText = '—';
         if (!empty($eng['eng_start_period']) && !empty($eng['eng_end_period'])) {
