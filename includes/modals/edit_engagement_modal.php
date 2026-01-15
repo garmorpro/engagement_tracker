@@ -1,9 +1,9 @@
-<div class="modal fade" id="editModal-<?php echo $eng['eng_idno']; ?>" tabindex="-1">
+<div class="modal fade" id="editModal-<?php echo $eng['eng_id']; ?>" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
     <div class="modal-content">
 
 <form method="POST">
-<input type="hidden" name="edit_eng_id" value="<?php echo $eng['eng_idno']; ?>">
+<input type="hidden" name="edit_eng_id" value="<?php echo $eng['eng_id']; ?>">
 
 <div class="modal-header">
   <h5 class="modal-title">Edit Engagement</h5>
