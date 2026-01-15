@@ -56,23 +56,7 @@ $engagements = getAllEngagements($conn);
   <div class="mt-4"></div>
 
     <?php include_once '../includes/status_cards.php'; ?>
-
-    <!-- Search bar -->
-          <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
-              <div class="p-3 border d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15); border-radius: 15px;">
-                  <div class="input-group flex-grow-1 me-3">
-                      <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
-                          <i class="bi bi-search"></i>
-                      </span>
-                      <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);;" placeholder="Search...">
-                  </div>
-                  <!-- Filter button -->
-                  <button class="btn filter-btn d-flex" >
-                    <i class="bi bi-funnel me-1"></i> Filter
-                  </button>
-              </div>
-          </div>
-    <!-- end search bar -->
+    <?php include_once '../includes/search_bar.php'; ?>
 
 
 
@@ -519,20 +503,7 @@ $engagements = getAllEngagements($conn);
 
  <script>
 // ----------------- Prepare engagement data -----------------
-const engagements = <?php echo json_encode(array_map(function($eng) {
-    return [
-        'id' => (int)$eng['eng_id'],
-        'idno' => $eng['eng_idno'],
-        'name' => $eng['eng_name'],
-        'manager' => $eng['eng_manager'] ?: 'Unassigned',
-        'status' => strtolower($eng['eng_status']) ?: 'unknown',
-        'planningCall' => $eng['eng_client_planning_call'] ?: null,
-        'fieldworkStart' => $eng['eng_fieldwork'] ?: null,
-        'draftDue' => $eng['eng_draft_due'] ?: null,
-        'finalDue' => $eng['eng_final_due'] ?: null,
-        'archived' => !empty($eng['eng_archive'])
-    ];
-}, $engagements), JSON_HEX_TAG | JSON_HEX_QUOT | JSON_HEX_APOS); ?>;
+const engagements = <?php echo json_encode($engagementsWithMilestones, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP); ?>;
 
 console.log("Loaded engagements:", engagements);
 
