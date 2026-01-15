@@ -714,7 +714,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
     <!-- CHAT BUTTON -->
     <form method="post" class="position-absolute top-0 end-0 m-3">
       <input type="hidden" name="action" value="update_last_contact">
-      <input type="hidden" name="eng_id" value="<?php echo (int)$eng['eng_idno']; ?>">
+      <input type="hidden" name="eng_id" value="<?php echo (int)$eng['eng_id']; ?>">
       <button type="submit"
               class="btn btn-sm"
               title="Update Last Communication"
