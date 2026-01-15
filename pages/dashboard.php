@@ -954,255 +954,253 @@ $totalEngagements = count($engagements);
 
         <!-- end row 3 -->
 
-
-  
     <!-- end board sections -->
 
 
     <div class="mt-5"></div>
 
-<?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
+    <?php include_once '../includes/modals/adding_engagement_modal.php'; ?>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    let draggedWrapper = null;
+    document.addEventListener('DOMContentLoaded', () => {
+        let draggedWrapper = null;
 
-    const layoutMap = {
-        'on-hold': 'horizontal',
-        'planning': 'vertical',
-        'in-progress': 'vertical',
-        'in-review': 'vertical',
-        'complete': 'horizontal'
-    };
+        const layoutMap = {
+            'on-hold': 'horizontal',
+            'planning': 'vertical',
+            'in-progress': 'vertical',
+            'in-review': 'vertical',
+            'complete': 'horizontal'
+        };
 
-    // Update badge count and empty-placeholder
-    const updateColumnUI = (column) => {
-        const cards = column.querySelectorAll('a > .engagement-card-kanban');
-        const count = cards.length;
+        // Update badge count and empty-placeholder
+        const updateColumnUI = (column) => {
+            const cards = column.querySelectorAll('a > .engagement-card-kanban');
+            const count = cards.length;
 
-        // Update badge
-        const badge = column.closest('.card')?.querySelector('.count-badge');
-        if (badge) badge.textContent = count;
+            // Update badge
+            const badge = column.closest('.card')?.querySelector('.count-badge');
+            if (badge) badge.textContent = count;
 
-        // Show/hide empty placeholder
-        const placeholder = column.querySelector('.empty-placeholder');
-        if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
-    };
+            // Show/hide empty placeholder
+            const placeholder = column.querySelector('.empty-placeholder');
+            if (placeholder) placeholder.style.display = count === 0 ? 'block' : 'none';
+        };
 
-    // Apply layout styles
-    const applyLayoutStyles = (card, status) => {
-        const body = card.querySelector('.card-body');
-        if (!body) return;
+        // Apply layout styles
+        const applyLayoutStyles = (card, status) => {
+            const body = card.querySelector('.card-body');
+            if (!body) return;
 
-        if (status === 'on-hold' || status === 'complete') {
-            card.style.width = 'auto';
-            body.classList.add('d-flex', 'align-items-center', 'justify-content-between');
-            body.style.marginBottom = '';
-        } else {
-            card.style.width = '100%';
-            body.classList.remove('d-flex', 'align-items-center', 'justify-content-between');
-            body.style.marginBottom = status === 'planning' ? '-15px' : '';
-        }
-    };
+            if (status === 'on-hold' || status === 'complete') {
+                card.style.width = 'auto';
+                body.classList.add('d-flex', 'align-items-center', 'justify-content-between');
+                body.style.marginBottom = '';
+            } else {
+                card.style.width = '100%';
+                body.classList.remove('d-flex', 'align-items-center', 'justify-content-between');
+                body.style.marginBottom = status === 'planning' ? '-15px' : '';
+            }
+        };
 
-    // Attach drag events to a card wrapper
-    const attachDragEvents = (wrapper) => {
-        wrapper.setAttribute('draggable', 'true');
+        // Attach drag events to a card wrapper
+        const attachDragEvents = (wrapper) => {
+            wrapper.setAttribute('draggable', 'true');
 
-        wrapper.addEventListener('dragstart', e => {
-            draggedWrapper = wrapper;
-            wrapper.querySelector('.engagement-card-kanban')?.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-        });
+            wrapper.addEventListener('dragstart', e => {
+                draggedWrapper = wrapper;
+                wrapper.querySelector('.engagement-card-kanban')?.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
 
-        wrapper.addEventListener('dragend', () => {
-            if (draggedWrapper) draggedWrapper.querySelector('.engagement-card-kanban')?.classList.remove('dragging');
-            draggedWrapper = null;
-        });
-    };
+            wrapper.addEventListener('dragend', () => {
+                if (draggedWrapper) draggedWrapper.querySelector('.engagement-card-kanban')?.classList.remove('dragging');
+                draggedWrapper = null;
+            });
+        };
 
-    // Transform card to horizontal layout
-    const transformToHorizontal = (card) => {
-        const { id, name, engno, manager, audit, finalDue } = card.dataset;
-        const wrapper = document.createElement('a');
-        wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
-        wrapper.className = 'text-decoration-none text-reset d-block';
-        wrapper.setAttribute('draggable', 'true');
+        // Transform card to horizontal layout
+        const transformToHorizontal = (card) => {
+            const { id, name, engno, manager, audit, finalDue } = card.dataset;
+            const wrapper = document.createElement('a');
+            wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
+            wrapper.className = 'text-decoration-none text-reset d-block';
+            wrapper.setAttribute('draggable', 'true');
 
-        const newCard = document.createElement('div');
-        newCard.className = 'card engagement-card-kanban mb-2';
-        Object.assign(newCard.dataset, { id, name, engno, manager, audit, finalDue });
-        newCard.style.cssText = 'border-radius:15px; border:1px solid rgb(208,213,219); cursor:move;';
+            const newCard = document.createElement('div');
+            newCard.className = 'card engagement-card-kanban mb-2';
+            Object.assign(newCard.dataset, { id, name, engno, manager, audit, finalDue });
+            newCard.style.cssText = 'border-radius:15px; border:1px solid rgb(208,213,219); cursor:move;';
 
-        const body = document.createElement('div');
-        body.className = 'card-body d-flex align-items-center justify-content-between';
+            const body = document.createElement('div');
+            body.className = 'card-body d-flex align-items-center justify-content-between';
 
-        // Determine date color
-        let dateColor = 'rgb(106,115,130)';
-        if (finalDue && new Date(finalDue) < new Date()) dateColor = 'rgb(243,36,57)';
+            // Determine date color
+            let dateColor = 'rgb(106,115,130)';
+            if (finalDue && new Date(finalDue) < new Date()) dateColor = 'rgb(243,36,57)';
 
-        body.innerHTML = `
-            <div class="d-flex align-items-center gap-3">
-                <i class="bi bi-grip-horizontal text-secondary"></i>
-                <div>
-                    <h5 class="mb-0" style="font-size: 18px; font-weight: 600;">${name}</h5>
-                    <span class="text-muted" style="font-size: 14px;">${engno}</span>
+            body.innerHTML = `
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-grip-horizontal text-secondary"></i>
+                    <div>
+                        <h5 class="mb-0" style="font-size: 18px; font-weight: 600;">${name}</h5>
+                        <span class="text-muted" style="font-size: 14px;">${engno}</span>
+                    </div>
                 </div>
-            </div>
-            <div class="d-flex align-items-center gap-3 text-secondary">
-                ${manager ? `<span style="font-size:14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span>` : ''}
-                ${finalDue ? `<span style="font-size:14px; color:${dateColor};"><i class="bi bi-calendar2"></i>&nbsp;${finalDue}</span>` : ''}
-            </div>
-        `;
+                <div class="d-flex align-items-center gap-3 text-secondary">
+                    ${manager ? `<span style="font-size:14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span>` : ''}
+                    ${finalDue ? `<span style="font-size:14px; color:${dateColor};"><i class="bi bi-calendar2"></i>&nbsp;${finalDue}</span>` : ''}
+                </div>
+            `;
 
-        const rightDiv = body.querySelector('div:last-child');
-        if (audit) {
-            const badge = document.createElement('span');
-            badge.className = 'badge';
-            badge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;';
-            badge.textContent = audit;
-            rightDiv.appendChild(badge);
-        }
+            const rightDiv = body.querySelector('div:last-child');
+            if (audit) {
+                const badge = document.createElement('span');
+                badge.className = 'badge';
+                badge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight: 500;';
+                badge.textContent = audit;
+                rightDiv.appendChild(badge);
+            }
 
-        if (finalDue && new Date(finalDue) < new Date()) {
-            const overdue = document.createElement('span');
-            overdue.className = 'badge';
-            overdue.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500; margin-left:5px;';
-            overdue.textContent = 'Overdue';
-            rightDiv.appendChild(overdue);
-        }
+            if (finalDue && new Date(finalDue) < new Date()) {
+                const overdue = document.createElement('span');
+                overdue.className = 'badge';
+                overdue.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight: 500; margin-left:5px;';
+                overdue.textContent = 'Overdue';
+                rightDiv.appendChild(overdue);
+            }
 
-        newCard.appendChild(body);
-        wrapper.appendChild(newCard);
-        attachDragEvents(wrapper);
-        return wrapper;
-    };
+            newCard.appendChild(body);
+            wrapper.appendChild(newCard);
+            attachDragEvents(wrapper);
+            return wrapper;
+        };
 
-    // Transform card to vertical layout
-    const transformToVertical = (card) => {
-        const { id, name, engno, manager, audit, finalDue } = card.dataset;
-        const wrapper = document.createElement('a');
-        wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
-        wrapper.className = 'text-decoration-none text-reset d-block';
-        wrapper.setAttribute('draggable', 'true');
+        // Transform card to vertical layout
+        const transformToVertical = (card) => {
+            const { id, name, engno, manager, audit, finalDue } = card.dataset;
+            const wrapper = document.createElement('a');
+            wrapper.href = `engagement-details.php?eng_id=${encodeURIComponent(id)}`;
+            wrapper.className = 'text-decoration-none text-reset d-block';
+            wrapper.setAttribute('draggable', 'true');
 
-        const newCard = document.createElement('div');
-        newCard.className = 'card engagement-card-kanban mb-2';
-        Object.assign(newCard.dataset, { id, name, engno, manager, audit, finalDue });
-        newCard.style.cssText = 'background-color: rgb(249,250,251); border:1px solid rgb(208,213,219); border-radius:15px; cursor:move;';
+            const newCard = document.createElement('div');
+            newCard.className = 'card engagement-card-kanban mb-2';
+            Object.assign(newCard.dataset, { id, name, engno, manager, audit, finalDue });
+            newCard.style.cssText = 'background-color: rgb(249,250,251); border:1px solid rgb(208,213,219); border-radius:15px; cursor:move;';
 
-        const body = document.createElement('div');
-        body.className = 'card-body';
-        body.style.marginBottom = '-15px';
+            const body = document.createElement('div');
+            body.className = 'card-body';
+            body.style.marginBottom = '-15px';
 
-        // Determine date color
-        let dateColor = '#000';
-        if (finalDue && new Date(finalDue) < new Date()) dateColor = 'rgb(243,36,57)';
+            // Determine date color
+            let dateColor = '#000';
+            if (finalDue && new Date(finalDue) < new Date()) dateColor = 'rgb(243,36,57)';
 
-        body.innerHTML = `
-            <div class="d-flex align-items-center justify-content-between">
-                <h6 class="card-title fw-bold mb-0">${name}</h6>
-                <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
-            </div>
-            <p class="text-secondary" style="font-size:16px; margin-bottom:-5px;">
-                <span style="color: rgb(106,115,130); font-size:14px;">${engno}</span><br>
-                <div class="pb-2"></div>
-                ${manager ? `<span style="font-size:14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span><br>` : ''}
-                ${finalDue ? `<span style="font-size:14px; color:${dateColor};"><i class="bi bi-calendar2"></i>&nbsp;${finalDue}</span><br>` : ''}
-                <div class="tags pt-2"></div>
-            </p>
-        `;
+            body.innerHTML = `
+                <div class="d-flex align-items-center justify-content-between">
+                    <h6 class="card-title fw-bold mb-0">${name}</h6>
+                    <i class="bi bi-three-dots-vertical text-secondary card-actions"></i>
+                </div>
+                <p class="text-secondary" style="font-size:16px; margin-bottom:-5px;">
+                    <span style="color: rgb(106,115,130); font-size:14px;">${engno}</span><br>
+                    <div class="pb-2"></div>
+                    ${manager ? `<span style="font-size:14px;"><i class="bi bi-people"></i>&nbsp;${manager}</span><br>` : ''}
+                    ${finalDue ? `<span style="font-size:14px; color:${dateColor};"><i class="bi bi-calendar2"></i>&nbsp;${finalDue}</span><br>` : ''}
+                    <div class="tags pt-2"></div>
+                </p>
+            `;
 
-        const tagsDiv = body.querySelector('.tags');
-        if (audit) {
-            const badge = document.createElement('span');
-            badge.className = 'badge';
-            badge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight:500;';
-            badge.textContent = audit;
-            tagsDiv.appendChild(badge);
-        }
+            const tagsDiv = body.querySelector('.tags');
+            if (audit) {
+                const badge = document.createElement('span');
+                badge.className = 'badge';
+                badge.style.cssText = 'background-color: rgba(235,236,237,1); color: rgb(57,69,85); font-weight:500;';
+                badge.textContent = audit;
+                tagsDiv.appendChild(badge);
+            }
 
-        if (finalDue && new Date(finalDue) < new Date()) {
-            const overdue = document.createElement('span');
-            overdue.className = 'badge';
-            overdue.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight:500; margin-left:5px;';
-            overdue.textContent = 'Overdue';
-            tagsDiv.appendChild(overdue);
-        }
+            if (finalDue && new Date(finalDue) < new Date()) {
+                const overdue = document.createElement('span');
+                overdue.className = 'badge';
+                overdue.style.cssText = 'background-color: rgb(255,226,226); color: rgb(201,0,18); font-weight:500; margin-left:5px;';
+                overdue.textContent = 'Overdue';
+                tagsDiv.appendChild(overdue);
+            }
 
-        newCard.appendChild(body);
-        wrapper.appendChild(newCard);
-        attachDragEvents(wrapper);
-        return wrapper;
-    };
+            newCard.appendChild(body);
+            wrapper.appendChild(newCard);
+            attachDragEvents(wrapper);
+            return wrapper;
+        };
 
-    // Attach drag events to all existing cards
-    document.querySelectorAll('.kanban-column a').forEach(a => attachDragEvents(a));
+        // Attach drag events to all existing cards
+        document.querySelectorAll('.kanban-column a').forEach(a => attachDragEvents(a));
 
-    // Drag & drop logic
-    document.querySelectorAll('.kanban-column').forEach(column => {
-        column.addEventListener('dragover', e => { e.preventDefault(); column.classList.add('drag-over'); });
-        column.addEventListener('dragleave', () => column.classList.remove('drag-over'));
-        column.addEventListener('drop', e => {
-            e.preventDefault();
-            column.classList.remove('drag-over');
-            if (!draggedWrapper) return;
+        // Drag & drop logic
+        document.querySelectorAll('.kanban-column').forEach(column => {
+            column.addEventListener('dragover', e => { e.preventDefault(); column.classList.add('drag-over'); });
+            column.addEventListener('dragleave', () => column.classList.remove('drag-over'));
+            column.addEventListener('drop', e => {
+                e.preventDefault();
+                column.classList.remove('drag-over');
+                if (!draggedWrapper) return;
 
-            const originalParent = draggedWrapper.parentElement;
-            const newStatus = column.dataset.status;
-            const cardData = draggedWrapper.querySelector('.engagement-card-kanban');
+                const originalParent = draggedWrapper.parentElement;
+                const newStatus = column.dataset.status;
+                const cardData = draggedWrapper.querySelector('.engagement-card-kanban');
 
-            let newWrapper = (layoutMap[newStatus] === 'horizontal') 
-                ? transformToHorizontal(cardData)
-                : transformToVertical(cardData);
+                let newWrapper = (layoutMap[newStatus] === 'horizontal') 
+                    ? transformToHorizontal(cardData)
+                    : transformToVertical(cardData);
 
-            if (newWrapper !== draggedWrapper) draggedWrapper.remove();
-            column.appendChild(newWrapper);
-            applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), newStatus);
+                if (newWrapper !== draggedWrapper) draggedWrapper.remove();
+                column.appendChild(newWrapper);
+                applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), newStatus);
 
-            // Update badges & placeholders dynamically
+                // Update badges & placeholders dynamically
+                [column, originalParent].forEach(updateColumnUI);
+
+                // Update DB
+    const engId = newWrapper.querySelector('.engagement-card-kanban').dataset.id;
+    fetch('../includes/update-engagement-status.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eng_id: engId, status: newStatus })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) {
+            // Revert if update failed
+            originalParent.appendChild(newWrapper);
+            applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
             [column, originalParent].forEach(updateColumnUI);
-
-            // Update DB
-const engId = newWrapper.querySelector('.engagement-card-kanban').dataset.id;
-fetch('../includes/update-engagement-status.php', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ eng_id: engId, status: newStatus })
-})
-.then(res => res.json())
-.then(data => {
-    if (!data.success) {
-        // Revert if update failed
+            alert('Failed to update DB. Reverted.');
+        } else {
+            // Refresh the page after successful update
+            location.reload();
+        }
+    })
+    .catch(() => {
         originalParent.appendChild(newWrapper);
         applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
         [column, originalParent].forEach(updateColumnUI);
         alert('Failed to update DB. Reverted.');
-    } else {
-        // Refresh the page after successful update
-        location.reload();
-    }
-})
-.catch(() => {
-    originalParent.appendChild(newWrapper);
-    applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
-    [column, originalParent].forEach(updateColumnUI);
-    alert('Failed to update DB. Reverted.');
-});
+    });
 
-            draggedWrapper = null;
+                draggedWrapper = null;
+            });
+        });
+
+        // Initialize all badges and placeholders on page load
+        document.querySelectorAll('.kanban-column').forEach(column => {
+            column.querySelectorAll('a > .engagement-card-kanban')
+                  .forEach(card => applyLayoutStyles(card, column.dataset.status));
+            updateColumnUI(column);
         });
     });
-
-    // Initialize all badges and placeholders on page load
-    document.querySelectorAll('.kanban-column').forEach(column => {
-        column.querySelectorAll('a > .engagement-card-kanban')
-              .forEach(card => applyLayoutStyles(card, column.dataset.status));
-        updateColumnUI(column);
-    });
-});
 </script>
 
 

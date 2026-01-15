@@ -267,23 +267,7 @@ $totalEngagements = count($engagements);
   <div class="mt-4"></div>
 
     <?php include_once '../includes/status_cards.php'; ?>
-
-    <!-- Search bar -->
-          <div class="row align-items-center mt-4" style="margin-left: 210px; margin-right: 210px;">
-              <div class="p-3 border d-flex align-items-center" style="box-shadow: 1px 1px 4px rgba(0,0,0,0.15); border-radius: 15px;">
-                  <div class="input-group flex-grow-1 me-3">
-                      <span class="input-group-text border-end-0" style="background-color: rgb(248,249,251); color: rgb(142,151,164);">
-                          <i class="bi bi-search"></i>
-                      </span>
-                      <input type="text" class="form-control border-start-0" style="background-color: rgb(248,249,251);;" placeholder="Search...">
-                  </div>
-                  <!-- Filter button -->
-                  <button class="btn filter-btn d-flex" >
-                    <i class="bi bi-funnel me-1"></i> Filter
-                  </button>
-              </div>
-          </div>
-    <!-- end search bar -->
+    <?php include_once '../includes/search_bar.php'; ?>
 
 
     <!-- table -->
@@ -302,58 +286,60 @@ $totalEngagements = count($engagements);
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($engagements as $eng): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($eng['eng_idno']); ?></td>
-                    <td>
-                        <strong><?php echo htmlspecialchars($eng['eng_name']); ?></strong><br>
-                        <?php if (!empty($eng['eng_audit_type'])): ?>
-                            <span class="text-secondary" style="font-size: 12px;"><?php echo htmlspecialchars($eng['eng_audit_type']); ?></span>
-                        <?php endif; ?>
-                    </td>
-                    <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
-                    <td><?php echo htmlspecialchars(ucfirst($eng['eng_status'])); ?></td>
-                    <?php
-                        $periodText = '—';
-                        if (!empty($eng['eng_start_period']) && !empty($eng['eng_end_period'])) {
-                            $start = date('M j, Y', strtotime($eng['eng_start_period']));
-                            $end   = date('M j, Y', strtotime($eng['eng_end_period']));
-                            $periodText = "{$start} – {$end}";
-                        } elseif (!empty($eng['eng_as_of_date'])) {
-                            $asOf = date('M j, Y', strtotime($eng['eng_as_of_date']));
-                            $periodText = "As of {$asOf}";
-                        }
-                    ?>
-                    <td><?php echo htmlspecialchars($periodText); ?></td>
+<?php foreach ($engagements as $eng): ?>
+<tr>
+    <td><?php echo htmlspecialchars($eng['eng_idno'] ?? ''); ?></td>
+    <td>
+        <strong><?php echo htmlspecialchars($eng['eng_name'] ?? ''); ?></strong><br>
+        <?php if (!empty($eng['eng_audit_type'])): ?>
+            <span class="text-secondary" style="font-size: 12px;">
+                <?php echo htmlspecialchars($eng['eng_audit_type'] ?? ''); ?>
+            </span>
+        <?php endif; ?>
+    </td>
+    <td><?php echo htmlspecialchars($eng['eng_manager'] ?? ''); ?></td>
+    <td><?php echo htmlspecialchars(ucfirst($eng['eng_status'] ?? '')); ?></td>
+    <?php
+        $periodText = '—';
+        if (!empty($eng['eng_start_period']) && !empty($eng['eng_end_period'])) {
+            $start = date('M j, Y', strtotime($eng['eng_start_period']));
+            $end   = date('M j, Y', strtotime($eng['eng_end_period']));
+            $periodText = "{$start} – {$end}";
+        } elseif (!empty($eng['eng_as_of_date'])) {
+            $asOf = date('M j, Y', strtotime($eng['eng_as_of_date']));
+            $periodText = "As of {$asOf}";
+        }
+    ?>
+    <td><?php echo htmlspecialchars($periodText); ?></td>
 
-                    <td>
-                        <div class="d-flex gap-1">
-                            <!-- VIEW -->
-                            <a href="engagement-details.php?eng_id=<?php echo $eng['eng_id']; ?>" 
-                               class="btn btn-sm btn-outline-primary action-btn view-btn" 
-                               title="View">
-                              <i class="bi bi-eye"></i>
-                            </a>
+    <td>
+        <div class="d-flex gap-1">
+            <!-- VIEW -->
+            <a href="engagement-details.php?eng_id=<?php echo $eng['eng_id'] ?? ''; ?>" 
+               class="btn btn-sm btn-outline-primary action-btn view-btn" 
+               title="View">
+              <i class="bi bi-eye"></i>
+            </a>
 
-                            <!-- EDIT -->
-                            <button class="btn btn-sm btn-outline-warning action-btn edit-btn" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#editModal-<?php echo $eng['eng_id']; ?>" 
-                                    title="Edit">
-                              <i class="bi bi-pencil-square"></i>
-                            </button>
+            <!-- EDIT -->
+            <button class="btn btn-sm btn-outline-warning action-btn edit-btn" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#editModal-<?php echo $eng['eng_id'] ?? ''; ?>" 
+                    title="Edit">
+              <i class="bi bi-pencil-square"></i>
+            </button>
 
-                            <!-- DELETE -->
-                            <form method="POST" style="display:inline-block;" 
-                                  onsubmit="return confirm('Are you sure you want to delete this engagement?');">
-                                <input type="hidden" name="delete_eng_id" value="<?php echo $eng['eng_id']; ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-danger action-btn delete-btn" title="Delete">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
+            <!-- DELETE -->
+            <form method="POST" style="display:inline-block;" 
+                  onsubmit="return confirm('Are you sure you want to delete this engagement?');">
+                <input type="hidden" name="delete_eng_id" value="<?php echo $eng['eng_id'] ?? ''; ?>">
+                <button type="submit" class="btn btn-sm btn-outline-danger action-btn delete-btn" title="Delete">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </form>
+        </div>
+    </td>
+</tr>
 
                 <!-- Modal for this engagement -->
 <div class="modal fade" id="editModal-<?php echo $eng['eng_idno']; ?>" tabindex="-1">
