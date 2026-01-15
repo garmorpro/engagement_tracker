@@ -1166,24 +1166,31 @@ document.addEventListener('DOMContentLoaded', () => {
             [column, originalParent].forEach(updateColumnUI);
 
             // Update DB
-            const engId = newWrapper.querySelector('.engagement-card-kanban').dataset.id;
-            fetch('../includes/update-engagement-status.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ eng_id: engId, status: newStatus })
-            }).then(res => res.json()).then(data => {
-                if (!data.success) {
-                    originalParent.appendChild(newWrapper);
-                    applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
-                    [column, originalParent].forEach(updateColumnUI);
-                    alert('Failed to update DB. Reverted.');
-                }
-            }).catch(() => {
-                originalParent.appendChild(newWrapper);
-                applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
-                [column, originalParent].forEach(updateColumnUI);
-                alert('Failed to update DB. Reverted.');
-            });
+const engId = newWrapper.querySelector('.engagement-card-kanban').dataset.id;
+fetch('../includes/update-engagement-status.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ eng_id: engId, status: newStatus })
+})
+.then(res => res.json())
+.then(data => {
+    if (!data.success) {
+        // Revert if update failed
+        originalParent.appendChild(newWrapper);
+        applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
+        [column, originalParent].forEach(updateColumnUI);
+        alert('Failed to update DB. Reverted.');
+    } else {
+        // Refresh the page after successful update
+        location.reload();
+    }
+})
+.catch(() => {
+    originalParent.appendChild(newWrapper);
+    applyLayoutStyles(newWrapper.querySelector('.engagement-card-kanban'), originalParent.dataset.status);
+    [column, originalParent].forEach(updateColumnUI);
+    alert('Failed to update DB. Reverted.');
+});
 
             draggedWrapper = null;
         });
