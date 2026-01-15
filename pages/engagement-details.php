@@ -23,6 +23,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && ($_POST['action'] ?? '') === 'update_last_contact'
+) {
+    $engId = (int)($_POST['eng_id'] ?? 0);
+
+    if ($engId > 0) {
+        $stmt = $conn->prepare("
+            UPDATE engagements
+            SET eng_last_communication = CURDATE()
+            WHERE eng_id = ?
+        ");
+        $stmt->bind_param('i', $engId);
+        $stmt->execute();
+        $stmt->close();
+
+        // Optional: force refresh so date updates immediately
+        header("Location: " . $_SERVER['REQUEST_URI']);
+        exit;
+    }
+}
+
+
 
 if (isset($_GET['eng_id'])) {
 
