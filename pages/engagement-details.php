@@ -686,21 +686,39 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
       </div>
 
       <div class="col-md-3">
-        <div class="card h-100" style="border-color: rgb(255,228,201); border-radius: 15px; background-color: rgb(255,242,227);">
-          <div class="card-body p-4">
-            <!-- Header -->
-            <div class="d-flex align-items-center mb-3">
-              <div class="icon-square me-2" style="background-color: rgb(255,103,0);">
-                <i class="bi bi-clock" style="color: rgb(255,255,255);"></i>
-              </div>
-              <h6 class="fw-semibold mb-0" style="color: rgb(98,0,0);">Last Contact</h6>
-            </div>
-            <p style="color: rgb(98,0,0);">
-              <?php echo htmlspecialchars(formatDate($eng['eng_last_communication'])); ?>
-            </p>
-          </div>
+  <div class="card h-100 position-relative"
+       style="border-color: rgb(255,228,201); border-radius: 15px; background-color: rgb(255,242,227);">
+
+    <!-- CHAT BUTTON -->
+    <form method="post" class="position-absolute top-0 end-0 m-3">
+      <input type="hidden" name="action" value="update_last_contact">
+      <input type="hidden" name="eng_id" value="<?php echo (int)$eng['eng_idno']; ?>">
+      <button type="submit"
+              class="btn btn-sm"
+              title="Update Last Communication"
+              style="background: transparent; border: none;">
+        <i class="bi bi-chat-fill fs-5" style="color: rgb(255,103,0);"></i>
+      </button>
+    </form>
+
+    <div class="card-body p-4">
+      <!-- Header -->
+      <div class="d-flex align-items-center mb-3">
+        <div class="icon-square me-2" style="background-color: rgb(255,103,0);">
+          <i class="bi bi-clock" style="color: rgb(255,255,255);"></i>
         </div>
+        <h6 class="fw-semibold mb-0" style="color: rgb(98,0,0);">
+          Last Contact
+        </h6>
       </div>
+
+      <p style="color: rgb(98,0,0);">
+        <?php echo htmlspecialchars(formatDate($eng['eng_last_communication'])); ?>
+      </p>
+    </div>
+  </div>
+</div>
+
 
       
 
