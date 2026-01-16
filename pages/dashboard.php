@@ -5,6 +5,8 @@ require_once '../includes/functions.php';
 
 require_once '../path.php';
 
+logoutUser($conn);
+
 
 // ============================
 // FUNCTION TO DETERMINE MILESTONES
