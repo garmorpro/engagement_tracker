@@ -35,7 +35,6 @@ function loginUser($conn)
 {
     $error = '';
 
-    // Only run on POST
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         return $error;
     }
@@ -49,7 +48,7 @@ function loginUser($conn)
 
     // Fetch account
     $stmt = $conn->prepare(
-        "SELECT account_name, password_hash 
+        "SELECT account_name, password 
          FROM service_accounts 
          WHERE account_name = ?
          LIMIT 1"
@@ -65,8 +64,8 @@ function loginUser($conn)
     $account = $result->fetch_assoc();
     $stmt->close();
 
-    // Validate credentials
-    if (!$account || !password_verify($password, $account['password_hash'])) {
+    // ❗ Password check (see notes below)
+    if (!$account || !password_verify($password, $account['password'])) {
         return 'Invalid account name or password.';
     }
 
@@ -87,9 +86,10 @@ function loginUser($conn)
         $stmt->close();
     }
 
-    header("Location: /dashboard.php");
+    header("Location: /pages/dashboard.php");
     exit;
 }
+
 
 
 
