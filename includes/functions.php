@@ -311,3 +311,60 @@ function getEngagementsDueThisWeek(mysqli $conn): array
 
     return $result->fetch_all(MYSQLI_ASSOC);
 }
+
+// Get new clients engagements
+
+function getNewClientEngagements(mysqli $conn): array
+{
+    $sql = "
+        SELECT
+            e.eng_id,
+            e.eng_name,
+            e.eng_idno,
+            MIN(ms.due_date) AS final_due_date
+        FROM engagements e
+        LEFT JOIN engagement_milestones ms
+            ON ms.eng_id = e.eng_id
+           AND ms.milestone_type LIKE 'final%'
+        WHERE e.eng_status != 'archived'
+          AND e.eng_repeat = 'N'
+        GROUP BY e.eng_id
+        ORDER BY final_due_date ASC
+        LIMIT 3
+    ";
+
+    $result = $conn->query($sql);
+    if (!$result) {
+        return [];
+    }
+
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+// Get recently updated engagements
+function getRecentlyUpdatedEngagements(mysqli $conn): array
+{
+    $sql = "
+        SELECT
+            e.eng_id,
+            e.eng_name,
+            e.eng_idno,
+            e.eng_updated,
+            MIN(ms.due_date) AS final_due_date
+        FROM engagements e
+        LEFT JOIN engagement_milestones ms
+            ON ms.eng_id = e.eng_id
+           AND ms.milestone_type LIKE 'final%'
+        WHERE e.eng_status != 'archived'
+        GROUP BY e.eng_id
+        ORDER BY e.eng_updated DESC
+        LIMIT 3
+    ";
+
+    $result = $conn->query($sql);
+    if (!$result) {
+        return [];
+    }
+
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
