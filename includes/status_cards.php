@@ -65,7 +65,7 @@
   
                           <!-- Big Number -->
                            <?php
-                            $result = $conn->query("SELECT COUNT(*) AS completed_engagements FROM engagements WHERE eng_status = 'complete'");
+                            $result = $conn->query("SELECT COUNT(*) AS completed_engagements FROM engagements WHERE eng_status = 'complete' }|| eng_status = 'archived'");
                             $row = $result->fetch_assoc();
                             $completeCount = $row['completed_engagements'] ?? 0;
                             ?>
