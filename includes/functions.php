@@ -261,7 +261,7 @@ function getOverdueEngagements(mysqli $conn): array
             e.eng_id,
             e.eng_name,
             e.eng_idno,
-            e.updated_at,
+            e.eng_updated,
             MIN(ms.due_date) AS final_due_date
         FROM engagements e
         JOIN engagement_milestones ms
