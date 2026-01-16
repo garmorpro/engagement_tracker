@@ -13,7 +13,8 @@ function logoutUser($conn)
 
             $stmt = $conn->prepare(
                 "UPDATE service_accounts 
-                 SET last_active = NOW() 
+                 SET last_active = NOW(),
+                     logged_in = 0
                  WHERE account_name = ?"
             );
 
@@ -26,10 +27,12 @@ function logoutUser($conn)
 
         session_destroy();
         header("Location: /");
-        exit; // Prevent further execution
+        exit;
     }
 }
 
+
+// LOGIN
 
 function loginUser($conn)
 {
@@ -64,7 +67,6 @@ function loginUser($conn)
     $account = $result->fetch_assoc();
     $stmt->close();
 
-    // ❗ Password check (see notes below)
     if (!$account || !password_verify($password, $account['password'])) {
         return 'Invalid account name or password.';
     }
@@ -73,10 +75,11 @@ function loginUser($conn)
     session_regenerate_id(true);
     $_SESSION['account_name'] = $account['account_name'];
 
-    // Update last_active
+    // Update login status
     $stmt = $conn->prepare(
         "UPDATE service_accounts 
-         SET last_active = NOW() 
+         SET last_active = NOW(),
+             logged_in = 1
          WHERE account_name = ?"
     );
 
@@ -89,7 +92,6 @@ function loginUser($conn)
     header("Location: /pages/dashboard.php");
     exit;
 }
-
 
 
 
