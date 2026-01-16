@@ -249,3 +249,35 @@ function getActiveEngagementCount(mysqli $conn): int
 
     return (int) ($row['active_count'] ?? 0);
 }
+
+
+
+// Get final due date
+
+function getOverdueEngagements(mysqli $conn): array
+{
+    $sql = "
+        SELECT
+            e.eng_id,
+            e.eng_name,
+            e.eng_idno,
+            e.updated_at,
+            MIN(ms.due_date) AS final_due_date
+        FROM engagements e
+        JOIN engagement_milestones ms
+            ON ms.eng_id = e.eng_id
+           AND ms.milestone_type LIKE 'final%'
+        WHERE e.eng_status != 'archived'
+          AND ms.due_date < CURDATE()
+        GROUP BY e.eng_id
+        ORDER BY e.updated_at DESC
+        LIMIT 3
+    ";
+
+    $result = $conn->query($sql);
+    if (!$result) {
+        return [];
+    }
+
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
