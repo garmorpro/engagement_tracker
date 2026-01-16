@@ -527,7 +527,7 @@ const statusCounts = statusCategories.reduce((acc, s) => {
 }, {});
 
 engagements.forEach(e => {
-    const status = e.status;
+    const status = e.eng_status;
     if (statusCounts.hasOwnProperty(status)) statusCounts[status]++;
 });
 
