@@ -234,12 +234,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['unarchive_eng_id']))
                                                 <i class="bi bi-arrow-counterclockwise"></i>
                                             </button>
                                         </form>
-                                        <button class="btn btn-sm btn-outline-warning action-btn edit-btn" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#editModal-<?php echo $eng['eng_id'] ?? ''; ?>" 
-                                                title="Edit">
-                                          <i class="bi bi-pencil-square"></i>
-                                        </button>
 
                                         <!-- DELETE -->
                                         <form method="POST" style="display:inline-block;" 
