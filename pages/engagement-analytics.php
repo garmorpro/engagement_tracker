@@ -408,7 +408,7 @@ $engagementsWithMilestones = getAllEngagements($conn); // rename
                       <h6 class="fw-semibold mb-0">Manager Workload</h6>
                     </div>
                                                     
-                    <div style="width: 600px; height: 600px; display: flex; justify-content: center; align-items: center;">
+                    <div style="width: 600px; height: 500px; display: flex; justify-content: center; align-items: center;">
                       <canvas id="manager_workload"></canvas>
                     </div>
                                                     
