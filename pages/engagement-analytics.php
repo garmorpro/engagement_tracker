@@ -80,7 +80,7 @@ $overdueEngagements = getOverdueEngagements($conn);
                     </div>
   
                     <?php if (empty($overdueEngagements)): ?>
-    <p class="text-secondary small mb-0">No overdue engagements 🎉</p>
+    <p class="text-secondary text-center small mb-0">No overdue engagements 🎉</p>
 <?php else: ?>
     <?php foreach ($overdueEngagements as $eng): ?>
         <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
