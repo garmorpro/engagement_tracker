@@ -82,6 +82,7 @@ $recentUpdates = getRecentlyUpdatedEngagements($conn);
                         <p class="text-secondary text-center small mb-0 pt-3">No overdue engagements</p>
                       <?php else: ?>
                           <?php foreach ($overdueEngagements as $eng): ?>
+                            <a href="engagement-details.php?eng_id=<?= (int)$eng['eng_id'] ?>" class="text-decoration-none text-reset d-block">
                               <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
                                   <div class="card-body">
                           
@@ -105,6 +106,7 @@ $recentUpdates = getRecentlyUpdatedEngagements($conn);
                           
                                   </div>
                               </div>
+                              </a>
                           <?php endforeach; ?>
                       <?php endif; ?>
                     </div>
@@ -128,6 +130,7 @@ $recentUpdates = getRecentlyUpdatedEngagements($conn);
                         <p class="text-secondary text-center small mb-0 pt-3">No engagements due this week</p>
                       <?php else: ?>
                           <?php foreach ($dueThisWeek as $eng): ?>
+                            <a href="engagement-details.php?eng_id=<?= (int)$eng['eng_id'] ?>" class="text-decoration-none text-reset d-block">
                               <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
                                   <div class="card-body">
                           
@@ -151,6 +154,7 @@ $recentUpdates = getRecentlyUpdatedEngagements($conn);
                           
                                   </div>
                               </div>
+                              </a>
                           <?php endforeach; ?>
                       <?php endif; ?>
 
@@ -176,6 +180,7 @@ $recentUpdates = getRecentlyUpdatedEngagements($conn);
                         <p class="text-secondary text-center small mb-0 pt-3">No new clients yet</p>
                       <?php else: ?>
                           <?php foreach ($newClientEngagements as $eng): ?>
+                            <a href="engagement-details.php?eng_id=<?= (int)$eng['eng_id'] ?>" class="text-decoration-none text-reset d-block">
                               <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
                                   <div class="card-body">
                           
@@ -202,6 +207,7 @@ $recentUpdates = getRecentlyUpdatedEngagements($conn);
                           
                                   </div>
                               </div>
+                              </a>
                           <?php endforeach; ?>
                       <?php endif; ?>
 
@@ -227,6 +233,7 @@ $recentUpdates = getRecentlyUpdatedEngagements($conn);
                         <p class="text-secondary text-center small mb-0 pt-3">No recent updates</p>
                       <?php else: ?>
                           <?php foreach ($recentUpdates as $eng): ?>
+                            <a href="engagement-details.php?eng_id=<?= (int)$eng['eng_id'] ?>" class="text-decoration-none text-reset d-block">
                               <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
                                   <div class="card-body">
                           
@@ -253,6 +260,7 @@ $recentUpdates = getRecentlyUpdatedEngagements($conn);
                           
                                   </div>
                               </div>
+                              </a>
                           <?php endforeach; ?>
                       <?php endif; ?>
 
