@@ -270,7 +270,7 @@ function getOverdueEngagements(mysqli $conn): array
         WHERE e.eng_status != 'archived'
           AND ms.due_date < CURDATE()
         GROUP BY e.eng_id
-        ORDER BY e.updated_at DESC
+        ORDER BY e.eng_updated DESC
         LIMIT 3
     ";
 
