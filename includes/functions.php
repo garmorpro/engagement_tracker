@@ -229,3 +229,23 @@ function getEngagementMilestones($conn) {
 
     return $milestones;
 }
+
+
+function getActiveEngagementCount(mysqli $conn): int
+{
+    $sql = "
+        SELECT COUNT(*) AS active_count
+        FROM engagements
+        WHERE eng_status != 'archived'
+    ";
+
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        return 0;
+    }
+
+    $row = $result->fetch_assoc();
+
+    return (int) ($row['active_count'] ?? 0);
+}

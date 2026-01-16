@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
 
 
 $engagements = getAllActiveEngagements($conn);
-$totalEngagements = count($engagements);
+$totalEngagements = getActiveEngagementCount($conn);
 
 ?>
 
