@@ -231,6 +231,10 @@ $totalEngagements = getActiveEngagementCount($conn);
 
 </head>
 <body>
+  <?php
+  $activeEngagements = getActiveEngagementCount($conn);
+echo $activeEngagements;
+?>
 
   <!-- Header -->
     <div class="header-container">
