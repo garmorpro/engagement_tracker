@@ -79,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
        Y / N FIELDS
     ============================ */
     $repeat              = $_POST['eng_repeat'] ?? 'N';
-    $section_3_requested = $_POST['eng_section_3_requested'] ?? 'N';
 
     /* ============================
        DATE FIELDS (EMPTY → NULL)
@@ -111,15 +110,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
             eng_end_period,
             eng_as_of_date,
             eng_archive,
-            eng_section_3_requested,
             eng_last_communication,
             eng_notes,
             eng_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     $stmt->bind_param(
-        "ssssssssssssssss",
+        "sssssssssssssss",
         $engId,
         $name,
         $poc,
@@ -132,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST[
         $end_period,
         $as_of_date,
         $archive,
-        $section_3_requested,
         $last_communication,
         $notes,
         $status
