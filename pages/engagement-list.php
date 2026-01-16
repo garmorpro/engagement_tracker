@@ -214,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
 
 
 $engagements = getAllActiveEngagements($conn);
-$totalEngagements = getActiveEngagementCount($conn);
+$activeEngagements = getActiveEngagementCount($conn);
 
 ?>
 
@@ -231,10 +231,6 @@ $totalEngagements = getActiveEngagementCount($conn);
 
 </head>
 <body>
-  <?php
-  $activeEngagements = getActiveEngagementCount($conn);
-echo $activeEngagements;
-?>
 
   <!-- Header -->
     <div class="header-container">
@@ -276,7 +272,7 @@ echo $activeEngagements;
 
     <!-- table -->
 <div class="mt-4" style="margin-left: 210px; margin-right: 210px;">
-    Showing <?php echo $totalEngagements; ?> of <?php echo $totalEngagements; ?> engagements
+    Showing <?php echo $activeEngagements; ?> of <?php echo $activeEngagements; ?> engagements
     <div class="table-wrapper mt-3">
         <table class="table align-middle mb-0">
             <thead>
