@@ -3,6 +3,53 @@
 
 require_once '../includes/functions.php';
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
+    $engId = (int)$_POST['delete_eng_id'];
+
+    // Temporarily disable foreign key checks
+    $conn->query("SET FOREIGN_KEY_CHECKS=0");
+
+    // 1️⃣ Delete the engagement itself first
+    $stmtEng = $conn->prepare("DELETE FROM engagements WHERE eng_id = ?");
+    if ($stmtEng) {
+        $stmtEng->bind_param("i", $engId);
+        $stmtEng->execute();
+        if ($stmtEng->error) {
+            echo "<div class='alert alert-danger'>Failed to delete engagement: " . htmlspecialchars($stmtEng->error) . "</div>";
+        }
+        $stmtEng->close();
+    }
+
+    // 2️⃣ Delete team members
+    $stmtTeam = $conn->prepare("DELETE FROM engagement_team WHERE eng_id = ?");
+    if ($stmtTeam) {
+        $stmtTeam->bind_param("i", $engId);
+        $stmtTeam->execute();
+        if ($stmtTeam->error) {
+            echo "<div class='alert alert-danger'>Failed to delete team members: " . htmlspecialchars($stmtTeam->error) . "</div>";
+        }
+        $stmtTeam->close();
+    }
+
+    // 3️⃣ Delete milestones
+    $stmtMilestones = $conn->prepare("DELETE FROM engagement_milestones WHERE eng_id = ?");
+    if ($stmtMilestones) {
+        $stmtMilestones->bind_param("i", $engId);
+        $stmtMilestones->execute();
+        if ($stmtMilestones->error) {
+            echo "<div class='alert alert-danger'>Failed to delete milestones: " . htmlspecialchars($stmtMilestones->error) . "</div>";
+        }
+        $stmtMilestones->close();
+    }
+
+    // Re-enable foreign key checks
+    $conn->query("SET FOREIGN_KEY_CHECKS=1");
+
+    // Redirect after deletion
+    header("Location: dashboard.php?message=Engagement deleted successfully");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -116,7 +163,11 @@ require_once '../includes/functions.php';
                                       <?php endif; ?>
                                   </td>
                                   <td><?php echo htmlspecialchars($eng['eng_manager']); ?></td>
-                                  <td><?php echo ucfirst(htmlspecialchars($eng['eng_status'])); ?></td>
+                                  <td>
+                                    <div class="badge" style="background-color: rgb(249,250,251); border: 1px solid rgb(229,231,235); border-radius: 12px; padding: 4px 8px; text-align: center; color: rgb(105,114,129); font-weight: 500;">
+                                      <?php echo ucfirst(htmlspecialchars($eng['eng_status'])); ?>
+                                    </div>
+                                  </td>
                                   <?php
                                     $periodText = '—';
 
@@ -141,7 +192,33 @@ require_once '../includes/functions.php';
                                       }
                                       ?>
                                   </td>
-                                  <td><i class="bi bi-trash"></i></td>
+                                  <td>
+                                    <div class="d-flex gap-1">
+                                        <!-- VIEW -->
+                                        <a href="engagement-details.php?eng_id=<?php echo $eng['eng_id'] ?? ''; ?>" 
+                                           class="btn btn-sm btn-outline-primary action-btn view-btn" 
+                                           title="View">
+                                          <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <!-- EDIT -->
+                                        <button class="btn btn-sm btn-outline-warning action-btn edit-btn" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#editModal-<?php echo $eng['eng_id'] ?? ''; ?>" 
+                                                title="Edit">
+                                          <i class="bi bi-pencil-square"></i>
+                                        </button>
+
+                                        <!-- DELETE -->
+                                        <form method="POST" style="display:inline-block;" 
+                                              onsubmit="return confirm('Are you sure you want to delete this engagement?');">
+                                            <input type="hidden" name="delete_eng_id" value="<?php echo $eng['eng_id'] ?? ''; ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger action-btn delete-btn" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                  </td>
                               </tr>
                           <?php endforeach; ?>
                       </tbody>
