@@ -135,6 +135,44 @@ function getAllEngagements(mysqli $conn): array
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+function getAllActiveEngagements(mysqli $conn): array
+{
+    $sql = "
+        SELECT
+            e.*,
+
+            -- Engagement Manager (single expected)
+            MAX(mgr.emp_name) AS eng_manager,
+
+            -- Final Due Date
+            MIN(ms.due_date) AS eng_final_due
+
+        FROM engagements e
+
+        LEFT JOIN engagement_team mgr
+            ON mgr.eng_id = e.eng_id
+           AND LOWER(mgr.role) = 'manager'
+
+        LEFT JOIN engagement_milestones ms
+            ON ms.eng_id = e.eng_id
+           AND ms.milestone_type LIKE 'final%'
+
+        WHERE e.eng_status != 'archived'
+
+        GROUP BY e.eng_id
+        ORDER BY e.eng_id DESC
+    ";
+
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        return [];
+    }
+
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+
 
 
 // automate eng_idno

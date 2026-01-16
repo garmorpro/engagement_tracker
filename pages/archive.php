@@ -146,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['unarchive_eng_id']))
   
     <!-- table -->
         <?php
-        $engagements = getAllEngagements($conn);
+        $engagements = getAllActiveEngagements($conn);
 
         // keep only archived
         $archivedEngagements = array_filter($engagements, function ($eng) {
