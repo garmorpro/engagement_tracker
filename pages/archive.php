@@ -50,6 +50,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['unarchive_eng_id'])) {
+    $engId = (int)$_POST['unarchive_eng_id'];
+
+    // Temporarily disable foreign key checks
+    $conn->query("SET FOREIGN_KEY_CHECKS=0");
+
+    // 1️⃣ Delete the engagement itself first
+    $stmtEng = $conn->prepare("UPDATE engagements SET eng_status = 'complete' WHERE eng_id = ?");
+    if ($stmtEng) {
+        $stmtEng->bind_param("i", $engId);
+        $stmtEng->execute();
+        if ($stmtEng->error) {
+            echo "<div class='alert alert-danger'>Failed to unarchive engagement: " . htmlspecialchars($stmtEng->error) . "</div>";
+        }
+        $stmtEng->close();
+    }
+
+    // Re-enable foreign key checks
+    $conn->query("SET FOREIGN_KEY_CHECKS=1");
+
+    // Redirect after deletion
+    header("Location: archive.php?message=Engagement unarchived successfully");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -202,6 +227,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
                                         </a>
 
                                         <!-- EDIT -->
+                                        <form method="POST" style="display:inline-block;" 
+                                              onsubmit="return confirm('Are you sure you want to unarchive this engagement?');">
+                                            <input type="hidden" name="unarchive_eng_id" value="<?php echo $eng['eng_id'] ?? ''; ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-warning action-btn edit-btn" title="unarchive">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                            </button>
+                                        </form>
                                         <button class="btn btn-sm btn-outline-warning action-btn edit-btn" 
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#editModal-<?php echo $eng['eng_id'] ?? ''; ?>" 
