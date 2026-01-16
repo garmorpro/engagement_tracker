@@ -5,6 +5,8 @@ require_once '../includes/functions.php';
 
 $engagementsWithMilestones = getAllEngagements($conn); // rename
 $overdueEngagements = getOverdueEngagements($conn);
+$dueThisWeek = getEngagementsDueThisWeek($conn);
+
 
 
 ?>
@@ -67,131 +69,99 @@ $overdueEngagements = getOverdueEngagements($conn);
           <div class="row g-4 mt-2" style="margin-left: 200px; margin-right: 200px;">
   
               <!-- Overdue -->
-              <div class="col-md-3">
-                <div class="card h-100" style="border-color: rgb(255,201,202); border-radius: 15px;">
-                  <div class="card-body p-4">
-  
-                    <!-- Header -->
-                    <div class="d-flex align-items-center mb-3">
-                      <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
-                        <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i>
+                <div class="col-md-3">
+                  <div class="card h-100" style="border-color: rgb(255,201,202); border-radius: 15px;">
+                    <div class="card-body p-4">
+
+                      <!-- Header -->
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="icon-square me-2" style="background-color: rgb(255,241,242);">
+                          <i class="bi bi-exclamation-circle" style="color: rgb(241,0,24);"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-0">Overdue</h6>
                       </div>
-                      <h6 class="fw-semibold mb-0">Overdue</h6>
+
+                      <?php if (empty($overdueEngagements)): ?>
+                        <p class="text-secondary text-center small mb-0 pt-3">No overdue engagements</p>
+                      <?php else: ?>
+                          <?php foreach ($overdueEngagements as $eng): ?>
+                              <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                                  <div class="card-body">
+                          
+                                      <!-- Title row -->
+                                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                                          <h6 class="card-title fw-bold mb-0">
+                                              <?= htmlspecialchars($eng['eng_name']) ?>
+                                          </h6>
+                                          <i class="bi bi-arrow-right text-secondary"></i>
+                                      </div>
+                          
+                                      <!-- Subtext -->
+                                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                                          <span style="color: rgb(106,115,130);">
+                                              <?= htmlspecialchars($eng['eng_idno']) ?>
+                                          </span><br>
+                                          <span style="color: rgb(74,86,101);">
+                                              Due: <?= date('M j, Y', strtotime($eng['final_due_date'])) ?>
+                                          </span>
+                                      </p>
+                          
+                                  </div>
+                              </div>
+                          <?php endforeach; ?>
+                      <?php endif; ?>
                     </div>
-  
-                    <?php if (empty($overdueEngagements)): ?>
-    <p class="text-secondary text-center small mb-0 pt-3">No overdue engagements 🎉</p>
-<?php else: ?>
-    <?php foreach ($overdueEngagements as $eng): ?>
-        <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-            <div class="card-body">
-
-                <!-- Title row -->
-                <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-                    <h6 class="card-title fw-bold mb-0">
-                        <?= htmlspecialchars($eng['eng_name']) ?>
-                    </h6>
-                    <i class="bi bi-arrow-right text-secondary"></i>
-                </div>
-
-                <!-- Subtext -->
-                <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-                    <span style="color: rgb(106,115,130);">
-                        <?= htmlspecialchars($eng['eng_idno']) ?>
-                    </span><br>
-                    <span style="color: rgb(74,86,101);">
-                        Due: <?= date('M j, Y', strtotime($eng['final_due_date'])) ?>
-                    </span>
-                </p>
-
-            </div>
-        </div>
-    <?php endforeach; ?>
-<?php endif; ?>
-
-  
-  
-  
-  
                   </div>
                 </div>
-              </div>
+              <!-- end Overdue -->
   
               <!-- Due This Week -->
-              <div class="col-md-3">
-                <div class="card h-100" style="border-color: rgb(255,214,171);  border-radius: 15px;">
-                  <div class="card-body">
-  
-                    <div class="d-flex align-items-center mb-3">
-                      <div class="icon-square me-2" style="background-color: rgb(255,247,238);">
-                        <i class="bi bi-calendar-week" style="color: rgb(255,71,0);"></i>
-                      </div>
-                      <h6 class="fw-semibold mb-0">Due This Week</h6>
-                    </div>
-  
-                    <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-                      <div class="card-body">
-  
-                        <!-- Title row -->
-                        <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-                          <h6 class="card-title fw-bold mb-0" >
-                            Acme Corportation Audit
-                          </h6>
-                          <i class="bi bi-arrow-right text-secondary"></i>
+                <div class="col-md-3">
+                  <div class="card h-100" style="border-color: rgb(255,214,171);  border-radius: 15px;">
+                    <div class="card-body">
+                            
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="icon-square me-2" style="background-color: rgb(255,247,238);">
+                          <i class="bi bi-calendar-week" style="color: rgb(255,71,0);"></i>
                         </div>
-  
-                        <!-- Subtext -->
-                        <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-                          <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-                          <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-                        </p>
-  
+                        <h6 class="fw-semibold mb-0">Due This Week</h6>
                       </div>
+                            
+                      <?php if (empty($dueThisWeek)): ?>
+                        <p class="text-secondary text-center small mb-0 pt-3">No engagements due this week</p>
+                      <?php else: ?>
+                          <?php foreach ($dueThisWeek as $eng): ?>
+                              <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
+                                  <div class="card-body">
+                          
+                                      <!-- Title row -->
+                                      <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
+                                          <h6 class="card-title fw-bold mb-0">
+                                              <?= htmlspecialchars($eng['eng_name']) ?>
+                                          </h6>
+                                          <i class="bi bi-arrow-right text-secondary"></i>
+                                      </div>
+                          
+                                      <!-- Subtext -->
+                                      <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
+                                          <span style="color: rgb(106,115,130);">
+                                              <?= htmlspecialchars($eng['eng_idno']) ?>
+                                          </span><br>
+                                          <span style="color: rgb(74,86,101);">
+                                              Due: <?= date('M j, Y', strtotime($eng['final_due_date'])) ?>
+                                          </span>
+                                      </p>
+                          
+                                  </div>
+                              </div>
+                          <?php endforeach; ?>
+                      <?php endif; ?>
+
+                          
                     </div>
-  
-                    <div class="card engagement-card-updates mb-2" style="background-color: rgb(249,250,251); border: none;">
-                      <div class="card-body">
-  
-                        <!-- Title row -->
-                        <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-                          <h6 class="card-title fw-bold mb-0" >
-                            Acme Corportation Audit
-                          </h6>
-                          <i class="bi bi-arrow-right text-secondary"></i>
-                        </div>
-  
-                        <!-- Subtext -->
-                        <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-                          <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-                          <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-                        </p>
-  
-                      </div>
-                    </div>
-  
-                    <div class="card engagement-card-updates" style="background-color: rgb(249,250,251); border: none;">
-                      <div class="card-body">
-  
-                        <!-- Title row -->
-                        <div class="d-flex align-items-center justify-content-between" style="margin-top: -5px !important;">
-                          <h6 class="card-title fw-bold mb-0" >
-                            Acme Corportation Audit
-                          </h6>
-                          <i class="bi bi-arrow-right text-secondary"></i>
-                        </div>
-  
-                        <!-- Subtext -->
-                        <p class="text-secondary" style="font-size: 14px; margin-bottom: -5px !important;">
-                          <span style="color: rgb(106,115,130);">ENG-2024-001</span><br>
-                          <span style="color: rgb(74,86,101);">Due: Feb 15, 2025</span>
-                        </p>
-  
-                      </div>
-                    </div>
-  
                   </div>
                 </div>
-              </div>
+              <!-- end Due This Week -->
   
               <!-- High Priority -->
               <div class="col-md-3">

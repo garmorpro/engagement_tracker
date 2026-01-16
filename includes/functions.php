@@ -281,3 +281,33 @@ function getOverdueEngagements(mysqli $conn): array
 
     return $result->fetch_all(MYSQLI_ASSOC);
 }
+
+// Get due this week engagements
+
+function getEngagementsDueThisWeek(mysqli $conn): array
+{
+    $sql = "
+        SELECT
+            e.eng_id,
+            e.eng_name,
+            e.eng_idno,
+            MIN(ms.due_date) AS final_due_date
+        FROM engagements e
+        JOIN engagement_milestones ms
+            ON ms.eng_id = e.eng_id
+           AND ms.milestone_type LIKE 'final%'
+        WHERE e.eng_status != 'archived'
+          AND ms.due_date BETWEEN CURDATE()
+                              AND DATE_ADD(CURDATE(), INTERVAL (7 - WEEKDAY(CURDATE())) DAY)
+        GROUP BY e.eng_id
+        ORDER BY final_due_date ASC
+        LIMIT 3
+    ";
+
+    $result = $conn->query($sql);
+    if (!$result) {
+        return [];
+    }
+
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
