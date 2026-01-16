@@ -2,6 +2,97 @@
 require_once 'db.php';
 session_start();
 
+// LOGOUT
+
+function logoutUser($conn)
+{
+    if (isset($_GET['logout']) && $_GET['logout'] == 1) {
+
+        if (!empty($_SESSION['account_name'])) {
+            $accountName = $_SESSION['account_name'];
+
+            $stmt = $conn->prepare(
+                "UPDATE service_accounts 
+                 SET last_active = NOW() 
+                 WHERE account_name = ?"
+            );
+
+            if ($stmt) {
+                $stmt->bind_param("s", $accountName);
+                $stmt->execute();
+                $stmt->close();
+            }
+        }
+
+        session_destroy();
+        header("Location: /");
+        exit; // Prevent further execution
+    }
+}
+
+
+function loginUser($conn)
+{
+    $error = '';
+
+    // Only run on POST
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        return $error;
+    }
+
+    $accountName = trim($_POST['account_name'] ?? '');
+    $password    = $_POST['password'] ?? '';
+
+    if ($accountName === '' || $password === '') {
+        return 'Please enter both account name and password.';
+    }
+
+    // Fetch account
+    $stmt = $conn->prepare(
+        "SELECT account_name, password_hash 
+         FROM service_accounts 
+         WHERE account_name = ?
+         LIMIT 1"
+    );
+
+    if (!$stmt) {
+        return 'System error. Please try again later.';
+    }
+
+    $stmt->bind_param("s", $accountName);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $account = $result->fetch_assoc();
+    $stmt->close();
+
+    // Validate credentials
+    if (!$account || !password_verify($password, $account['password_hash'])) {
+        return 'Invalid account name or password.';
+    }
+
+    // ✅ Login success
+    session_regenerate_id(true);
+    $_SESSION['account_name'] = $account['account_name'];
+
+    // Update last_active
+    $stmt = $conn->prepare(
+        "UPDATE service_accounts 
+         SET last_active = NOW() 
+         WHERE account_name = ?"
+    );
+
+    if ($stmt) {
+        $stmt->bind_param("s", $_SESSION['account_name']);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    header("Location: /dashboard.php");
+    exit;
+}
+
+
+
 // get engagement details
 
 // $engagements = getAllEngagements();

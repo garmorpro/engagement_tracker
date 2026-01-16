@@ -1,5 +1,6 @@
 <?php
-require_once 'includes/auth.php';
+require_once 'includes/functions.php';
+$error = loginUser($conn);
 ?>
 
 <!DOCTYPE html>
