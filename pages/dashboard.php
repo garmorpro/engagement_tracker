@@ -1,5 +1,5 @@
 <?php 
-sessions_start();
+session_start();
 
 require_once '../includes/functions.php';
 logoutUser($conn);
