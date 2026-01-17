@@ -13,25 +13,49 @@
 </head>
 <body>
 
-<!-- Header -->
-<div class="header-container">
-  <div class="header-inner">
-    
-    <!-- Left -->
-    <div>
-      <div class="header-title">Engagement Tracker</div>
-      <div class="header-subtitle">Manage your audit engagements</div>
+<?php include 'includes/mobile_header.php'; ?>
+
+
+
+<div class="container my-4">
+  <div class="row g-3">
+
+    <!-- Started Card -->
+    <div class="col-md-4">
+      <div class="card p-3">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-play-circle-fill fs-2 text-primary"></i>
+        </div>
+        <div class="fs-3 fw-bold mb-1">24</div>
+        <div class="text-muted">Started</div>
+      </div>
     </div>
 
-    <!-- Right -->
-    <div class="header-stat text-end">
-      <div class="header-stat-number fw-semibold" style="color: #000000; font-size: 20px;">12</div>
-      <div class="header-stat-text text-uppercase" style="color: rgb(107,114,129); font-size: 10px;">Active</div>
+    <!-- Nearly Done Card -->
+    <div class="col-md-4">
+      <div class="card p-3">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-hourglass-split fs-2 text-warning"></i>
+        </div>
+        <div class="fs-3 fw-bold mb-1">15</div>
+        <div class="text-muted">Nearly Done</div>
+      </div>
+    </div>
+
+    <!-- Needs Attention Card -->
+    <div class="col-md-4">
+      <div class="card p-3">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-exclamation-triangle-fill fs-2 text-danger"></i>
+        </div>
+        <div class="fs-3 fw-bold mb-1">5</div>
+        <div class="text-muted">Needs Attention</div>
+      </div>
     </div>
 
   </div>
 </div>
-<!-- Header -->
+
 
     
 </body>
