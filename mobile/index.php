@@ -88,7 +88,7 @@ statusButtons.forEach(btn => {
 
 
 <div class="container my-3">
-  <div class="d-flex border-start border-4 p-3" style="border-color: rgb(214,115,19); background-color: #fff; border-radius: 8px;">
+  <div class="d-flex border-start border-4 p-3" style="border-color: rgb(214,115,19) !important; background-color: #fff; border-radius: 8px;">
     
     <!-- Icon Circle -->
     <div class="d-flex align-items-center justify-content-center flex-shrink-0 me-3" 
