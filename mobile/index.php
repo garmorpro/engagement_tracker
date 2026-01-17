@@ -93,7 +93,7 @@ statusButtons.forEach(btn => {
     <!-- Icon Circle -->
     <div class="d-flex align-items-center justify-content-center flex-shrink-0 me-3" 
          style="width: 40px; height: 40px; border-radius: 50%; background-color: rgb(252,237,215);">
-      <i class="bi bi-exclamation-circle-fill" style="color: rgb(228,96,19); font-size: 1.2rem;"></i>
+      <i class="bi bi-exclamation-circle" style="color: rgb(228,96,19); font-size: 1.2rem;"></i>
     </div>
 
     <!-- Text -->
