@@ -1,0 +1,635 @@
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+    
+    .header-container {
+  position: sticky;
+ 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;               /* set explicit height */
+  background: #fff;
+  z-index: 1000;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.header-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* padding: 0 200px; */
+}
+
+    .header-title {
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+    .header-subtitle {
+      font-size: 0.875rem;
+      color: #6c757d;
+      margin-top: 2px;
+    }
+    .tab-btn.active {
+        background-color: white;
+        border: none !important;
+    }
+
+    .tab-btn.active:hover {
+        background-color: white;
+        border: none !important;
+    }
+    .tab-btn {
+        border: none !important;
+    }
+    .tab-btn:hover {
+        background-color: rgb(225,228,232);
+        border: none !important;
+    }
+    .new-btn {
+        background-color: rgb(15,62,69);
+        color: white;
+        border-radius: 10px !important;
+    }
+    .filter-btn {
+      background-color: rgb(241,242,245) !important;
+      border-radius: 10px !important;
+      padding: 8px 10px !important;
+      border: none !important;
+    }
+    .tools-btn {
+      background-color: rgb(241,242,245) !important;
+      border-radius: 10px !important;
+      padding: 5.5px 10px !important;
+      border: none !important;
+    }
+    .tools-btn.active {
+      background-color: rgb(181,72,255) !important;
+      color: white !important;
+    }
+    .logout-btn {
+      background-color: rgb(15,62,69) !important;
+      color: white !important;
+      border-radius: 10px !important;
+      padding: 5.5px 10px !important;
+      border: none !important;
+    }
+    .archive-btn {
+      background-color: rgb(241,242,245) !important;
+      border-radius: 10px !important;
+      padding: 5.5px 10px !important;
+      border: none !important;
+    }
+    .archive-btn.active {
+      background-color: rgb(33,128,255) !important;
+      color: white !important;
+    }
+    .filter-btn:hover {
+      background-color: rgb(225,228,232) !important;
+    }
+    .logout-btn:hover {
+        background-color: rgba(15, 62, 69, 0.9) !important;
+        color: white;
+    }
+
+
+/* Card shadow on hover */
+.custom-card {
+  transition: all 0.3s ease;
+}
+
+.custom-card:hover {
+  box-shadow: 8px 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Small icon box */
+.icon-box {
+  transition: all 0.3s ease;
+}
+
+/* Enlarge icon box on hover without affecting card */
+.custom-card:hover .icon-box {
+  transform: scale(1.1); /* grows the box smoothly */
+}
+
+.icon-square {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.engagement-card-updates i {
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.engagement-card-updates:hover {
+    background-color: rgb(243,244,246) !important;
+}
+
+.engagement-card-updates:hover i {
+  transform: translateX(6px);
+  color: rgb(74,86,101);
+}
+.engagement-card-kanban:hover {
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+}
+
+.engagement-card-kanban .card-actions {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.engagement-card-kanban:hover .card-actions {
+  opacity: 1;
+  visibility: visible;
+}
+
+.table-wrapper {
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  overflow: hidden;   /* CRITICAL for rounded corners */
+  background: #fff;
+}
+
+.table-wrapper thead th {
+  background-color: rgb(236,236,240);
+  color: rgb(113,113,129);
+  font-weight: 400 !important;
+  border-bottom: 1px solid #dee2e6;
+  padding: 15px 15px;
+}
+
+.table-wrapper tbody td {
+  padding: 15px 15px;
+}
+
+
+
+
+/* new */
+
+.calendar {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  background: #fff;
+}
+
+/* HEADER */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.calendar-header h5 {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* NAV BUTTONS */
+.calendar-nav {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nav-btn:hover {
+  background: #f3f4f6;
+}
+
+/* WEEKDAYS */
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+}
+
+.calendar-weekdays div {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+/* DAYS GRID */
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.calendar-day {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  min-height: 120px;
+  padding: 8px;
+  background: #fff;
+}
+
+.calendar-day-number {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+.calendar-day {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  min-height: 110px;
+  padding: 8px;
+  position: relative;
+  background: #fff;
+}
+
+.calendar-day-number {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.event {
+  margin-top: 6px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event.final { background: #ef4444; }
+.event.draft { background: #f97316; }
+.event.fieldwork { background: #3b82f6; }
+.event.planning { background: #a855f7; }
+.calendar-container {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  min-height: 110px;
+  border-radius: 12px;
+  padding: 8px;
+  background: #f9fafb;
+  position: relative;
+}
+
+.calendar-day-number {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+}
+
+.calendar-day.today {
+  border: 2px solid #2563eb;
+  background: #eff6ff;
+}
+
+/* Events */
+.event {
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.planning_call { background-color: rgba(131, 38, 193, 0.1); color: rgb(131,38,193); padding: 2px 5px; border-radius: 4px; margin-top: 2px; font-size: 12px; }
+.fieldwork_start { background-color: rgba(41, 133, 193, 0.1); color: rgb(41,133,193); padding: 2px 5px; border-radius: 4px; margin-top: 2px; font-size: 12px; }
+.draft_due { background-color: rgba(195, 119, 38, 0.1); color: rgb(195,119,38); padding: 2px 5px; border-radius: 4px; margin-top: 2px; font-size: 12px; }
+.final_due { background-color: rgba(55, 182, 38, 0.1); color: rgb(55,182,38); padding: 2px 5px; border-radius: 4px; margin-top: 2px; font-size: 12px; }
+
+
+
+
+/* engagement details */
+
+.back-link-inner {
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+.back-link .icon-square {
+  height: 30px;
+  width: 30px;
+  background-color: #fff;
+  border: 1px solid rgb(229,231,235);
+  border-radius: 6px;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+/* Hover the parent link, but shadow only on the icon */
+.back-link:hover .icon-square {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
+}
+
+.back-link i {
+  color: rgb(84,96,110);
+}
+
+.back-link p {
+  font-size: 14px;
+  color: rgb(84,96,110);
+}
+
+
+/* Edit button: white background with border */
+.btn-edit {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  color: #333;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-edit:hover {
+  border-color: #888; /* darker border on hover */
+  background-color: #f8f9fa;
+}
+
+/* Delete button: red background */
+.btn-delete {
+  background-color: #e53e3e; /* primary red */
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background-color: #c53030;
+  color: #fff;
+}
+
+/* Optional: icon spacing */
+.btn-edit i,
+.btn-delete i {
+  font-size: 16px;
+}
+
+.badge-overdue {
+  background-color: #e53e3e;
+  color: #fff;
+  animation: pulse 1.2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(229, 62, 62, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(229, 62, 62, 0); }
+}
+
+.kanban-ghost {
+  opacity: 0.5;
+  border: 2px dashed #ccc;
+}
+
+
+.kanban-column {
+    min-height: 150px; /* ensures you can drop on empty column */
+}
+
+.kanban-column.drag-over {
+    border: 2px dashed #999;
+    background-color: #f5f5f5;
+}
+
+
+
+.engagement-card-kanban {
+    user-select: none;
+}
+
+.engagement-card-kanban * {
+    pointer-events: none;
+}
+
+.engagement-card-kanban a {
+    pointer-events: auto;
+}
+
+.drag-over {
+    background-color: rgba(68,125,252,0.05);
+    border-radius: 12px;
+}
+
+.dragging {
+    opacity: 0.6;
+}
+
+.engagement-card-kanban * {
+  pointer-events: none;
+}
+.engagement-card-kanban a {
+  pointer-events: auto;
+}
+
+.engagement-card-kanban.dragging {
+    opacity: 0.5;
+    transform: scale(1.02);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.kanban-column.drag-over {
+    border: 2px dashed #6c757d;
+    background-color: #f8f9fa;
+    border-radius: 15px;
+    transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+.kanban-column {
+    min-height: 80px;
+    padding: 10px;
+    margin-bottom: 15px;
+    transition: background-color 0.2s ease, border 0.2s ease;
+}
+
+
+
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 21px;           /* centers line behind 44px icon */
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: rgb(229,231,235);
+}
+
+
+
+/* Show Archive button on hover */
+.btn-archive {
+    font-size: 14px;
+    padding: 4px 8px;
+}
+
+
+.action-btn {
+  border: none;
+  background-color: rgb(255,255,255) !important;
+  color: rgb(148,148,160) !important;
+}
+
+.view-btn:hover {
+  background-color: rgba(236,236,240) !important;
+  color: rgb(60, 103, 163) !important;
+}
+
+.edit-btn:hover {
+  background-color: rgba(236,236,240) !important;
+  color: rgb(60,163,74) !important;
+}
+
+.delete-btn {
+  color: rgb(202,72,87) !important;
+}
+.delete-btn:hover {
+  background-color: rgb(250, 229, 232) !important;
+  color: rgb(202,72,87) !important;
+}
+
+
+.yn-toggle {
+  width: 42px;
+  height: 38px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+  background: #f8f9fa;
+  color: #555;
+  user-select: none;
+}
+
+.yn-toggle.active {
+  background: #d1f5e0;
+  border-color: #28a745;
+  color: #1e7e34;
+}
+
+
+
+
+
+  .dol-card {
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid transparent;
+  }
+
+  .dol-blue {
+    background: #f1f7ff;
+    border-color: #cfe2ff;
+  }
+
+  .dol-purple {
+    background: #f8f2ff;
+    border-color: #e3cfff;
+  }
+
+  .dol-green {
+    background: #f1fff6;
+    border-color: #c9f1d9;
+  }
+
+  .text-purple {
+    color: #6f42c1;
+  }
+
+  /* .modal-xl {
+    max-width: 900px;
+  } */
+
+  .dol-card .form-control {
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .dol-header-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #e7f0ff;
+    color: #0d6efd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+
+  #addModal .modal-body {
+  max-height: 70vh; /* modal scrolls when content exceeds 70% of viewport height */
+  overflow-y: auto;
+}
