@@ -140,9 +140,9 @@ statusButtons.forEach(btn => {
 
     <!-- Audit Type & TSC Row -->
     <div class="d-flex gap-2 mb-3">
-      <div class="card flex-fill p-2 text-start bg-light">
+      <div class="card flex-fill p-2 text-center bg-light">
         <div class="text-muted small">Audit Type</div>
-        <div class="fw-semibold">SOC 2 Type 2</div>
+        <div class="fw-semibold">SOC 2 Type 2, SOC 1 Type 2, PCI</div>
       </div>
       <div class="card flex-fill p-2 text-center bg-light">
         <div class="text-muted small">TSC</div>
