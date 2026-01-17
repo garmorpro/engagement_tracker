@@ -1,6 +1,8 @@
 <?php
 require_once 'includes/functions.php';
-// $error = loginUser($conn);
+
+$error = $_SESSION['login_error'] ?? '';
+unset($_SESSION['login_error']);
 ?>
 
 <!DOCTYPE html>
@@ -14,14 +16,14 @@ require_once 'includes/functions.php';
 <body style="background-color: rgba(216, 216, 216, 1);">
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
     <div class="card p-3 shadow" style="width: 100%; max-width: 425px;">
-        <!-- <img src="../assets/images/aarc-360-logo-1.webp" alt="" class="mx-auto d-block" style="width: 50%;"> -->
-        <div class="mt-4"></div>
+
         <h5 class="text-center mb-2">Welcome Back</h5>
         <p class="text-center text-muted">Sign in to access your engagement tracker</p>
 
-        <!-- Show error alert only if error is not empty -->
         <?php if (!empty($error)): ?>
-            <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
+            <div class="alert alert-danger text-center">
+                <?php echo htmlspecialchars($error); ?>
+            </div>
         <?php endif; ?>
 
         <form class="p-4" method="POST" action="<?php echo BASE_URL . '/auth/login.php'; ?>">
@@ -29,12 +31,12 @@ require_once 'includes/functions.php';
                 <label class="form-label">Account name</label>
                 <input type="text" class="form-control" name="account_name" required>
             </div>
-                
+
             <div class="mb-3">
                 <label class="form-label">Password</label>
                 <input type="password" class="form-control" name="password" required>
             </div>
-                
+
             <div class="d-grid">
                 <button type="submit" class="btn" style="background-color: rgb(23,62,70); color: white;">
                     Sign In
@@ -43,7 +45,6 @@ require_once 'includes/functions.php';
         </form>
 
         <p class="text-center text-muted">Contact your administrator for account setup.</p>
-        <p class="text-center text-muted" style="font-size: 10px;">This is a demo application. In production, users would be created by administrators.</p>
     </div>
 </div>
 </body>
