@@ -117,7 +117,7 @@ statusButtons.forEach(btn => {
     </div>
 
     <!-- Engagement Name -->
-    <div class="fs-5 fw-semibold mb-1 text-truncate">ACME Corp</div>
+    <div class="fs-5 fw-semibold text-truncate">ACME Corp</div>
     
     <!-- Engagement ID -->
     <div class="text-muted mb-2" style="font-size: 0.75rem;">ENG-2026-001</div>
