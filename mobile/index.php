@@ -113,7 +113,7 @@ statusButtons.forEach(btn => {
     
     <!-- Right Chevron -->
     <i class="bi bi-chevron-right position-absolute" 
-       style="top: 12px; right: 12px; font-size: 1.25rem; color: rgb(107,114,129);"></i>
+       style="top: 12px; right: 12px; font-size: .875rem; color: rgb(107,114,129);"></i>
 
     <!-- Status Badge -->
     <div class="mb-2">
