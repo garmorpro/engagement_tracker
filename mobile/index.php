@@ -120,7 +120,7 @@ statusButtons.forEach(btn => {
     <div class="fs-5 fw-semibold mb-1 text-truncate">ACME Corp</div>
     
     <!-- Engagement ID -->
-    <div class="text-muted mb-2">ENG-2026-001</div>
+    <div class="text-muted mb-2" style="font-size: 0.75rem;">ENG-2026-001</div>
 
     <!-- Manager Row -->
     <div class="d-flex justify-content-between align-items-center mb-1">
