@@ -25,8 +25,8 @@
 
     <!-- Right -->
     <div class="header-stat text-end">
-      <div class="header-stat-number">12</div>
-      <div class="header-stat-text">Active</div>
+      <div class="header-stat-number fw-semibold" style="color: #000000; font-size: 18px;">12</div>
+      <div class="header-stat-text text-uppercase" style="color: rgb(107,114,129); font-size: 12px;">Active</div>
     </div>
 
   </div>
