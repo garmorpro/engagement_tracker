@@ -28,6 +28,27 @@
   </div>
 </div>
 
+<div class="container my-3">
+  <ul class="nav nav-pills flex-row overflow-auto" id="status-filter" role="tablist">
+    <li class="nav-item me-2" role="presentation">
+      <button class="nav-link active" data-status="all" type="button">All</button>
+    </li>
+    <li class="nav-item me-2" role="presentation">
+      <button class="nav-link" data-status="planning" type="button">Planning</button>
+    </li>
+    <li class="nav-item me-2" role="presentation">
+      <button class="nav-link" data-status="in-progress" type="button">In Progress</button>
+    </li>
+    <li class="nav-item me-2" role="presentation">
+      <button class="nav-link" data-status="review" type="button">Review</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-status="complete" type="button">Complete</button>
+    </li>
+  </ul>
+</div>
+
+
 
 
 
