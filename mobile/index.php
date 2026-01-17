@@ -127,7 +127,7 @@ statusButtons.forEach(btn => {
       <div class="d-flex align-items-center" style="color: rgb(107,114,129); font-size: 0.875rem;">
         <i class="bi bi-person me-1"></i> Manager
       </div>
-      <div>John Smith</div>
+      <div style="color: rgb(107,114,129); font-size: 0.875rem;">John Smith</div>
     </div>
 
     <!-- Audit Team Row -->
