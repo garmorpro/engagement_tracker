@@ -20,7 +20,7 @@
     <input
       type="text"
       class="form-control"
-      placeholder="Search engagements..."
+      placeholder="Search by name, manager, or ID..."
       aria-label="Search"
       aria-describedby="search-icon"
       id="search-input"
