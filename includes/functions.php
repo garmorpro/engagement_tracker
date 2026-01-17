@@ -415,18 +415,25 @@ function getAllActiveEngagementsMobile(mysqli $conn): array
             }
         }
 
-        // Get next milestone (closest due date that is not completed)
+        // Get next milestone (closest due date that is not completed and has a due_date)
         $milestone = null;
         $milestone_sql = "
             SELECT milestone_type, due_date, is_completed
             FROM engagement_milestones
-            WHERE eng_id = '$eng_id' AND is_completed = 0
+            WHERE eng_id = '$eng_id' AND is_completed = 0 AND due_date IS NOT NULL
             ORDER BY due_date ASC
             LIMIT 1
         ";
         $milestone_result = $conn->query($milestone_sql);
         if ($milestone_result && $milestone_result->num_rows > 0) {
             $milestone = $milestone_result->fetch_assoc();
+        } else {
+            // If no milestone with due_date exists, show placeholder
+            $milestone = [
+                'milestone_type' => 'No due dates set',
+                'due_date' => null,
+                'is_completed' => 0
+            ];
         }
 
         $engagements[] = [
@@ -444,4 +451,3 @@ function getAllActiveEngagementsMobile(mysqli $conn): array
 
     return $engagements;
 }
-?>
