@@ -143,13 +143,13 @@ statusButtons.forEach(btn => {
   <!-- Audit Type Card -->
   <div class="card p-2 text-center flex-1 d-flex flex-column" style="flex: 1 1 0; background-color: rgb(248,249,250); border-color: rgb(243,244,246);">
     <div class="text-muted" style="font-size: 0.75rem;">Audit Type</div>
-    <div class="fw-semibold" style="font-size: 1rem;">SOC 2 Type 2</div>
+    <div class="fw-semibold" style="font-size: .90rem;">SOC 2 Type 2</div>
   </div>
 
   <!-- TSC Card -->
   <div class="card p-2 text-center flex-1 d-flex flex-column" style="flex: 1 1 0; background-color: rgb(248,249,250); border-color: rgb(243,244,246);">
     <div class="text-muted" style="font-size: 0.75rem;">TSC</div>
-    <div class="fw-semibold" style="font-size: 1rem;">Security, A, P</div>
+    <div class="fw-semibold" style="font-size: .90rem;">Security, A, P</div>
   </div>
 
 </div>
