@@ -108,9 +108,13 @@ statusButtons.forEach(btn => {
 
 
 <!-- Engagement Card Template -->
-<a href="engagement.php?eng_id=123" class="text-decoration-none">
-  <div class="card mb-3 p-3 my-3 mx-3 shadow-sm" style="border-color: rgb(229,231,235);">
+<a href="engagement.php?eng_id=123" class="text-decoration-none position-relative">
+  <div class="card mb-3 p-3 my-3 mx-3 shadow-sm" style="border-color: rgb(229,231,235); position: relative;">
     
+    <!-- Right Chevron -->
+    <i class="bi bi-chevron-right position-absolute" 
+       style="top: 12px; right: 12px; font-size: 1.25rem; color: rgb(107,114,129);"></i>
+
     <!-- Status Badge -->
     <div class="mb-2">
       <span class="badge rounded-pill bg-info text-dark">In Progress</span>
@@ -138,7 +142,7 @@ statusButtons.forEach(btn => {
       <div class="fw-semibold" style="color: rgb(18,24,39); font-size: 0.875rem;">5 members</div>
     </div>
 
-    <!-- Audit Team Row -->
+    <!-- Audit Type Row -->
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="d-flex align-items-center" style="color: rgb(107,114,129); font-size: 0.875rem;">
         <i class="bi bi-people me-1"></i>&nbsp;Audit Type
@@ -146,27 +150,31 @@ statusButtons.forEach(btn => {
       <div class="fw-semibold" style="color: rgb(18,24,39); font-size: 0.875rem;">SOC 2 Type 2, PCI</div>
     </div>
 
-
     <!-- Next Milestone -->
     <div class="d-flex align-items-center mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
       <div class="fw-semibold me-1" style="color: rgb(35,70,221);">Next:</div>
       <div class="me-auto fw-semibold" style="color: rgb(35,70,221);">Draft Due</div>
       <div class="d-flex align-items-center text-muted">
-        <i class="bi bi-calendar me-2" style="color: rgb(63,106,243);"></i><span class="fw-semibold me-2" style="color: rgb(35,56,137);">Feb 19</span><span style="color: rgb(35,70,221);">(34d left)</span>
+        <i class="bi bi-calendar me-2" style="color: rgb(63,106,243);"></i>
+        <span class="fw-semibold me-2" style="color: rgb(35,56,137);">Feb 19</span>
+        <span style="color: rgb(35,70,221);">(34d left)</span>
       </div>
     </div>
 
+    <!-- Team Members -->
     <div class="d-flex align-items-center">
-  <div class="me-2 fw-semibold">Team:</div>
-  <div class="d-flex">
-    <div class="rounded-circle border border-white text-white d-flex align-items-center justify-content-center" style="width:32px; height:32px; font-size:0.75rem; z-index:1; background-color: rgb(160,77,253);">SJ</div>
-    <div class="rounded-circle border border-white text-white d-flex align-items-center justify-content-center" style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:2; background-color: rgb(79,198,95);">DM</div>
-  </div>
-</div>
-
+      <div class="me-2 fw-semibold">Team:</div>
+      <div class="d-flex">
+        <div class="rounded-circle border border-white text-white d-flex align-items-center justify-content-center" 
+             style="width:32px; height:32px; font-size:0.75rem; z-index:1; background-color: rgb(160,77,253);">SJ</div>
+        <div class="rounded-circle border border-white text-white d-flex align-items-center justify-content-center" 
+             style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:2; background-color: rgb(79,198,95);">DM</div>
+      </div>
+    </div>
 
   </div>
 </a>
+
 
 
 
