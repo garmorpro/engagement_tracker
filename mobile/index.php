@@ -16,7 +16,7 @@
 
     <title>Document</title>
 </head>
-<body style="background-color: rgb(249,250,251);">
+<body style="background-color: rgb(248,249,250);">
 
 <?php include 'includes/mobile_header.php'; ?>
 
