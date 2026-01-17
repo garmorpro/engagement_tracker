@@ -165,43 +165,36 @@ statusButtons.forEach(btn => {
       $milestoneTypeFormatted = ucwords(str_replace('_', ' ', $milestoneType));
 
       $dueDateStr = $eng['next_milestone']['due_date'] ?? null;
-      $isCompleted = $eng['next_milestone']['is_completed'] ?? 0;
 
       if($dueDateStr) {
           $dueTimestamp = strtotime($dueDateStr);
           $due = date('M d', $dueTimestamp);
           $daysLeft = (int)(($dueTimestamp - time()) / 86400);
-
-          // Check if overdue
-          $overdue = ($daysLeft < 0 && $isCompleted == 0);
       } else {
           $due = 'TBD';
-          $daysLeft = '';
-          $overdue = false;
+          $daysLeft = null;
       }
 ?>
-<div class="d-flex flex-column mb-3 p-2 rounded shadow-sm" 
-     style="border: 1px solid <?= $overdue ? 'rgb(241,69,69)' : 'rgb(196,218,252)' ?>; 
-            background-color: <?= $overdue ? 'rgb(254,235,235)' : 'rgb(240,246,254)' ?>; 
-            font-size: 0.875rem;">
+<div class="d-flex flex-column mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
   
   <!-- First Row: Next: milestone type -->
-  <div class="fw-semibold mb-1" style="color: <?= $overdue ? 'rgb(241,69,69)' : 'rgb(35,70,221)' ?>;">
+  <div class="fw-semibold mb-1" style="color: rgb(35,70,221);">
     Next: <?= htmlspecialchars($milestoneTypeFormatted) ?>
-    <?php if($overdue): ?>
-      <span class="badge bg-danger ms-2" style="font-size:0.65rem;">Overdue</span>
-    <?php endif; ?>
   </div>
   
   <!-- Second Row: Calendar icon, date, days left -->
   <div class="d-flex align-items-center text-muted">
-    <i class="bi bi-calendar me-2" style="color: <?= $overdue ? 'rgb(241,69,69)' : 'rgb(63,106,243)' ?>;"></i>
-    <span class="fw-semibold me-2" style="color: <?= $overdue ? 'rgb(241,69,69)' : 'rgb(35,56,137)' ?>;"><?= $due ?></span>
-    <?php if($daysLeft !== '' && !$overdue): ?>
-      <span style="color: rgb(35,70,221);">(<?= $daysLeft ?>d left)</span>
-    <?php elseif($daysLeft !== '' && $overdue): ?>
-      <span style="color: rgb(241,69,69);">(<?= abs($daysLeft) ?>d overdue)</span>
+    <i class="bi bi-calendar me-2" style="color: rgb(63,106,243);"></i>
+    <span class="fw-semibold me-2" style="color: rgb(35,56,137);"><?= $due ?></span>
+    
+    <?php if($daysLeft !== null): ?>
+        <?php if($daysLeft < 0): ?>
+            <span style="color: rgb(228, 96, 19); font-weight: 600;">Overdue</span>
+        <?php else: ?>
+            <span style="color: rgb(35,70,221);">(<?= $daysLeft ?>d left)</span>
+        <?php endif; ?>
     <?php endif; ?>
+    
   </div>
 
 </div>
