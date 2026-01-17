@@ -1,5 +1,6 @@
 <?php
 require_once 'includes/functions.php';
+require_once 'path.php';
 
 $error = $_SESSION['login_error'] ?? '';
 unset($_SESSION['login_error']);
