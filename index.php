@@ -24,7 +24,7 @@ $error = loginUser($conn);
             <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form class="p-4" method="POST" action="<?php echo BASE_URL . '/login.php'; ?>">
+        <form class="p-4" method="POST" action="<?php echo BASE_URL . '/auth/login.php'; ?>">
             <div class="mb-3">
                 <label class="form-label">Account name</label>
                 <input type="text" class="form-control" name="account_name" required>
