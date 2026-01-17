@@ -40,10 +40,8 @@ function logoutUser($conn)
 
 function loginUser($conn)
 {
-    $error = '';
-
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        return $error;
+        return '';
     }
 
     $accountName = trim($_POST['account_name'] ?? '');
@@ -53,21 +51,20 @@ function loginUser($conn)
         return 'Please enter both account name and password.';
     }
 
-    // Fetch account
     $stmt = $conn->prepare(
-        "SELECT account_name, password 
-         FROM service_accounts 
+        "SELECT user_id, account_name, password
+         FROM service_accounts
          WHERE account_name = ?
          LIMIT 1"
     );
 
     if (!$stmt) {
-        return 'System error. Please try again later.';
+        return 'System error. Please try again.';
     }
 
     $stmt->bind_param("s", $accountName);
     $stmt->execute();
-    $result = $stmt->get_result();
+    $result  = $stmt->get_result();
     $account = $result->fetch_assoc();
     $stmt->close();
 
@@ -77,18 +74,20 @@ function loginUser($conn)
 
     // ✅ Login success
     session_regenerate_id(true);
+
+    $_SESSION['user_id']      = $account['user_id'];
     $_SESSION['account_name'] = $account['account_name'];
 
-    // Update login status
+    // Update login state
     $stmt = $conn->prepare(
-        "UPDATE service_accounts 
+        "UPDATE service_accounts
          SET last_active = NOW(),
              logged_in = 1
-         WHERE account_name = ?"
+         WHERE user_id = ?"
     );
 
     if ($stmt) {
-        $stmt->bind_param("s", $_SESSION['account_name']);
+        $stmt->bind_param("i", $_SESSION['user_id']);
         $stmt->execute();
         $stmt->close();
     }
