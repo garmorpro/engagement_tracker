@@ -159,9 +159,11 @@ statusButtons.forEach(btn => {
             </div>
 
             <!-- Next Milestone -->
-            <?php if($eng['next_milestone']): 
-                $due = date('M d', strtotime($eng['next_milestone']['due_date']));
-                $daysLeft = (int)((strtotime($eng['next_milestone']['due_date']) - time()) / 86400);
+            <?php if($eng['next_milestone'] && !empty($eng['next_milestone']['due_date'])): 
+                  $dueDateStr = $eng['next_milestone']['due_date'];
+                  $dueTimestamp = strtotime($dueDateStr);
+                  $due = date('M d', $dueTimestamp);
+                  $daysLeft = (int)(($dueTimestamp - time()) / 86400);
             ?>
             <div class="d-flex align-items-center mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
               <div class="fw-semibold me-1" style="color: rgb(35,70,221);">Next:</div>
