@@ -203,7 +203,7 @@ statusButtons.forEach(btn => {
     
     <?php if($daysLeft !== null): ?>
         <?php if($isOverdue): ?>
-            <span style="color: <?= $daysColor ?>; font-weight: 600;"><?= $daysLeft ?>d overdue</span>
+            <span style="color: <?= $daysColor ?>; font-weight: 600;">(<?= $daysLeft ?>d overdue)</span>
         <?php else: ?>
             <span style="color: <?= $daysColor ?>;">(<?= $daysLeft ?>d left)</span>
         <?php endif; ?>
