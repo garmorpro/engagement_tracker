@@ -124,7 +124,7 @@ statusButtons.forEach(btn => {
 
     <!-- Manager Row -->
     <div class="d-flex justify-content-between align-items-center mb-1">
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center" style="color: rgb(107,114,129); font-size: 0.875rem;">
         <i class="bi bi-person me-1"></i> Manager
       </div>
       <div>John Smith</div>
