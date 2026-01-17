@@ -159,7 +159,7 @@ statusButtons.forEach(btn => {
       <div class="fw-semibold me-2" style="color: rgb(35,70,221);">Next:</div>
       <div class="me-auto" style="color: rgb(35,70,221);">Draft Due</div>
       <div class="d-flex align-items-center text-muted">
-        <i class="bi bi-calendar me-1" style="color: rgb(63,106,243);"></i>&nbsp;<span style="color: rgb(35,56,137);">Feb 19</span> <span style="color: rgb(35,70,221);">(34d left)</span>
+        <i class="bi bi-calendar me-1" style="color: rgb(63,106,243);"></i><span class="fw-semibold" style="color: rgb(35,56,137);">Feb 19</span>&nbsp;<span style="color: rgb(35,70,221);">(34d left)</span>
       </div>
     </div>
 
