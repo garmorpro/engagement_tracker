@@ -138,21 +138,14 @@ statusButtons.forEach(btn => {
       <div class="fw-semibold" style="color: rgb(18,24,39); font-size: 0.875rem;">5 members</div>
     </div>
 
-    <div class="d-flex gap-2 mb-3">
+    <!-- Audit Team Row -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center" style="color: rgb(107,114,129); font-size: 0.875rem;">
+        <i class="bi bi-people me-1"></i>&nbsp;Audit Type
+      </div>
+      <div class="fw-semibold" style="color: rgb(18,24,39); font-size: 0.875rem;">SOC 2 Type 2, PCI</div>
+    </div>
 
-  <!-- Audit Type Card -->
-  <div class="card p-2 text-center flex-1 d-flex flex-column" style="flex: 1 1 0; background-color: rgb(248,249,250); border-color: rgb(243,244,246);">
-    <div class="text-muted" style="font-size: 0.75rem;">Audit Type</div>
-    <div class="fw-semibold" style="font-size: .90rem;">SOC 2 Type 2</div>
-  </div>
-
-  <!-- TSC Card -->
-  <div class="card p-2 text-center flex-1 d-flex flex-column" style="flex: 1 1 0; background-color: rgb(248,249,250); border-color: rgb(243,244,246);">
-    <div class="text-muted" style="font-size: 0.75rem;">TSC</div>
-    <div class="fw-semibold" style="font-size: .90rem;">Security, A, P</div>
-  </div>
-
-</div>
 
     <!-- Next Milestone -->
     <div class="d-flex align-items-center mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
