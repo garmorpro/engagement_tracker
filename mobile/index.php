@@ -109,7 +109,7 @@ statusButtons.forEach(btn => {
 
 <!-- Engagement Card Template -->
 <a href="engagement.php?eng_id=123" class="text-decoration-none">
-  <div class="card mb-3 p-3 my-3 mx-2 shadow-sm">
+  <div class="card mb-3 p-3 my-3 mx-3 shadow-sm">
     
     <!-- Status Badge -->
     <div class="mb-2">
