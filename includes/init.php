@@ -8,7 +8,7 @@ require_once 'functions.php';
 // If user is NOT logged in and not on index.php → redirect to login
 if (empty($_SESSION['user_id'])) {
     if (basename($_SERVER['PHP_SELF']) !== 'index.php') {
-        header("Location: /index.php");
+        header("Location: /");
         exit;
     }
 }
