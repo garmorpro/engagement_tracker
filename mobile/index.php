@@ -132,10 +132,10 @@ statusButtons.forEach(btn => {
 
     <!-- Audit Team Row -->
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center" style="color: rgb(107,114,129); font-size: 0.875rem;">
         <i class="bi bi-people me-1"></i> Audit Team
       </div>
-      <div>5 members</div>
+      <div class="fw-semibold" style="color: rgb(18,24,39); font-size: 0.875rem;">5 members</div>
     </div>
 
     <!-- Audit Type & TSC Row -->
