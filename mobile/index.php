@@ -141,28 +141,25 @@ statusButtons.forEach(btn => {
     <div class="d-flex gap-2 mb-3">
 
   <!-- Audit Type Card -->
-  <div class="card p-2 text-center bg-light flex-1 d-flex flex-column" style="flex: 1 1 0;">
+  <div class="card p-2 text-center flex-1 d-flex flex-column" style="flex: 1 1 0; background-color: rgb(248,249,250); border-color: rgb(243,244,246);">
     <div class="text-muted small">Audit Type</div>
     <div class="fw-semibold">SOC 2 Type 2</div>
   </div>
 
   <!-- TSC Card -->
-  <div class="card p-2 text-center bg-light flex-1 d-flex flex-column" style="flex: 1 1 0;">
+  <div class="card p-2 text-center flex-1 d-flex flex-column" style="flex: 1 1 0; background-color: rgb(248,249,250); border-color: rgb(243,244,246);">
     <div class="text-muted small">TSC</div>
     <div class="fw-semibold">Security, A, P</div>
   </div>
 
 </div>
 
-
-
-
     <!-- Next Milestone -->
-    <div class="d-flex align-items-center mb-3 p-2 border rounded bg-white shadow-sm">
-      <div class="fw-semibold me-2">Next:</div>
-      <div class="me-auto">Draft Due</div>
+    <div class="d-flex align-items-center mb-3 p-2 border rounded bg-white shadow-sm" style="border-color: rgb(196,218,252); background-color: rgb(240,246,254);">
+      <div class="fw-semibold me-2" style="color: rgb(35,70,221);">Next:</div>
+      <div class="me-auto" style="color: rgb(35,70,221);">Draft Due</div>
       <div class="d-flex align-items-center text-muted">
-        <i class="bi bi-calendar me-1"></i> Feb 19 (34d left)
+        <i class="bi bi-calendar me-1" style="color: rgb(63,106,243);"></i> <span style="color: rgb(35,56,137);">Feb 19</span> <span style="color: rgb(35,70,221);">(34d left)</span>
       </div>
     </div>
 
