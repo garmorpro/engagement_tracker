@@ -217,9 +217,11 @@ $totalEngagements = count($engagements);
           <!-- <button class="btn new-btn btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#addModal">
             <i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement
           </button> -->
-          <a class="btn logout-btn btn-sm ms-3" href="<?php echo BASE_URL . "/?logout=1" ?>">
-              <i class="bi bi-box-arrow-left"></i>&nbsp;&nbsp;Logout
-          </a>
+            <form method="POST" action="<?php echo BASE_URL . '/logout.php'; ?>" class="d-inline">
+                <button type="submit" class="btn logout-btn btn-sm ms-3">
+                    <i class="bi bi-box-arrow-left"></i>&nbsp;&nbsp;Logout
+                </button>
+            </form>
         </div>
       </div>
     </div>

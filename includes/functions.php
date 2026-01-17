@@ -6,30 +6,34 @@ session_start();
 
 function logoutUser($conn)
 {
-    if (isset($_GET['logout']) && $_GET['logout'] == 1) {
-
-        if (!empty($_SESSION['account_name'])) {
-            $accountName = $_SESSION['account_name'];
-
-            $stmt = $conn->prepare(
-                "UPDATE service_accounts 
-                 SET last_active = NOW(),
-                     logged_in = 0
-                 WHERE account_name = ?"
-            );
-
-            if ($stmt) {
-                $stmt->bind_param("s", $accountName);
-                $stmt->execute();
-                $stmt->close();
-            }
-        }
-
-        session_destroy();
-        header("Location: /");
-        exit;
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        return;
     }
+
+    if (!empty($_SESSION['account_name'])) {
+        $accountName = $_SESSION['account_name'];
+
+        $stmt = $conn->prepare(
+            "UPDATE service_accounts
+             SET last_active = NOW(),
+                 logged_in = 0
+             WHERE account_name = ?"
+        );
+
+        if ($stmt) {
+            $stmt->bind_param("s", $accountName);
+            $stmt->execute();
+            $stmt->close();
+        }
+    }
+
+    session_unset();
+    session_destroy();
+
+    header("Location: /");
+    exit;
 }
+
 
 
 // LOGIN
