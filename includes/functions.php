@@ -420,7 +420,7 @@ function getAllActiveEngagementsMobile(mysqli $conn): array
         $milestone_sql = "
             SELECT milestone_type, due_date, is_completed
             FROM engagement_milestones
-            WHERE eng_id = '$eng_id' AND is_completed = N AND due_date IS NOT NULL
+            WHERE eng_id = '$eng_id' AND is_completed = 'N' AND due_date IS NOT NULL
             ORDER BY due_date ASC
             LIMIT 1
         ";
