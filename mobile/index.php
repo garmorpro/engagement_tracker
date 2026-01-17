@@ -17,9 +17,6 @@
 
 <div class="container my-3">
   <div class="input-group">
-    <span class="input-group-text bg-light" id="search-icon">
-      <i class="bi bi-search"></i>
-    </span>
     <input
       type="text"
       class="form-control"
