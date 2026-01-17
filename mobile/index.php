@@ -129,7 +129,7 @@ statusButtons.forEach(btn => {
     <!-- Audit Type Row -->
     <div class="d-flex justify-content-between align-items-center mb-1">
       <div class="d-flex align-items-center" style="color: rgb(107,114,129); font-size: 0.875rem;">
-        <i class="bi bi-people me-1"></i>&nbsp;Audit Type
+        <i class="bi bi-file-earmark-text me-1"></i>&nbsp;Audit Type
       </div>
       <div class="fw-semibold" style="color: rgb(18,24,39); font-size: 0.875rem;">SOC 2 Type 2, PCI</div>
     </div>
