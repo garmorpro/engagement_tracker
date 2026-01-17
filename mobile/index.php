@@ -54,6 +54,32 @@
   </div>
 </div>
 
+<script>
+    const statusButtons = document.querySelectorAll('.status-btn');
+const cards = document.querySelectorAll('.card');
+
+statusButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const status = btn.dataset.status;
+
+    // Filter cards
+    cards.forEach(card => {
+      if (status === 'all') {
+        card.style.display = '';
+      } else {
+        const cardStatus = card.dataset.status;
+        card.style.display = cardStatus === status ? '' : 'none';
+      }
+    });
+
+    // Close the modal
+    const modalEl = document.getElementById('statusModal');
+    const modal = bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
+  });
+});
+
+</script>
 
 
 
