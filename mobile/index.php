@@ -113,14 +113,14 @@ statusButtons.forEach(btn => {
     
     <!-- Status Badge -->
     <div class="mb-2">
-      <span class="badge bg-info text-dark">In Progress</span>
+      <span class="badge rounded-pill bg-info text-dark">In Progress</span>
     </div>
 
     <!-- Engagement Name -->
     <div class="fs-5 fw-semibold text-truncate">ACME Corp</div>
     
     <!-- Engagement ID -->
-    <div class="text-muted mb-2" style="font-size: 0.75rem;">ENG-2026-001</div>
+    <div class="text-muted mb-3" style="font-size: 0.75rem;">ENG-2026-001</div>
 
     <!-- Manager Row -->
     <div class="d-flex justify-content-between align-items-center mb-1">
