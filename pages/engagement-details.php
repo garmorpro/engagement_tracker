@@ -3,6 +3,7 @@ ob_start(); // start output buffering
 
 // sessions_start();
 require_once '../includes/functions.php';
+require_once '../includes/init.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     $engId = $_POST['archive_eng_id'];

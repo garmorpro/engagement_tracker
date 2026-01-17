@@ -2,6 +2,8 @@
 // sessions_start();
 
 require_once '../includes/functions.php';
+require_once '../includes/init.php';
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     $engId = (int)$_POST['delete_eng_id'];

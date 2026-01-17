@@ -1,6 +1,7 @@
 <?php
 require_once 'includes/functions.php';
 require_once 'path.php';
+require_once 'includes/init.php';
 
 // $error = loginUser($conn);
 ?>

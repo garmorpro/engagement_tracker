@@ -2,6 +2,7 @@
 // sessions_start();
 
 require_once '../includes/functions.php';
+require_once '../includes/init.php';
 
 $engagementsWithMilestones = getAllEngagements($conn); // rename
 $overdueEngagements = getOverdueEngagements($conn);

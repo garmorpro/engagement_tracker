@@ -2,6 +2,7 @@
 // sessions_start();
 
 require_once '../includes/functions.php';
+require_once '../includes/init.php';
 
 $engagements = getAllEngagements($conn);
 $milestones = getEngagementMilestones($conn);
