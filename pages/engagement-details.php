@@ -1,7 +1,7 @@
 <?php
 ob_start(); // start output buffering
 
-// sessions_start();
+require_once '../path.php';
 require_once '../includes/functions.php';
 require_once '../includes/init.php';
 logoutUser($conn);
