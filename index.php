@@ -1,6 +1,6 @@
 <?php
 require_once 'includes/functions.php';
-$error = loginUser($conn);
+// $error = loginUser($conn);
 ?>
 
 <!DOCTYPE html>
