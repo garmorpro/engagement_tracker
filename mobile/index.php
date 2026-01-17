@@ -163,16 +163,20 @@ statusButtons.forEach(btn => {
       </div>
     </div>
 
-    <!-- Team Members Row -->
     <div class="d-flex align-items-center">
-      <div class="me-2 fw-semibold">Team:</div>
-      <div class="d-flex">
-        <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center me-1" style="width:32px; height:32px; font-size:0.75rem;">SJ</div>
-        <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center me-1" style="width:32px; height:32px; font-size:0.75rem;">DM</div>
-        <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center me-1" style="width:32px; height:32px; font-size:0.75rem;">MD</div>
-        <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" style="width:32px; height:32px; font-size:0.75rem;">JW</div>
-      </div>
-    </div>
+  <div class="me-2 fw-semibold">Team:</div>
+  <div class="d-flex">
+    <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" 
+         style="width:32px; height:32px; font-size:0.75rem; z-index:4;">SJ</div>
+    <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" 
+         style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:3;">DM</div>
+    <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" 
+         style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:2;">MD</div>
+    <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" 
+         style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:1;">JW</div>
+  </div>
+</div>
+
 
   </div>
 </a>
