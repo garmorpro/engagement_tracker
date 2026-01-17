@@ -141,15 +141,15 @@ statusButtons.forEach(btn => {
     <div class="d-flex gap-2 mb-3">
 
   <!-- Audit Type Card -->
-  <div class="card p-2 text-center bg-light flex-grow-1" style="min-width:0;">
+  <div class="card p-2 text-center bg-light flex-1 d-flex flex-column" style="flex: 1 1 0;">
     <div class="text-muted small">Audit Type</div>
-    <div class="fw-semibold text-truncate">SOC 2 Type 2, SOC 1 Type 2, PCI</div>
+    <div class="fw-semibold">SOC 2 Type 2, SOC 1 Type 2, PCI</div>
   </div>
 
   <!-- TSC Card -->
-  <div class="card p-2 text-center bg-light flex-grow-1" style="min-width:0;">
+  <div class="card p-2 text-center bg-light flex-1 d-flex flex-column" style="flex: 1 1 0;">
     <div class="text-muted small">TSC</div>
-    <div class="fw-semibold text-truncate">Security, A, P</div>
+    <div class="fw-semibold">Security, A, P</div>
   </div>
 
 </div>
