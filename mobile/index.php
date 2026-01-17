@@ -167,13 +167,13 @@ statusButtons.forEach(btn => {
   <div class="me-2 fw-semibold">Team:</div>
   <div class="d-flex">
     <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" 
-         style="width:32px; height:32px; font-size:0.75rem; z-index:4;">SJ</div>
+         style="width:32px; height:32px; font-size:0.75rem; z-index:1;">SJ</div>
     <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" 
-         style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:3;">DM</div>
+         style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:2;">DM</div>
     <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" 
-         style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:2;">MD</div>
+         style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:3;">MD</div>
     <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" 
-         style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:1;">JW</div>
+         style="width:32px; height:32px; font-size:0.75rem; margin-left:-8px; z-index:4;">JW</div>
   </div>
 </div>
 
