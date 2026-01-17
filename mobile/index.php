@@ -28,25 +28,32 @@
   </div>
 </div>
 
+<!-- Filter Button -->
 <div class="container my-3">
-  <ul class="nav nav-pills flex-row overflow-auto" id="status-filter" role="tablist">
-    <li class="nav-item me-2" role="presentation">
-      <button class="nav-link active" data-status="all" type="button">All</button>
-    </li>
-    <li class="nav-item me-2" role="presentation">
-      <button class="nav-link" data-status="planning" type="button">Planning</button>
-    </li>
-    <li class="nav-item me-2" role="presentation">
-      <button class="nav-link" data-status="in-progress" type="button">In Progress</button>
-    </li>
-    <li class="nav-item me-2" role="presentation">
-      <button class="nav-link" data-status="review" type="button">Review</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" data-status="complete" type="button">Complete</button>
-    </li>
-  </ul>
+  <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#statusModal">
+    Filter Status
+  </button>
 </div>
+
+<!-- Fullscreen Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Select Status</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body d-flex flex-column justify-content-center align-items-stretch">
+        <button class="btn btn-lg btn-outline-primary mb-2 status-btn" data-status="all">All</button>
+        <button class="btn btn-lg btn-outline-primary mb-2 status-btn" data-status="planning">Planning</button>
+        <button class="btn btn-lg btn-outline-primary mb-2 status-btn" data-status="in-progress">In Progress</button>
+        <button class="btn btn-lg btn-outline-primary mb-2 status-btn" data-status="review">Review</button>
+        <button class="btn btn-lg btn-outline-primary status-btn" data-status="complete">Complete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 
 
