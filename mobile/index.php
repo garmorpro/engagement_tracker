@@ -138,17 +138,22 @@ statusButtons.forEach(btn => {
       <div class="fw-semibold" style="color: rgb(18,24,39); font-size: 0.875rem;">5 members</div>
     </div>
 
-    <!-- Audit Type & TSC Row -->
     <div class="d-flex gap-2 mb-3">
-      <div class="card flex-fill p-2 text-center bg-light">
-        <div class="text-muted small">Audit Type</div>
-        <div class="fw-semibold">SOC 2 Type 2, SOC 1 Type 2, PCI</div>
-      </div>
-      <div class="card flex-fill p-2 text-center bg-light">
-        <div class="text-muted small">TSC</div>
-        <div class="fw-semibold">Security, A, P</div>
-      </div>
-    </div>
+
+  <!-- Audit Type Card -->
+  <div class="card p-2 text-center bg-light flex-grow-1" style="min-width:0;">
+    <div class="text-muted small">Audit Type</div>
+    <div class="fw-semibold text-truncate">SOC 2 Type 2, SOC 1 Type 2, PCI</div>
+  </div>
+
+  <!-- TSC Card -->
+  <div class="card p-2 text-center bg-light flex-grow-1" style="min-width:0;">
+    <div class="text-muted small">TSC</div>
+    <div class="fw-semibold text-truncate">Security, A, P</div>
+  </div>
+
+</div>
+
 
     <!-- Next Milestone -->
     <div class="d-flex align-items-center mb-3 p-2 border rounded bg-white shadow-sm">
