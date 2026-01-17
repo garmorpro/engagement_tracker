@@ -161,6 +161,9 @@ statusButtons.forEach(btn => {
             <!-- Next Milestone -->
 <?php if(!empty($eng['next_milestone'])): 
       $milestoneType = $eng['next_milestone']['milestone_type'] ?? 'Upcoming';
+      // Convert snake_case to Title Case
+      $milestoneTypeFormatted = ucwords(str_replace('_', ' ', $milestoneType));
+
       $dueDateStr = $eng['next_milestone']['due_date'] ?? null;
 
       if($dueDateStr) {
@@ -176,7 +179,7 @@ statusButtons.forEach(btn => {
   
   <!-- First Row: Next: milestone type -->
   <div class="fw-semibold mb-1" style="color: rgb(35,70,221);">
-    Next: <?= htmlspecialchars($milestoneType) ?>
+    Next: <?= htmlspecialchars($milestoneTypeFormatted) ?>
   </div>
   
   <!-- Second Row: Calendar icon, date, days left -->
