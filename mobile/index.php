@@ -15,46 +15,39 @@
 
 <?php include 'includes/mobile_header.php'; ?>
 
-
-
-<div class="container my-4">
-  <div class="row g-3">
+<div class="container my-3">
+  <div class="d-flex justify-content-between">
 
     <!-- Started Card -->
-    <div class="col-md-4">
-      <div class="card p-3">
-        <div class="d-flex align-items-center mb-2">
-          <i class="bi bi-play-circle-fill fs-2 text-primary"></i>
-        </div>
-        <div class="fs-3 fw-bold mb-1">24</div>
-        <div class="text-muted">Started</div>
+    <div class="card flex-fill me-2 p-3 text-start">
+      <div class="mb-2">
+        <i class="bi bi-play-circle-fill fs-3 text-primary"></i>
       </div>
+      <div class="fs-5 fw-bold mb-1">24</div>
+      <div class="text-muted">Started</div>
     </div>
 
     <!-- Nearly Done Card -->
-    <div class="col-md-4">
-      <div class="card p-3">
-        <div class="d-flex align-items-center mb-2">
-          <i class="bi bi-hourglass-split fs-2 text-warning"></i>
-        </div>
-        <div class="fs-3 fw-bold mb-1">15</div>
-        <div class="text-muted">Nearly Done</div>
+    <div class="card flex-fill mx-1 p-3 text-start">
+      <div class="mb-2">
+        <i class="bi bi-hourglass-split fs-3 text-warning"></i>
       </div>
+      <div class="fs-5 fw-bold mb-1">15</div>
+      <div class="text-muted">Nearly Done</div>
     </div>
 
     <!-- Needs Attention Card -->
-    <div class="col-md-4">
-      <div class="card p-3">
-        <div class="d-flex align-items-center mb-2">
-          <i class="bi bi-exclamation-triangle-fill fs-2 text-danger"></i>
-        </div>
-        <div class="fs-3 fw-bold mb-1">5</div>
-        <div class="text-muted">Needs Attention</div>
+    <div class="card flex-fill ms-2 p-3 text-start">
+      <div class="mb-2">
+        <i class="bi bi-exclamation-triangle-fill fs-3 text-danger"></i>
       </div>
+      <div class="fs-5 fw-bold mb-1">5</div>
+      <div class="text-muted">Needs Attention</div>
     </div>
 
   </div>
 </div>
+
 
 
     
