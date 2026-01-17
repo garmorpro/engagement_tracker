@@ -166,32 +166,46 @@ statusButtons.forEach(btn => {
 
       $dueDateStr = $eng['next_milestone']['due_date'] ?? null;
 
+      $isOverdue = false;
       if($dueDateStr) {
           $dueTimestamp = strtotime($dueDateStr);
           $due = date('M d', $dueTimestamp);
           $daysLeft = (int)(($dueTimestamp - time()) / 86400);
+          if ($daysLeft < 0) {
+              $isOverdue = true;
+              $daysLeft = abs($daysLeft); // show as positive number if you want "34d overdue"
+          }
       } else {
           $due = 'TBD';
           $daysLeft = null;
       }
+
+      // Set colors dynamically
+      $cardBg = $isOverdue ? 'rgb(252,243,242)' : 'rgb(240,246,254)';
+      $cardBorder = $isOverdue ? 'rgb(247,204,203)' : 'rgb(196,218,252)';
+      $topTextColor = $isOverdue ? 'rgb(177,30,27)' : 'rgb(35,70,221)';
+      $iconColor = $isOverdue ? 'rgb(216,55,53)' : 'rgb(63,106,243)';
+      $dateColor = $isOverdue ? 'rgb(119,34,31)' : 'rgb(35,56,137)';
+      $daysColor = $isOverdue ? 'rgb(177,30,27)' : 'rgb(35,70,221)';
 ?>
-<div class="d-flex flex-column mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
+<div class="d-flex flex-column mb-3 p-2 rounded shadow-sm" 
+     style="border: 1px solid <?= $cardBorder ?>; background-color: <?= $cardBg ?>; font-size: 0.875rem;">
   
   <!-- First Row: Next: milestone type -->
-  <div class="fw-semibold mb-1" style="color: rgb(35,70,221);">
+  <div class="fw-semibold mb-1" style="color: <?= $topTextColor ?>;">
     Next: <?= htmlspecialchars($milestoneTypeFormatted) ?>
   </div>
   
   <!-- Second Row: Calendar icon, date, days left -->
   <div class="d-flex align-items-center text-muted">
-    <i class="bi bi-calendar me-2" style="color: rgb(63,106,243);"></i>
-    <span class="fw-semibold me-2" style="color: rgb(35,56,137);"><?= $due ?></span>
+    <i class="bi bi-calendar me-2" style="color: <?= $iconColor ?>;"></i>
+    <span class="fw-semibold me-2" style="color: <?= $dateColor ?>;"><?= $due ?></span>
     
     <?php if($daysLeft !== null): ?>
-        <?php if($daysLeft < 0): ?>
-            <span style="color: rgb(228, 96, 19); font-weight: 600;">Overdue</span>
+        <?php if($isOverdue): ?>
+            <span style="color: <?= $daysColor ?>; font-weight: 600;"><?= $daysLeft ?>d overdue</span>
         <?php else: ?>
-            <span style="color: rgb(35,70,221);">(<?= $daysLeft ?>d left)</span>
+            <span style="color: <?= $daysColor ?>;">(<?= $daysLeft ?>d left)</span>
         <?php endif; ?>
     <?php endif; ?>
     
@@ -199,6 +213,7 @@ statusButtons.forEach(btn => {
 
 </div>
 <?php endif; ?>
+
 
 
 
