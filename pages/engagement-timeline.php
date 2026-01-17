@@ -3,6 +3,7 @@
 
 require_once '../includes/functions.php';
 require_once '../includes/init.php';
+logoutUser($conn);
 
 $engagements = getAllEngagements($conn);
 $milestones = getEngagementMilestones($conn);

@@ -3,6 +3,7 @@
 
 require_once '../includes/functions.php';
 require_once '../includes/init.php';
+logoutUser($conn);
 
 $engagementsWithMilestones = getAllEngagements($conn); // rename
 $overdueEngagements = getOverdueEngagements($conn);
@@ -51,7 +52,11 @@ $recentUpdates = getRecentlyUpdatedEngagements($conn);
 
           <a class="btn archive-btn btn-sm ms-3" href="archive.php"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</a>
           <a class="btn tools-btn btn-sm ms-3" href="tools.php"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</a>
-          <!-- <button class="btn new-btn btn-sm ms-3"><i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement</button> -->
+          <form method="POST" action="<?php echo BASE_URL . '/auth/logout.php'; ?>" class="d-inline">
+                <button type="submit" class="btn logout-btn btn-sm ms-3">
+                    <i class="bi bi-box-arrow-left"></i>&nbsp;&nbsp;Logout
+                </button>
+            </form>
         </div>
       </div>
     </div>
