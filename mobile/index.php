@@ -131,7 +131,7 @@ statusButtons.forEach(btn => {
     </div>
 
     <!-- Audit Team Row -->
-    <div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="d-flex justify-content-between align-items-center mb-3">
       <div class="d-flex align-items-center" style="color: rgb(107,114,129); font-size: 0.875rem;">
         <i class="bi bi-people me-1"></i>&nbsp;Audit Team
       </div>
@@ -140,7 +140,7 @@ statusButtons.forEach(btn => {
 
     <!-- Audit Type & TSC Row -->
     <div class="d-flex gap-2 mb-3">
-      <div class="card flex-fill p-2 text-center bg-light">
+      <div class="card flex-fill p-2 text-start bg-light">
         <div class="text-muted small">Audit Type</div>
         <div class="fw-semibold">SOC 2 Type 2</div>
       </div>
