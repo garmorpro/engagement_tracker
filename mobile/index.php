@@ -155,7 +155,7 @@ statusButtons.forEach(btn => {
 </div>
 
     <!-- Next Milestone -->
-    <div class="d-flex align-items-center mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254);">
+    <div class="d-flex align-items-center mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
       <div class="fw-semibold me-2" style="color: rgb(35,70,221);">Next:</div>
       <div class="me-auto" style="color: rgb(35,70,221);">Draft Due</div>
       <div class="d-flex align-items-center text-muted">
