@@ -159,22 +159,32 @@ statusButtons.forEach(btn => {
             </div>
 
             <!-- Next Milestone -->
-            <?php if($eng['next_milestone'] && !empty($eng['next_milestone']['due_date'])): 
-                  $dueDateStr = $eng['next_milestone']['due_date'];
-                  $dueTimestamp = strtotime($dueDateStr);
-                  $due = date('M d', $dueTimestamp);
-                  $daysLeft = (int)(($dueTimestamp - time()) / 86400);
-            ?>
-            <div class="d-flex align-items-center mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
-              <div class="fw-semibold me-1" style="color: rgb(35,70,221);">Next:</div>
-              <div class="me-auto fw-semibold" style="color: rgb(35,70,221);"><?= htmlspecialchars($eng['next_milestone']['milestone_type']) ?></div>
-              <div class="d-flex align-items-center text-muted">
-                <i class="bi bi-calendar me-2" style="color: rgb(63,106,243);"></i>
-                <span class="fw-semibold me-2" style="color: rgb(35,56,137);"><?= $due ?></span>
-                <span style="color: rgb(35,70,221);">(<?= $daysLeft ?>d left)</span>
-              </div>
-            </div>
-            <?php endif; ?>
+<?php if(!empty($eng['next_milestone'])): 
+      $milestoneType = $eng['next_milestone']['milestone_type'] ?? 'Upcoming';
+      $dueDateStr = $eng['next_milestone']['due_date'] ?? null;
+
+      if($dueDateStr) {
+          $dueTimestamp = strtotime($dueDateStr);
+          $due = date('M d', $dueTimestamp);
+          $daysLeft = (int)(($dueTimestamp - time()) / 86400);
+      } else {
+          $due = 'TBD';
+          $daysLeft = '';
+      }
+?>
+<div class="d-flex align-items-center mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
+  <div class="fw-semibold me-1" style="color: rgb(35,70,221);">Next:</div>
+  <div class="me-auto fw-semibold" style="color: rgb(35,70,221);"><?= htmlspecialchars($milestoneType) ?></div>
+  <div class="d-flex align-items-center text-muted">
+    <i class="bi bi-calendar me-2" style="color: rgb(63,106,243);"></i>
+    <span class="fw-semibold me-2" style="color: rgb(35,56,137);"><?= $due ?></span>
+    <?php if($daysLeft !== ''): ?>
+      <span style="color: rgb(35,70,221);">(<?= $daysLeft ?>d left)</span>
+    <?php endif; ?>
+  </div>
+</div>
+<?php endif; ?>
+
 
             <!-- Team Members -->
             <div class="d-flex align-items-center">
