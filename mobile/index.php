@@ -86,7 +86,7 @@ statusButtons.forEach(btn => {
 
 </script>
 
-
+<!-- Needs attention -->
 <div class="container my-3">
   <div class="d-flex border-start border-4 p-3" style="border-color: rgb(214,115,19) !important; background-color: #fff; border-radius: 8px;">
     
@@ -104,6 +104,75 @@ statusButtons.forEach(btn => {
 
   </div>
 </div>
+<!-- ends Needs attention -->
+
+
+<!-- Engagement Card Template -->
+<a href="engagement.php?eng_id=123" class="text-decoration-none">
+  <div class="card mb-3 p-3 shadow-sm">
+    
+    <!-- Status Badge -->
+    <div class="mb-2">
+      <span class="badge bg-info text-dark">In Progress</span>
+    </div>
+
+    <!-- Engagement Name -->
+    <div class="fs-5 fw-semibold mb-1 text-truncate">ACME Corp</div>
+    
+    <!-- Engagement ID -->
+    <div class="text-muted mb-2">ENG-2026-001</div>
+
+    <!-- Manager Row -->
+    <div class="d-flex justify-content-between align-items-center mb-1">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-person me-1"></i> Manager
+      </div>
+      <div>John Smith</div>
+    </div>
+
+    <!-- Audit Team Row -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-people me-1"></i> Audit Team
+      </div>
+      <div>5 members</div>
+    </div>
+
+    <!-- Audit Type & TSC Row -->
+    <div class="d-flex gap-2 mb-3">
+      <div class="card flex-fill p-2 text-center bg-light">
+        <div class="text-muted small">Audit Type</div>
+        <div class="fw-semibold">SOC 2 Type 2</div>
+      </div>
+      <div class="card flex-fill p-2 text-center bg-light">
+        <div class="text-muted small">TSC</div>
+        <div class="fw-semibold">Security, A, P</div>
+      </div>
+    </div>
+
+    <!-- Next Milestone -->
+    <div class="d-flex align-items-center mb-3 p-2 border rounded bg-white shadow-sm">
+      <div class="fw-semibold me-2">Next:</div>
+      <div class="me-auto">Draft Due</div>
+      <div class="d-flex align-items-center text-muted">
+        <i class="bi bi-calendar me-1"></i> Feb 19 (34d left)
+      </div>
+    </div>
+
+    <!-- Team Members Row -->
+    <div class="d-flex align-items-center">
+      <div class="me-2 fw-semibold">Team:</div>
+      <div class="d-flex">
+        <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center me-1" style="width:32px; height:32px; font-size:0.75rem;">SJ</div>
+        <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center me-1" style="width:32px; height:32px; font-size:0.75rem;">DM</div>
+        <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center me-1" style="width:32px; height:32px; font-size:0.75rem;">MD</div>
+        <div class="rounded-circle border border-white bg-secondary text-white d-flex align-items-center justify-content-center" style="width:32px; height:32px; font-size:0.75rem;">JW</div>
+      </div>
+    </div>
+
+  </div>
+</a>
+
 
 
 
