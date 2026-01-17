@@ -172,9 +172,14 @@ statusButtons.forEach(btn => {
           $daysLeft = '';
       }
 ?>
-<div class="d-flex align-items-center mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
-  <div class="fw-semibold me-1" style="color: rgb(35,70,221);">Next:</div>
-  <div class="me-auto fw-semibold" style="color: rgb(35,70,221);"><?= htmlspecialchars($milestoneType) ?></div>
+<div class="d-flex flex-column mb-3 p-2 rounded shadow-sm" style="border: 1px solid rgb(196,218,252); background-color: rgb(240,246,254); font-size: 0.875rem;">
+  
+  <!-- First Row: Next: milestone type -->
+  <div class="fw-semibold mb-1" style="color: rgb(35,70,221);">
+    Next: <?= htmlspecialchars($milestoneType) ?>
+  </div>
+  
+  <!-- Second Row: Calendar icon, date, days left -->
   <div class="d-flex align-items-center text-muted">
     <i class="bi bi-calendar me-2" style="color: rgb(63,106,243);"></i>
     <span class="fw-semibold me-2" style="color: rgb(35,56,137);"><?= $due ?></span>
@@ -182,8 +187,10 @@ statusButtons.forEach(btn => {
       <span style="color: rgb(35,70,221);">(<?= $daysLeft ?>d left)</span>
     <?php endif; ?>
   </div>
+
 </div>
 <?php endif; ?>
+
 
 
             <!-- Team Members -->
