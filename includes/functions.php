@@ -371,3 +371,77 @@ function getRecentlyUpdatedEngagements(mysqli $conn): array
 
     return $result->fetch_all(MYSQLI_ASSOC);
 }
+
+
+function getAllActiveEngagementsMobile(mysqli $conn): array
+{
+    // Query active engagements (exclude archived)
+    $sql = "
+        SELECT 
+            e.eng_id,
+            e.eng_status,
+            e.eng_name,
+            e.eng_idno,
+            e.eng_audit_type,
+            -- Get manager name
+            (SELECT emp_name FROM engagement_team t 
+             WHERE t.eng_id = e.eng_id AND t.role = 'Manager' LIMIT 1) AS manager_name,
+            -- Count of team members excluding manager
+            (SELECT COUNT(*) FROM engagement_team t 
+             WHERE t.eng_id = e.eng_id AND t.role != 'Manager') AS team_count
+        FROM engagements e
+        WHERE e.eng_status != 'archived'
+        ORDER BY e.eng_name ASC
+    ";
+
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        return [];
+    }
+
+    $engagements = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $eng_id = $row['eng_id'];
+
+        // Get team members (excluding manager) for initials
+        $teamMembers = [];
+        $team_sql = "SELECT emp_name FROM engagement_team WHERE eng_id = '$eng_id' AND role != 'Manager'";
+        $team_result = $conn->query($team_sql);
+        if ($team_result) {
+            while ($t = $team_result->fetch_assoc()) {
+                $teamMembers[] = $t['emp_name'];
+            }
+        }
+
+        // Get next milestone (closest due date that is not completed)
+        $milestone = null;
+        $milestone_sql = "
+            SELECT milestone_type, due_date, is_completed
+            FROM engagement_milestones
+            WHERE eng_id = '$eng_id' AND is_completed = 0
+            ORDER BY due_date ASC
+            LIMIT 1
+        ";
+        $milestone_result = $conn->query($milestone_sql);
+        if ($milestone_result && $milestone_result->num_rows > 0) {
+            $milestone = $milestone_result->fetch_assoc();
+        }
+
+        $engagements[] = [
+            'eng_id' => $row['eng_id'],
+            'eng_status' => $row['eng_status'],
+            'eng_name' => $row['eng_name'],
+            'eng_idno' => $row['eng_idno'],
+            'eng_audit_type' => $row['eng_audit_type'],
+            'manager_name' => $row['manager_name'] ?? '',
+            'team_count' => (int) $row['team_count'],
+            'team_members' => $teamMembers,
+            'next_milestone' => $milestone,
+        ];
+    }
+
+    return $engagements;
+}
+?>
