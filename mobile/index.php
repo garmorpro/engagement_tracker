@@ -87,6 +87,26 @@ statusButtons.forEach(btn => {
 </script>
 
 
+<div class="container my-3">
+  <div class="d-flex border-start border-4 p-3" style="border-color: rgb(214,115,19); background-color: #fff; border-radius: 8px;">
+    
+    <!-- Icon Circle -->
+    <div class="d-flex align-items-center justify-content-center flex-shrink-0 me-3" 
+         style="width: 40px; height: 40px; border-radius: 50%; background-color: rgb(252,237,215);">
+      <i class="bi bi-exclamation-circle-fill" style="color: rgb(228,96,19); font-size: 1.2rem;"></i>
+    </div>
+
+    <!-- Text -->
+    <div class="d-flex flex-column justify-content-center">
+      <div style="color: rgb(18,24,39); font-weight: 600;">6 Engagements Need Attention</div>
+      <div style="color: rgb(133,139,149); font-size: 0.875rem;">6 overdue • Review and prioritize critical items</div>
+    </div>
+
+  </div>
+</div>
+
+
+
 
 
 
