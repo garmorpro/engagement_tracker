@@ -1,10 +1,10 @@
 <?php 
-session_start();
-
+// sessions_start();
+require_once '../path.php';
 require_once '../includes/functions.php';
 logoutUser($conn);
 
-require_once '../path.php';
+
 
 
 
