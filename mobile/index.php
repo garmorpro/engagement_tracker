@@ -142,7 +142,7 @@ statusButtons.forEach(btn => {
         <div class="text-muted small">Audit Type</div>
         <div class="fw-semibold">SOC 2 Type 2, SOC 1 Type 2, PCI</div>
     </div>
-    <div class="card p-2 text-center bg-light flex-1 d-flex flex-column" style="flex: 1 1 0;">
+    <div class="card p-2 text-center bg-light flex-1 d-flex flex-column mb-3" style="flex: 1 1 0;">
         <div class="text-muted small">TSC</div>
         <div class="fw-semibold">Security, A, P</div>
     </div>
