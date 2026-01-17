@@ -24,17 +24,21 @@ $error = loginUser($conn);
             <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
-        <form class="p-4" method="POST" action="">
+        <form class="p-4" method="POST" action="<?php echo BASE_URL . '/login.php'; ?>">
             <div class="mb-3">
-                <label for="account_name" class="form-label">Account name</label>
-                <input type="text" class="form-control" name="account_name" placeholder="Enter your account name" required>
+                <label class="form-label">Account name</label>
+                <input type="text" class="form-control" name="account_name" required>
             </div>
+                
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" name="password" placeholder="Enter your password" required>
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" required>
             </div>
+                
             <div class="d-grid">
-                <button type="submit" class="btn" style="background-color: rgb(23,62, 70); color: white;">Sign In</button>
+                <button type="submit" class="btn" style="background-color: rgb(23,62,70); color: white;">
+                    Sign In
+                </button>
             </div>
         </form>
 
