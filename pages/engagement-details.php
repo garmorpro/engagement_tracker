@@ -769,8 +769,8 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
        style="border-color: rgb(255,228,201); border-radius: 15px; background-color: rgb(255,242,227);">
 
     <!-- CHAT BUTTON -->
-    <form method="post" class="position-absolute top-0 end-0 m-3">
-      <input type="hidden" name="action" value="update_last_contact">
+    <form method="POST" class="position-absolute top-0 end-0 m-3">
+      <!-- <input type="hidden" name="action" value="update_last_contact"> -->
       <input type="hidden" name="eng_id" value="<?php echo (int)$eng['eng_id']; ?>">
       <button type="submit"
               class="btn btn-sm"
