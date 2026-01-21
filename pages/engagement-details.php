@@ -25,10 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST'
-    && !empty($_POST['eng_id'])
-) {
-    $engId = (int)($_POST['eng_id'] ?? 0);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['eng_id'])) {
+    $engId = (int) $_POST['eng_id'];
 
     if ($engId > 0) {
         $stmt = $conn->prepare("
@@ -40,11 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         $stmt->execute();
         $stmt->close();
 
-        // Optional: force refresh so date updates immediately
+        // 🔁 Redirect to refresh page
         header("Location: " . $_SERVER['REQUEST_URI']);
         exit;
     }
 }
+
 
 
 
