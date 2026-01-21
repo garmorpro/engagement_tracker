@@ -4,7 +4,7 @@ ob_start(); // start output buffering
 require_once '../path.php';
 require_once '../includes/functions.php';
 require_once '../includes/init.php';
-logoutUser($conn);
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     $engId = $_POST['archive_eng_id'];
@@ -283,6 +283,7 @@ $nextEngId = getNextEngagementId($conn);
 
 $engagements = getAllEngagements($conn);
 $totalEngagements = count($engagements);
+logoutUser($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -678,7 +679,7 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
     <!-- CHAT BUTTON -->
     <form method="POST" class="position-absolute top-0 end-0 m-3">
       <!-- <input type="hidden" name="action" value="update_last_contact"> -->
-      <input type="text" name="eng_id" value="<?php echo $eng['eng_id']; ?>">
+      <input type="hidden" name="eng_id" value="<?php echo $eng['eng_id']; ?>">
       <button type="submit"
               class="btn btn-sm"
               title="Update Last Communication"
