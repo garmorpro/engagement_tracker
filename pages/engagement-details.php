@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['eng_id'])) {
 
         // 🔁 Redirect to refresh page
         // header("Location: engagement-details.php?eng_id=" . urlencode($engId));
-        echo "<script>window.location.reload();</script>";
+        // echo "<script>window.location.reload();</script>";
         exit;
     }
 }
