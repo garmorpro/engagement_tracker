@@ -29,17 +29,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['eng_id'])) {
     $engId = (int) $_POST['eng_id'];
 
     if ($engId > 0) {
+        $today = date('Y-m-d');
+
         $stmt = $conn->prepare("
             UPDATE engagements
-            SET eng_last_communication = CURDATE()
+            SET eng_last_communication = ?
             WHERE eng_id = ?
         ");
-        $stmt->bind_param('i', $engId);
+        $stmt->bind_param('si', $today, $engId);
         $stmt->execute();
         $stmt->close();
 
         // 🔁 Redirect to refresh page
-        header("Location: engagement-details.php?eng_id=" . urlencode($engId));
+        // header("Location: engagement-details.php?eng_id=" . urlencode($engId));
+        echo "<script>window.location.reload();</script>";
         exit;
     }
 }
