@@ -25,7 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['archive_eng_id'])) {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['eng_id'])) {
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['update_last_contact'])
+    && !empty($_POST['eng_id'])
+) {
     $engId = (int) $_POST['eng_id'];
 
     if ($engId > 0) {
@@ -40,12 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['eng_id'])) {
         $stmt->execute();
         $stmt->close();
 
-        // 🔁 Redirect to refresh page
-        // header("Location: engagement-details.php?eng_id=" . urlencode($engId));
-        // echo "<script>window.location.reload();</script>";
+        // 🔁 Redirect (recommended)
+        header("Location: engagement-details.php?eng_id=" . urlencode($engId));
         exit;
     }
 }
+
 
 
 
@@ -220,103 +224,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['edit_eng_id'])) {
     } else {
         echo "<div class='alert alert-danger'>
             Failed to update engagement: " . htmlspecialchars($stmt->error) . "
-        </div>";
-    }
-}
-
-
-
-
-// Handle adding engagement
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['action']) && $_POST['action'] === 'add') {
-
-    /* ============================
-       TEXT FIELDS
-    ============================ */
-    $engId       = $_POST['eng_idno'] ?? '';
-    $name        = $_POST['eng_name'] ?? '';
-    $poc         = $_POST['eng_poc'] ?? '';
-    $location    = $_POST['eng_location'] ?? '';
-    $audit_type  = $_POST['eng_audit_type'] ?? '';
-    $scope       = $_POST['eng_scope'] ?? '';
-    $tsc         = $_POST['eng_tsc'] ?? '';
-    $notes       = $_POST['eng_notes'] ?? '';
-    $status      = $_POST['eng_status'] ?? '';
-
-    /* ============================
-       Y / N FIELDS
-    ============================ */
-    $repeat              = $_POST['eng_repeat'] ?? 'N';
-
-    /* ============================
-       DATE FIELDS (EMPTY → NULL)
-    ============================ */
-    function nullDate($key) {
-        return !empty($_POST[$key]) ? $_POST[$key] : null;
-    }
-
-    $start_period       = nullDate('eng_start_period');
-    $end_period         = nullDate('eng_end_period');
-    $as_of_date         = nullDate('eng_as_of_date');
-    $archive            = nullDate('eng_archive');
-    $last_communication = nullDate('eng_last_communication');
-
-    /* ============================
-       PREPARE INSERT
-    ============================ */
-    $stmt = $conn->prepare("
-        INSERT INTO engagements (
-            eng_idno,
-            eng_name,
-            eng_poc,
-            eng_location,
-            eng_repeat,
-            eng_audit_type,
-            eng_scope,
-            eng_tsc,
-            eng_start_period,
-            eng_end_period,
-            eng_as_of_date,
-            eng_archive,
-            eng_last_communication,
-            eng_notes,
-            eng_status
-        ) VALUES (
-            ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-        )
-    ");
-
-    /* ============================
-       BIND (16 params)
-    ============================ */
-    $stmt->bind_param(
-        "sssssssssssssss",
-        $engId,
-        $name,
-        $poc,
-        $location,
-        $repeat,
-        $audit_type,
-        $scope,
-        $tsc,
-        $start_period,
-        $end_period,
-        $as_of_date,
-        $archive,
-        $last_communication,
-        $notes,
-        $status
-    );
-
-    /* ============================
-       EXECUTE
-    ============================ */
-    if ($stmt->execute()) {
-        header("Location: engagement-details.php?eng_id=" . urlencode($engId) . "&message=Engagement added successfully");
-        exit;
-    } else {
-        echo "<div class='alert alert-danger'>
-            Failed to add engagement: " . htmlspecialchars($stmt->error) . "
         </div>";
     }
 }
