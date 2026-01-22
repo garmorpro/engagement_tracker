@@ -568,17 +568,15 @@ $totalEngagements = count($engagements);
                   </span>
 
 
-                  <!-- Overdue badge -->
-                  <?php
-                  $today = new DateTime();
-                  if (!empty($eng['eng_final_due']) && new DateTime($eng['eng_final_due']) < $today): ?>
-                    <span class="badge rounded-pill badge-overdue">Overdue</span>
-                  <?php endif; ?>
+               
                   
                   <!-- Repeat Client badge -->
                   <?php if (!empty($eng['eng_repeat']) && $eng['eng_repeat'] === 'Y'): ?>
                     <span class="badge rounded-pill text-white" style="background-color: #2563eb;">Repeat Client</span>
                   <?php endif; ?>
+
+                  <div id="overdueBadge"></div>
+
                 </div>
                   
                 <!-- Engagement Name -->
@@ -617,29 +615,50 @@ $totalEngagements = count($engagements);
 fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
   .then(res => res.json())
   .then(data => {
+    const overdueBadge = document.getElementById('overdueBadge');
     const dueDisplay = document.getElementById('finalDueDisplay');
     const daysCount = document.getElementById('daysCount');
     const daysLabel = document.getElementById('daysLabel');
 
+    // Clear overdue badge by default
+    overdueBadge.innerHTML = '';
+
+    // Normalize "today" (date-only)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     // If milestone is completed
     if (data.is_completed === 'Y') {
-      // Big green check circle
-      daysCount.innerHTML = '<i class="bi bi-check2-circle" style="font-size: 30px; color: green;"></i>';
-      // Small "Completed" text below
+      daysCount.innerHTML =
+        '<i class="bi bi-check2-circle" style="font-size: 30px; color: green;"></i>';
       daysLabel.textContent = 'Completed';
       daysLabel.style.fontSize = '14px';
       daysLabel.style.fontWeight = 'bold';
-      dueDisplay.textContent = ''; // hide the due date
-      return;
+      dueDisplay.textContent = '';
+      return; // stop here
     }
 
-    // Display final due date
-    // dueDisplay.textContent = data.final_due 
-    //   ? new Date(data.final_due + 'T00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
-    //   : 'N/A';
+    // If we have a final due date
+    if (data.final_due) {
+      const dueDate = new Date(data.final_due + 'T00:00');
 
-    // Display days until/overdue
-    if (data.days_info.days !== undefined) {
+      // Show Overdue badge
+      if (dueDate < today) {
+        overdueBadge.innerHTML = `
+          <span class="badge rounded-pill badge-overdue">Overdue</span>
+        `;
+      }
+
+      // Optional: show formatted due date
+      // dueDisplay.textContent = dueDate.toLocaleDateString('en-US', {
+      //   month: 'short',
+      //   day: 'numeric',
+      //   year: 'numeric'
+      // });
+    }
+
+    // Display days until / overdue info
+    if (data.days_info && data.days_info.days !== undefined) {
       daysCount.textContent = data.days_info.days;
       daysLabel.textContent = data.days_info.label;
       daysCount.style.color = data.days_info.color;
@@ -647,8 +666,10 @@ fetch('../includes/get_final_due.php?eng_id=<?= $eng_id ?>')
       daysCount.style.fontSize = '20px';
       daysLabel.style.fontSize = '12px';
     }
-  });
+  })
+  .catch(err => console.error('Final due fetch error:', err));
 </script>
+
 
 
 
