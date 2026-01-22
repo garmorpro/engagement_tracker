@@ -477,7 +477,7 @@ $totalEngagements = count($engagements);
                                                 </span><br>
                                     
                                                 <!-- Tags -->
-                                                <div class="tags pt-2" style="margin-bottom: -15px !important;">
+                                                <div class="tags pt-2">
                                                     <?php if (!empty($eng['eng_audit_type'])): ?>
                                                         <span class="badge"
                                                               style="background-color: rgba(235,236,237,1);
