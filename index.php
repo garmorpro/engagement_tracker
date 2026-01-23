@@ -6,6 +6,45 @@
 <body>
 
 <button onclick="login()">Login with Fingerprint</button>
+<button onclick="register()">Register Fingerprint</button>
+
+<script>
+function base64urlToUint8Array(b64) {
+    const pad = '='.repeat((4 - b64.length % 4) % 4);
+    const base64 = (b64 + pad).replace(/-/g, '+').replace(/_/g, '/');
+    return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+}
+
+function uint8ArrayToBase64url(buf) {
+    return btoa(String.fromCharCode(...buf))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+async function register() {
+    const res = await fetch('/auth/webauthn_register.php');
+    const options = await res.json();
+
+    options.challenge = base64urlToUint8Array(options.challenge);
+    options.user.id = base64urlToUint8Array(options.user.id);
+
+    const cred = await navigator.credentials.create({
+        publicKey: options
+    });
+
+    await fetch('/auth/webauthn_register_save.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+            rawId: uint8ArrayToBase64url(new Uint8Array(cred.rawId)),
+            publicKey: uint8ArrayToBase64url(
+                new Uint8Array(cred.response.attestationObject)
+            )
+        })
+    });
+
+    alert('Fingerprint registered');
+}
+</script>
 
 <script>
 function base64urlToUint8Array(base64url) {
