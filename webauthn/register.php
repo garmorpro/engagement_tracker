@@ -15,6 +15,9 @@ use Webauthn\AuthenticatorAttestationResponseValidator;
 use Webauthn\PublicKeyCredentialLoader;
 use Webauthn\Util\Base64UrlSafe;
 
+// Test
+var_dump(class_exists(Base64UrlSafe::class));
+
 // Force JSON response
 header('Content-Type: application/json');
 
