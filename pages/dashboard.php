@@ -217,11 +217,7 @@ $totalEngagements = count($engagements);
       <a class="btn archive-btn btn-sm ms-3" href="archive.php"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</a>
       <a class="btn tools-btn btn-sm ms-3" href="tools.php"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</a>
 
-      <?php if ($showBiometricButton): ?>
-    <button id="enableBiometricBtn" class="btn btn-success btn-sm ms-3">
-      <i class="bi bi-fingerprint"></i>&nbsp;&nbsp;Enable Face ID / Touch ID
-    </button>
-<?php endif; ?>
+    
 
       <form method="POST" action="<?php echo BASE_URL . '/auth/logout.php'; ?>" class="d-inline">
           <button type="submit" class="btn logout-btn btn-sm ms-3">
