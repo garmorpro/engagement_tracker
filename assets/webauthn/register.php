@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once '../includes/init.php';
-require_once '../../vendor/autoload.php';
+require_once '../../../vendor/autoload.php';
 
 use Webauthn\PublicKeyCredentialCreationOptions;
 use Webauthn\PublicKeyCredentialRpEntity;
