@@ -251,12 +251,17 @@ $totalEngagements = count($engagements);
 
 <script>
 function bufferDecode(base64url) {
-    const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
-    const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/') + padding;
-    const str = atob(base64);
-    const buf = new Uint8Array(str.length);
-    for (let i = 0; i < str.length; i++) buf[i] = str.charCodeAt(i);
-    return buf; // Uint8Array
+    try {
+        const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
+        const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/') + padding;
+        const str = atob(base64);
+        const buf = new Uint8Array(str.length);
+        for (let i = 0; i < str.length; i++) buf[i] = str.charCodeAt(i);
+        return buf; // Uint8Array
+    } catch (err) {
+        console.error('bufferDecode failed for:', base64url, err);
+        throw err; // rethrow so the outer try/catch catches it
+    }
 }
 
 function bufferEncode(arrayBuffer) {
@@ -275,17 +280,29 @@ async function enableBiometric() {
     try {
         const res = await fetch('../webauthn/register.php');
         const options = await res.json();
+        console.log('Raw options from server:', options); // 🔹 log full server response
+
         if (options.error) throw new Error(options.error);
 
+        console.log('Decoding challenge:', options.challenge);
         options.challenge = bufferDecode(options.challenge);
+        console.log('Decoded challenge (Uint8Array):', options.challenge);
+
+        console.log('Decoding user.id:', options.user.id);
         options.user.id = bufferDecode(options.user.id);
+        console.log('Decoded user.id (Uint8Array):', options.user.id);
 
         if (Array.isArray(options.excludeCredentials) && options.excludeCredentials.length > 0) {
-            options.excludeCredentials = options.excludeCredentials.map(c => ({
-                type: c.type,
-                id: bufferDecode(c.id),
-                transports: c.transports || []
-            }));
+            options.excludeCredentials = options.excludeCredentials.map(c => {
+                console.log('Decoding excludeCredential id:', c.id);
+                const decodedId = bufferDecode(c.id);
+                console.log('Decoded excludeCredential id (Uint8Array):', decodedId);
+                return {
+                    type: c.type,
+                    id: decodedId,
+                    transports: c.transports || []
+                };
+            });
         } else {
             delete options.excludeCredentials;
         }
@@ -310,6 +327,8 @@ async function enableBiometric() {
         });
 
         const result = await verifyRes.json();
+        console.log('Server verification response:', result);
+
         if (result.success) {
             alert('Biometric login enabled!');
             const btn = document.getElementById('enableBiometricBtn');
@@ -319,7 +338,7 @@ async function enableBiometric() {
         }
 
     } catch (err) {
-        console.error(err);
+        console.error('enableBiometric error:', err);
         alert('Biometric registration failed or is not supported on this device.');
     }
 }
@@ -329,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.addEventListener('click', enableBiometric);
 });
 </script>
+
 
 
 
