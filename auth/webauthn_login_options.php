@@ -2,22 +2,25 @@
 session_start();
 require '../includes/db.php';
 
+function b64url($data) {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
 $challenge = random_bytes(32);
-$_SESSION['webauthn_challenge'] = base64_encode($challenge);
+$_SESSION['webauthn_challenge'] = $challenge;
 
-// Get all credentials
 $res = $db->query("SELECT credential_id FROM webauthn_credentials");
-$allow = [];
 
+$allow = [];
 while ($row = $res->fetch_assoc()) {
     $allow[] = [
         'type' => 'public-key',
-        'id' => rtrim(strtr(base64_encode($row['credential_id']), '+/', '-_'), '=')
+        'id' => b64url($row['credential_id'])
     ];
 }
 
 echo json_encode([
-    'challenge' => rtrim(strtr(base64_encode($challenge), '+/', '-_'), '='),
+    'challenge' => b64url($challenge),
     'rpId' => $_SERVER['HTTP_HOST'],
     'allowCredentials' => $allow,
     'userVerification' => 'preferred'
