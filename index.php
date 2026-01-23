@@ -28,32 +28,42 @@ function uint8ArrayToBase64url(buffer) {
 }
 
 async function login() {
-    const optRes = await fetch('/auth/webauthn_login_options.php');
-    const options = await optRes.json();
+    const res = await fetch('/auth/webauthn_login_options.php');
+    const options = await res.json();
 
-    options.challenge = b64ToBuf(options.challenge);
-    options.allowCredentials.forEach(c => c.id = b64ToBuf(c.id));
+    console.log('OPTIONS:', options); // 👈 DEBUG
 
-    const cred = await navigator.credentials.get({ publicKey: options });
+    options.challenge = base64urlToUint8Array(options.challenge);
 
-    const res = await fetch('/auth/webauthn_login_verify.php', {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({
-            id: cred.id,
-            rawId: bufToB64(cred.rawId),
-            response: {
-                authenticatorData: bufToB64(cred.response.authenticatorData),
-                clientDataJSON: bufToB64(cred.response.clientDataJSON),
-                signature: bufToB64(cred.response.signature)
-            }
-        })
+    options.allowCredentials = options.allowCredentials.map(c => ({
+        ...c,
+        id: base64urlToUint8Array(c.id)
+    }));
+
+    const cred = await navigator.credentials.get({
+        publicKey: options
     });
 
-    const data = await res.json();
-    if (data.success) location.href = '/pages/dashboard.php';
+    const payload = {
+        rawId: uint8ArrayToBase64url(new Uint8Array(cred.rawId)),
+        response: {
+            clientDataJSON: uint8ArrayToBase64url(new Uint8Array(cred.response.clientDataJSON)),
+            authenticatorData: uint8ArrayToBase64url(new Uint8Array(cred.response.authenticatorData)),
+            signature: uint8ArrayToBase64url(new Uint8Array(cred.response.signature))
+        }
+    };
+
+    const verify = await fetch('/auth/webauthn_login_verify.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+    });
+
+    const result = await verify.json();
+    if (result.success) location.href = '/pages/dashboard.php';
     else alert('Login failed');
 }
+
 </script>
 
 </body>
