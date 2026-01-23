@@ -16,44 +16,99 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Quick PIN Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body { background-color: #d8d8d8; }
-        .card { max-width: 425px; }
-        .pin-popup, .register-popup {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-            display: none;
-            width: 300px;
-            z-index: 1000;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Quick PIN Login</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+body {
+    background: linear-gradient(135deg, #d8e2ec, #f0f4f8);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+    max-width: 450px;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    background: #ffffffee;
+}
+
+.account-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.account-item {
+    background: #f8f9fa;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.account-item:hover {
+    background: #e0f0ff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.account-item .role-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.register-btn {
+    background: linear-gradient(to right, #3b82f6, #06b6d4);
+    color: white;
+    font-weight: 600;
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    transition: all 0.2s ease-in-out;
+    margin-top: 1rem;
+}
+
+.register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.pin-popup, .register-popup {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 25px rgba(0,0,0,0.3);
+    display: none;
+    width: 350px;
+    z-index: 1000;
+}
+</style>
 </head>
 <body>
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card p-3 shadow w-100">
-        <h5 class="text-center mb-2">Welcome Back</h5>
-        <p class="text-center text-muted mb-3">Click an account to sign in</p>
+    <div class="card w-100">
+        <h4 class="text-center mb-3">Welcome Back</h4>
+        <p class="text-center text-muted mb-4">Click an account to sign in</p>
 
         <!-- Account List -->
         <?php if (!empty($accounts)): ?>
-            <div class="list-group mb-3">
+            <div class="account-list">
                 <?php foreach ($accounts as $account): ?>
-                    <button type="button"
-                            class="list-group-item list-group-item-action"
-                            data-user-id="<?= $account['user_id'] ?>"
-                            data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
-                            data-role="<?= $account['role'] ?>"
-                            onclick="openPinPopup(this)">
-                        <?= htmlspecialchars($account['account_name']) ?>
-                    </button>
+                    <div class="account-item"
+                         data-user-id="<?= $account['user_id'] ?>"
+                         data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
+                         data-role="<?= $account['role'] ?>"
+                         onclick="openPinPopup(this)">
+                        <i class="bi <?= $account['role'] === 'super_admin' ? 'bi-shield-lock-fill text-danger' : 'bi-person-circle text-primary' ?> role-icon"></i>
+                        <div><?= htmlspecialchars($account['account_name']) ?></div>
+                    </div>
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
@@ -61,12 +116,14 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <?php endif; ?>
 
         <div class="d-grid">
-            <button type="button" class="btn btn-primary" onclick="openAdminPinPopup()">Register New Account</button>
+            <button type="button" class="register-btn" onclick="openAdminPinPopup()">
+                <i class="bi bi-person-plus-fill me-2"></i>Register New Account
+            </button>
         </div>
     </div>
 </div>
 
-<!-- User PIN Popup -->
+<!-- PIN & Register Popups -->
 <div class="pin-popup" id="pinPopup">
     <h6 id="popupAccountName" class="text-center mb-3"></h6>
     <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
@@ -78,7 +135,6 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     </form>
 </div>
 
-<!-- Super Admin PIN Popup -->
 <div class="pin-popup" id="adminPinPopup">
     <h6 class="text-center mb-3">Enter Super Admin PIN</h6>
     <form id="adminPinForm">
@@ -88,7 +144,6 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     </form>
 </div>
 
-<!-- Register Account Popup -->
 <div class="register-popup" id="registerPopup">
     <h6 class="text-center mb-3">Create New Account</h6>
     <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
@@ -114,7 +169,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 </div>
 
 <script>
-// Open user PIN popup
+// --- Popup Logic ---
 function openPinPopup(btn) {
     const userId = btn.dataset.userId;
     const accountName = btn.dataset.accountName;
@@ -125,8 +180,6 @@ function openPinPopup(btn) {
 
     const pinInput = document.getElementById('pinInput');
     const pinLabel = document.getElementById('pinLabel');
-    
-    // Set max length & pattern based on role
     if(role === 'super_admin'){
         pinInput.maxLength = 6;
         pinInput.pattern = "\\d{6}";
@@ -142,15 +195,12 @@ function openPinPopup(btn) {
     document.getElementById('pinPopup').style.display = 'block';
 }
 
-// Auto-submit when full PIN entered
 document.getElementById('pinInput').addEventListener('input', function() {
-    const maxLength = this.maxLength;
-    if(this.value.length == maxLength){
+    if(this.value.length == this.maxLength){
         document.getElementById('pinForm').submit();
     }
 });
 
-// Open Super Admin PIN popup
 function openAdminPinPopup() {
     const popup = document.getElementById('adminPinPopup');
     const input = document.getElementById('adminPinInput');
@@ -159,7 +209,6 @@ function openAdminPinPopup() {
     popup.style.display = 'block';
 }
 
-// Verify super admin PIN
 document.getElementById('adminPinInput').addEventListener('input', function(){
     if(this.value.length === 6){
         const adminPin = this.value;
