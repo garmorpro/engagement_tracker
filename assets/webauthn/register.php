@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/init.php';
-require_once __DIR__ . '../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use Webauthn\PublicKeyCredentialCreationOptions;
 use Webauthn\PublicKeyCredentialRpEntity;
@@ -13,7 +13,7 @@ use Webauthn\AuthenticatorAttestationResponseValidator;
 use Webauthn\PublicKeyCredentialLoader;
 use Webauthn\Util\Base64UrlSafe;
 
-// Force JSON
+// Force JSON response
 header('Content-Type: application/json');
 
 // Must be logged in
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     $stmt->close();
 
-    // Generate random challenge
+    // Generate challenge
     $challenge = random_bytes(32);
     $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
 
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'id'   => Base64UrlSafe::encodeUnpadded($cred->getId())
     ], $exclude);
 
-    // Send options to browser
+    // Send registration options to browser
     $response = [
         'rp' => ['name' => 'Engagement Tracker', 'id' => $_SERVER['HTTP_HOST']],
         'user' => [
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Load credential
+    // Load credential from browser
     $loader = new PublicKeyCredentialLoader();
     $publicKeyCredential = $loader->loadArray($data);
 
@@ -143,11 +143,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
     } catch (Throwable $e) {
         http_response_code(400);
-        echo json_encode(['error' => 'Biometric registration failed']);
+        echo json_encode(['error' => 'Biometric registration failed: ' . $e->getMessage()]);
         exit;
     }
 
-    // Save credential
+    // Save credential to DB
     $stmt = $conn->prepare("
         INSERT INTO webauthn_credentials
             (user_id, credential_id, public_key, sign_count, device_name)
