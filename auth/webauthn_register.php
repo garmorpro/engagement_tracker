@@ -18,25 +18,16 @@ function base64url_encode($data) {
 
 $options = [
     'challenge' => base64url_encode($challenge),
-    'rp' => [
-        'name' => 'Engagement Tracker',
-        'id' => 'morganserver.com'
-    ],
+    'rp' => ['name' => 'Engagement Tracker', 'id' => 'morganserver.com'],
     'user' => [
-        'id' => base64url_encode($userUUID),
-        'name' => $accountName ?: $userUUID,
-        'displayName' => $accountName ?: $userUUID
+        'id' => base64url_encode($user_id),
+        'name' => $username,
+        'displayName' => $username
     ],
-    'pubKeyCredParams' => [
-        ['type' => 'public-key', 'alg' => -7],   // ES256 (Elliptic curve)
-        // ['type' => 'public-key', 'alg' => -257], // RS256 optional, can remove
-    ],
-    'authenticatorSelection' => [
-        'authenticatorAttachment' => 'platform', // Only Touch ID / Face ID
-        'userVerification' => 'required'
-    ],
+    'pubKeyCredParams' => [['type' => 'public-key', 'alg' => -7]],
+    'authenticatorSelection' => ['authenticatorAttachment' => 'platform', 'userVerification' => 'required'],
     'timeout' => 60000,
-    'attestation' => 'none' // No attestation needed
+    'attestation' => 'none'
 ];
 
 echo json_encode($options);
