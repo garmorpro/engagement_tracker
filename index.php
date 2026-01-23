@@ -128,7 +128,7 @@ body {
         <input type="hidden" name="user_id" id="pinUserId">
         <div class="mb-3">
             <label for="pinInput" class="form-label" id="pinLabel">Enter PIN</label>
-            <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" id="pinInput" name="passcode" required autofocus>
+            <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" id="pinInput" name="passcode" required>
         </div>
     </form>
 </div>
@@ -138,7 +138,7 @@ body {
     <h6 class="text-center mb-3">Enter Super Admin PIN</h6>
     <form id="adminPinForm">
         <div class="mb-3">
-            <input type="password" maxlength="6" pattern="\d{6}" class="form-control text-center fs-4" id="adminPinInput" required autofocus>
+            <input type="password" maxlength="6" pattern="\d{6}" class="form-control text-center fs-4" id="adminPinInput" required>
         </div>
     </form>
 </div>
@@ -191,8 +191,10 @@ function openPinPopup(btn) {
     }
 
     pinInput.value = '';
-    pinInput.focus();
     document.getElementById('pinPopup').style.display = 'block';
+
+    // Auto focus after popup shows
+    setTimeout(() => pinInput.focus(), 50);
 }
 
 document.getElementById('pinInput').addEventListener('input', function() {
@@ -205,8 +207,10 @@ function openAdminPinPopup() {
     const popup = document.getElementById('adminPinPopup');
     const input = document.getElementById('adminPinInput');
     input.value = '';
-    input.focus();
     popup.style.display = 'block';
+
+    // Auto focus after popup shows
+    setTimeout(() => input.focus(), 50);
 }
 
 document.getElementById('adminPinInput').addEventListener('input', function(){
@@ -222,6 +226,12 @@ document.getElementById('adminPinInput').addEventListener('input', function(){
             if(data.success){
                 document.getElementById('adminPinPopup').style.display = 'none';
                 document.getElementById('registerPopup').style.display = 'block';
+
+                // Focus first input in register popup
+                setTimeout(() => {
+                    document.querySelector('#registerPopup input[name="account_name"]').focus();
+                }, 50);
+
             } else {
                 alert('Invalid Super Admin PIN');
                 this.value = '';
