@@ -262,7 +262,7 @@ $totalEngagements = count($engagements);
 
     async function enableBiometric() {
         try {
-            const res = await fetch('/webauthn/register.php');
+            const res = await fetch('../webauthn/register.php');
             const options = await res.json();
 
             if (options.error) throw new Error(options.error);
@@ -283,7 +283,7 @@ $totalEngagements = count($engagements);
             const credential = await navigator.credentials.create({ publicKey: options });
 
             // Send credential to server
-            const verifyRes = await fetch('/webauthn/register.php', {
+            const verifyRes = await fetch('../webauthn/register.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(credential)
