@@ -5,22 +5,6 @@ require_once '../includes/functions.php';
 // require_once '../includes/init.php';
 // logoutUser($conn);
 
-// $userId = $_SESSION['user_id'] ?? null;
-
-$showBiometricButton = false;
-
-if ($userId) {
-    // Check if user already has registered credentials
-    $stmt = $conn->prepare("SELECT COUNT(*) as cnt FROM webauthn_credentials WHERE user_id = ?");
-    $stmt->bind_param('i', $userId);
-    $stmt->execute();
-    $res = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-
-    if ((int)$res['cnt'] === 0) {
-        $showBiometricButton = true; // no credentials → show button
-    }
-}
 
 
 
