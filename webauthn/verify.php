@@ -1,14 +1,13 @@
 <?php
 declare(strict_types=1);
 
-// ----------------- ERROR REPORTING -----------------
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-// ----------------- AUTOLOAD & DB -----------------
+session_start();
 require '/var/www/engagement_tracker/vendor/autoload.php';
-require_once __DIR__ . '/../includes/db.php'; // ensure $conn is available
+require_once __DIR__ . '/../includes/db.php';
 
 use Webauthn\PublicKeyCredentialLoader;
 use Webauthn\AuthenticatorAssertionResponseValidator;
@@ -17,13 +16,8 @@ use Webauthn\PublicKeyCredentialRpEntity;
 use Webauthn\PublicKeyCredentialUserEntity;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 
-// ----------------- SESSION -----------------
-session_start();
-
-// Force JSON response
 header('Content-Type: application/json');
 
-// ----------------- CHECK CHALLENGE -----------------
 if (empty($_SESSION['webauthn_authentication'])) {
     http_response_code(400);
     echo json_encode(['success' => false, 'error' => 'Missing authentication challenge']);
@@ -31,16 +25,9 @@ if (empty($_SESSION['webauthn_authentication'])) {
 }
 
 $authSession = $_SESSION['webauthn_authentication'];
-unset($_SESSION['webauthn_authentication']); // single-use challenge
+unset($_SESSION['webauthn_authentication']);
 
-// ----------------- READ REQUEST -----------------
 $rawData = file_get_contents('php://input');
-if (!$rawData) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'error' => 'Invalid request']);
-    exit;
-}
-
 $data = json_decode($rawData, true);
 if (!is_array($data)) {
     http_response_code(400);
@@ -48,7 +35,6 @@ if (!is_array($data)) {
     exit;
 }
 
-// ----------------- DECODE CREDENTIAL -----------------
 try {
     $credentialId = Base64UrlSafe::decode($data['id']);
 } catch (Throwable $e) {
@@ -57,7 +43,6 @@ try {
     exit;
 }
 
-// ----------------- LOAD STORED CREDENTIAL -----------------
 $stmt = $conn->prepare("
     SELECT c.credential_id, c.public_key, c.sign_count, s.user_id
     FROM webauthn_credentials c
@@ -69,20 +54,13 @@ $stmt->execute();
 $stored = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if (!$stored) {
+if (!$stored || (int)$stored['user_id'] !== (int)$authSession['user_id']) {
     http_response_code(401);
-    echo json_encode(['success' => false, 'error' => 'Credential not recognized']);
-    exit;
-}
-
-// Ensure credential belongs to expected user
-if ((int)$stored['user_id'] !== (int)$authSession['user_id']) {
-    http_response_code(403);
     echo json_encode(['success' => false, 'error' => 'Credential/user mismatch']);
     exit;
 }
 
-// ----------------- RP & USER ENTITIES -----------------
+// RP & User entities
 $rpEntity = new PublicKeyCredentialRpEntity('Engagement Tracker', $_SERVER['HTTP_HOST']);
 $userEntity = new PublicKeyCredentialUserEntity(
     (string)$stored['user_id'],
@@ -90,24 +68,21 @@ $userEntity = new PublicKeyCredentialUserEntity(
     'User'
 );
 
-// ----------------- LOAD CREDENTIAL SOURCE -----------------
 $credentialSource = PublicKeyCredentialSource::createFromArray([
     'publicKeyCredentialId' => $stored['credential_id'],
-    'type'                  => 'public-key',
-    'transports'            => [],
-    'attestationType'       => null,
-    'trustPath'             => null,
-    'aaguid'                => null,
-    'credentialPublicKey'   => $stored['public_key'],
-    'userHandle'            => (string)$stored['user_id'],
-    'counter'               => (int)$stored['sign_count']
+    'type' => 'public-key',
+    'transports' => [],
+    'attestationType' => null,
+    'trustPath' => null,
+    'aaguid' => null,
+    'credentialPublicKey' => $stored['public_key'],
+    'userHandle' => (string)$stored['user_id'],
+    'counter' => (int)$stored['sign_count']
 ]);
 
-// ----------------- LOAD BROWSER RESPONSE -----------------
 $loader = new PublicKeyCredentialLoader();
 $publicKeyCredential = $loader->loadArray($data);
 
-// ----------------- VALIDATE ASSERTION -----------------
 $validator = AuthenticatorAssertionResponseValidator::create();
 
 try {
@@ -117,7 +92,7 @@ try {
         $authSession['challenge'],
         $_SERVER['HTTP_HOST'],
         $userEntity->getId(),
-        true // user verification required
+        true
     );
 } catch (Throwable $e) {
     http_response_code(401);
@@ -125,31 +100,18 @@ try {
     exit;
 }
 
-// ----------------- UPDATE SIGNATURE COUNTER -----------------
-$stmt = $conn->prepare("
-    UPDATE webauthn_credentials
-    SET sign_count = ?
-    WHERE credential_id = ?
-");
+$stmt = $conn->prepare("UPDATE webauthn_credentials SET sign_count = ? WHERE credential_id = ?");
 $signCount = $response->getSignCount();
 $stmt->bind_param('is', $signCount, $stored['credential_id']);
 $stmt->execute();
 $stmt->close();
 
-// ----------------- AUTHENTICATE SESSION -----------------
 $_SESSION['user_id'] = (int)$stored['user_id'];
 $_SESSION['last_activity'] = time();
 
-// Update account login state
-$stmt = $conn->prepare("
-    UPDATE service_accounts
-    SET logged_in = 1, last_active = NOW()
-    WHERE user_id = ?
-");
+$stmt = $conn->prepare("UPDATE service_accounts SET logged_in = 1, last_active = NOW() WHERE user_id = ?");
 $stmt->bind_param('i', $stored['user_id']);
 $stmt->execute();
 $stmt->close();
 
-// ----------------- SUCCESS -----------------
 echo json_encode(['success' => true]);
-exit;

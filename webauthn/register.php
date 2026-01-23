@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-// Enable full error reporting for debugging
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-// ----------------- AUTOLOAD & DB -----------------
+session_start();
+
+require_once __DIR__ . '/../includes/db.php';
 require '/var/www/engagement_tracker/vendor/autoload.php';
-require_once __DIR__ . '/../includes/db.php'; // ensure $conn is available
 
 use Webauthn\PublicKeyCredentialCreationOptions;
 use Webauthn\PublicKeyCredentialRpEntity;
@@ -19,28 +19,21 @@ use Webauthn\AuthenticatorAttestationResponseValidator;
 use Webauthn\PublicKeyCredentialLoader;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 
-// Test autoload
-if (!class_exists(Base64UrlSafe::class)) {
-    die(json_encode(['error' => 'Base64UrlSafe class not found, check composer autoload.']));
-}
-
-// Force JSON response
+// Force JSON
 header('Content-Type: application/json');
 
-// ----------------- MUST BE LOGGED IN -----------------
-session_start();
+// Must be logged in
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
     exit;
 }
 
-$userId = (int) $_SESSION['user_id'];
+$userId = (int)$_SESSION['user_id'];
 
 // ----------------- STEP 1: SEND REGISTRATION OPTIONS -----------------
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    // Fetch account name
     $stmt = $conn->prepare("SELECT account_name FROM service_accounts WHERE user_id = ?");
     $stmt->bind_param('i', $userId);
     $stmt->execute();
@@ -65,16 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Supported algorithms
     $pubKeyCredParams = [
-        new PublicKeyCredentialParameters('public-key', -7),
-        new PublicKeyCredentialParameters('public-key', -257)
+        new PublicKeyCredentialParameters('public-key', -7),    // ES256
+        new PublicKeyCredentialParameters('public-key', -257)   // RS256
     ];
 
     // Exclude already registered credentials
-    $exclude = [];
     $stmt = $conn->prepare("SELECT credential_id FROM webauthn_credentials WHERE user_id = ?");
     $stmt->bind_param('i', $userId);
     $stmt->execute();
     $res = $stmt->get_result();
+    $exclude = [];
     while ($row = $res->fetch_assoc()) {
         $exclude[] = new PublicKeyCredentialDescriptor(
             PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
@@ -85,18 +78,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Generate challenge
     $challenge = random_bytes(32);
-    $_SESSION['webauthn_registration'] = [
-        'challenge' => $challenge,
-        'time' => time()
-    ];
+    $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
 
-    // Encode excludeCredentials for JS
     $excludeCredentials = array_map(fn($cred) => [
         'type' => 'public-key',
-        'id'   => Base64UrlSafe::encodeUnpadded($cred->getId())
+        'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
     ], $exclude);
 
-    // Build response
     $response = [
         'rp' => ['name' => 'Engagement Tracker', 'id' => $_SERVER['HTTP_HOST']],
         'user' => [
@@ -122,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
-// ----------------- STEP 2: VERIFY & STORE REGISTRATION -----------------
+// ----------------- STEP 2: VERIFY & STORE -----------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($_SESSION['webauthn_registration'])) {
@@ -141,12 +129,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Load credential from browser
     $loader = new PublicKeyCredentialLoader();
     $publicKeyCredential = $loader->loadArray($data);
 
-    // Validate attestation
     $validator = AuthenticatorAttestationResponseValidator::create();
+
     try {
         $credentialSource = $validator->check(
             $publicKeyCredential->getResponse(),
@@ -162,10 +149,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Save credential to DB
     $stmt = $conn->prepare("
         INSERT INTO webauthn_credentials
-            (user_id, credential_id, public_key, sign_count, device_name)
+        (user_id, credential_id, public_key, sign_count, device_name)
         VALUES (?, ?, ?, ?, ?)
     ");
     $deviceName = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown device';
@@ -184,6 +170,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// ----------------- INVALID METHOD -----------------
 http_response_code(405);
 echo json_encode(['error' => 'Method not allowed']);

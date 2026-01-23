@@ -267,21 +267,16 @@ function bufferEncode(arrayBuffer) {
 }
 
 async function enableBiometric() {
-    if (!window.PublicKeyCredential) {
-        alert('WebAuthn not supported');
-        return;
-    }
+    if (!window.PublicKeyCredential) return alert('WebAuthn not supported');
 
     try {
         const res = await fetch('../webauthn/register.php');
         const options = await res.json();
         if (options.error) throw new Error(options.error);
 
-        // Convert challenge and user ID to ArrayBuffer
         options.challenge = bufferDecode(options.challenge);
         options.user.id = bufferDecode(options.user.id);
 
-        // Convert excludeCredentials
         if (Array.isArray(options.excludeCredentials)) {
             options.excludeCredentials = options.excludeCredentials.map(c => ({
                 type: c.type,
@@ -290,10 +285,8 @@ async function enableBiometric() {
             }));
         }
 
-        // Call WebAuthn API
         const credential = await navigator.credentials.create({ publicKey: options });
 
-        // Prepare credential for server
         const payload = {
             id: credential.id,
             type: credential.type,
@@ -304,7 +297,6 @@ async function enableBiometric() {
             }
         };
 
-        // Send to PHP
         const verifyRes = await fetch('../webauthn/register.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -314,12 +306,10 @@ async function enableBiometric() {
         const result = await verifyRes.json();
         if (result.success) {
             alert('Biometric login enabled!');
-            const btn = document.getElementById('enableBiometricBtn');
-            if (btn) btn.style.display = 'none';
+            document.getElementById('enableBiometricBtn').style.display = 'none';
         } else {
             alert('Failed: ' + (result.error || 'Unknown'));
         }
-
     } catch (err) {
         console.error(err);
         alert('Biometric registration failed or is not supported on this device.');
@@ -331,6 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.addEventListener('click', enableBiometric);
 });
 </script>
+
 
 
   
