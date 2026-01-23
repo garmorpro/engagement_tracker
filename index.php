@@ -68,6 +68,36 @@ $bioAccounts = $bioResult ? $bioResult->fetch_all(MYSQLI_ASSOC) : [];
     </div>
 </div>
 
+<script>
+    // -------------------------
+// WebAuthn helper functions
+// -------------------------
+
+// Convert base64url string to ArrayBuffer
+function base64urlToBuffer(base64url) {
+    const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = base64.padEnd(base64.length + (4 - base64.length % 4) % 4, '=');
+    const binary = atob(padded);
+    const buffer = new ArrayBuffer(binary.length);
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return buffer;
+}
+
+// Convert ArrayBuffer to base64url string
+function bufferToBase64url(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+</script>
+
 
 
 <script>

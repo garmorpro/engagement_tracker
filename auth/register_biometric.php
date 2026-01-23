@@ -18,18 +18,21 @@ if (!$userUUID) {
 // Generate a random challenge
 $challenge = random_bytes(32); // 32 bytes = 256 bits
 
-// Store challenge in session for verification
+function base64url_encode($data) {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+// Store challenge in session (still regular base64 is fine for server)
 $_SESSION['webauthn_registration_challenge'][$userUUID] = base64_encode($challenge);
 
-// Prepare PublicKeyCredentialCreationOptions
 $options = [
-    'challenge' => base64_encode($challenge),
+    'challenge' => base64url_encode($challenge),
     'rp' => [
         'name' => 'Engagement Tracker',
         'id' => $_SERVER['SERVER_NAME']
     ],
     'user' => [
-        'id' => base64_encode($userUUID),
+        'id' => base64url_encode($userUUID),
         'name' => $accountName ?: $userUUID,
         'displayName' => $accountName ?: $userUUID
     ],
@@ -43,6 +46,7 @@ $options = [
     'timeout' => 60000, // 60 seconds
     'attestation' => 'direct'
 ];
+
 
 // Return JSON options to browser
 header('Content-Type: application/json');
