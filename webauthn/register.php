@@ -22,9 +22,13 @@ use Webauthn\PublicKeyCredentialParameters;
 use Webauthn\PublicKeyCredentialDescriptor;
 use Webauthn\AuthenticatorAttestationResponseValidator;
 use Webauthn\PublicKeyCredentialLoader;
-use Webauthn\Util\Base64;
+use ParagonIE\ConstantTime\Base64UrlSafe;
 
-Base64::encodeUnpadded($someData); // if Base64 has encodeUnpadded
+// Encode a string without padding
+$encoded = Base64UrlSafe::encodeUnpadded($data);
+
+// Decode a string
+$decoded = Base64UrlSafe::decode($data);
 
 // Test
 var_dump(class_exists(Base64::class));
