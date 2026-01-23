@@ -1,19 +1,14 @@
 <?php
 declare(strict_types=1);
 
+// Enable full error reporting for debugging
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
-require_once '../includes/functions.php';
-// require_once __DIR__ '/../includes/db.php';
+// ----------------- AUTOLOAD & DB -----------------
 require '/var/www/engagement_tracker/vendor/autoload.php';
-
-
-
-
-
-echo "__DIR__ is: " . __DIR__;
+require_once __DIR__ . '/../includes/db.php'; // ensure $conn is available
 
 use Webauthn\PublicKeyCredentialCreationOptions;
 use Webauthn\PublicKeyCredentialRpEntity;
@@ -24,19 +19,16 @@ use Webauthn\AuthenticatorAttestationResponseValidator;
 use Webauthn\PublicKeyCredentialLoader;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 
-// Encode a string without padding
-$encoded = Base64UrlSafe::encodeUnpadded($data);
-
-// Decode a string
-$decoded = Base64UrlSafe::decode($data);
-
-// Test
-var_dump(class_exists(Base64::class));
+// Test autoload
+if (!class_exists(Base64UrlSafe::class)) {
+    die(json_encode(['error' => 'Base64UrlSafe class not found, check composer autoload.']));
+}
 
 // Force JSON response
 header('Content-Type: application/json');
 
-// Must be logged in
+// ----------------- MUST BE LOGGED IN -----------------
+session_start();
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
@@ -45,7 +37,7 @@ if (empty($_SESSION['user_id'])) {
 
 $userId = (int) $_SESSION['user_id'];
 
-// ---------- STEP 1: SEND REGISTRATION OPTIONS ----------
+// ----------------- STEP 1: SEND REGISTRATION OPTIONS -----------------
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Fetch account name
@@ -93,7 +85,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Generate challenge
     $challenge = random_bytes(32);
-    $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
+    $_SESSION['webauthn_registration'] = [
+        'challenge' => $challenge,
+        'time' => time()
+    ];
 
     // Encode excludeCredentials for JS
     $excludeCredentials = array_map(fn($cred) => [
@@ -101,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'id'   => Base64UrlSafe::encodeUnpadded($cred->getId())
     ], $exclude);
 
-    // Send registration options to browser
+    // Build response
     $response = [
         'rp' => ['name' => 'Engagement Tracker', 'id' => $_SERVER['HTTP_HOST']],
         'user' => [
@@ -127,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
-// ---------- STEP 2: VERIFY & STORE REGISTRATION ----------
+// ----------------- STEP 2: VERIFY & STORE REGISTRATION -----------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($_SESSION['webauthn_registration'])) {
@@ -189,6 +184,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Invalid method
+// ----------------- INVALID METHOD -----------------
 http_response_code(405);
 echo json_encode(['error' => 'Method not allowed']);
