@@ -8,13 +8,23 @@
 <button onclick="login()">Login with Fingerprint</button>
 
 <script>
-function b64ToBuf(b64) {
-    const bin = atob(b64.replace(/-/g,'+').replace(/_/g,'/'));
-    return Uint8Array.from(bin, c => c.charCodeAt(0));
+function base64urlToUint8Array(base64url) {
+    const padding = '='.repeat((4 - base64url.length % 4) % 4);
+    const base64 = (base64url + padding)
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+    const raw = atob(base64);
+    return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
 }
-function bufToB64(buf) {
-    return btoa(String.fromCharCode(...new Uint8Array(buf)))
-        .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/, '');
+
+function uint8ArrayToBase64url(buffer) {
+    let binary = '';
+    buffer.forEach(b => binary += String.fromCharCode(b));
+    return btoa(binary)
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '');
 }
 
 async function login() {
