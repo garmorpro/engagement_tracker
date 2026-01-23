@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         ],
         'timeout'=>60000,
         'excludeCredentials'=>$excludeCredentials,
-        'authenticatorSelection'=>['authenticatorAttachment'=>'platform','userVerification'=>'required'],
+        'authenticatorSelection'=>['authenticatorAttachment'=>'cross-platform','userVerification'=>'required'],
         'attestation'=>'none',
         'user_uuid'=>$userUUID
     ]);
