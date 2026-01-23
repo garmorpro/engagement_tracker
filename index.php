@@ -147,14 +147,25 @@ body {
 <div class="register-popup" id="registerPopup">
     <h6 class="text-center mb-3">Create New Account</h6>
     <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
+        <!-- Name Field -->
+        <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control" name="name" placeholder="John Doe" required>
+        </div>
+
+        <!-- Account Name Field -->
         <div class="mb-3">
             <label class="form-label">Account Name</label>
             <input type="text" class="form-control" name="account_name" required>
         </div>
+
+        <!-- PIN Field -->
         <div class="mb-3">
             <label class="form-label">4-digit PIN</label>
             <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center" name="passcode" required>
         </div>
+
+        <!-- Role Field -->
         <div class="mb-3">
             <label class="form-label">Role</label>
             <select class="form-select" name="role" required>
@@ -162,11 +173,13 @@ body {
                 <option value="admin">Admin</option>
             </select>
         </div>
+
         <div class="d-grid">
             <button type="submit" class="btn btn-success">Create Account</button>
         </div>
     </form>
 </div>
+
 
 <script>
 // --- Popup Logic ---
