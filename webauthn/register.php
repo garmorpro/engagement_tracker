@@ -20,7 +20,7 @@ use ParagonIE\ConstantTime\Base64UrlSafe;
 header('Content-Type: application/json');
 session_start();
 
-// Must be logged in
+// Ensure the user is logged in
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
@@ -29,9 +29,10 @@ if (empty($_SESSION['user_id'])) {
 
 $userId = (int) $_SESSION['user_id'];
 
-// ---------- STEP 1: SEND REGISTRATION OPTIONS ----------
+// ----------- STEP 1: SEND REGISTRATION OPTIONS -----------
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
+    // Fetch the user account
     $stmt = $conn->prepare("SELECT account_name FROM service_accounts WHERE user_id = ?");
     $stmt->bind_param('i', $userId);
     $stmt->execute();
@@ -47,20 +48,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // RP entity
     $rp = new PublicKeyCredentialRpEntity('Engagement Tracker', $_SERVER['HTTP_HOST']);
 
-    // Generate 16-byte user handle
+    // Generate a 16-byte user handle
     $userHandle = random_bytes(16);
     $_SESSION['webauthn_user_handle'] = $userHandle;
 
     $user = new PublicKeyCredentialUserEntity(
-        $userHandle, 
+        $userHandle,
         (string)$userId,
         $account['account_name']
     );
 
     // Supported algorithms
     $pubKeyCredParams = [
-        new PublicKeyCredentialParameters('public-key', -7),
-        new PublicKeyCredentialParameters('public-key', -257)
+        new PublicKeyCredentialParameters('public-key', -7),   // ES256
+        new PublicKeyCredentialParameters('public-key', -257)  // RS256
     ];
 
     // Exclude already registered credentials
@@ -70,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt->execute();
     $res = $stmt->get_result();
     while ($row = $res->fetch_assoc()) {
-        // Make sure credential_id is binary for JS
         $binaryId = Base64UrlSafe::decode($row['credential_id']);
         $exclude[] = new PublicKeyCredentialDescriptor(
             PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
@@ -83,19 +83,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $challenge = random_bytes(32);
     $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
 
-    // Encode excludeCredentials for JS safely
+    // Encode excludeCredentials for JS
     $excludeCredentials = array_map(function($cred) {
         return [
             'type' => 'public-key',
             'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
         ];
     }, $exclude);
-
-    // --- DEBUG LOGGING ---
-    error_log("User ID (base64url): " . Base64UrlSafe::encodeUnpadded($userHandle));
-    foreach ($excludeCredentials as $i => $c) {
-        error_log("ExcludeCredential[$i]: " . $c['id']);
-    }
 
     // Build response
     $response = [
@@ -123,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
-// ---------- STEP 2: VERIFY & STORE REGISTRATION ----------
+// ----------- STEP 2: VERIFY & STORE REGISTRATION -----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($_SESSION['webauthn_registration']) || empty($_SESSION['webauthn_user_handle'])) {
@@ -143,9 +137,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Load credential from browser
+    // Load the credential from the browser
     $loader = new PublicKeyCredentialLoader();
-    $publicKeyCredential = $loader->loadArray($data);
+    try {
+        $publicKeyCredential = $loader->loadArray($data);
+    } catch (Throwable $e) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Failed to load credential: ' . $e->getMessage()]);
+        exit;
+    }
 
     // Validate attestation
     $validator = AuthenticatorAttestationResponseValidator::create();
@@ -164,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Save credential to DB (binary)
+    // Save credential to DB
     $stmt = $conn->prepare("
         INSERT INTO webauthn_credentials
             (user_id, credential_id, public_key, sign_count, device_name)
