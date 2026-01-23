@@ -33,7 +33,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <div class="mt-4"></div>
         <h5 class="text-center mb-2">Welcome Back</h5>
         <p class="text-center text-muted mb-3">
-            Select an account to sign in with biometrics
+            Click an account to sign in
         </p>
 
         <!-- Account List -->
@@ -62,22 +62,18 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <!-- Divider -->
         <div class="text-center text-muted my-3">OR</div>
 
-        <!-- Password Login Toggle -->
-        <div class="d-grid mb-3">
-            <button type="button" class="btn btn-outline-secondary" onclick="showPasswordLogin()">
-                Sign in with password
-            </button>
-        </div>
-
         <!-- Password Login Form -->
         <form id="passwordLoginForm"
               class="p-4 d-none"
               method="POST"
               action="<?= BASE_URL ?>/auth/login.php">
 
+            <input type="hidden" name="enable_biometrics" id="enableBiometricsFlag" value="0">
+            <input type="hidden" name="user_id" id="loginUserId">
+
             <div class="mb-3">
                 <label class="form-label">Account name</label>
-                <input type="text" class="form-control" name="account_name" required>
+                <input type="text" class="form-control" name="account_name" id="loginAccountName" required>
             </div>
 
             <div class="mb-3">
@@ -96,41 +92,41 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             Contact your administrator for account setup.
         </p>
 
-        <p class="text-center text-muted" style="font-size: 10px;">
-            This is a demo application. In production, users would be created by administrators.
-        </p>
     </div>
 </div>
 
 <script>
-function showPasswordLogin() {
+function showPasswordLogin(accountName = '', userId = 0) {
     document.getElementById('passwordLoginForm').classList.remove('d-none');
+    if (accountName) document.getElementById('loginAccountName').value = accountName;
+    if (userId) document.getElementById('loginUserId').value = userId;
+    document.getElementById('enableBiometricsFlag').value = '1';
 }
 
-// Handle account button click
+// Handle click on account
 function handleAccountClick(btn) {
     const userId = btn.dataset.userId;
     const hasBiometrics = parseInt(btn.dataset.hasBiometrics, 10);
+    const accountName = btn.innerText.trim();
 
     if (hasBiometrics) {
         biometricLogin(userId);
     } else {
-        promptEnableBiometric(userId, btn);
+        showPasswordLogin(accountName, userId);
     }
 }
 
-// Biometric login for accounts with credentials
+// Biometric login
 async function biometricLogin(userId) {
     try {
         const res = await fetch(`/webauthn/options.php?user_id=${userId}`);
         const options = await res.json();
-
         if (options.error) {
-            alert('Biometric login is not enabled for this account yet.');
+            alert('Biometric login is not enabled for this account.');
             return;
         }
 
-        // Convert base64 fields to ArrayBuffer
+        // Convert base64url to ArrayBuffer
         options.challenge = Uint8Array.from(atob(options.challenge.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
         options.user.id = Uint8Array.from(atob(options.user.id.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
 
@@ -143,6 +139,7 @@ async function biometricLogin(userId) {
 
         const credential = await navigator.credentials.get({ publicKey: options });
 
+        // Encode credential for server
         const payload = {
             id: credential.id,
             type: credential.type,
@@ -163,24 +160,13 @@ async function biometricLogin(userId) {
 
         const result = await verifyRes.json();
         if (result.success) {
-            window.location.href = '/dashboard.php';
+            window.location.href = '/pages/dashboard.php';
         } else {
             alert('Biometric authentication failed.');
         }
     } catch (err) {
         console.error(err);
         alert('Biometric login is not available on this device.');
-    }
-}
-
-// Prompt user to enable biometrics if none are registered
-function promptEnableBiometric(userId, btn) {
-    if (confirm("Biometric login is not enabled for this account. Sign in with password first to enable Face ID / Touch ID.")) {
-        showPasswordLogin();
-
-        // Optional: after successful password login, mark account as enabled
-        btn.querySelector('i').classList.remove('bi-circle', 'text-secondary');
-        btn.querySelector('i').classList.add('bi-check-circle', 'text-success');
     }
 }
 </script>
