@@ -68,7 +68,7 @@ $bioAccounts = $bioResult ? $bioResult->fetch_all(MYSQLI_ASSOC) : [];
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/webauthn-json@2.0.2/dist/webauthn-json.umd.min.js"></script>
+<script src="https://unpkg.com/webauthn-json@2.0.2/dist/webauthn-json.umd.min.js"></script>
 
 
 <script>
