@@ -46,6 +46,7 @@ $options = [
     'challenge' => base64url_encode($challenge),
     'timeout' => 60000,
     'rpId' => $_SERVER['SERVER_NAME'],
+    'allowCredentials' => [], // remove explicit credentials
     // 'allowCredentials' => [[
     //     'type' => 'public-key',
     //     'id' => $credentialIdB64Url,
