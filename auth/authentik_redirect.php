@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once 'includes/functions.php';
-require_once 'includes/init.php';
+require_once '../includes/functions.php';
+require_once '../includes/init.php';
 
 if (isset($_GET['code'], $_GET['state'])) {
     // Verify state
@@ -14,7 +14,7 @@ if (isset($_GET['code'], $_GET['state'])) {
     // Exchange code for token
     $token_url = 'http://10.10.254.198:9000/application/o/token/';
     $client_id = 'dekMyHfssWUpwBzKa42Nbfxw2OfJl8TTe78JWK7A';
-    $client_secret = 'YOUR_CLIENT_SECRET';
+    $client_secret = 'u82w0aAZPRbKahIpDFomyEtEaY4fOJQy4YyIwj6PondKZQKPoy02BmNHqNKpWXpu1Dg36yje4Z3s94EFDMi7D8cZd6xpMEnEbGswTxQ3HcBfNo4g2AUZpwi04ricKOhH';
 
     $ch = curl_init($token_url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
