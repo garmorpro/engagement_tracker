@@ -5,7 +5,7 @@ require_once '../includes/functions.php';
 // require_once '../includes/init.php';
 // logoutUser($conn);
 
-$userId = $_SESSION['user_id'] ?? null;
+// $userId = $_SESSION['user_id'] ?? null;
 
 $showBiometricButton = false;
 
