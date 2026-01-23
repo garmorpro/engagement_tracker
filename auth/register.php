@@ -58,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     $stmt->close();
 
-    // Generate challenge
+    // Generate challenge and store in session
     $challenge = random_bytes(32);
     $_SESSION['webauthn_registration_challenge'] = $challenge;
 
@@ -68,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
     ], $exclude);
 
+    // Build options for browser
     $response = [
         'rp' => ['name' => 'Engagement Tracker', 'id' => $_SERVER['HTTP_HOST']],
         'user' => [
@@ -87,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             'userVerification' => 'required'
         ],
         'attestation' => 'none',
-        'user_uuid' => $userUUID // send UUID back to JS
+        'user_uuid' => $userUUID
     ];
 
     echo json_encode($response);
@@ -116,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Load the credential from browser
+    // Load credential from browser
     $loader = new PublicKeyCredentialLoader(new EmptyTrustPathChecker());
     try {
         $publicKeyCredential = $loader->loadArray($data);
@@ -144,14 +145,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Insert account if not exists
-    $stmt = $conn->prepare("INSERT INTO biometric_accounts (user_uuid, account_name, status) VALUES (?, ?, 'active') ON DUPLICATE KEY UPDATE account_name=VALUES(account_name)");
+    $stmt = $conn->prepare("
+        INSERT INTO biometric_accounts (user_uuid, account_name, status)
+        VALUES (?, ?, 'active')
+        ON DUPLICATE KEY UPDATE account_name=VALUES(account_name)
+    ");
     $accountName = $_POST['account_name'] ?? 'Unnamed Account';
     $stmt->bind_param('ss', $userUUID, $accountName);
     $stmt->execute();
     $stmt->close();
 
     // Insert credential
-    $stmt = $conn->prepare("INSERT INTO webauthn_credentials (user_uuid, credential_id, public_key, sign_count, device_name) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("
+        INSERT INTO webauthn_credentials (user_uuid, credential_id, public_key, sign_count, device_name)
+        VALUES (?, ?, ?, ?, ?)
+    ");
     $credId = Base64UrlSafe::encodeUnpadded($credentialSource->getPublicKeyCredentialId());
     $publicKey = $credentialSource->getCredentialPublicKey();
     $signCount = $credentialSource->getCounter();
@@ -164,5 +172,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+// Invalid method
 http_response_code(405);
 echo json_encode(['error' => 'Method not allowed']);
