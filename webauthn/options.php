@@ -16,22 +16,24 @@ use ParagonIE\ConstantTime\Base64UrlSafe;
 
 header('Content-Type: application/json');
 
+// Ensure HTTPS
 if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') {
     http_response_code(400);
     echo json_encode(['error' => 'WebAuthn requires HTTPS']);
     exit;
 }
 
-$userId = isset($_GET['user_id']) ? (int)$_GET['user_id'] : 0;
-if ($userId <= 0) {
+// Get user_uuid from GET
+$userUUID = $_GET['user_uuid'] ?? '';
+if (empty($userUUID)) {
     http_response_code(400);
-    echo json_encode(['error' => 'Invalid user']);
+    echo json_encode(['error' => 'Invalid user UUID']);
     exit;
 }
 
-// Fetch credentials
-$stmt = $conn->prepare("SELECT credential_id FROM webauthn_credentials WHERE user_id = ?");
-$stmt->bind_param('i', $userId);
+// Fetch credentials for this user
+$stmt = $conn->prepare("SELECT credential_id FROM webauthn_credentials WHERE user_uuid = ?");
+$stmt->bind_param('s', $userUUID);
 $stmt->execute();
 $res = $stmt->get_result();
 
@@ -39,7 +41,7 @@ $allowCredentials = [];
 while ($row = $res->fetch_assoc()) {
     $allowCredentials[] = new PublicKeyCredentialDescriptor(
         PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
-        $row['credential_id']
+        Base64UrlSafe::decode($row['credential_id'])
     );
 }
 $stmt->close();
@@ -54,10 +56,11 @@ if (empty($allowCredentials)) {
 $challenge = random_bytes(32);
 $_SESSION['webauthn_authentication'] = [
     'challenge' => $challenge,
-    'user_id'   => $userId,
+    'user_uuid' => $userUUID,
     'time'      => time()
 ];
 
+// Build WebAuthn options
 $options = new PublicKeyCredentialRequestOptions(
     $challenge,
     60000,
@@ -67,6 +70,7 @@ $options = new PublicKeyCredentialRequestOptions(
     new AuthenticationExtensionsClientInputs()
 );
 
+// Output JSON for the browser
 echo json_encode([
     'challenge' => Base64UrlSafe::encodeUnpadded($options->getChallenge()),
     'timeout' => $options->getTimeout(),
