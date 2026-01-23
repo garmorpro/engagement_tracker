@@ -16,7 +16,7 @@ use Webauthn\Util\Base64UrlSafe;
 // Force JSON
 header('Content-Type: application/json');
 
-// Must be logged in via password
+// Must be logged in
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
@@ -29,11 +29,7 @@ $userId = (int) $_SESSION['user_id'];
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // Fetch account name
-    $stmt = $conn->prepare("
-        SELECT account_name
-        FROM service_accounts
-        WHERE user_id = ?
-    ");
+    $stmt = $conn->prepare("SELECT account_name FROM service_accounts WHERE user_id = ?");
     $stmt->bind_param('i', $userId);
     $stmt->execute();
     $account = $stmt->get_result()->fetch_assoc();
@@ -45,36 +41,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         exit;
     }
 
-    // Create RP (your app)
-    $rp = new PublicKeyCredentialRpEntity(
-        'Engagement Tracker',
-        $_SERVER['HTTP_HOST']
-    );
+    // RP entity
+    $rp = new PublicKeyCredentialRpEntity('Engagement Tracker', $_SERVER['HTTP_HOST']);
 
-    // Create user entity
+    // User entity
     $user = new PublicKeyCredentialUserEntity(
-        (string) $userId,
-        (string) $userId,
+        (string)$userId,
+        (string)$userId,
         $account['account_name']
     );
 
     // Supported algorithms
     $pubKeyCredParams = [
-        new PublicKeyCredentialParameters('public-key', -7),   // ES256
-        new PublicKeyCredentialParameters('public-key', -257), // RS256
+        new PublicKeyCredentialParameters('public-key', -7),
+        new PublicKeyCredentialParameters('public-key', -257)
     ];
 
-    // Exclude already-registered credentials
+    // Exclude already registered credentials
     $exclude = [];
-    $stmt = $conn->prepare("
-        SELECT credential_id
-        FROM webauthn_credentials
-        WHERE user_id = ?
-    ");
+    $stmt = $conn->prepare("SELECT credential_id FROM webauthn_credentials WHERE user_id = ?");
     $stmt->bind_param('i', $userId);
     $stmt->execute();
     $res = $stmt->get_result();
-
     while ($row = $res->fetch_assoc()) {
         $exclude[] = new PublicKeyCredentialDescriptor(
             PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
@@ -83,39 +71,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     $stmt->close();
 
-    // Generate challenge
+    // Generate random challenge
     $challenge = random_bytes(32);
+    $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
 
-    $_SESSION['webauthn_registration'] = [
-        'challenge' => $challenge,
-        'time'      => time()
-    ];
-
-    // Create options
-    $options = new PublicKeyCredentialCreationOptions(
-        $rp,
-        $user,
-        $challenge,
-        $pubKeyCredParams
-    );
-
-    $options->setTimeout(60000);
-    $options->setExcludeCredentials($exclude);
-    $options->setAuthenticatorSelection([
-        'authenticatorAttachment' => 'platform',
-        'userVerification'        => 'required'
-    ]);
-    $options->setAttestation(PublicKeyCredentialCreationOptions::ATTESTATION_CONVEYANCE_PREFERENCE_NONE);
-
-    // Send options to browser
-    echo json_encode([
-        'rp' => [
-            'name' => 'Engagement Tracker',
-            'id'   => $_SERVER['HTTP_HOST']
-        ],
+    // Send properly encoded options to browser
+    $response = [
+        'rp' => ['name' => 'Engagement Tracker', 'id' => $_SERVER['HTTP_HOST']],
         'user' => [
-            'id'          => Base64UrlSafe::encodeUnpadded($user->getId()),
-            'name'        => $account['account_name'],
+            'id' => Base64UrlSafe::encodeUnpadded($user->getId()),
+            'name' => $account['account_name'],
             'displayName' => $account['account_name']
         ],
         'challenge' => Base64UrlSafe::encodeUnpadded($challenge),
@@ -124,19 +89,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             ['type' => 'public-key', 'alg' => -257]
         ],
         'timeout' => 60000,
-        'excludeCredentials' => array_map(function ($cred) {
-            return [
-                'type' => 'public-key',
-                'id'   => Base64UrlSafe::encodeUnpadded($cred->getId())
-            ];
-        }, $exclude),
+        'excludeCredentials' => array_map(fn($cred) => [
+            'type' => 'public-key',
+            'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
+        ], $exclude),
         'authenticatorSelection' => [
             'authenticatorAttachment' => 'platform',
-            'userVerification'        => 'required'
+            'userVerification' => 'required'
         ],
         'attestation' => 'none'
-    ]);
+    ];
 
+    echo json_encode($response);
     exit;
 }
 
@@ -159,13 +123,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Load browser credential
+    // Load credential
     $loader = new PublicKeyCredentialLoader();
     $publicKeyCredential = $loader->loadArray($data);
 
     // Validate attestation
     $validator = AuthenticatorAttestationResponseValidator::create();
-
     try {
         $credentialSource = $validator->check(
             $publicKeyCredential->getResponse(),
@@ -181,13 +144,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Store credential
+    // Save credential
     $stmt = $conn->prepare("
         INSERT INTO webauthn_credentials
             (user_id, credential_id, public_key, sign_count, device_name)
         VALUES (?, ?, ?, ?, ?)
     ");
-
     $deviceName = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown device';
     $stmt->bind_param(
         'issis',
@@ -197,7 +159,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $credentialSource->getCounter(),
         $deviceName
     );
-
     $stmt->execute();
     $stmt->close();
 

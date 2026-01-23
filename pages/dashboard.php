@@ -250,40 +250,49 @@ $totalEngagements = count($engagements);
 <!-- Header -->
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('enableBiometricBtn');
-    if (!btn) return; // button not present → exit
+    function bufferDecode(value) {
+    return Uint8Array.from(atob(value.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+}
 
-    btn.addEventListener('click', async () => {
-        try {
-            // 1️⃣ Get registration options
-            const optionsRes = await fetch('../webauthn/register.php');
-            const options = await optionsRes.json();
+async function enableBiometric() {
+    try {
+        const optionsRes = await fetch('../webauthn/register.php');
+        const options = await optionsRes.json();
 
-            // 2️⃣ Create credential
-            const credential = await navigator.credentials.create({ publicKey: options });
+        // Convert challenge and user.id to ArrayBuffer
+        options.challenge = bufferDecode(options.challenge);
+        options.user.id = bufferDecode(options.user.id);
 
-            // 3️⃣ Send credential to server to save
-            const res = await fetch('../webauthn/register.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(credential)
+        if (options.excludeCredentials) {
+            options.excludeCredentials = options.excludeCredentials.map(cred => {
+                return {
+                    ...cred,
+                    id: bufferDecode(cred.id)
+                };
             });
-
-            const result = await res.json();
-            if (result.success) {
-                alert('Biometric login enabled! You can now tap your account to login with Face ID / Touch ID.');
-                btn.disabled = true;
-                btn.innerText = 'Biometric Enabled';
-            } else {
-                alert('Failed to enable biometrics.');
-            }
-        } catch (err) {
-            console.error(err);
-            alert('Biometric registration failed or is not supported on this device.');
         }
-    });
-});
+
+        const credential = await navigator.credentials.create({ publicKey: options });
+
+        // Send to server
+        const res = await fetch('../webauthn/register.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(credential)
+        });
+
+        const result = await res.json();
+        if (result.success) {
+            alert('Biometric login enabled!');
+        } else {
+            alert('Failed to enable biometrics.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Biometric registration failed or is not supported on this device.');
+    }
+}
+
 
 </script>
 
