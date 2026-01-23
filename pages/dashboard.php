@@ -281,18 +281,22 @@ async function enableBiometric() {
         options.challenge = bufferDecode(options.challenge);
         options.user.id = bufferDecode(options.user.id);
 
-        // Decode excludeCredentials
-        if (Array.isArray(options.excludeCredentials)) {
+        // Only include excludeCredentials if not empty
+        if (options.excludeCredentials && options.excludeCredentials.length) {
             options.excludeCredentials = options.excludeCredentials.map(c => ({
                 type: c.type,
                 id: bufferDecode(c.id),
                 transports: c.transports || []
             }));
+        } else {
+            delete options.excludeCredentials;
         }
 
+        // Call WebAuthn
         const credential = await navigator.credentials.create({ publicKey: options });
+        if (!credential) throw new Error('Credential creation failed');
 
-        // Prepare payload for server
+        // Send to server
         const payload = {
             id: credential.id,
             type: credential.type,
@@ -323,6 +327,7 @@ async function enableBiometric() {
         alert('Biometric registration failed or is not supported on this device.');
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('enableBiometricBtn');
