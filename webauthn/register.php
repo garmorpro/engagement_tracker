@@ -20,6 +20,7 @@ use ParagonIE\ConstantTime\Base64UrlSafe;
 header('Content-Type: application/json');
 session_start();
 
+// Must be logged in
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
@@ -46,12 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // RP entity
     $rp = new PublicKeyCredentialRpEntity('Engagement Tracker', $_SERVER['HTTP_HOST']);
 
-    // Generate 16-byte user handle
+    // Generate 16-byte user handle (binary)
     $userHandle = random_bytes(16);
     $_SESSION['webauthn_user_handle'] = $userHandle;
 
     $user = new PublicKeyCredentialUserEntity(
-        $userHandle, // binary, will be encoded for JS
+        $userHandle, // binary
         (string)$userId,
         $account['account_name']
     );
@@ -69,31 +70,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt->execute();
     $res = $stmt->get_result();
     while ($row = $res->fetch_assoc()) {
+        // Decode from DB if stored as base64, ensure binary
+        $binaryId = Base64UrlSafe::decode($row['credential_id']);
         $exclude[] = new PublicKeyCredentialDescriptor(
             PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
-            $row['credential_id'] // binary
+            $binaryId
         );
     }
     $stmt->close();
 
-    // Generate registration challenge
+    // Generate challenge (binary)
     $challenge = random_bytes(32);
     $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
 
-    // Encode excludeCredentials for JS
+    // Encode excludeCredentials for JS (always valid base64url)
     $excludeCredentials = array_map(fn($cred) => [
         'type' => 'public-key',
-        'id' => Base64UrlSafe::encodeUnpadded($cred->getId()) // binary -> base64url
+        'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
     ], $exclude);
 
+    // Build response
     $response = [
         'rp' => ['name' => 'Engagement Tracker', 'id' => $_SERVER['HTTP_HOST']],
         'user' => [
-            'id' => Base64UrlSafe::encodeUnpadded($userHandle), // binary -> base64url
+            'id' => Base64UrlSafe::encodeUnpadded($userHandle),
             'name' => $account['account_name'],
             'displayName' => $account['account_name']
         ],
-        'challenge' => Base64UrlSafe::encodeUnpadded($challenge), // binary -> base64url
+        'challenge' => Base64UrlSafe::encodeUnpadded($challenge),
         'pubKeyCredParams' => [
             ['type' => 'public-key', 'alg' => -7],
             ['type' => 'public-key', 'alg' => -257]
