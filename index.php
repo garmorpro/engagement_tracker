@@ -5,7 +5,7 @@ require_once 'includes/init.php';
 
 // Fetch active service accounts
 $result = $conn->query("
-    SELECT `user_id`, `account_name`, `passcode`
+    SELECT `user_id`, `account_name`, `passcode`, `role`
     FROM `service_accounts`
     WHERE `status` = 'active'
     ORDER BY `account_name`
@@ -50,6 +50,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                             class="list-group-item list-group-item-action"
                             data-user-id="<?= $account['user_id'] ?>"
                             data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
+                            data-role="<?= $account['role'] ?>"
                             onclick="openPinPopup(this)">
                         <?= htmlspecialchars($account['account_name']) ?>
                     </button>
@@ -65,24 +66,24 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     </div>
 </div>
 
-<!-- PIN Popup -->
+<!-- User PIN Popup -->
 <div class="pin-popup" id="pinPopup">
     <h6 id="popupAccountName" class="text-center mb-3"></h6>
     <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
         <input type="hidden" name="user_id" id="pinUserId">
         <div class="mb-3">
-            <label for="pinInput" class="form-label">Enter 4-digit PIN</label>
+            <label for="pinInput" class="form-label" id="pinLabel">Enter PIN</label>
             <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" id="pinInput" name="passcode" required autofocus>
         </div>
     </form>
 </div>
 
-<!-- Admin PIN Popup -->
+<!-- Super Admin PIN Popup -->
 <div class="pin-popup" id="adminPinPopup">
-    <h6 class="text-center mb-3">Enter Admin PIN</h6>
+    <h6 class="text-center mb-3">Enter Super Admin PIN</h6>
     <form id="adminPinForm">
         <div class="mb-3">
-            <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" id="adminPinInput" required autofocus>
+            <input type="password" maxlength="6" pattern="\d{6}" class="form-control text-center fs-4" id="adminPinInput" required autofocus>
         </div>
     </form>
 </div>
@@ -113,42 +114,55 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 </div>
 
 <script>
+// Open user PIN popup
 function openPinPopup(btn) {
     const userId = btn.dataset.userId;
     const accountName = btn.dataset.accountName;
+    const role = btn.dataset.role;
 
     document.getElementById('popupAccountName').innerText = accountName;
     document.getElementById('pinUserId').value = userId;
 
-    const popup = document.getElementById('pinPopup');
-    popup.style.display = 'block';
-
     const pinInput = document.getElementById('pinInput');
+    const pinLabel = document.getElementById('pinLabel');
+    
+    // Set max length & pattern based on role
+    if(role === 'super_admin'){
+        pinInput.maxLength = 6;
+        pinInput.pattern = "\\d{6}";
+        pinLabel.innerText = "Enter 6-digit PIN";
+    } else {
+        pinInput.maxLength = 4;
+        pinInput.pattern = "\\d{4}";
+        pinLabel.innerText = "Enter 4-digit PIN";
+    }
+
     pinInput.value = '';
     pinInput.focus();
+    document.getElementById('pinPopup').style.display = 'block';
 }
 
-// Auto-submit when 4 digits entered
+// Auto-submit when full PIN entered
 document.getElementById('pinInput').addEventListener('input', function() {
-    if (this.value.length === 4) {
+    const maxLength = this.maxLength;
+    if(this.value.length == maxLength){
         document.getElementById('pinForm').submit();
     }
 });
 
-// Open admin PIN popup for registration
+// Open Super Admin PIN popup
 function openAdminPinPopup() {
     const popup = document.getElementById('adminPinPopup');
-    popup.style.display = 'block';
     const input = document.getElementById('adminPinInput');
     input.value = '';
     input.focus();
+    popup.style.display = 'block';
 }
 
-// Handle admin PIN submission
-document.getElementById('adminPinInput').addEventListener('input', function() {
-    if (this.value.length === 4) {
+// Verify super admin PIN
+document.getElementById('adminPinInput').addEventListener('input', function(){
+    if(this.value.length === 6){
         const adminPin = this.value;
-        // Replace this with actual admin PIN verification from DB
         fetch('<?= BASE_URL ?>/auth/verify_admin_pin.php', {
             method: 'POST',
             headers: {'Content-Type':'application/json'},
@@ -160,23 +174,21 @@ document.getElementById('adminPinInput').addEventListener('input', function() {
                 document.getElementById('adminPinPopup').style.display = 'none';
                 document.getElementById('registerPopup').style.display = 'block';
             } else {
-                alert('Invalid Admin PIN');
+                alert('Invalid Super Admin PIN');
                 this.value = '';
                 this.focus();
             }
         })
-        .catch(() => alert('Error verifying admin PIN'));
+        .catch(() => alert('Error verifying Super Admin PIN'));
     }
 });
 
-// Optional: click outside popup to close
-window.addEventListener('click', function(e) {
-    const pinPopup = document.getElementById('pinPopup');
-    const adminPopup = document.getElementById('adminPinPopup');
-    const regPopup = document.getElementById('registerPopup');
-    if (e.target === pinPopup) pinPopup.style.display = 'none';
-    if (e.target === adminPopup) adminPopup.style.display = 'none';
-    if (e.target === regPopup) regPopup.style.display = 'none';
+// Close popups when clicking outside
+window.addEventListener('click', function(e){
+    ['pinPopup','adminPinPopup','registerPopup'].forEach(id => {
+        const popup = document.getElementById(id);
+        if(e.target === popup) popup.style.display = 'none';
+    });
 });
 </script>
 </body>
