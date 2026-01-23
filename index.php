@@ -3,12 +3,15 @@ require_once 'includes/functions.php';
 require_once 'path.php';
 require_once 'includes/init.php';
 
-// Fetch active accounts for biometric login list
+// Fetch active accounts and check if biometrics exist
 $result = $conn->query("
-    SELECT user_id, account_name
-    FROM service_accounts
-    WHERE status = 'active'
-    ORDER BY account_name
+    SELECT sa.user_id, sa.account_name,
+           COUNT(wc.id) AS has_biometrics
+    FROM service_accounts sa
+    LEFT JOIN webauthn_credentials wc ON wc.user_id = sa.user_id
+    WHERE sa.status = 'active'
+    GROUP BY sa.user_id
+    ORDER BY sa.account_name
 ");
 $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 ?>
@@ -27,24 +30,26 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
     <div class="card p-3 shadow" style="width: 100%; max-width: 425px;">
 
-        <!-- Logo (optional) -->
-        <!-- <img src="../assets/images/aarc-360-logo-1.webp" class="mx-auto d-block" style="width:50%;"> -->
-
         <div class="mt-4"></div>
-
         <h5 class="text-center mb-2">Welcome Back</h5>
         <p class="text-center text-muted mb-3">
             Select an account to sign in with biometrics
         </p>
 
-        <!-- Account List (Biometric Login) -->
+        <!-- Account List -->
         <?php if (!empty($accounts)): ?>
             <div class="list-group mb-3">
                 <?php foreach ($accounts as $account): ?>
                     <button
                         type="button"
                         class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        onclick="biometricLogin(<?= (int)$account['user_id'] ?>)">
+                        onclick="<?php 
+                            if ($account['has_biometrics'] > 0) {
+                                echo "biometricLogin({$account['user_id']})";
+                            } else {
+                                echo "promptEnableBiometric({$account['user_id']})";
+                            }
+                        ?>">
                         <?= htmlspecialchars($account['account_name']) ?>
                         <i class="bi bi-fingerprint fs-4"></i>
                     </button>
@@ -64,7 +69,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             </button>
         </div>
 
-        <!-- Password Login Form (Hidden by default) -->
+        <!-- Password Login Form -->
         <form id="passwordLoginForm"
               class="p-4 d-none"
               method="POST"
@@ -97,20 +102,23 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     </div>
 </div>
 
-<!-- JS -->
 <script>
 function showPasswordLogin() {
     document.getElementById('passwordLoginForm').classList.remove('d-none');
 }
 
+// Biometric login for accounts with credentials
 async function biometricLogin(userId) {
     try {
-        const options = await fetch(`/webauthn/options.php?user_id=${userId}`)
-            .then(res => res.json());
+        const optionsRes = await fetch(`/webauthn/options.php?user_id=${userId}`);
+        const options = await optionsRes.json();
 
-        const credential = await navigator.credentials.get({
-            publicKey: options
-        });
+        if (options.error) {
+            alert('Biometric login is not enabled for this account yet.');
+            return;
+        }
+
+        const credential = await navigator.credentials.get({ publicKey: options });
 
         const response = await fetch('/webauthn/verify.php', {
             method: 'POST',
@@ -119,7 +127,6 @@ async function biometricLogin(userId) {
         });
 
         const result = await response.json();
-
         if (result.success) {
             window.location.href = '/dashboard.php';
         } else {
@@ -128,6 +135,13 @@ async function biometricLogin(userId) {
     } catch (err) {
         console.error(err);
         alert('Biometric login is not available on this device.');
+    }
+}
+
+// Prompt user to enable biometrics if none are registered
+function promptEnableBiometric(userId) {
+    if (confirm("Biometric login is not enabled for this account. Sign in with password first, then you can enable Face ID / Touch ID.")) {
+        showPasswordLogin();
     }
 }
 </script>
