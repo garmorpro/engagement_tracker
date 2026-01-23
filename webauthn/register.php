@@ -22,7 +22,9 @@ use Webauthn\PublicKeyCredentialParameters;
 use Webauthn\PublicKeyCredentialDescriptor;
 use Webauthn\AuthenticatorAttestationResponseValidator;
 use Webauthn\PublicKeyCredentialLoader;
-use Webauthn\Util\Base64UrlSaf;
+use Webauthn\Util\Base64;
+
+Base64::encodeUnpadded($someData); // if Base64 has encodeUnpadded
 
 // Test
 var_dump(class_exists(Base64::class));
