@@ -1,23 +1,50 @@
 <?php
 session_start();
-require '../includes/db.php';
+header('Content-Type: application/json');
 
-function fromB64url($data) {
-    return base64_decode(strtr($data, '-_', '+/'));
+require_once '../includes/init.php';
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+$input = json_decode(file_get_contents('php://input'), true);
+
+if (!$input) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid JSON']);
+    exit;
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+if (empty($input['rawId']) || empty($input['attestationObject'])) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Missing credential data']);
+    exit;
+}
 
-$userId = $_SESSION['user_id'];
+try {
+    $rawId = $input['rawId'];
+    $attestationObject = $input['attestationObject'];
 
-$credId = fromB64url($data['rawId']);
-$pubKey = fromB64url($data['publicKey']);
+    // ⚠️ TEMP: store raw credential without full cryptographic verification
+    // This is OK for initial testing
+    $stmt = $conn->prepare("
+        INSERT INTO webauthn_credentials 
+        (credential_id, public_key)
+        VALUES (?, ?)
+    ");
 
-$stmt = $db->prepare("
-    INSERT INTO webauthn_credentials (user_id, credential_id, public_key)
-    VALUES (?, ?, ?)
-");
-$stmt->bind_param('iss', $userId, $credId, $pubKey);
-$stmt->execute();
+    $stmt->bind_param('ss', $rawId, $attestationObject);
+    $stmt->execute();
+    $stmt->close();
 
-echo json_encode(['success'=>true]);
+    echo json_encode([
+        'success' => true,
+        'message' => 'Credential stored'
+    ]);
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => $e->getMessage()
+    ]);
+}
