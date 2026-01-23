@@ -257,7 +257,7 @@ function bufferDecode(base64url) {
         const str = atob(base64);
         const buf = new Uint8Array(str.length);
         for (let i = 0; i < str.length; i++) buf[i] = str.charCodeAt(i);
-        return buf; // Uint8Array
+        return buf;
     } catch (err) {
         console.error('bufferDecode failed for:', base64url, err);
         throw err;
@@ -272,7 +272,6 @@ function bufferEncode(arrayBuffer) {
 }
 
 function toArrayBuffer(u8) {
-    // Safari fix: ensure Uint8Array is ArrayBuffer
     if (u8 instanceof ArrayBuffer) return u8;
     return u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
 }
@@ -290,28 +289,27 @@ async function enableBiometric() {
 
         if (options.error) throw new Error(options.error);
 
-        console.log('Decoding challenge:', options.challenge);
         options.challenge = toArrayBuffer(bufferDecode(options.challenge));
         console.log('Decoded challenge (ArrayBuffer):', options.challenge);
 
-        console.log('Decoding user.id:', options.user.id);
         options.user.id = toArrayBuffer(bufferDecode(options.user.id));
         console.log('Decoded user.id (ArrayBuffer):', options.user.id);
 
+        // Properly handle excludeCredentials
         if (Array.isArray(options.excludeCredentials) && options.excludeCredentials.length > 0) {
             options.excludeCredentials = options.excludeCredentials.map(c => {
-                console.log('Decoding excludeCredential id:', c.id);
-                const decodedId = toArrayBuffer(bufferDecode(c.id));
-                console.log('Decoded excludeCredential id (ArrayBuffer):', decodedId);
                 return {
                     type: c.type,
-                    id: decodedId,
+                    id: toArrayBuffer(bufferDecode(c.id)), // MUST be ArrayBuffer
                     transports: c.transports || []
                 };
             });
         } else {
+            // Some browsers fail if excludeCredentials is an empty array
             delete options.excludeCredentials;
         }
+
+        console.log('Final publicKey options for navigator.credentials.create():', options);
 
         const credential = await navigator.credentials.create({ publicKey: options });
         if (!credential) throw new Error('Credential creation failed');
