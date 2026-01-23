@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 require '/var/www/engagement_tracker/vendor/autoload.php';
 require_once __DIR__ . '/../includes/db.php';
 
@@ -16,25 +17,31 @@ use ParagonIE\ConstantTime\Base64UrlSafe;
 session_start();
 header('Content-Type: application/json');
 
-// -------------------- STEP 1: SEND OPTIONS --------------------
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+$method = $_SERVER['REQUEST_METHOD'];
+
+// ----------- STEP 1: SEND REGISTRATION OPTIONS -----------
+if ($method === 'GET') {
     $accountName = $_GET['account_name'] ?? 'Unnamed Account';
     $userUUID = $_GET['user_uuid'] ?? bin2hex(random_bytes(16));
 
     $_SESSION['webauthn_user_uuid'] = $userUUID;
 
+    // RP entity
     $rp = new PublicKeyCredentialRpEntity('Engagement Tracker', $_SERVER['HTTP_HOST']);
+
+    // User entity
     $userHandle = random_bytes(16);
     $_SESSION['webauthn_user_handle'] = $userHandle;
 
     $user = new PublicKeyCredentialUserEntity($userHandle, $userUUID, $accountName);
 
+    // Supported algorithms
     $pubKeyCredParams = [
         new PublicKeyCredentialParameters('public-key', -7),
         new PublicKeyCredentialParameters('public-key', -257)
     ];
 
-    // Exclude credentials
+    // Exclude already registered credentials
     $exclude = [];
     $stmt = $conn->prepare("SELECT credential_id FROM webauthn_credentials WHERE user_uuid = ?");
     $stmt->bind_param('s', $userUUID);
@@ -48,12 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     $stmt->close();
 
+    // Challenge
     $challenge = random_bytes(32);
     $_SESSION['webauthn_registration_challenge'] = $challenge;
 
-    $excludeCredentials = array_map(fn($c) => [
+    $excludeCredentials = array_map(fn($cred) => [
         'type' => 'public-key',
-        'id' => Base64UrlSafe::encodeUnpadded($c->getId())
+        'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
     ], $exclude);
 
     echo json_encode([
@@ -65,36 +73,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         ],
         'challenge' => Base64UrlSafe::encodeUnpadded($challenge),
         'pubKeyCredParams' => [
-            ['type'=>'public-key','alg'=>-7],
-            ['type'=>'public-key','alg'=>-257]
+            ['type' => 'public-key', 'alg' => -7],
+            ['type' => 'public-key', 'alg' => -257]
         ],
-        'timeout'=>60000,
-        'excludeCredentials'=>$excludeCredentials,
-        'authenticatorSelection'=>['authenticatorAttachment'=>'cross-platform','userVerification'=>'required'],
-        'attestation'=>'none',
-        'user_uuid'=>$userUUID
+        'timeout' => 60000,
+        'excludeCredentials' => $excludeCredentials,
+        'authenticatorSelection' => [
+            'authenticatorAttachment' => 'platform', // 'platform' disables roaming keys
+            'userVerification' => 'required'
+        ],
+        'attestation' => 'none',
+        'user_uuid' => $userUUID
     ]);
     exit;
 }
 
-// -------------------- STEP 2: VERIFY --------------------
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// ----------- STEP 2: VERIFY & STORE REGISTRATION -----------
+if ($method === 'POST') {
     $userUUID = $_SESSION['webauthn_user_uuid'] ?? '';
     $userHandle = $_SESSION['webauthn_user_handle'] ?? '';
     $challenge = $_SESSION['webauthn_registration_challenge'] ?? '';
 
     if (!$userUUID || !$userHandle || !$challenge) {
         http_response_code(400);
-        echo json_encode(['error'=>'Missing registration challenge/session']);
+        echo json_encode(['error' => 'Missing registration challenge/session']);
         exit;
     }
 
     unset($_SESSION['webauthn_user_uuid'], $_SESSION['webauthn_user_handle'], $_SESSION['webauthn_registration_challenge']);
 
-    $data = json_decode(file_get_contents('php://input'), true) ?? [];
+    $data = json_decode(file_get_contents('php://input'), true);
     if (!$data) {
         http_response_code(400);
-        echo json_encode(['error'=>'Invalid request']);
+        echo json_encode(['error' => 'Invalid request']);
         exit;
     }
 
@@ -103,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $publicKeyCredential = $loader->loadArray($data);
     } catch (Throwable $e) {
         http_response_code(400);
-        echo json_encode(['error'=>'Failed to load credential: '.$e->getMessage()]);
+        echo json_encode(['error' => 'Failed to load credential: ' . $e->getMessage()]);
         exit;
     }
 
@@ -119,18 +130,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
     } catch (Throwable $e) {
         http_response_code(400);
-        echo json_encode(['error'=>'Biometric registration failed: '.$e->getMessage()]);
+        echo json_encode(['error' => 'Biometric registration failed: ' . $e->getMessage()]);
         exit;
     }
 
     // Insert account
-    $stmt = $conn->prepare("INSERT INTO biometric_accounts (user_uuid, account_name, status) VALUES (?, ?, 'active') ON DUPLICATE KEY UPDATE account_name=VALUES(account_name)");
-    $stmt->bind_param('ss', $userUUID, $_POST['account_name']);
+    $stmt = $conn->prepare("
+        INSERT INTO biometric_accounts (user_uuid, account_name, status)
+        VALUES (?, ?, 'active') ON DUPLICATE KEY UPDATE account_name=VALUES(account_name)
+    ");
+    $accountName = $_POST['account_name'] ?? 'Unnamed Account';
+    $stmt->bind_param('ss', $userUUID, $accountName);
     $stmt->execute();
     $stmt->close();
 
     // Insert credential
-    $stmt = $conn->prepare("INSERT INTO webauthn_credentials (user_uuid, credential_id, public_key, sign_count, device_name) VALUES (?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("
+        INSERT INTO webauthn_credentials (user_uuid, credential_id, public_key, sign_count, device_name)
+        VALUES (?, ?, ?, ?, ?)
+    ");
     $credId = Base64UrlSafe::encodeUnpadded($credentialSource->getPublicKeyCredentialId());
     $publicKey = $credentialSource->getCredentialPublicKey();
     $signCount = $credentialSource->getCounter();
@@ -139,9 +157,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute();
     $stmt->close();
 
-    echo json_encode(['success'=>true,'user_uuid'=>$userUUID]);
+    echo json_encode(['success' => true, 'user_uuid' => $userUUID]);
     exit;
 }
 
 http_response_code(405);
-echo json_encode(['error'=>'Method not allowed']);
+echo json_encode(['error' => 'Method not allowed']);
