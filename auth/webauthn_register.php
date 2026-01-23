@@ -20,7 +20,7 @@ $options = [
     'challenge' => base64url_encode($challenge),
     'rp' => [
         'name' => 'Engagement Tracker',
-        'id' => $_SERVER['SERVER_NAME']
+        'id' => 'morganserver.com'
     ],
     'user' => [
         'id' => base64url_encode($userUUID),
