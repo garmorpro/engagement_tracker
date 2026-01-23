@@ -68,6 +68,9 @@ $bioAccounts = $bioResult ? $bioResult->fetch_all(MYSQLI_ASSOC) : [];
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/webauthn-json@2.0.2/dist/webauthn-json.browser-ponyfill.min.js"></script>
+
+
 <script>
 // Show registration form
 function showRegisterForm(accountName = '', userUUID = '') {
@@ -88,19 +91,71 @@ async function handleAccountClick(btn) {
     }
 }
 
-// Dummy function for demo (replace with real WebAuthn)
 async function loginWithBiometrics(userUUID) {
-    alert(`Logging in user ${userUUID} with biometrics...`);
-    // Implement WebAuthn authentication flow here
+    try {
+        // Fetch challenge from server
+        const res = await fetch('/auth/login_biometric.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ user_uuid: userUUID })
+        });
+        const options = await res.json();
+
+        // Convert options and call WebAuthn API
+        const assertion = await window["webauthn-json"].get(options);
+
+        // Send assertion back to server for verification
+        const verifyRes = await fetch('/auth/verify_login.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(assertion)
+        });
+        const verifyData = await verifyRes.json();
+        if (verifyData.success) {
+            window.location.href = '/pages/dashboard.php';
+        } else {
+            alert('Biometric login failed: ' + verifyData.error);
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error during biometric login');
+    }
 }
 
-// Dummy registration starter (replace with WebAuthn registration)
-function startRegistration() {
+async function startRegistration() {
     const userUUID = document.getElementById('loginUserUuid').value;
     const accountName = document.getElementById('loginAccountName').value;
-    alert(`Registering biometric for ${accountName || 'Unnamed Account'} (${userUUID})`);
-    // Implement WebAuthn registration flow here
+
+    try {
+        const res = await fetch('/auth/register_biometric.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({ user_uuid: userUUID, account_name: accountName })
+        });
+        const options = await res.json();
+
+        // Call WebAuthn API to create credentials
+        const credential = await window["webauthn-json"].create(options);
+
+        // Send credential to server to save
+        const saveRes = await fetch('/auth/verify_registration.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(credential)
+        });
+        const saveData = await saveRes.json();
+        if (saveData.success) {
+            alert('Biometric registered successfully!');
+            window.location.reload();
+        } else {
+            alert('Registration failed: ' + saveData.error);
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error during registration');
+    }
 }
+
 </script>
 </body>
 </html>
