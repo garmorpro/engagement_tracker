@@ -59,7 +59,7 @@ if (isset($_GET['code'], $_GET['state'])) {
             refresh_token = VALUES(refresh_token),
             last_login = NOW()
     ");
-    $stmt->bind_param('sssss', $user_uuid, $email, $name, $data['access_token'], $data['refresh_token']);
+    $stmt->bind_param('sssss', $user_uuid, $email, $name, $data['access_token'], $refresh_token);
     $stmt->execute();
     $stmt->close();
 
