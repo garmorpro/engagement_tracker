@@ -54,12 +54,18 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             </div>
         <?php else: ?>
             <p class="text-center text-muted">No accounts available</p>
+            <div class="d-grid mb-3">
+                <button type="button" class="btn btn-primary" onclick="showRegisterForm()">
+                    Register Account
+                </button>
+            </div>
         <?php endif; ?>
 
-        <!-- Password Login Form -->
+        <!-- Password Login / Registration Form -->
         <form id="passwordLoginForm" class="p-4 d-none" method="POST" action="<?= BASE_URL ?>/auth/login.php">
             <input type="hidden" name="user_id" id="loginUserId">
             <input type="hidden" name="enable_biometrics" id="enableBiometricsFlag" value="0">
+            <input type="hidden" name="is_register" id="isRegisterFlag" value="0">
 
             <div class="mb-3">
                 <label class="form-label">Account name</label>
@@ -73,7 +79,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
             <div class="d-grid">
                 <button type="submit" class="btn" style="background-color: rgb(23,62,70); color: white;">
-                    Sign In
+                    Submit
                 </button>
             </div>
         </form>
@@ -85,10 +91,19 @@ function showPasswordLogin(accountName = '', userId = 0) {
     document.getElementById('passwordLoginForm').classList.remove('d-none');
     document.getElementById('loginAccountName').value = accountName;
     document.getElementById('loginUserId').value = userId;
-    document.getElementById('enableBiometricsFlag').value = '1'; // enable biometrics after password login
+    document.getElementById('enableBiometricsFlag').value = '1'; // enable biometrics after login
+    document.getElementById('isRegisterFlag').value = '0'; // existing account
 }
 
-// Handle account button click
+function showRegisterForm() {
+    document.getElementById('passwordLoginForm').classList.remove('d-none');
+    document.getElementById('loginAccountName').value = '';
+    document.getElementById('loginUserId').value = '0';
+    document.getElementById('enableBiometricsFlag').value = '1';
+    document.getElementById('isRegisterFlag').value = '1'; // new account
+}
+
+// Handle click on existing account
 async function handleAccountClick(btn) {
     const userId = btn.dataset.userId;
     const hasBiometrics = parseInt(btn.dataset.hasBiometrics, 10);
