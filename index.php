@@ -64,105 +64,16 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             <button type="button" class="btn btn-dark" onclick="startRegistration()">Continue</button>
         </div>
     </form>
+
+    <div class="d-grid mb-3">
+    <a href="/auth/authentik_redirect.php" class="btn btn-info">
+        Login with Authentik
+    </a>
+</div>
+
 </div>
 </div>
 
-<script>
-function showRegisterForm(accountName = '', userUUID = '') {
-    document.getElementById('biometricForm').classList.remove('d-none');
-    document.getElementById('loginAccountName').value = accountName;
-    document.getElementById('loginUserUuid').value = userUUID || '';
-}
 
-async function handleAccountClick(btn) {
-    const userUUID = btn.dataset.userUuid;
-    const hasBiometrics = parseInt(btn.dataset.hasBiometrics);
-    if(hasBiometrics) {
-        await loginWithBiometrics(userUUID);
-    } else {
-        showRegisterForm(btn.dataset.accountName, userUUID);
-    }
-}
-
-async function startRegistration() {
-    const userUUID = document.getElementById('loginUserUuid').value;
-    const accountName = document.getElementById('loginAccountName').value || 'Unnamed Account';
-
-    // Get registration options from server
-    const res = await fetch(`/auth/register.php?user_uuid=${userUUID}&account_name=${encodeURIComponent(accountName)}`);
-    const options = await res.json();
-    if(options.error) return alert(options.error);
-
-    // Decode challenge & user id
-    options.challenge = Uint8Array.from(atob(options.challenge.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
-    options.user.id = Uint8Array.from(atob(options.user.id.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
-
-    // Create credential
-    const credential = await navigator.credentials.create({ publicKey: options });
-
-    const payload = {
-        id: credential.id,
-        type: credential.type,
-        rawId: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
-        response: {
-            authenticatorData: btoa(String.fromCharCode(...new Uint8Array(credential.response.authenticatorData))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
-            clientDataJSON: btoa(String.fromCharCode(...new Uint8Array(credential.response.clientDataJSON))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
-            signature: btoa(String.fromCharCode(...new Uint8Array(credential.response.signature))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
-            userHandle: credential.response.userHandle ? btoa(String.fromCharCode(...new Uint8Array(credential.response.userHandle))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'') : null
-        },
-        user_uuid: options.user_uuid
-    };
-
-    // Send registration to server
-    const verifyRes = await fetch('/auth/register.php', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
-    });
-    const result = await verifyRes.json();
-    if(result.success) window.location.href = '/pages/dashboard.php';
-    else alert(result.error || 'Registration failed');
-}
-
-async function loginWithBiometrics(userUUID) {
-    const res = await fetch(`/auth/options.php?user_uuid=${userUUID}`);
-    const options = await res.json();
-    if(options.error) return alert(options.error);
-
-    options.challenge = Uint8Array.from(atob(options.challenge.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
-    options.user.id = Uint8Array.from(atob(options.user.id.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
-
-    if(options.allowCredentials) {
-        options.allowCredentials = options.allowCredentials.map(c=>({
-            ...c,
-            id: Uint8Array.from(atob(c.id.replace(/-/g,'+').replace(/_/g,'/')), d=>d.charCodeAt(0))
-        }));
-    }
-
-    const credential = await navigator.credentials.get({ publicKey: options });
-
-    const payload = {
-        id: credential.id,
-        type: credential.type,
-        rawId: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
-        response: {
-            authenticatorData: btoa(String.fromCharCode(...new Uint8Array(credential.response.authenticatorData))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
-            clientDataJSON: btoa(String.fromCharCode(...new Uint8Array(credential.response.clientDataJSON))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
-            signature: btoa(String.fromCharCode(...new Uint8Array(credential.response.signature))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
-            userHandle: credential.response.userHandle ? btoa(String.fromCharCode(...new Uint8Array(credential.response.userHandle))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'') : null
-        },
-        user_uuid: userUUID
-    };
-
-    const verifyRes = await fetch('/auth/verify.php',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
-    });
-    const result = await verifyRes.json();
-    if(result.success) window.location.href='/pages/dashboard.php';
-    else alert(result.error || 'Login failed');
-}
-</script>
 </body>
 </html>
