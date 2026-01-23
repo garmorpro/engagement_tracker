@@ -32,7 +32,7 @@ function base64url_encode($data) {
 $options = [
     'challenge' => base64url_encode($challenge),
     'timeout' => 60000,
-    'rpId' => 'et.morganserver.com',
+    'rpId' => 'morganserver.com',
     'allowCredentials' => [[
         'type' => 'public-key',
         'id' => $row['credential_id'],
