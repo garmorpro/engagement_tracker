@@ -63,17 +63,14 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         </div>
 
         <!-- Biometric Registration Form -->
-        <form id="biometricForm" class="p-4 d-none" method="POST" action="<?= BASE_URL ?>/auth/register.php">
-            <input type="hidden" name="user_uuid" id="loginUserUuid">
-            <input type="hidden" name="is_register" id="isRegisterFlag" value="1">
-
+        <form id="biometricForm" class="p-4 d-none">
             <div class="mb-3">
                 <label class="form-label">Account name (optional)</label>
-                <input type="text" class="form-control" name="account_name" id="loginAccountName">
+                <input type="text" class="form-control" id="loginAccountName">
             </div>
 
             <div class="d-grid">
-                <button type="submit" class="btn btn-dark">
+                <button type="button" class="btn btn-dark" onclick="registerAccount()">
                     Continue
                 </button>
             </div>
@@ -82,6 +79,13 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 </div>
 
 <script>
+// Show registration form
+function showRegisterForm(accountName = '', userUUID = '') {
+    document.getElementById('biometricForm').classList.remove('d-none');
+    document.getElementById('loginAccountName').value = accountName;
+}
+
+// Click on existing account
 async function handleAccountClick(btn) {
     const userUUID = btn.dataset.userUuid;
     const hasBiometrics = parseInt(btn.dataset.hasBiometrics);
@@ -94,19 +98,61 @@ async function handleAccountClick(btn) {
     }
 }
 
-function showRegisterForm(accountName = '', userUUID = '') {
-    document.getElementById('biometricForm').classList.remove('d-none');
-    document.getElementById('loginAccountName').value = accountName;
-    document.getElementById('loginUserUuid').value = userUUID || '';
+// Registration
+async function registerAccount() {
+    const accountName = document.getElementById('loginAccountName').value || 'Unnamed Account';
+
+    // Step 1: GET registration options from server
+    const res = await fetch(`/auth/register.php?account_name=${encodeURIComponent(accountName)}`);
+    const options = await res.json();
+    if (options.error) return alert(options.error);
+
+    // Convert challenge & user id to ArrayBuffer
+    options.challenge = Uint8Array.from(atob(options.challenge.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
+    options.user.id = Uint8Array.from(atob(options.user.id.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
+
+    if (options.excludeCredentials) {
+        options.excludeCredentials = options.excludeCredentials.map(c => ({
+            ...c,
+            id: Uint8Array.from(atob(c.id.replace(/-/g,'+').replace(/_/g,'/')), d => d.charCodeAt(0))
+        }));
+    }
+
+    // Step 2: Create credential
+    const credential = await navigator.credentials.create({ publicKey: options });
+
+    // Step 3: POST credential to server
+    const payload = {
+        id: credential.id,
+        type: credential.type,
+        rawId: btoa(String.fromCharCode(...new Uint8Array(credential.rawId))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
+        response: {
+            authenticatorData: btoa(String.fromCharCode(...new Uint8Array(credential.response.authenticatorData))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
+            clientDataJSON: btoa(String.fromCharCode(...new Uint8Array(credential.response.clientDataJSON))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
+            signature: btoa(String.fromCharCode(...new Uint8Array(credential.response.signature))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,''),
+            userHandle: credential.response.userHandle ? btoa(String.fromCharCode(...new Uint8Array(credential.response.userHandle))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'') : null
+        },
+        user_uuid: options.user_uuid
+    };
+
+    const postRes = await fetch('/auth/register.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+    });
+
+    const result = await postRes.json();
+    if (result.success) window.location.reload();
+    else alert(result.error || 'Registration failed.');
 }
 
+// Biometric login
 async function biometricLogin(userUUID) {
     try {
         const res = await fetch(`/auth/options.php?user_uuid=${userUUID}`);
         const options = await res.json();
-        if (options.error) return alert('No biometric credentials found.');
+        if (options.error) return alert(options.error);
 
-        // Convert challenge & user ID to ArrayBuffer
         options.challenge = Uint8Array.from(atob(options.challenge.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
         options.user.id = Uint8Array.from(atob(options.user.id.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
 
@@ -139,10 +185,10 @@ async function biometricLogin(userUUID) {
 
         const result = await verifyRes.json();
         if (result.success) window.location.href = '/pages/dashboard.php';
-        else alert('Biometric authentication failed.');
+        else alert('Login failed.');
     } catch (err) {
         console.error(err);
-        alert('Biometric login not available on this device.');
+        alert('Biometric login not supported on this device.');
     }
 }
 </script>

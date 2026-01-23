@@ -12,13 +12,13 @@ session_start();
 header('Content-Type: application/json');
 
 $userUUID = $_GET['user_uuid'] ?? '';
-if (!$userUUID) { http_response_code(400); echo json_encode(['error'=>'Invalid user']); exit; }
+if (!$userUUID) { echo json_encode(['error'=>'Missing user_uuid']); exit; }
 
+// Fetch credentials
 $stmt = $conn->prepare("SELECT credential_id FROM webauthn_credentials WHERE user_uuid = ?");
 $stmt->bind_param('s', $userUUID);
 $stmt->execute();
 $res = $stmt->get_result();
-
 $allowCredentials = [];
 while ($row = $res->fetch_assoc()) {
     $allowCredentials[] = new PublicKeyCredentialDescriptor(
@@ -28,8 +28,9 @@ while ($row = $res->fetch_assoc()) {
 }
 $stmt->close();
 
-if (empty($allowCredentials)) { http_response_code(400); echo json_encode(['error'=>'No credentials']); exit; }
+if (empty($allowCredentials)) { echo json_encode(['error'=>'No biometric credentials found']); exit; }
 
+// Generate challenge
 $challenge = random_bytes(32);
 $_SESSION['webauthn_authentication'] = ['challenge'=>$challenge,'user_uuid'=>$userUUID,'time'=>time()];
 
