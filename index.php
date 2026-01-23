@@ -68,7 +68,6 @@ $bioAccounts = $bioResult ? $bioResult->fetch_all(MYSQLI_ASSOC) : [];
     </div>
 </div>
 
-<script src="https://unpkg.com/webauthn-json@2.0.2/dist/webauthn-json.umd.min.js"></script>
 
 
 <script>
@@ -92,69 +91,99 @@ async function handleAccountClick(btn) {
 }
 
 async function loginWithBiometrics(userUUID) {
-    try {
-        // Fetch challenge from server
-        const res = await fetch('/auth/login_biometric.php', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ user_uuid: userUUID })
-        });
-        const options = await res.json();
+    // Step 1: fetch login options from server
+    const res = await fetch('/auth/login_biometric.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ user_uuid: userUUID })
+    });
+    const options = await res.json();
 
-        // Convert options and call WebAuthn API
-        const assertion = await window["webauthn-json"].get(options);
+    // Convert challenge and allowedCredentials id(s) to ArrayBuffer
+    options.challenge = base64urlToBuffer(options.challenge);
+    options.allowCredentials.forEach(c => {
+        c.id = base64urlToBuffer(c.id);
+    });
 
-        // Send assertion back to server for verification
-        const verifyRes = await fetch('/auth/verify_login.php', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify(assertion)
-        });
-        const verifyData = await verifyRes.json();
-        if (verifyData.success) {
-            window.location.href = '/pages/dashboard.php';
-        } else {
-            alert('Biometric login failed: ' + verifyData.error);
+    // Step 2: call WebAuthn API
+    const assertion = await navigator.credentials.get({ publicKey: options });
+
+    // Step 3: convert assertion to base64url
+    const assertionData = {
+        user_uuid: userUUID,
+        id: assertion.id,
+        rawId: bufferToBase64url(assertion.rawId),
+        type: assertion.type,
+        response: {
+            authenticatorData: bufferToBase64url(assertion.response.authenticatorData),
+            clientDataJSON: bufferToBase64url(assertion.response.clientDataJSON),
+            signature: bufferToBase64url(assertion.response.signature),
+            userHandle: assertion.response.userHandle ? bufferToBase64url(assertion.response.userHandle) : null
         }
-    } catch (err) {
-        console.error(err);
-        alert('Error during biometric login');
+    };
+
+    // Step 4: send to verify_login.php
+    const verifyRes = await fetch('/auth/verify_login.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(assertionData)
+    });
+    const verifyData = await verifyRes.json();
+    if (verifyData.success) {
+        window.location.href = '/pages/dashboard.php';
+    } else {
+        alert('Login failed: ' + verifyData.error);
     }
 }
+
 
 async function startRegistration() {
     const userUUID = document.getElementById('loginUserUuid').value;
     const accountName = document.getElementById('loginAccountName').value;
 
-    try {
-        const res = await fetch('/auth/register_biometric.php', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ user_uuid: userUUID, account_name: accountName })
-        });
-        const options = await res.json();
+    // Step 1: fetch options from server
+    const res = await fetch('/auth/register_biometric.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ user_uuid: userUUID, account_name: accountName })
+    });
+    const options = await res.json();
 
-        // Call WebAuthn API to create credentials
-        const credential = await window["webauthn-json"].create(options);
+    // Step 2: convert challenge and user.id to ArrayBuffer
+    options.challenge = base64urlToBuffer(options.challenge);
+    options.user.id = base64urlToBuffer(options.user.id);
 
-        // Send credential to server to save
-        const saveRes = await fetch('/auth/verify_registration.php', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify(credential)
-        });
-        const saveData = await saveRes.json();
-        if (saveData.success) {
-            alert('Biometric registered successfully!');
-            window.location.reload();
-        } else {
-            alert('Registration failed: ' + saveData.error);
+    // Step 3: call WebAuthn API
+    const credential = await navigator.credentials.create({ publicKey: options });
+
+    // Step 4: convert credential data to base64url for server
+    const credentialData = {
+        user_uuid: userUUID,
+        account_name: accountName,
+        id: credential.id,
+        rawId: bufferToBase64url(credential.rawId),
+        type: credential.type,
+        response: {
+            attestationObject: bufferToBase64url(credential.response.attestationObject),
+            clientDataJSON: bufferToBase64url(credential.response.clientDataJSON)
         }
-    } catch (err) {
-        console.error(err);
-        alert('Error during registration');
+    };
+
+    // Step 5: send to verify_registration.php
+    const verifyRes = await fetch('/auth/verify_registration.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(credentialData)
+    });
+    const verifyData = await verifyRes.json();
+    if (verifyData.success) {
+        alert('Biometric registration successful!');
+        window.location.reload();
+    } else {
+        alert('Registration failed: ' + verifyData.error);
     }
 }
+
 
 </script>
 </body>
