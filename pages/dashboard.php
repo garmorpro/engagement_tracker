@@ -257,14 +257,14 @@ $totalEngagements = count($engagements);
     btn.addEventListener('click', async () => {
         try {
             // 1️⃣ Get registration options
-            const optionsRes = await fetch('/webauthn/register.php');
+            const optionsRes = await fetch('../webauthn/register.php');
             const options = await optionsRes.json();
 
             // 2️⃣ Create credential
             const credential = await navigator.credentials.create({ publicKey: options });
 
             // 3️⃣ Send credential to server to save
-            const res = await fetch('/webauthn/register.php', {
+            const res = await fetch('../webauthn/register.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(credential)
