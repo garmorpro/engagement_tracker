@@ -3,8 +3,8 @@ require_once 'includes/functions.php';
 require_once 'path.php';
 require_once 'includes/init.php';
 
-// Fetch active accounts and check if biometrics exist
-$result = $conn->query("
+// Fetch active biometric accounts
+$bioResult = $conn->query("
     SELECT ba.user_uuid, ba.account_name,
            COUNT(wc.id) AS has_biometrics
     FROM biometric_accounts ba
@@ -13,7 +13,15 @@ $result = $conn->query("
     GROUP BY ba.user_uuid
     ORDER BY ba.account_name
 ");
-$accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+$bioAccounts = $bioResult ? $bioResult->fetch_all(MYSQLI_ASSOC) : [];
+
+// Fetch Authentik users
+$authResult = $conn->query("
+    SELECT user_uuid, name
+    FROM authentik_users
+    ORDER BY name
+");
+$authUsers = $authResult ? $authResult->fetch_all(MYSQLI_ASSOC) : [];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -27,11 +35,11 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height:100vh;">
 <div class="card p-3 shadow" style="width:100%; max-width:425px;">
     <h5 class="text-center mb-2">Welcome</h5>
-    <p class="text-center text-muted mb-3">Click an account to sign in with biometrics</p>
 
-    <?php if (!empty($accounts)): ?>
-    <div class="list-group mb-3">
-        <?php foreach ($accounts as $account): ?>
+    <?php if (!empty($bioAccounts)): ?>
+        <p class="text-center text-muted mb-1">Click an account to sign in with biometrics</p>
+        <div class="list-group mb-3">
+        <?php foreach ($bioAccounts as $account): ?>
             <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                 data-user-uuid="<?= $account['user_uuid'] ?>"
                 data-has-biometrics="<?= $account['has_biometrics'] ?>"
@@ -45,9 +53,23 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                 <?php endif; ?>
             </button>
         <?php endforeach; ?>
-    </div>
+        </div>
     <?php else: ?>
-        <p class="text-center text-muted">No accounts available</p>
+        <p class="text-center text-muted mb-3">No biometric accounts available</p>
+    <?php endif; ?>
+
+    <?php if (!empty($authUsers)): ?>
+        <p class="text-center text-muted mb-1">Quick login with Authentik</p>
+        <div class="list-group mb-3">
+        <?php foreach ($authUsers as $user): ?>
+            <button type="button" class="list-group-item list-group-item-action"
+                onclick="loginAsUser('<?= $user['user_uuid'] ?>')">
+                <?= htmlspecialchars($user['name'] ?? 'Unnamed User') ?>
+            </button>
+        <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <p class="text-center text-muted mb-3">No Authentik users found</p>
     <?php endif; ?>
 
     <div class="d-grid mb-3">
@@ -64,16 +86,42 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             <button type="button" class="btn btn-dark" onclick="startRegistration()">Continue</button>
         </div>
     </form>
-
-    <div class="d-grid mb-3">
-    <a href="/auth/authentik_redirect.php" class="btn btn-info">
-        Login with Authentik
-    </a>
-</div>
-
 </div>
 </div>
 
+<script>
+function showRegisterForm(accountName = '', userUUID = '') {
+    document.getElementById('biometricForm').classList.remove('d-none');
+    document.getElementById('loginAccountName').value = accountName;
+    document.getElementById('loginUserUuid').value = userUUID || '';
+}
 
+async function handleAccountClick(btn) {
+    const userUUID = btn.dataset.userUuid;
+    const hasBiometrics = parseInt(btn.dataset.hasBiometrics);
+    if(hasBiometrics) {
+        await loginWithBiometrics(userUUID);
+    } else {
+        showRegisterForm(btn.dataset.accountName, userUUID);
+    }
+}
+
+async function loginAsUser(userUUID) {
+    // Quick login via PHP endpoint
+    const res = await fetch('/auth/quick_login.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({user_uuid: userUUID})
+    });
+    const data = await res.json();
+    if(data.success) {
+        window.location.href = '/pages/dashboard.php';
+    } else {
+        alert(data.error || 'Login failed');
+    }
+}
+
+// Your existing biometric registration/login functions here...
+</script>
 </body>
 </html>
