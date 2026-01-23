@@ -260,7 +260,7 @@ function bufferDecode(base64url) {
         return buf; // Uint8Array
     } catch (err) {
         console.error('bufferDecode failed for:', base64url, err);
-        throw err; // rethrow so the outer try/catch catches it
+        throw err;
     }
 }
 
@@ -269,6 +269,12 @@ function bufferEncode(arrayBuffer) {
     let str = '';
     for (let i = 0; i < bytes.length; i++) str += String.fromCharCode(bytes[i]);
     return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+function toArrayBuffer(u8) {
+    // Safari fix: ensure Uint8Array is ArrayBuffer
+    if (u8 instanceof ArrayBuffer) return u8;
+    return u8.buffer.slice(u8.byteOffset, u8.byteOffset + u8.byteLength);
 }
 
 async function enableBiometric() {
@@ -280,23 +286,23 @@ async function enableBiometric() {
     try {
         const res = await fetch('../webauthn/register.php');
         const options = await res.json();
-        console.log('Raw options from server:', options); // 🔹 log full server response
+        console.log('Raw options from server:', options);
 
         if (options.error) throw new Error(options.error);
 
         console.log('Decoding challenge:', options.challenge);
-        options.challenge = bufferDecode(options.challenge);
-        console.log('Decoded challenge (Uint8Array):', options.challenge);
+        options.challenge = toArrayBuffer(bufferDecode(options.challenge));
+        console.log('Decoded challenge (ArrayBuffer):', options.challenge);
 
         console.log('Decoding user.id:', options.user.id);
-        options.user.id = bufferDecode(options.user.id);
-        console.log('Decoded user.id (Uint8Array):', options.user.id);
+        options.user.id = toArrayBuffer(bufferDecode(options.user.id));
+        console.log('Decoded user.id (ArrayBuffer):', options.user.id);
 
         if (Array.isArray(options.excludeCredentials) && options.excludeCredentials.length > 0) {
             options.excludeCredentials = options.excludeCredentials.map(c => {
                 console.log('Decoding excludeCredential id:', c.id);
-                const decodedId = bufferDecode(c.id);
-                console.log('Decoded excludeCredential id (Uint8Array):', decodedId);
+                const decodedId = toArrayBuffer(bufferDecode(c.id));
+                console.log('Decoded excludeCredential id (ArrayBuffer):', decodedId);
                 return {
                     type: c.type,
                     id: decodedId,
@@ -348,6 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.addEventListener('click', enableBiometric);
 });
 </script>
+
 
 
 
