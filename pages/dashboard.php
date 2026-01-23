@@ -251,12 +251,17 @@ $totalEngagements = count($engagements);
 
 <script>
 function bufferDecode(base64url) {
-    const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
-    const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/') + padding;
-    const str = atob(base64);
-    const buf = new Uint8Array(str.length);
-    for (let i = 0; i < str.length; i++) buf[i] = str.charCodeAt(i);
-    return buf;
+    try {
+        const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
+        const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/') + padding;
+        const str = atob(base64);
+        const buf = new Uint8Array(str.length);
+        for (let i = 0; i < str.length; i++) buf[i] = str.charCodeAt(i);
+        return buf;
+    } catch (err) {
+        console.error('bufferDecode failed for:', base64url, err);
+        throw err;
+    }
 }
 
 function bufferEncode(arrayBuffer) {
@@ -282,6 +287,7 @@ async function enableBiometric() {
         // Step 1: Get registration options from server
         const res = await fetch('../webauthn/register.php');
         const options = await res.json();
+        console.log('Raw options from server:', options);
 
         if (options.error) throw new Error(options.error);
 
@@ -300,7 +306,7 @@ async function enableBiometric() {
             delete options.excludeCredentials;
         }
 
-        // Ensure RP ID matches current host
+        // ⚠️ Ensure RP ID matches the current hostname
         options.rp.id = window.location.hostname;
 
         console.log('Final publicKey options for navigator.credentials.create():', options);
@@ -328,6 +334,7 @@ async function enableBiometric() {
         });
 
         const result = await verifyRes.json();
+        console.log('Server verification response:', result);
 
         if (result.success) {
             alert('Biometric login enabled!');
@@ -349,6 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.addEventListener('click', enableBiometric);
 });
 </script>
+
 
 
 
