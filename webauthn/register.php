@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+echo "__DIR__ is: " . __DIR__;
 
 require_once '../includes/init.php';
 require __DIR__ . '/../../vendor/autoload.php';
