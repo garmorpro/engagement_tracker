@@ -250,22 +250,21 @@ $totalEngagements = count($engagements);
 <!-- Header -->
 
 <script>
-// Helper: convert base64url string to ArrayBuffer
+    // Convert Base64URL to Uint8Array
 function bufferDecode(value) {
-    return Uint8Array.from(
-        atob(value.replace(/-/g, '+').replace(/_/g, '/')),
-        c => c.charCodeAt(0)
-    );
+    // Add padding
+    let base64 = value.replace(/-/g, '+').replace(/_/g, '/');
+    while (base64.length % 4) base64 += '=';
+    return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('enableBiometricBtn');
-    if (!btn) return; // button doesn't exist → exit
+    if (!btn) return;
 
     btn.addEventListener('click', async () => {
         try {
-            // 1️⃣ Get registration options from server
-            const optionsRes = await fetch('../webauthn/register.php'); // adjust path if needed
+            const optionsRes = await fetch('../webauthn/register.php');
             const options = await optionsRes.json();
 
             if (options.error) {
@@ -273,10 +272,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 2️⃣ Convert challenge and user.id to ArrayBuffer
+            // Convert challenge and user.id to ArrayBuffer
             options.challenge = bufferDecode(options.challenge);
             options.user.id = bufferDecode(options.user.id);
 
+            // Convert excludeCredentials
             if (options.excludeCredentials) {
                 options.excludeCredentials = options.excludeCredentials.map(cred => ({
                     ...cred,
@@ -284,10 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }));
             }
 
-            // 3️⃣ Create credential
             const credential = await navigator.credentials.create({ publicKey: options });
 
-            // 4️⃣ Send credential to server
             const res = await fetch('../webauthn/register.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -297,9 +295,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await res.json();
 
             if (result.success) {
-                alert('Biometric login enabled! You can now tap your account to login.');
+                alert('Biometric login enabled!');
                 btn.disabled = true;
-                btn.innerHTML = '<i class="bi bi-check-circle"></i>&nbsp;&nbsp;Biometric Enabled';
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> Biometric Enabled';
             } else {
                 alert('Failed to enable biometrics.');
             }
@@ -309,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
 </script>
 
   

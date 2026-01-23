@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '../includes/init.php';
-require_once __DIR__ . '../../vendor/autoload.php';
+require_once __DIR__ . '/../includes/init.php';
+require_once __DIR__ . '../../../vendor/autoload.php';
 
 use Webauthn\PublicKeyCredentialCreationOptions;
 use Webauthn\PublicKeyCredentialRpEntity;
@@ -75,7 +75,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $challenge = random_bytes(32);
     $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
 
-    // Send properly encoded options to browser
+    // Encode excludeCredentials for JS
+    $excludeCredentials = array_map(fn($cred) => [
+        'type' => 'public-key',
+        'id'   => Base64UrlSafe::encodeUnpadded($cred->getId())
+    ], $exclude);
+
+    // Send options to browser
     $response = [
         'rp' => ['name' => 'Engagement Tracker', 'id' => $_SERVER['HTTP_HOST']],
         'user' => [
@@ -89,10 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             ['type' => 'public-key', 'alg' => -257]
         ],
         'timeout' => 60000,
-        'excludeCredentials' => array_map(fn($cred) => [
-            'type' => 'public-key',
-            'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
-        ], $exclude),
+        'excludeCredentials' => $excludeCredentials,
         'authenticatorSelection' => [
             'authenticatorAttachment' => 'platform',
             'userVerification' => 'required'
