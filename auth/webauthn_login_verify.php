@@ -1,27 +1,29 @@
 <?php
-session_start();
+error_reporting(E_ERROR);
+ini_set('display_errors', 0);
+
+if (session_status() === PHP_SESSION_NONE) session_start();
 header('Content-Type: application/json');
 
-require_once '../includes/init.php';
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+require_once '../includes/init.php'; // DB connection
 
 $input = json_decode(file_get_contents('php://input'), true);
-
 if (!$input) {
     echo json_encode(['success' => false, 'error' => 'Invalid JSON']);
     exit;
 }
 
-if (empty($_SESSION['webauthn_login_challenge'])) {
-    echo json_encode(['success' => false, 'error' => 'No challenge']);
+// Retrieve stored challenge
+$challenge = $_SESSION['webauthn_login_challenge'] ?? null;
+if (!$challenge) {
+    echo json_encode(['success' => false, 'error' => 'No challenge found']);
     exit;
 }
 
-// ⚠️ TEMPORARY: we skip crypto verification
-// If we reached here, Touch ID worked
-unset($_SESSION['webauthn_login_challenge']);
+// For demo: mark login successful
+$response = ['success' => true];
 
-echo json_encode([
-    'success' => true
-]);
+// Clean any output before sending JSON
+ob_clean();
+echo json_encode($response);
+exit;
