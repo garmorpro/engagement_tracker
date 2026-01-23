@@ -22,10 +22,10 @@ use Webauthn\PublicKeyCredentialParameters;
 use Webauthn\PublicKeyCredentialDescriptor;
 use Webauthn\AuthenticatorAttestationResponseValidator;
 use Webauthn\PublicKeyCredentialLoader;
-// use Webauthn\Util\Base64UrlSafe;
+use Webauthn\Util\Base64UrlSaf;
 
 // Test
-// var_dump(class_exists(Base64UrlSafe::class));
+var_dump(class_exists(Base64::class));
 
 // Force JSON response
 header('Content-Type: application/json');
