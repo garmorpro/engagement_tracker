@@ -3,9 +3,9 @@
 session_start();
 
 // Replace these with your Authentik settings
-$client_id = 'YOUR_CLIENT_ID';
-$redirect_uri = 'https://yourdomain.com/auth/authentik_callback.php';
-$auth_url = 'https://authentik.example.com/application/o/authorize/';
+$client_id = 'dekMyHfssWUpwBzKa42Nbfxw2OfJl8TTe78JWK7A';
+$redirect_uri = 'https://et.morganserver.com/pages/dashboard';
+$auth_url = 'http://10.10.254.198:9000/application/o/authorize/';
 
 $state = bin2hex(random_bytes(16)); // Prevent CSRF attacks
 $_SESSION['authentik_state'] = $state;
