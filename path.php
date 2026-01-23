@@ -1,4 +1,4 @@
 <?php
 
 define("ROOT_PATH", realpath(dirname(__FILE__)));
-define("BASE_URL", "https://morganserver.com");
+define("BASE_URL", "https://et.morganserver.com");
