@@ -1,51 +1,60 @@
 <?php
-// ---------------------------
-// WebAuthn Login Options API
-// ---------------------------
+// ============================================
+// WebAuthn Login Options Endpoint
+// ============================================
 
-// Suppress PHP warnings and notices
-error_reporting(E_ERROR | E_PARSE);
+// Silence all warnings/notices so JSON is clean
+error_reporting(E_ERROR);
 ini_set('display_errors', 0);
 
-// Start session safely
+// Only start session if none exists
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Return JSON
+// Set JSON header
 header('Content-Type: application/json');
 
-require_once '../includes/init.php';
+require_once '../includes/db.php'; // DB connection
 
-// Fetch ONE credential from database
+// Fetch ONE credential for demo (replace with proper user lookup)
 $result = $conn->query("SELECT credential_id FROM webauthn_credentials LIMIT 1");
-$row = $result ? $result->fetch_assoc() : null;
+$row = $result->fetch_assoc();
 
 if (!$row) {
     echo json_encode(['error' => 'No credentials registered']);
     exit;
 }
 
-// Generate 32-byte challenge
+// Generate random challenge
 $challenge = random_bytes(32);
 
-// Store challenge in session for verification
+// Store challenge for later verification
 $_SESSION['webauthn_login_challenge'] = base64_encode($challenge);
 
-// Prepare WebAuthn options
+// Convert credential_id to base64url for WebAuthn
+function base64url_encode($data) {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+$credentialId = $row['credential_id'];
+$credentialIdB64Url = base64url_encode(base64_decode($credentialId)); 
+// decode first if stored as regular base64 in DB
+
+// Build login options
 $options = [
     'challenge' => rtrim(strtr(base64_encode($challenge), '+/', '-_'), '='),
     'timeout' => 60000,
     'rpId' => $_SERVER['SERVER_NAME'],
     'allowCredentials' => [[
         'type' => 'public-key',
-        // credential_id must be sent base64url encoded
-        'id' => $row['credential_id'],
-        'transports' => ['internal'], // optional
+        'id' => $credentialIdB64Url,
+        'transports' => ['internal'] // platform authenticator
     ]],
     'userVerification' => 'required'
 ];
 
-// Send clean JSON
+// Ensure no accidental output breaks JSON
+ob_clean();
 echo json_encode($options);
 exit;
