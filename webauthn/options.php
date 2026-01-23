@@ -1,25 +1,33 @@
 <?php
 declare(strict_types=1);
 
+// ----------------- ERROR REPORTING -----------------
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+// ----------------- SESSION & AUTOLOAD -----------------
+session_start();
+
+require '/var/www/engagement_tracker/vendor/autoload.php';
 require_once __DIR__ . '/../includes/db.php';
-require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use Webauthn\PublicKeyCredentialRequestOptions;
 use Webauthn\PublicKeyCredentialDescriptor;
-use Webauthn\Util\Base64UrlSafe;
+use ParagonIE\ConstantTime\Base64UrlSafe;
 use Webauthn\AuthenticationExtensions\AuthenticationExtensionsClientInputs;
 
 // Force JSON
 header('Content-Type: application/json');
 
-// Require HTTPS (important for WebAuthn)
-if (empty($_SERVER['HTTPS'])) {
+// ----------------- REQUIRE HTTPS -----------------
+if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off') {
     http_response_code(400);
     echo json_encode(['error' => 'WebAuthn requires HTTPS']);
     exit;
 }
 
-// Validate user_id
+// ----------------- VALIDATE USER -----------------
 $userId = isset($_GET['user_id']) ? (int) $_GET['user_id'] : 0;
 if ($userId <= 0) {
     http_response_code(400);
@@ -27,7 +35,7 @@ if ($userId <= 0) {
     exit;
 }
 
-// Fetch biometric credentials for this user
+// ----------------- FETCH BIOMETRIC CREDENTIALS -----------------
 $stmt = $conn->prepare("
     SELECT credential_id
     FROM webauthn_credentials
@@ -38,44 +46,40 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $allowCredentials = [];
-
 while ($row = $result->fetch_assoc()) {
     $allowCredentials[] = new PublicKeyCredentialDescriptor(
         PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
         $row['credential_id']
     );
 }
-
 $stmt->close();
 
-// No biometrics registered
 if (empty($allowCredentials)) {
     http_response_code(400);
     echo json_encode(['error' => 'No biometric credentials found']);
     exit;
 }
 
-// Generate random challenge
+// ----------------- GENERATE CHALLENGE -----------------
 $challenge = random_bytes(32);
 
-// Save challenge to session
 $_SESSION['webauthn_authentication'] = [
     'challenge' => $challenge,
     'user_id'   => $userId,
     'time'      => time()
 ];
 
-// Create WebAuthn request options
+// ----------------- CREATE WEBAUTHN REQUEST OPTIONS -----------------
 $options = new PublicKeyCredentialRequestOptions(
     $challenge,
-    60000, // timeout (ms)
-    null,
+    60000, // timeout in ms
+    null,  // rpId, defaults to current host
     $allowCredentials,
     PublicKeyCredentialRequestOptions::USER_VERIFICATION_REQUIREMENT_REQUIRED,
     new AuthenticationExtensionsClientInputs()
 );
 
-// Output JSON for browser
+// ----------------- OUTPUT JSON FOR BROWSER -----------------
 echo json_encode([
     'challenge' => Base64UrlSafe::encodeUnpadded($options->getChallenge()),
     'timeout' => $options->getTimeout(),
@@ -83,7 +87,7 @@ echo json_encode([
     'allowCredentials' => array_map(function ($cred) {
         return [
             'type' => 'public-key',
-            'id'   => Base64UrlSafe::encodeUnpadded($cred->getId())
+            'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
         ];
     }, $allowCredentials),
     'userVerification' => 'required'
