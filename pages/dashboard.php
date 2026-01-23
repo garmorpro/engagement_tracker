@@ -5,6 +5,23 @@ require_once '../includes/functions.php';
 require_once '../includes/init.php';
 logoutUser($conn);
 
+$userId = $_SESSION['user_id'] ?? null;
+
+$showBiometricButton = false;
+
+if ($userId) {
+    // Check if user already has registered credentials
+    $stmt = $conn->prepare("SELECT COUNT(*) as cnt FROM webauthn_credentials WHERE user_id = ?");
+    $stmt->bind_param('i', $userId);
+    $stmt->execute();
+    $res = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if ((int)$res['cnt'] === 0) {
+        $showBiometricButton = true; // no credentials → show button
+    }
+}
+
 
 
 
@@ -190,43 +207,85 @@ $totalEngagements = count($engagements);
 <body>
 
   <!-- Header -->
-    <div class="header-container">
-      <div class="header-inner">
-        <div>
-          <div class="header-title">Engagement Tracker</div>
-          <div class="header-subtitle">Manage your audit engagements</div>
-        </div>
-
-        <div class="header-actions d-flex align-items-center">
-          <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;" role="tablist">
-            <a class="btn btn-sm me-2 tab-btn active" href="dashboard.php">
-              <i class="bi bi-grid"></i> Board
-            </a>
-            <a class="btn btn-sm me-2 tab-btn" href="engagement-list.php">
-              <i class="bi bi-list-ul"></i> List
-            </a>
-            <a class="btn btn-sm me-2 tab-btn" href="engagement-timeline.php">
-              <i class="bi bi-calendar2"></i> Timeline
-            </a>
-            <a class="btn btn-sm tab-btn" href="engagement-analytics.php">
-              <i class="bi bi-graph-up"></i> Analytics
-            </a>
-          </div>
-
-          <a class="btn archive-btn btn-sm ms-3" href="archive.php"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</a>
-          <a class="btn tools-btn btn-sm ms-3" href="tools.php"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</a>
-          <!-- <button class="btn new-btn btn-sm ms-3" data-bs-toggle="modal" data-bs-target="#addModal">
-            <i class="bi bi-plus"></i>&nbsp;&nbsp;New Engagement
-          </button> -->
-            <form method="POST" action="<?php echo BASE_URL . '/auth/logout.php'; ?>" class="d-inline">
-                <button type="submit" class="btn logout-btn btn-sm ms-3">
-                    <i class="bi bi-box-arrow-left"></i>&nbsp;&nbsp;Logout
-                </button>
-            </form>
-        </div>
-      </div>
+<div class="header-container">
+  <div class="header-inner">
+    <div>
+      <div class="header-title">Engagement Tracker</div>
+      <div class="header-subtitle">Manage your audit engagements</div>
     </div>
-  <!-- Header -->
+
+    <div class="header-actions d-flex align-items-center">
+      <div class="view-options p-1" style="background-color: rgb(241,242,245); border-radius: 10px;" role="tablist">
+        <a class="btn btn-sm me-2 tab-btn active" href="dashboard.php">
+          <i class="bi bi-grid"></i> Board
+        </a>
+        <a class="btn btn-sm me-2 tab-btn" href="engagement-list.php">
+          <i class="bi bi-list-ul"></i> List
+        </a>
+        <a class="btn btn-sm me-2 tab-btn" href="engagement-timeline.php">
+          <i class="bi bi-calendar2"></i> Timeline
+        </a>
+        <a class="btn btn-sm tab-btn" href="engagement-analytics.php">
+          <i class="bi bi-graph-up"></i> Analytics
+        </a>
+      </div>
+
+      <a class="btn archive-btn btn-sm ms-3" href="archive.php"><i class="bi bi-archive"></i>&nbsp;&nbsp;Archive</a>
+      <a class="btn tools-btn btn-sm ms-3" href="tools.php"><i class="bi bi-tools"></i>&nbsp;&nbsp;Tools</a>
+
+      <?php if ($showBiometricButton): ?>
+        <button id="enableBiometricBtn" class="btn btn-success btn-sm ms-3">
+          <i class="bi bi-fingerprint"></i>&nbsp;&nbsp;Enable Face ID / Touch ID
+        </button>
+      <?php endif; ?>
+
+      <form method="POST" action="<?php echo BASE_URL . '/auth/logout.php'; ?>" class="d-inline">
+          <button type="submit" class="btn logout-btn btn-sm ms-3">
+              <i class="bi bi-box-arrow-left"></i>&nbsp;&nbsp;Logout
+          </button>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Header -->
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('enableBiometricBtn');
+    if (!btn) return; // button not present → exit
+
+    btn.addEventListener('click', async () => {
+        try {
+            // 1️⃣ Get registration options
+            const optionsRes = await fetch('/webauthn/register.php');
+            const options = await optionsRes.json();
+
+            // 2️⃣ Create credential
+            const credential = await navigator.credentials.create({ publicKey: options });
+
+            // 3️⃣ Send credential to server to save
+            const res = await fetch('/webauthn/register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(credential)
+            });
+
+            const result = await res.json();
+            if (result.success) {
+                alert('Biometric login enabled! You can now tap your account to login with Face ID / Touch ID.');
+                btn.disabled = true;
+                btn.innerText = 'Biometric Enabled';
+            } else {
+                alert('Failed to enable biometrics.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Biometric registration failed or is not supported on this device.');
+        }
+    });
+});
+
+</script>
 
   
 
