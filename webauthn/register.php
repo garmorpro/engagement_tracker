@@ -17,11 +17,9 @@ use Webauthn\AuthenticatorAttestationResponseValidator;
 use Webauthn\PublicKeyCredentialLoader;
 use ParagonIE\ConstantTime\Base64UrlSafe;
 
-// Force JSON response
 header('Content-Type: application/json');
-
-// Must be logged in
 session_start();
+
 if (empty($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Unauthorized']);
@@ -48,12 +46,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // RP entity
     $rp = new PublicKeyCredentialRpEntity('Engagement Tracker', $_SERVER['HTTP_HOST']);
 
-    // User entity with proper 16-byte random user handle
+    // Generate 16-byte user handle
     $userHandle = random_bytes(16);
     $_SESSION['webauthn_user_handle'] = $userHandle;
 
     $user = new PublicKeyCredentialUserEntity(
-        Base64UrlSafe::encodeUnpadded($userHandle), // used by WebAuthn
+        $userHandle, // binary, will be encoded for JS
         (string)$userId,
         $account['account_name']
     );
@@ -73,29 +71,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     while ($row = $res->fetch_assoc()) {
         $exclude[] = new PublicKeyCredentialDescriptor(
             PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
-            $row['credential_id']
+            $row['credential_id'] // binary
         );
     }
     $stmt->close();
 
-    // Generate challenge
+    // Generate registration challenge
     $challenge = random_bytes(32);
     $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
 
     // Encode excludeCredentials for JS
     $excludeCredentials = array_map(fn($cred) => [
         'type' => 'public-key',
-        'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
+        'id' => Base64UrlSafe::encodeUnpadded($cred->getId()) // binary -> base64url
     ], $exclude);
 
     $response = [
         'rp' => ['name' => 'Engagement Tracker', 'id' => $_SERVER['HTTP_HOST']],
         'user' => [
-            'id' => Base64UrlSafe::encodeUnpadded($userHandle),
+            'id' => Base64UrlSafe::encodeUnpadded($userHandle), // binary -> base64url
             'name' => $account['account_name'],
             'displayName' => $account['account_name']
         ],
-        'challenge' => Base64UrlSafe::encodeUnpadded($challenge),
+        'challenge' => Base64UrlSafe::encodeUnpadded($challenge), // binary -> base64url
         'pubKeyCredParams' => [
             ['type' => 'public-key', 'alg' => -7],
             ['type' => 'public-key', 'alg' => -257]
@@ -154,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Save credential to DB
+    // Save credential to DB (binary)
     $stmt = $conn->prepare("
         INSERT INTO webauthn_credentials
             (user_id, credential_id, public_key, sign_count, device_name)
@@ -164,8 +162,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param(
         'issis',
         $userId,
-        $credentialSource->getPublicKeyCredentialId(),
-        $credentialSource->getCredentialPublicKey(),
+        $credentialSource->getPublicKeyCredentialId(), // binary
+        $credentialSource->getCredentialPublicKey(),   // binary
         $credentialSource->getCounter(),
         $deviceName
     );

@@ -250,21 +250,15 @@ $totalEngagements = count($engagements);
 <!-- Header -->
 
 <script>
-/**
- * Decode a base64url string into a Uint8Array
- */
 function bufferDecode(base64url) {
     const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
     const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/') + padding;
     const str = atob(base64);
     const buf = new Uint8Array(str.length);
     for (let i = 0; i < str.length; i++) buf[i] = str.charCodeAt(i);
-    return buf; // Return Uint8Array (WebAuthn expects this)
+    return buf; // Uint8Array
 }
 
-/**
- * Encode an ArrayBuffer or Uint8Array into base64url
- */
 function bufferEncode(arrayBuffer) {
     const bytes = new Uint8Array(arrayBuffer);
     let str = '';
@@ -274,21 +268,18 @@ function bufferEncode(arrayBuffer) {
 
 async function enableBiometric() {
     if (!window.PublicKeyCredential) {
-        alert('WebAuthn not supported on this browser');
+        alert('WebAuthn not supported');
         return;
     }
 
     try {
-        // 1️⃣ Get registration options from server
         const res = await fetch('../webauthn/register.php');
         const options = await res.json();
         if (options.error) throw new Error(options.error);
 
-        // 2️⃣ Convert challenge & user.id to Uint8Array
         options.challenge = bufferDecode(options.challenge);
         options.user.id = bufferDecode(options.user.id);
 
-        // 3️⃣ Convert excludeCredentials ids to Uint8Array if present
         if (Array.isArray(options.excludeCredentials) && options.excludeCredentials.length > 0) {
             options.excludeCredentials = options.excludeCredentials.map(c => ({
                 type: c.type,
@@ -299,11 +290,9 @@ async function enableBiometric() {
             delete options.excludeCredentials;
         }
 
-        // 4️⃣ Call WebAuthn API to create credential
         const credential = await navigator.credentials.create({ publicKey: options });
         if (!credential) throw new Error('Credential creation failed');
 
-        // 5️⃣ Prepare payload to send back to server
         const payload = {
             id: credential.id,
             type: credential.type,
@@ -314,7 +303,6 @@ async function enableBiometric() {
             }
         };
 
-        // 6️⃣ Send credential to server for verification
         const verifyRes = await fetch('../webauthn/register.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -341,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.addEventListener('click', enableBiometric);
 });
 </script>
+
 
 
 
