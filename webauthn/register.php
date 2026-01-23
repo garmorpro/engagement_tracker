@@ -47,12 +47,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // RP entity
     $rp = new PublicKeyCredentialRpEntity('Engagement Tracker', $_SERVER['HTTP_HOST']);
 
-    // Generate 16-byte user handle (binary)
+    // Generate 16-byte user handle
     $userHandle = random_bytes(16);
     $_SESSION['webauthn_user_handle'] = $userHandle;
 
     $user = new PublicKeyCredentialUserEntity(
-        $userHandle, // binary
+        $userHandle, 
         (string)$userId,
         $account['account_name']
     );
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt->execute();
     $res = $stmt->get_result();
     while ($row = $res->fetch_assoc()) {
-        // Decode from DB if stored as base64, ensure binary
+        // Make sure credential_id is binary for JS
         $binaryId = Base64UrlSafe::decode($row['credential_id']);
         $exclude[] = new PublicKeyCredentialDescriptor(
             PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
@@ -79,15 +79,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     $stmt->close();
 
-    // Generate challenge (binary)
+    // Generate challenge
     $challenge = random_bytes(32);
     $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
 
-    // Encode excludeCredentials for JS (always valid base64url)
-    $excludeCredentials = array_map(fn($cred) => [
-        'type' => 'public-key',
-        'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
-    ], $exclude);
+    // Encode excludeCredentials for JS safely
+    $excludeCredentials = array_map(function($cred) {
+        return [
+            'type' => 'public-key',
+            'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
+        ];
+    }, $exclude);
+
+    // --- DEBUG LOGGING ---
+    error_log("User ID (base64url): " . Base64UrlSafe::encodeUnpadded($userHandle));
+    foreach ($excludeCredentials as $i => $c) {
+        error_log("ExcludeCredential[$i]: " . $c['id']);
+    }
 
     // Build response
     $response = [
@@ -166,8 +174,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param(
         'issis',
         $userId,
-        $credentialSource->getPublicKeyCredentialId(), // binary
-        $credentialSource->getCredentialPublicKey(),   // binary
+        $credentialSource->getPublicKeyCredentialId(),
+        $credentialSource->getCredentialPublicKey(),
         $credentialSource->getCounter(),
         $deviceName
     );
