@@ -32,6 +32,22 @@ body {
     padding: 2rem;
     box-shadow: 0 12px 30px rgba(0,0,0,0.12);
     background: #ffffffee;
+    position: relative;
+}
+
+.card-header-icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.5rem;
+    color: #3b82f6;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.card-header-icon:hover {
+    color: #06b6d4;
+    transform: scale(1.2);
 }
 
 .account-list {
@@ -62,21 +78,6 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.register-btn {
-    background: linear-gradient(to right, #3b82f6, #06b6d4);
-    color: white;
-    font-weight: 600;
-    border-radius: 0.75rem;
-    padding: 0.75rem;
-    transition: all 0.2s ease-in-out;
-    margin-top: 1rem;
-}
-
-.register-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
-
 .pin-popup, .register-popup {
     position: fixed;
     top: 50%; left: 50%;
@@ -97,6 +98,9 @@ body {
         <h4 class="text-center mb-3">Welcome Back</h4>
         <p class="text-center text-muted mb-4">Click an account to sign in</p>
 
+        <!-- Super Admin Register Icon -->
+        <i class="bi bi-person-fill-add card-header-icon" onclick="openAdminPinPopup()" title="Register New Account"></i>
+
         <!-- Account List -->
         <?php if (!empty($accounts)): ?>
             <div class="account-list">
@@ -114,16 +118,10 @@ body {
         <?php else: ?>
             <p class="text-center text-muted">No accounts available</p>
         <?php endif; ?>
-
-        <div class="d-grid">
-            <button type="button" class="register-btn" onclick="openAdminPinPopup()">
-                <i class="bi bi-person-plus-fill me-2"></i>Register New Account
-            </button>
-        </div>
     </div>
 </div>
 
-<!-- PIN & Register Popups -->
+<!-- User PIN Popup -->
 <div class="pin-popup" id="pinPopup">
     <h6 id="popupAccountName" class="text-center mb-3"></h6>
     <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
@@ -135,6 +133,7 @@ body {
     </form>
 </div>
 
+<!-- Super Admin PIN Popup -->
 <div class="pin-popup" id="adminPinPopup">
     <h6 class="text-center mb-3">Enter Super Admin PIN</h6>
     <form id="adminPinForm">
@@ -144,28 +143,18 @@ body {
     </form>
 </div>
 
+<!-- Register Account Popup -->
 <div class="register-popup" id="registerPopup">
     <h6 class="text-center mb-3">Create New Account</h6>
     <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
-        <!-- Name Field -->
-        <div class="mb-3">
-            <label class="form-label">Full Name</label>
-            <input type="text" class="form-control" name="name" placeholder="John Doe" required>
-        </div>
-
-        <!-- Account Name Field -->
         <div class="mb-3">
             <label class="form-label">Account Name</label>
             <input type="text" class="form-control" name="account_name" required>
         </div>
-
-        <!-- PIN Field -->
         <div class="mb-3">
             <label class="form-label">4-digit PIN</label>
             <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center" name="passcode" required>
         </div>
-
-        <!-- Role Field -->
         <div class="mb-3">
             <label class="form-label">Role</label>
             <select class="form-select" name="role" required>
@@ -173,13 +162,11 @@ body {
                 <option value="admin">Admin</option>
             </select>
         </div>
-
         <div class="d-grid">
             <button type="submit" class="btn btn-success">Create Account</button>
         </div>
     </form>
 </div>
-
 
 <script>
 // --- Popup Logic ---
