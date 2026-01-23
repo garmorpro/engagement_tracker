@@ -250,7 +250,7 @@ $totalEngagements = count($engagements);
 <!-- Header -->
 
 <script>
-function bufferDecode(base64url) {
+    function bufferDecode(base64url) {
     const padding = '='.repeat((4 - (base64url.length % 4)) % 4);
     const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/') + padding;
     const str = atob(base64);
@@ -273,16 +273,17 @@ async function enableBiometric() {
     }
 
     try {
+        // 1️⃣ Get registration options
         const res = await fetch('../webauthn/register.php');
         const options = await res.json();
         if (options.error) throw new Error(options.error);
 
-        // Decode challenge and user ID
+        // 2️⃣ Convert challenge & user.id
         options.challenge = bufferDecode(options.challenge);
         options.user.id = bufferDecode(options.user.id);
 
-        // Only include excludeCredentials if not empty
-        if (options.excludeCredentials && options.excludeCredentials.length) {
+        // 3️⃣ Only include excludeCredentials if non-empty
+        if (Array.isArray(options.excludeCredentials) && options.excludeCredentials.length > 0) {
             options.excludeCredentials = options.excludeCredentials.map(c => ({
                 type: c.type,
                 id: bufferDecode(c.id),
@@ -292,11 +293,11 @@ async function enableBiometric() {
             delete options.excludeCredentials;
         }
 
-        // Call WebAuthn
+        // 4️⃣ Call WebAuthn API
         const credential = await navigator.credentials.create({ publicKey: options });
         if (!credential) throw new Error('Credential creation failed');
 
-        // Send to server
+        // 5️⃣ Prepare payload for server
         const payload = {
             id: credential.id,
             type: credential.type,
@@ -307,6 +308,7 @@ async function enableBiometric() {
             }
         };
 
+        // 6️⃣ Send to server
         const verifyRes = await fetch('../webauthn/register.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -328,13 +330,12 @@ async function enableBiometric() {
     }
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('enableBiometricBtn');
     if (btn) btn.addEventListener('click', enableBiometric);
 });
-</script>
 
+</script>
 
 
   
