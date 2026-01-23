@@ -3,7 +3,7 @@ require_once 'includes/functions.php';
 require_once 'path.php';
 require_once 'includes/init.php';
 
-// Fetch all active biometric accounts and check if biometrics exist
+// Fetch all active accounts and check if biometrics exist
 $result = $conn->query("
     SELECT ba.id, ba.user_uuid, ba.account_name,
            COUNT(wc.id) AS has_biometrics
@@ -24,10 +24,10 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body style="background-color: rgba(216, 216, 216, 1);">
+<body style="background-color: #d8d8d8;">
 <div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
     <div class="card p-3 shadow" style="width: 100%; max-width: 425px;">
-        <h5 class="text-center mb-2">Welcome Back</h5>
+        <h5 class="text-center mb-2">Welcome</h5>
         <p class="text-center text-muted mb-3">
             Click an account to sign in with biometrics
         </p>
@@ -63,10 +63,9 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         </div>
 
         <!-- Biometric Registration Form -->
-        <form id="biometricForm" class="p-4 d-none" method="POST" action="<?= BASE_URL ?>/auth/login.php">
+        <form id="biometricForm" class="p-4 d-none" method="POST" action="<?= BASE_URL ?>/auth/register.php">
             <input type="hidden" name="user_uuid" id="loginUserUuid">
-            <input type="hidden" name="enable_biometrics" id="enableBiometricsFlag" value="1">
-            <input type="hidden" name="is_register" id="isRegisterFlag" value="0">
+            <input type="hidden" name="is_register" id="isRegisterFlag" value="1">
 
             <div class="mb-3">
                 <label class="form-label">Account name (optional)</label>
@@ -74,7 +73,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             </div>
 
             <div class="d-grid">
-                <button type="submit" class="btn" style="background-color: rgb(23,62,70); color: white;">
+                <button type="submit" class="btn btn-dark">
                     Continue
                 </button>
             </div>
@@ -83,10 +82,9 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 </div>
 
 <script>
-// Handle click on existing account
 async function handleAccountClick(btn) {
     const userUUID = btn.dataset.userUuid;
-    const hasBiometrics = parseInt(btn.dataset.hasBiometrics, 10);
+    const hasBiometrics = parseInt(btn.dataset.hasBiometrics);
     const accountName = btn.dataset.accountName;
 
     if (hasBiometrics) {
@@ -96,29 +94,24 @@ async function handleAccountClick(btn) {
     }
 }
 
-// Show registration form
 function showRegisterForm(accountName = '', userUUID = '') {
-    const form = document.getElementById('biometricForm');
-    form.classList.remove('d-none');
+    document.getElementById('biometricForm').classList.remove('d-none');
     document.getElementById('loginAccountName').value = accountName;
-    document.getElementById('loginUserUuid').value = userUUID;
-    document.getElementById('enableBiometricsFlag').value = '1';
-    document.getElementById('isRegisterFlag').value = userUUID ? '0' : '1';
+    document.getElementById('loginUserUuid').value = userUUID || '';
 }
 
-// Biometric login for existing credentials
 async function biometricLogin(userUUID) {
     try {
-        const res = await fetch(`/webauthn/options.php?user_uuid=${userUUID}`);
+        const res = await fetch(`/auth/options.php?user_uuid=${userUUID}`);
         const options = await res.json();
-        if (options.error) return showRegisterForm(options.accountName, userUUID);
+        if (options.error) return alert('No biometric credentials found.');
 
         // Convert challenge & user ID to ArrayBuffer
         options.challenge = Uint8Array.from(atob(options.challenge.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
         options.user.id = Uint8Array.from(atob(options.user.id.replace(/-/g,'+').replace(/_/g,'/')), c => c.charCodeAt(0));
 
-        if (options.excludeCredentials) {
-            options.excludeCredentials = options.excludeCredentials.map(c => ({
+        if (options.allowCredentials) {
+            options.allowCredentials = options.allowCredentials.map(c => ({
                 ...c,
                 id: Uint8Array.from(atob(c.id.replace(/-/g,'+').replace(/_/g,'/')), d => d.charCodeAt(0))
             }));
@@ -138,7 +131,7 @@ async function biometricLogin(userUUID) {
             }
         };
 
-        const verifyRes = await fetch('/webauthn/verify.php', {
+        const verifyRes = await fetch('/auth/verify.php', {
             method: 'POST',
             headers: {'Content-Type':'application/json'},
             body: JSON.stringify(payload)
