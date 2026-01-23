@@ -20,42 +20,27 @@ use ParagonIE\ConstantTime\Base64UrlSafe;
 header('Content-Type: application/json');
 session_start();
 
-// Ensure the user is logged in
-if (empty($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['error' => 'Unauthorized']);
-    exit;
-}
-
-$userId = (int) $_SESSION['user_id'];
-
 // ----------- STEP 1: SEND REGISTRATION OPTIONS -----------
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    // Fetch the user account
-    $stmt = $conn->prepare("SELECT account_name FROM service_accounts WHERE user_id = ?");
-    $stmt->bind_param('i', $userId);
-    $stmt->execute();
-    $account = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
+    // Get optional account name from query
+    $accountName = $_GET['account_name'] ?? 'Unnamed Account';
 
-    if (!$account) {
-        http_response_code(400);
-        echo json_encode(['error' => 'User not found']);
-        exit;
-    }
+    // Generate a new UUID for the account if registering
+    $userUUID = bin2hex(random_bytes(16));
+    $_SESSION['webauthn_user_uuid'] = $userUUID;
 
     // RP entity
     $rp = new PublicKeyCredentialRpEntity('Engagement Tracker', $_SERVER['HTTP_HOST']);
 
-    // Generate a 16-byte user handle
+    // User handle = 16 bytes
     $userHandle = random_bytes(16);
     $_SESSION['webauthn_user_handle'] = $userHandle;
 
     $user = new PublicKeyCredentialUserEntity(
         $userHandle,
-        (string)$userId,
-        $account['account_name']
+        $userUUID,
+        $accountName
     );
 
     // Supported algorithms
@@ -64,40 +49,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         new PublicKeyCredentialParameters('public-key', -257)  // RS256
     ];
 
-    // Exclude already registered credentials
-    $exclude = [];
-    $stmt = $conn->prepare("SELECT credential_id FROM webauthn_credentials WHERE user_id = ?");
-    $stmt->bind_param('i', $userId);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    while ($row = $res->fetch_assoc()) {
-        $binaryId = Base64UrlSafe::decode($row['credential_id']);
-        $exclude[] = new PublicKeyCredentialDescriptor(
-            PublicKeyCredentialDescriptor::CREDENTIAL_TYPE_PUBLIC_KEY,
-            $binaryId
-        );
-    }
-    $stmt->close();
+    // No excludeCredentials for new user
+    $excludeCredentials = [];
 
     // Generate challenge
     $challenge = random_bytes(32);
     $_SESSION['webauthn_registration'] = ['challenge' => $challenge, 'time' => time()];
 
-    // Encode excludeCredentials for JS
-    $excludeCredentials = array_map(function($cred) {
-        return [
-            'type' => 'public-key',
-            'id' => Base64UrlSafe::encodeUnpadded($cred->getId())
-        ];
-    }, $exclude);
-
-    // Build response
+    // Build response for browser
     $response = [
-        'rp' => ['name' => 'Engagement Tracker', 'id' => $_SERVER['HTTP_HOST']],
+        'rp' => ['name' => $rp->getName(), 'id' => $rp->getId()],
         'user' => [
             'id' => Base64UrlSafe::encodeUnpadded($userHandle),
-            'name' => $account['account_name'],
-            'displayName' => $account['account_name']
+            'name' => $accountName,
+            'displayName' => $accountName
         ],
         'challenge' => Base64UrlSafe::encodeUnpadded($challenge),
         'pubKeyCredParams' => [
@@ -105,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             ['type' => 'public-key', 'alg' => -257]
         ],
         'timeout' => 60000,
-        'excludeCredentials' => $excludeCredentials,
+        'excludeCredentials' => [],
         'authenticatorSelection' => [
             'authenticatorAttachment' => 'platform',
             'userVerification' => 'required'
@@ -120,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 // ----------- STEP 2: VERIFY & STORE REGISTRATION -----------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    if (empty($_SESSION['webauthn_registration']) || empty($_SESSION['webauthn_user_handle'])) {
+    if (empty($_SESSION['webauthn_registration']) || empty($_SESSION['webauthn_user_handle']) || empty($_SESSION['webauthn_user_uuid'])) {
         http_response_code(400);
         echo json_encode(['error' => 'Missing registration challenge']);
         exit;
@@ -128,7 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $challenge = $_SESSION['webauthn_registration']['challenge'];
     $userHandle = $_SESSION['webauthn_user_handle'];
-    unset($_SESSION['webauthn_registration'], $_SESSION['webauthn_user_handle']);
+    $userUUID = $_SESSION['webauthn_user_uuid'];
+
+    unset($_SESSION['webauthn_registration'], $_SESSION['webauthn_user_handle'], $_SESSION['webauthn_user_uuid']);
 
     $data = json_decode(file_get_contents('php://input'), true);
     if (!$data) {
@@ -164,25 +131,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Save credential to DB
+    // Optional account name from POST
+    $accountName = $_POST['account_name'] ?? 'Unnamed Account';
+
+    // Insert account into biometric_accounts
     $stmt = $conn->prepare("
-        INSERT INTO webauthn_credentials
-            (user_id, credential_id, public_key, sign_count, device_name)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO biometric_accounts (user_uuid, account_name)
+        VALUES (?, ?)
     ");
-    $deviceName = $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown device';
-    $stmt->bind_param(
-        'issis',
-        $userId,
-        $credentialSource->getPublicKeyCredentialId(),
-        $credentialSource->getCredentialPublicKey(),
-        $credentialSource->getCounter(),
-        $deviceName
-    );
+    $stmt->bind_param('ss', $userUUID, $accountName);
     $stmt->execute();
     $stmt->close();
 
-    echo json_encode(['success' => true]);
+    // Insert credential
+    $stmt = $conn->prepare("
+        INSERT INTO webauthn_credentials (user_uuid, credential_id, public_key, sign_count)
+        VALUES (?, ?, ?, ?)
+    ");
+    $credId = Base64UrlSafe::encodeUnpadded($credentialSource->getPublicKeyCredentialId());
+    $publicKey = $credentialSource->getCredentialPublicKey();
+    $signCount = $credentialSource->getCounter();
+    $stmt->bind_param('sssi', $userUUID, $credId, $publicKey, $signCount);
+    $stmt->execute();
+    $stmt->close();
+
+    echo json_encode(['success' => true, 'user_uuid' => $userUUID]);
     exit;
 }
 
