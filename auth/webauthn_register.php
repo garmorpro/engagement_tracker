@@ -18,7 +18,7 @@ function base64url_encode($data) {
 
 $options = [
     'challenge' => base64url_encode($challenge),
-    'rp' => ['name' => 'Engagement Tracker', 'id' => 'et.morganserver.com'],
+    'rp' => ['name' => 'Engagement Tracker', 'id' => 'morganserver.com'],
     'user' => [
         'id' => base64url_encode($user_id),
         'name' => $username,
