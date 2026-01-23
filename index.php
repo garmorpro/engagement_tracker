@@ -32,27 +32,40 @@ async function register() {
     console.log('▶ Starting registration');
 
     if (!window.isSecureContext) {
-        alert('WebAuthn requires HTTPS');
+        alert('WebAuthn requires HTTPS or localhost');
         return;
     }
 
-    const res = await fetch('/auth/webauthn_register.php', {
-        headers: { 'Accept': 'application/json' }
-    });
+    // Fetch registration options from server
+    let res;
+    try {
+        res = await fetch('/auth/webauthn_register.php', { headers: { 'Accept': 'application/json' } });
+    } catch (err) {
+        console.error('❌ Failed to fetch register options:', err);
+        alert('Could not fetch registration options');
+        return;
+    }
 
-    const options = await res.json();
+    let options;
+    try {
+        options = await res.json();
+    } catch (err) {
+        console.error('❌ Invalid JSON from register options:', err);
+        alert('Server returned invalid JSON');
+        return;
+    }
+
     console.log('📦 Register options from server:', options);
 
+    // Convert challenge & user.id to ArrayBuffer
     options.challenge = b64ToBuf(options.challenge);
     options.user.id = b64ToBuf(options.user.id);
 
     let cred;
     try {
-        cred = await navigator.credentials.create({
-            publicKey: options
-        });
+        cred = await navigator.credentials.create({ publicKey: options });
     } catch (err) {
-        console.error('❌ Registration failed:', err);
+        console.error('❌ Credential creation failed:', err);
         alert(err.message);
         return;
     }
@@ -61,26 +74,39 @@ async function register() {
 
     const payload = {
         rawId: bufToB64(new Uint8Array(cred.rawId)),
-        attestationObject: bufToB64(
-            new Uint8Array(cred.response.attestationObject)
-        )
+        attestationObject: bufToB64(new Uint8Array(cred.response.attestationObject))
     };
 
     console.log('📤 Sending registration payload:', payload);
 
-    const save = await fetch('/auth/webauthn_register_save.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
+    let save;
+    try {
+        save = await fetch('/auth/webauthn_register_save.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    } catch (err) {
+        console.error('❌ Failed to send registration payload:', err);
+        alert('Could not send registration data to server');
+        return;
+    }
 
-    const result = await save.json();
+    let result;
+    try {
+        result = await save.json();
+    } catch (err) {
+        console.error('❌ Invalid JSON from registration save:', err);
+        alert('Server returned invalid JSON on registration save');
+        return;
+    }
+
     console.log('📥 Registration save response:', result);
 
     if (result.success) {
         alert('Fingerprint registered successfully');
     } else {
-        alert('Registration failed');
+        alert('Registration failed: ' + (result.error || 'Unknown error'));
     }
 }
 
@@ -90,26 +116,53 @@ async function register() {
 async function login() {
     console.log('▶ Starting login');
 
-    const res = await fetch('/auth/webauthn_login_options.php', {
-        headers: { 'Accept': 'application/json' }
-    });
+    // Fetch login options
+    let res;
+    try {
+        res = await fetch('/auth/webauthn_login_options.php', { headers: { 'Accept': 'application/json' } });
+    } catch (err) {
+        console.error('❌ Failed to fetch login options:', err);
+        alert('Could not fetch login options');
+        return;
+    }
 
-    const options = await res.json();
-    console.log('📦 Login options from server:', options);
+    let optionsText;
+    try {
+        optionsText = await res.text();
+        console.log('📦 Raw login options response:', optionsText);
+    } catch (err) {
+        console.error('❌ Failed to read login options text:', err);
+        return;
+    }
 
+    let options;
+    try {
+        options = JSON.parse(optionsText);
+    } catch (err) {
+        console.error('❌ Invalid JSON from login options:', err);
+        alert('Server returned invalid JSON for login');
+        return;
+    }
+
+    if (options.error) {
+        alert('Login error: ' + options.error);
+        return;
+    }
+
+    // Convert challenge & credential IDs
     options.challenge = b64ToBuf(options.challenge);
-    options.allowCredentials = options.allowCredentials.map(c => ({
-        ...c,
-        id: b64ToBuf(c.id)
-    }));
+    if (options.allowCredentials) {
+        options.allowCredentials = options.allowCredentials.map(c => ({
+            ...c,
+            id: b64ToBuf(c.id)
+        }));
+    }
 
     let assertion;
     try {
-        assertion = await navigator.credentials.get({
-            publicKey: options
-        });
+        assertion = await navigator.credentials.get({ publicKey: options });
     } catch (err) {
-        console.error('❌ Login failed:', err);
+        console.error('❌ Assertion failed:', err);
         alert(err.message);
         return;
     }
@@ -127,19 +180,35 @@ async function login() {
 
     console.log('📤 Sending login payload:', payload);
 
-    const verify = await fetch('/auth/webauthn_login_verify.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-    });
+    let verify;
+    try {
+        verify = await fetch('/auth/webauthn_login_verify.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    } catch (err) {
+        console.error('❌ Failed to send login payload:', err);
+        alert('Could not verify login');
+        return;
+    }
 
-    const result = await verify.json();
-    console.log('📥 Login verify response:', result);
+    let result;
+    try {
+        const text = await verify.text();
+        console.log('📥 Login verify response (raw):', text);
+        result = JSON.parse(text);
+    } catch (err) {
+        console.error('❌ Invalid JSON from login verify:', err);
+        alert('Server returned invalid JSON during login');
+        return;
+    }
 
     if (result.success) {
+        alert('Login successful');
         location.href = '/pages/dashboard.php';
     } else {
-        alert('Login failed');
+        alert('Login failed: ' + (result.error || 'Unknown error'));
     }
 }
 </script>

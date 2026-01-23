@@ -1,27 +1,33 @@
 <?php
 session_start();
-require '../includes/db.php';
+header('Content-Type: application/json');
 
-function b64url($data) {
-    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+require_once '../includes/init.php';
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// Fetch ONE credential
+$result = $conn->query("SELECT credential_id FROM webauthn_credentials LIMIT 1");
+$row = $result->fetch_assoc();
+
+if (!$row) {
+    echo json_encode(['error' => 'No credentials registered']);
+    exit;
 }
 
+// Generate challenge
 $challenge = random_bytes(32);
-$_SESSION['webauthn_challenge'] = $challenge;
 
-$res = $db->query("SELECT credential_id FROM webauthn_credentials");
-
-$allow = [];
-while ($row = $res->fetch_assoc()) {
-    $allow[] = [
-        'type' => 'public-key',
-        'id' => b64url($row['credential_id'])
-    ];
-}
+// Store challenge for later verification
+$_SESSION['webauthn_login_challenge'] = base64_encode($challenge);
 
 echo json_encode([
-    'challenge' => b64url($challenge),
-    'rpId' => $_SERVER['HTTP_HOST'],
-    'allowCredentials' => $allow,
-    'userVerification' => 'preferred'
+    'challenge' => rtrim(strtr(base64_encode($challenge), '+/', '-_'), '='),
+    'timeout' => 60000,
+    'rpId' => $_SERVER['SERVER_NAME'],
+    'allowCredentials' => [[
+        'type' => 'public-key',
+        'id' => $row['credential_id'],
+    ]],
+    'userVerification' => 'required'
 ]);
