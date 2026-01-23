@@ -267,16 +267,21 @@ function bufferEncode(arrayBuffer) {
 }
 
 async function enableBiometric() {
-    if (!window.PublicKeyCredential) return alert('WebAuthn not supported');
+    if (!window.PublicKeyCredential) {
+        alert('WebAuthn not supported');
+        return;
+    }
 
     try {
         const res = await fetch('../webauthn/register.php');
         const options = await res.json();
         if (options.error) throw new Error(options.error);
 
+        // Decode challenge and user ID
         options.challenge = bufferDecode(options.challenge);
         options.user.id = bufferDecode(options.user.id);
 
+        // Decode excludeCredentials
         if (Array.isArray(options.excludeCredentials)) {
             options.excludeCredentials = options.excludeCredentials.map(c => ({
                 type: c.type,
@@ -287,6 +292,7 @@ async function enableBiometric() {
 
         const credential = await navigator.credentials.create({ publicKey: options });
 
+        // Prepare payload for server
         const payload = {
             id: credential.id,
             type: credential.type,
@@ -306,10 +312,12 @@ async function enableBiometric() {
         const result = await verifyRes.json();
         if (result.success) {
             alert('Biometric login enabled!');
-            document.getElementById('enableBiometricBtn').style.display = 'none';
+            const btn = document.getElementById('enableBiometricBtn');
+            if (btn) btn.style.display = 'none';
         } else {
             alert('Failed: ' + (result.error || 'Unknown'));
         }
+
     } catch (err) {
         console.error(err);
         alert('Biometric registration failed or is not supported on this device.');
