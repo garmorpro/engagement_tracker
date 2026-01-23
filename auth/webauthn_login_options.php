@@ -3,21 +3,21 @@
 // WebAuthn Login Options Endpoint
 // ============================================
 
-// Silence all warnings/notices so JSON is clean
+// Silence warnings to keep JSON clean
 error_reporting(E_ERROR);
 ini_set('display_errors', 0);
 
-// Only start session if none exists
+// Start session if not already
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Set JSON header
+// JSON header
 header('Content-Type: application/json');
 
 require_once '../includes/db.php'; // DB connection
 
-// Fetch ONE credential for demo (replace with proper user lookup)
+// Fetch ONE credential for demo
 $result = $conn->query("SELECT credential_id FROM webauthn_credentials LIMIT 1");
 $row = $result->fetch_assoc();
 
@@ -26,35 +26,35 @@ if (!$row) {
     exit;
 }
 
-// Generate random challenge
+// Generate a random challenge
 $challenge = random_bytes(32);
 
-// Store challenge for later verification
+// Store challenge for verification
 $_SESSION['webauthn_login_challenge'] = base64_encode($challenge);
 
-// Convert credential_id to base64url for WebAuthn
+// Convert base64 to base64url
 function base64url_encode($data) {
     return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
 }
 
+// Convert credential_id to base64url
 $credentialId = $row['credential_id'];
-$credentialIdB64Url = base64url_encode(base64_decode($credentialId)); 
-// decode first if stored as regular base64 in DB
+$credentialIdB64Url = base64url_encode(base64_decode($credentialId)); // decode if stored as base64
 
-// Build login options
+// Build login options for Face ID / Fingerprint only
 $options = [
-    'challenge' => rtrim(strtr(base64_encode($challenge), '+/', '-_'), '='),
+    'challenge' => base64url_encode($challenge),
     'timeout' => 60000,
     'rpId' => $_SERVER['SERVER_NAME'],
     'allowCredentials' => [[
         'type' => 'public-key',
         'id' => $credentialIdB64Url,
-        'transports' => ['internal'] // platform authenticator
+        'transports' => ['internal'] // 🔹 platform authenticator only
     ]],
-    'userVerification' => 'required'
+    'userVerification' => 'required' // 🔹 forces biometric verification
 ];
 
-// Ensure no accidental output breaks JSON
+// Clean any prior output
 ob_clean();
 echo json_encode($options);
 exit;
