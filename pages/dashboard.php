@@ -251,61 +251,67 @@ $totalEngagements = count($engagements);
 
 <script>
     // Convert Base64URL string to ArrayBuffer
-function bufferDecode(base64url) {
-    // Add padding
-    let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-    while (base64.length % 4) base64 += '=';
-    // Decode to binary
-    const str = atob(base64);
-    const buf = new Uint8Array(str.length);
-    for (let i = 0; i < str.length; i++) {
-        buf[i] = str.charCodeAt(i);
+    function bufferDecode(base64url) {
+        let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+        while (base64.length % 4) base64 += '=';
+        const str = atob(base64);
+        const buf = new Uint8Array(str.length);
+        for (let i = 0; i < str.length; i++) buf[i] = str.charCodeAt(i);
+        return buf.buffer; // Must return ArrayBuffer for WebAuthn
     }
-    return buf.buffer; // Return ArrayBuffer
-}
 
-async function enableBiometric() {
-    try {
-        const res = await fetch('../webauthn/register.php');
-        const options = await res.json();
+    async function enableBiometric() {
+        try {
+            const res = await fetch('/webauthn/register.php');
+            const options = await res.json();
 
-        if (options.error) throw new Error(options.error);
+            if (options.error) throw new Error(options.error);
 
-        // Convert challenge and user.id
-        options.challenge = bufferDecode(options.challenge);
-        options.user.id = bufferDecode(options.user.id);
+            // Convert challenge and user.id to ArrayBuffer
+            options.challenge = bufferDecode(options.challenge);
+            options.user.id = bufferDecode(options.user.id);
 
-        // Convert excludeCredentials
-        if (options.excludeCredentials) {
-            options.excludeCredentials = options.excludeCredentials.map(c => ({
-                ...c,
-                id: bufferDecode(c.id)
-            }));
+            // Convert excludeCredentials
+            if (options.excludeCredentials) {
+                options.excludeCredentials = options.excludeCredentials.map(c => ({
+                    ...c,
+                    id: bufferDecode(c.id)
+                }));
+            }
+
+            // Call WebAuthn API
+            const credential = await navigator.credentials.create({ publicKey: options });
+
+            // Send credential to server
+            const verifyRes = await fetch('/webauthn/register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(credential)
+            });
+
+            const result = await verifyRes.json();
+            if (result.success) {
+                alert('Biometric login enabled!');
+                // Optional: hide the button after successful registration
+                const btn = document.getElementById('enableBiometricBtn');
+                if (btn) btn.style.display = 'none';
+            } else {
+                alert('Failed to enable biometrics.');
+            }
+
+        } catch (err) {
+            console.error(err);
+            alert('Biometric registration failed or is not supported on this device.');
         }
-
-        // Call WebAuthn API
-        const credential = await navigator.credentials.create({ publicKey: options });
-
-        // Send to server
-        const verifyRes = await fetch('../webauthn/register.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(credential)
-        });
-
-        const result = await verifyRes.json();
-        if (result.success) {
-            alert('Biometric login enabled!');
-        } else {
-            alert('Failed to enable biometrics.');
-        }
-
-    } catch (err) {
-        console.error(err);
-        alert('Biometric registration failed or is not supported on this device.');
     }
-}
 
+    // Attach click handler to button
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('enableBiometricBtn');
+        if (btn) {
+            btn.addEventListener('click', enableBiometric);
+        }
+    });
 </script>
 
   
