@@ -46,11 +46,11 @@ $options = [
     'challenge' => base64url_encode($challenge),
     'timeout' => 60000,
     'rpId' => $_SERVER['SERVER_NAME'],
-    'allowCredentials' => [[
-        'type' => 'public-key',
-        'id' => $credentialIdB64Url,
-        'transports' => ['internal'] // 🔹 platform authenticator only
-    ]],
+    // 'allowCredentials' => [[
+    //     'type' => 'public-key',
+    //     'id' => $credentialIdB64Url,
+    //     'transports' => ['internal'] // 🔹 platform authenticator only
+    // ]],
     'userVerification' => 'required' // 🔹 forces biometric verification
 ];
 
