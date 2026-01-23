@@ -118,7 +118,8 @@ async function startRegistration(){
     const verify = await fetch('/auth/register.php',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
+        credentials: 'same-origin'
     });
     const result = await verify.json();
     if(result.success) location.reload();
@@ -153,7 +154,7 @@ async function loginBiometric(uuid){
     const verify = await fetch('/auth/verify.php',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
     });
     const result = await verify.json();
     if(result.success) window.location.href='/pages/dashboard.php';
