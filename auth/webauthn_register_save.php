@@ -10,9 +10,19 @@ if (!$input) exit(json_encode(['success'=>false, 'error'=>'No input']));
 $rawId = $input['rawId']; // base64url
 $attestationObject = $input['attestationObject'];
 
-$stmt = $conn->prepare("INSERT INTO webauthn_credentials (credential_id, attestation) VALUES (?, ?)");
+// Prepare statement
+$stmt = $conn->prepare("INSERT INTO webauthn_credentials (credential_id, public_key) VALUES (?, ?)");
+if (!$stmt) {
+    echo json_encode(['success'=>false, 'error'=>$conn->error]);
+    exit;
+}
 $stmt->bind_param('ss', $rawId, $attestationObject);
-$stmt->execute();
+
+if (!$stmt->execute()) {
+    echo json_encode(['success'=>false, 'error'=>$stmt->error]);
+    exit;
+}
+
 $stmt->close();
 
 echo json_encode(['success'=>true]);
