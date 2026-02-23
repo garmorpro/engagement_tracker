@@ -79,7 +79,7 @@ $stmt = $conn->prepare("
     SELECT *
     FROM engagement_team
     WHERE eng_id = ?
-    ORDER BY FIELD(role, 'Manager', 'Senior', 'Staff'), emp_name
+    ORDER BY FIELD(role, 'Manager', 'Senior', 'Staff')
 ");
 $stmt->bind_param("i", $eng_id);
 $stmt->execute();
