@@ -252,7 +252,7 @@ document.querySelectorAll('.delete-team-member').forEach(btn => {
   // ===============================
   function getNextIndex(container) {
     const cards = container.querySelectorAll('.card');
-    return cards.length < 2 ? cards.length + 1 : null;
+    return cards.length < 5 ? cards.length + 1 : null; // I changed to 5 (2/23/26)
   }
 
   function updateButtons() {
