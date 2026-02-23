@@ -186,9 +186,9 @@ document.querySelectorAll('.delete-team-member').forEach(btn => {
 
   // SORT: seniors first, then staff
   members.sort((a, b) => {
-    if (a.type === b.type) return a.name.localeCompare(b.name); // optional: alphabetically
-    return a.type === 'senior' ? -1 : 1;
-  });
+  if (a.type === b.type) return 0;  // keep original order
+  return a.type === 'senior' ? -1 : 1;
+});
 
   if (!members.length) {
     modalBody.innerHTML += `<div class="text-muted">No team members found.</div>`;
