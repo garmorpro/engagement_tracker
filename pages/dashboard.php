@@ -331,15 +331,15 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             background: rgba(68, 135, 252, 0.02);
         }
 
-        .view-toggle {
+        /* .view-toggle {
             display: flex;
             gap: 0.25rem;
             background: var(--gray-100);
             padding: 0.25rem;
             border-radius: 8px;
-        }
+        } */
 
-        .view-btn {
+        /* .view-btn {
             width: 36px;
             height: 36px;
             border: none;
@@ -358,7 +358,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             background: white;
             color: var(--primary-blue);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
+        } */
 
         .action-buttons {
             display: flex;
@@ -688,14 +688,14 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         </div>
 
         <div class="action-buttons">
-            <div class="view-toggle">
+            <!-- <div class="view-toggle">
                 <button class="view-btn active" title="List view">
                     <i class="bi bi-list-ul"></i>
                 </button>
                 <button class="view-btn" title="Grid view">
                     <i class="bi bi-grid-3x3-gap"></i>
                 </button>
-            </div>
+            </div> -->
             <button class="btn-new-engagement">
                 <i class="bi bi-plus"></i> New Engagement
             </button>
