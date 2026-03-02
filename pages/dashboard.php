@@ -284,7 +284,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         .search-input-wrapper {
             position: relative;
-            width: 280px;
+            width: 350px;
         }
 
         .search-input {
