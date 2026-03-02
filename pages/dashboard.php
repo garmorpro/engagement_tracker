@@ -273,6 +273,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             gap: 1rem;
             margin-bottom: 2rem;
             align-items: center;
+            max-width: 65%;
         }
 
         .search-input-wrapper {
