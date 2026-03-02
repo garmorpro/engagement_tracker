@@ -21,7 +21,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
     <title>Dashboard - Engagement Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>"> -->
+    <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>">
     <style>
         :root {
             --primary-blue: #4487FC;
@@ -184,7 +184,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         /* ========== MAIN CONTENT ========== */
         .main-container {
             padding: 2rem;
-            /* max-width: 1400px; */
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -273,17 +273,23 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             gap: 1rem;
             margin-bottom: 2rem;
             align-items: center;
-            max-width: 65%;
+            justify-content: space-between;
+        }
+
+        .search-filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
 
         .search-input-wrapper {
-            flex: 1;
             position: relative;
+            width: 280px;
         }
 
         .search-input {
             width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            padding: 0.65rem 1rem 0.65rem 2.5rem;
             border: 1px solid var(--gray-200);
             border-radius: 10px;
             font-size: 14px;
@@ -357,6 +363,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         .action-buttons {
             display: flex;
             gap: 0.75rem;
+            align-items: center;
         }
 
         .btn-new-engagement {
@@ -547,10 +554,20 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
             .search-bar-section {
                 flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-filter-group {
+                flex-direction: column;
+            }
+
+            .search-input-wrapper {
+                width: 100%;
             }
 
             .action-buttons {
                 width: 100%;
+                justify-content: flex-start;
             }
 
             .btn-new-engagement {
@@ -660,22 +677,25 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
     <!-- SEARCH & FILTERS -->
     <div class="search-bar-section">
-        <div class="search-input-wrapper">
-            <i class="bi bi-search search-icon"></i>
-            <input type="text" class="search-input" placeholder="Search engagements...">
-        </div>
-        <button class="filter-btn">
-            <i class="bi bi-funnel"></i> Filters
-        </button>
-        <div class="view-toggle">
-            <button class="view-btn active" title="List view">
-                <i class="bi bi-list-ul"></i>
-            </button>
-            <button class="view-btn" title="Grid view">
-                <i class="bi bi-grid-3x3-gap"></i>
+        <div class="search-filter-group">
+            <div class="search-input-wrapper">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search...">
+            </div>
+            <button class="filter-btn">
+                <i class="bi bi-funnel"></i> Filters
             </button>
         </div>
+
         <div class="action-buttons">
+            <div class="view-toggle">
+                <button class="view-btn active" title="List view">
+                    <i class="bi bi-list-ul"></i>
+                </button>
+                <button class="view-btn" title="Grid view">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                </button>
+            </div>
             <button class="btn-new-engagement">
                 <i class="bi bi-plus"></i> New Engagement
             </button>
