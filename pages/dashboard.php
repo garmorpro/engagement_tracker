@@ -184,7 +184,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         /* ========== MAIN CONTENT ========== */
         .main-container {
             padding: 2rem;
-            max-width: 1400px;
+            /* max-width: 1400px; */
             margin: 0 auto;
         }
 
