@@ -21,7 +21,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
     <title>Dashboard - Engagement Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>">
+    <!-- <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>"> -->
     <style>
         :root {
             --primary-blue: #4487FC;
