@@ -609,7 +609,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             </button>
             <button class="icon-btn" title="Notifications">
                 <i class="bi bi-bell"></i>
-                <div class="notification-badge">2</div>
+                <!-- <div class="notification-badge">2</div> -->
             </button>
             <button class="icon-btn" title="Settings">
                 <i class="bi bi-gear"></i>
