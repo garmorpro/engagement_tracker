@@ -858,8 +858,8 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
                             <?php echo $initials; ?>
                         </div>
                         <div class="profile-dropdown-info">
-                            <div class="profile-dropdown-name">John Doe</div>
-                            <div class="profile-dropdown-email">john.doe@company.com</div>
+                            <div class="profile-dropdown-name"><?php echo $_SESSION['name'] ?? 'User'; ?></div>
+                            <div class="profile-dropdown-email"><?php echo $_SESSION['email'] ?? 'user@company.com'; ?></div>
                         </div>
                     </div>
 
