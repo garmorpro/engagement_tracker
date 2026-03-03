@@ -110,7 +110,7 @@ if (!$engagement) {
             color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             transition: all 0.2s;
         }
 
