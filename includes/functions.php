@@ -10,10 +10,6 @@ require_once 'db.php';
 
 function logoutUser($conn)
 {
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        return;
-    }
-
     if (!empty($_SESSION['account_name'])) {
         $accountName = $_SESSION['account_name'];
 
