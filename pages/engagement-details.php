@@ -691,6 +691,9 @@ if (!$engagement) {
         </div>
     </div>
 
+    <hr>
+    
+
     <!-- Dark Mode Button -->
     <button class="dark-mode-btn" id="darkModeBtn" title="Toggle dark mode">
         <i class="bi bi-moon"></i>
