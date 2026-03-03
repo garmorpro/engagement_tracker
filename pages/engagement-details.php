@@ -106,7 +106,7 @@ if (!$engagement) {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding-top: 1.5rem;
+            padding-top: 1rem;
             color: var(--text-secondary);
             text-decoration: none;
             font-size: 14px;
