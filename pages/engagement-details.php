@@ -338,10 +338,10 @@ if (!$engagement) {
                 box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.7);
             }
             70% {
-                box-shadow: 0 0 0 10px rgba(201, 0, 18, 0.7);
+                box-shadow: 0 0 0 6px rgba(201, 0, 18, 0.7);
             }
             100% {
-                box-shadow: 0 0 0 0px rgba(201, 0, 18, 0.7);
+                box-shadow: 0 0 0 2px rgba(201, 0, 18, 0.7);
             }
         }
 
