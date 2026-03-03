@@ -84,6 +84,12 @@ if (!$engagement) {
             align-items: flex-start;
             gap: 2rem;
             margin-bottom: 3rem;
+            position: sticky;
+            top: 0;
+            background: var(--bg-primary);
+            z-index: 40;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
         /* ========== BACK BUTTON ========== */
@@ -330,15 +336,15 @@ if (!$engagement) {
         }
 
         .overdue-badge.pulse {
-            animation: pulse 1s infinite;
+            animation: pulse-out 2s infinite;
         }
 
-        @keyframes pulse {
-            from {
+        @keyframes pulse-out {
+            0%, 100% {
                 box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.7);
             }
-            to {
-                box-shadow: 0 0 0 6px rgba(201, 0, 18, 0);
+            50% {
+                box-shadow: 0 0 0 8px rgba(201, 0, 18, 0);
             }
         }
 
@@ -416,7 +422,7 @@ if (!$engagement) {
             background: var(--primary-blue);
             color: white;
             border: none;
-            padding: 0.40rem 1.25rem;
+            padding: 0.65rem 1.25rem;
             border-radius: 8px;
             font-size: 12px;
             font-weight: 600;
@@ -528,17 +534,6 @@ if (!$engagement) {
                 flex: 1;
             }
         }
-
-        hr {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-}
     </style>
 </head>
 <body>
@@ -693,17 +688,15 @@ if (!$engagement) {
 
                 <!-- Upcoming Section -->
                 <div class="sidebar-section">
+                    <div class="sidebar-section-title">Upcoming</div>
                     <div class="upcoming-item">
-                        <div class="upcoming-label">Upcoming</div>
+                        <div class="upcoming-label">Next Milestone</div>
                         <div class="upcoming-title">Leadsheet Due</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <hr>
-
 
     <!-- Dark Mode Button -->
     <button class="dark-mode-btn" id="darkModeBtn" title="Toggle dark mode">
