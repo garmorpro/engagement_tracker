@@ -24,7 +24,7 @@ if (!$user_id || !$passcode) {
 
 // Fetch user
 $stmt = $conn->prepare("
-    SELECT `user_id`, `account_name`, `passcode`, `role`, `status`
+    SELECT `user_id`, `name`, `account_name`, `passcode`, `role`, `status`
     FROM `service_accounts`
     WHERE `user_id` = ? AND `status` = 'active'
     LIMIT 1
@@ -62,6 +62,7 @@ $stmt->close();
 // Set session
 $_SESSION['user_id'] = $user['user_id'];
 $_SESSION['account_name'] = $user['account_name'];
+$_SESSION['name'] = $user['name'];
 $_SESSION['role'] = $user['role'];
 
 // Redirect to dashboard
