@@ -524,7 +524,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         .filter-btn:hover {
             border-color: var(--primary-blue);
-            background: rgba(68, 135, 252, 0.02);
+            background: rgba(68, 135, 252, 0.08);
         }
 
         .view-toggle {
