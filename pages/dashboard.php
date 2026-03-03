@@ -112,11 +112,12 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             color: var(--gray-300);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.2s;
+            transition: all 0.2s;
             position: relative;
             white-space: nowrap;
-            padding-bottom: 8px;
-            border-bottom: 2px solid transparent;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            border-bottom: none;
         }
 
         .nav-item:hover {
@@ -124,23 +125,25 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         }
 
         .nav-item.active {
-            color: var(--text-dark);
-            border-bottom-color: var(--primary-blue);
+            color: var(--primary-blue);
+            background-color: rgba(68, 135, 252, 0.1);
+            border-bottom: none;
         }
 
         .nav-item .badge {
-            background: var(--danger-red) !important;
-            color: white !important;
+            background: var(--gray-200) !important;
+            color: var(--text-dark) !important;
             margin-left: 0.5rem;
-            padding: 0.2rem 0.45rem !important;
-            font-size: 10px !important;
-            border-radius: 3px;
+            padding: 0 !important;
+            font-size: 11px !important;
+            border-radius: 50%;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             font-weight: 700;
+            min-width: 20px;
         }
 
         .header-right {
