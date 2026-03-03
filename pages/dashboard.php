@@ -621,6 +621,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         .table tbody tr {
             transition: background-color 0.2s;
+            background-color: var(--bg-secondary);
         }
 
         .table tbody tr:hover {
