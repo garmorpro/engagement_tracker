@@ -128,6 +128,20 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             border-bottom-color: var(--primary-blue);
         }
 
+        .nav-item .badge {
+            background: #F33 !important;
+            color: white !important;
+            margin-left: 0.5rem;
+            padding: 0.25rem 0.5rem !important;
+            font-size: 11px !important;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+        }
+
         .header-right {
             display: flex;
             align-items: center;
@@ -576,7 +590,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             <div class="header-nav">
                 <a href="#" class="nav-item active">Dashboard</a>
                 <a href="#" class="nav-item">Analytics</a>
-                <a href="#" class="nav-item">Archive <span class="badge" style="background: #F33; color: white; margin-left: 0.5rem; padding: 0.3rem 0.5rem; font-size: 10px;">1</span></a>
+                <a href="#" class="nav-item">Archive <span class="badge">1</span></a>
             </div>
         </div>
 
