@@ -337,9 +337,9 @@ if (!$engagement) {
             0%, 100% {
                 box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.7);
             }
-            50% {
+            /* 50% {
                 box-shadow: 0 0 0 8px rgba(201, 0, 18, 0);
-            }
+            } */
         }
 
         .critical-date-label {
@@ -682,9 +682,8 @@ if (!$engagement) {
 
                 <!-- Upcoming Section -->
                 <div class="sidebar-section">
-                    <div class="sidebar-section-title">Upcoming</div>
                     <div class="upcoming-item">
-                        <div class="upcoming-label">Next Milestone</div>
+                        <div class="upcoming-label">Upcoming</div>
                         <div class="upcoming-title">Leadsheet Due</div>
                     </div>
                 </div>
