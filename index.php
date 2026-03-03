@@ -554,31 +554,36 @@ function setupPinMasking(inputId) {
     pinInputs[inputId] = '';
     
     input.addEventListener('input', function(e) {
-        // Store the actual numeric value only
-        pinInputs[inputId] = e.target.value.replace(/[^\d•]/g, '').replace(/•/g, '');
+        // Get only the numeric digits from the input
+        const numericOnly = e.target.value.replace(/\D/g, '');
+        
+        // Store the actual numeric value
+        pinInputs[inputId] = numericOnly;
         
         // Display masked value (dots)
-        e.target.value = '•'.repeat(pinInputs[inputId].length);
+        e.target.value = '•'.repeat(numericOnly.length);
         
         // Auto-submit PIN form when 4 digits entered
-        if (inputId === 'pinInput' && pinInputs[inputId].length === 4) {
-            document.getElementById('pinForm').passcode.value = pinInputs[inputId];
+        if (inputId === 'pinInput' && numericOnly.length === 4) {
+            document.getElementById('pinForm').passcode.value = numericOnly;
             setTimeout(() => document.getElementById('pinForm').submit(), 50);
         }
         
         // Auto-verify admin PIN when 6 digits entered
-        if (inputId === 'adminPinInput' && pinInputs[inputId].length === 6) {
-            verifyAdminPin(pinInputs[inputId]);
+        if (inputId === 'adminPinInput' && numericOnly.length === 6) {
+            verifyAdminPin(numericOnly);
         }
     });
     
-    // Only allow numeric input
+    // Allow backspace to delete dots
     input.addEventListener('keydown', function(e) {
-        if (['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
-            return;
-        }
-        if (!/\d/.test(e.key)) {
+        if (e.key === 'Backspace') {
             e.preventDefault();
+            const currentValue = pinInputs[inputId];
+            if (currentValue.length > 0) {
+                pinInputs[inputId] = currentValue.slice(0, -1);
+                e.target.value = '•'.repeat(pinInputs[inputId].length);
+            }
         }
     });
 }
