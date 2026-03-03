@@ -831,21 +831,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             <div class="profile-section">
                 <div class="profile-wrapper" id="profileToggle">
                     <button class="profile-btn" title="Profile">
-                        <?php
-                                $initials = '';
-                        
-                                if (!empty($_SESSION['name'])) {
-                                    $nameParts = explode(' ', trim($_SESSION['name']));
-                                    
-                                    foreach ($nameParts as $part) {
-                                        if (!empty($part)) {
-                                            $initials .= strtoupper($part[0]);
-                                        }
-                                    }
-                                }
-                        
-                                echo $initials;
-                            ?>
+                        <?php echo $initials; ?>
                     </button>
                     <button class="profile-dropdown-toggle">
                         <i class="bi bi-chevron-down"></i>
