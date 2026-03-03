@@ -343,7 +343,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         .profile-dropdown-item i {
             font-size: 16px;
             color: var(--gray-300);
-            width: 18px;
+            width: 23px;
         }
 
         .profile-dropdown-item.logout i {
