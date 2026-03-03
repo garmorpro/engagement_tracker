@@ -373,6 +373,17 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         flex: 1;
     }
 
+    /* PIN Field - Text styled as password */
+    .pin-field {
+        letter-spacing: 0.5em;
+        font-family: 'Arial', sans-serif;
+        font-size: 24px !important;
+    }
+
+    .pin-field::placeholder {
+        letter-spacing: normal;
+    }
+
     .demo-credentials {
         background: rgba(77, 191, 184, 0.1);
         border: 1px solid var(--teal);
@@ -482,8 +493,8 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php" autocomplete="off">
             <input type="hidden" name="user_id" id="pinUserId">
             <label class="form-label">PIN</label>
-            <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" 
-                   id="pinInput" name="passcode" required autofocus autocomplete="off" data-lpignore="true" data-form-type="other">
+            <input type="text" inputmode="numeric" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4 pin-field" 
+                   id="pinInput" name="passcode" required autofocus>
         </form>
     </div>
 </div>
@@ -502,8 +513,8 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <!-- Step 1: Verify Super Admin PIN -->
         <div id="adminPinStep">
             <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
-            <input type="password" maxlength="6" pattern="\d{6}" 
-                   class="form-control text-center fs-4" id="adminPinInput" required autofocus autocomplete="off" data-lpignore="true" data-form-type="other">
+            <input type="text" inputmode="numeric" maxlength="6" pattern="\d{6}" 
+                   class="form-control text-center fs-4 pin-field" id="adminPinInput" required autofocus>
             <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
         </div>
 
@@ -520,8 +531,8 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">4-Digit PIN</label>
-                    <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center" 
-                           name="passcode" required autocomplete="off" data-lpignore="true" data-form-type="other">
+                    <input type="text" inputmode="numeric" maxlength="4" pattern="\d{4}" class="form-control text-center pin-field" 
+                           name="passcode" required>
                 </div>
                 <div class="button-group">
                     <button type="button" class="btn btn-secondary" onclick="goBackToAdminPin()">Back</button>
@@ -533,24 +544,12 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 </div>
 
 <script>
-// Prevent password manager autofill
+// Prevent any autofill attempts
 document.addEventListener('DOMContentLoaded', function() {
-    // Clear all password inputs on load
-    document.querySelectorAll('input[type="password"]').forEach(input => {
+    // Clear all PIN fields on load
+    document.querySelectorAll('.pin-field').forEach(input => {
         input.value = '';
-        input.setAttribute('autocomplete', 'off');
-        input.setAttribute('data-lpignore', 'true');
-        input.setAttribute('data-form-type', 'other');
     });
-});
-
-// Prevent autofill on form reset
-document.addEventListener('input', function(e) {
-    if (e.target.type === 'password') {
-        // Don't let the browser or extensions autofill
-        e.target.removeAttribute('data-lastpass');
-        e.target.removeAttribute('data-bitwarden');
-    }
 });
 
 // PIN Modal Functions
