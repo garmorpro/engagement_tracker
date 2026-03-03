@@ -334,11 +334,14 @@ if (!$engagement) {
         }
 
         @keyframes pulse {
-            0%, 100% {
+            0% {
                 box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.7);
             }
-            50% {
-                box-shadow: 0 0 0 8px rgba(201, 0, 18, 0);
+            70% {
+                box-shadow: 0 0 0 10px rgba(201, 0, 18, 0.7);
+            }
+            100% {
+                box-shadow: 0 0 0 0px rgba(201, 0, 18, 0.7);
             }
         }
 
