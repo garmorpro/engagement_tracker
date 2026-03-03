@@ -512,23 +512,23 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             align-items: center;
             gap: 0.5rem;
             padding: 0.75rem 1rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            background: var(--bg-secondary) !important;
+            border: 1px solid var(--border-color) !important;
             border-radius: 10px;
             font-size: 14px;
             font-weight: 500;
-            color: var(--text-primary);
+            color: var(--text-primary) !important;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .filter-btn i {
-            color: var(--text-primary);
+            color: var(--text-primary) !important;
         }
 
         .filter-btn:hover {
-            border-color: var(--primary-blue);
-            background: rgba(68, 135, 252, 0.08);
+            border-color: var(--primary-blue) !important;
+            background: rgba(68, 135, 252, 0.08) !important;
         }
 
         .view-toggle {
