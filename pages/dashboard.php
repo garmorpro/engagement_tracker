@@ -868,6 +868,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 <!-- ========== MAIN CONTENT ========== -->
 <div class="main-container">
 
+<?php var_dump($_SESSION); ?>
     <!-- STATUS CARDS -->
     <div class="status-cards">
         <div class="status-card">
