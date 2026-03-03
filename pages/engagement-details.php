@@ -294,6 +294,7 @@ if (!$engagement) {
             gap: 1rem;
             align-items: flex-start;
             margin-bottom: 1.25rem;
+            justify-content: space-between;
         }
 
         .critical-date-icon-wrapper {
@@ -313,16 +314,7 @@ if (!$engagement) {
         }
 
         .critical-date-icon.overdue {
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.4);
-            }
-            50% {
-                box-shadow: 0 0 0 10px rgba(201, 0, 18, 0);
-            }
+            animation: none;
         }
 
         .overdue-badge {
@@ -337,8 +329,17 @@ if (!$engagement) {
             letter-spacing: 0.5px;
         }
 
-        .critical-date-content {
-            flex: 1;
+        .overdue-badge.pulse {
+            animation: pulse-out 2s infinite;
+        }
+
+        @keyframes pulse-out {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(201, 0, 18, 0);
+            }
         }
 
         .critical-date-label {
@@ -662,13 +663,11 @@ if (!$engagement) {
                     <!-- Icon and Overdue Badge Row -->
                     <div class="critical-date-wrapper">
                         <div class="critical-date-icon-wrapper">
-                            <div class="critical-date-icon overdue">
+                            <div class="critical-date-icon">
                                 <i class="bi bi-clock-history"></i>
                             </div>
                         </div>
-                        <div class="critical-date-content">
-                            <span class="overdue-badge">Overdue</span>
-                        </div>
+                        <span class="overdue-badge pulse">Overdue</span>
                     </div>
 
                     <!-- Main Content Box -->
@@ -683,8 +682,9 @@ if (!$engagement) {
 
                 <!-- Upcoming Section -->
                 <div class="sidebar-section">
+                    <div class="sidebar-section-title">Upcoming</div>
                     <div class="upcoming-item">
-                        <div class="upcoming-label">Upcoming</div>
+                        <div class="upcoming-label">Next Milestone</div>
                         <div class="upcoming-title">Leadsheet Due</div>
                     </div>
                 </div>
