@@ -1031,6 +1031,22 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Dark mode toggle
+    const darkModeBtn = document.querySelector('.icon-btn[title="Dark mode"]');
+    
+    function updateDarkModeIcon(isDark) {
+        const icon = darkModeBtn?.querySelector('i');
+        if (icon) {
+            if (isDark) {
+                icon.classList.remove('bi-moon');
+                icon.classList.add('bi-sun');
+            } else {
+                icon.classList.remove('bi-sun');
+                icon.classList.add('bi-moon');
+            }
+        }
+    }
+
     // Initialize dark mode from localStorage
     const isDarkMode = localStorage.getItem('darkMode') === 'true';
     if (isDarkMode) {
@@ -1038,24 +1054,11 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
     }
     updateDarkModeIcon(isDarkMode);
 
-    // Dark mode toggle
-    const darkModeBtn = document.querySelector('.icon-btn[title="Dark mode"]');
     darkModeBtn?.addEventListener('click', () => {
         const isDark = document.body.classList.toggle('dark-mode');
         localStorage.setItem('darkMode', isDark);
         updateDarkModeIcon(isDark);
     });
-
-    function updateDarkModeIcon(isDark) {
-        const icon = darkModeBtn.querySelector('i');
-        if (isDark) {
-            icon.classList.remove('bi-moon');
-            icon.classList.add('bi-sun');
-        } else {
-            icon.classList.remove('bi-sun');
-            icon.classList.add('bi-moon');
-        }
-    }
 
     // Profile dropdown toggle
     const profileToggle = document.getElementById('profileToggle');
