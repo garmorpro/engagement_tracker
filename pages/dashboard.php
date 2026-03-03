@@ -838,7 +838,23 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
                 <div class="profile-dropdown" id="profileDropdown">
                     <div class="profile-dropdown-header">
-                        <div class="profile-dropdown-avatar">JD</div>
+                        <div class="profile-dropdown-avatar">
+                            <?php
+                                $initials = '';
+                        
+                                if (!empty($_SESSION['name'])) {
+                                    $nameParts = explode(' ', trim($_SESSION['name']));
+                                    
+                                    foreach ($nameParts as $part) {
+                                        if (!empty($part)) {
+                                            $initials .= strtoupper($part[0]);
+                                        }
+                                    }
+                                }
+                        
+                                echo $initials;
+                            ?>
+                        </div>
                         <div class="profile-dropdown-info">
                             <div class="profile-dropdown-name">John Doe</div>
                             <div class="profile-dropdown-email">john.doe@company.com</div>
