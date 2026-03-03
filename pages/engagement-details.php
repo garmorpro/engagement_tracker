@@ -683,9 +683,8 @@ if (!$engagement) {
 
                 <!-- Upcoming Section -->
                 <div class="sidebar-section">
-                    <div class="sidebar-section-title">Upcoming</div>
                     <div class="upcoming-item">
-                        <div class="upcoming-label">Next Milestone</div>
+                        <div class="upcoming-label">Upcoming</div>
                         <div class="upcoming-title">Leadsheet Due</div>
                     </div>
                 </div>
