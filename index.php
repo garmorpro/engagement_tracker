@@ -492,7 +492,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php" autocomplete="off">
             <input type="hidden" name="user_id" id="pinUserId">
             <label class="form-label">PIN</label>
-            <input type="text" inputmode="numeric" maxlength="6" pattern="\d{6}" class="form-control text-center fs-4 pin-field" 
+            <input type="text" class="form-control text-center fs-4 pin-field" 
                    id="pinInput" name="passcode" required autofocus>
         </form>
     </div>
@@ -512,8 +512,8 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <!-- Step 1: Verify Super Admin PIN -->
         <div id="adminPinStep">
             <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
-            <input type="text" inputmode="numeric" maxlength="6" pattern="\d{6}" 
-                   class="form-control text-center fs-4 pin-field" id="adminPinInput" required autofocus>
+            <input type="text" class="form-control text-center fs-4 pin-field" 
+                   id="adminPinInput" required autofocus>
             <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
         </div>
 
@@ -530,7 +530,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">4-Digit PIN</label>
-                    <input type="text" inputmode="numeric" maxlength="6" pattern="\d{6}" class="form-control text-center pin-field" 
+                    <input type="text" class="form-control text-center pin-field" 
                            name="passcode" required>
                 </div>
                 <div class="button-group">
@@ -552,10 +552,14 @@ function setupPinMasking(inputId) {
     if (!input) return;
     
     pinInputs[inputId] = '';
+    const maxLength = inputId === 'adminPinInput' ? 6 : 4;
     
     input.addEventListener('input', function(e) {
-        // Get only the numeric digits from the input
-        const numericOnly = e.target.value.replace(/\D/g, '');
+        // Get only the numeric digits from what was typed
+        let numericOnly = e.target.value.replace(/\D/g, '');
+        
+        // Enforce max length
+        numericOnly = numericOnly.slice(0, maxLength);
         
         // Store the actual numeric value
         pinInputs[inputId] = numericOnly;
@@ -563,7 +567,7 @@ function setupPinMasking(inputId) {
         // Display masked value (dots)
         e.target.value = '•'.repeat(numericOnly.length);
         
-        // Auto-submit PIN form when 4 digits entered
+        // Auto-submit PIN form when max length reached
         if (inputId === 'pinInput' && numericOnly.length === 4) {
             document.getElementById('pinForm').passcode.value = numericOnly;
             setTimeout(() => document.getElementById('pinForm').submit(), 50);
@@ -572,18 +576,6 @@ function setupPinMasking(inputId) {
         // Auto-verify admin PIN when 6 digits entered
         if (inputId === 'adminPinInput' && numericOnly.length === 6) {
             verifyAdminPin(numericOnly);
-        }
-    });
-    
-    // Allow backspace to delete dots
-    input.addEventListener('keydown', function(e) {
-        if (e.key === 'Backspace') {
-            e.preventDefault();
-            const currentValue = pinInputs[inputId];
-            if (currentValue.length > 0) {
-                pinInputs[inputId] = currentValue.slice(0, -1);
-                e.target.value = '•'.repeat(pinInputs[inputId].length);
-            }
         }
     });
 }
