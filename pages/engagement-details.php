@@ -312,7 +312,7 @@ if (!$engagement) {
             font-size: 24px;
         }
 
-        .critical-date-icon.overdue {
+        .critical-date-content.overdue {
             animation: pulse 2s infinite;
         }
 
