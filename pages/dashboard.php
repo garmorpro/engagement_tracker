@@ -34,47 +34,21 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             --gray-200: #D0D5DB;
             --gray-300: #6A7382;
             --text-dark: #1A1A1A;
-            --bg-primary: #FAFBFC;
-            --bg-secondary: #FFFFFF;
-            --border-color: #D0D5DB;
-            --text-primary: #1A1A1A;
-            --text-secondary: #6A7382;
-        }
-
-        body.dark-mode {
-            --primary-blue: #4487FC;
-            --success-green: #4FC65F;
-            --warning-orange: #F17313;
-            --danger-red: #C90012;
-            --info-purple: #A04DFD;
-            --teal: #4DBFB8;
-            --gray-100: #1E2736;
-            --gray-200: #2D3847;
-            --gray-300: #8B95A6;
-            --text-dark: #E8EAED;
-            --bg-primary: #0F1419;
-            --bg-secondary: #1A2332;
-            --border-color: #2D3847;
-            --text-primary: #E8EAED;
-            --text-secondary: #8B95A6;
         }
 
         body {
-            background-color: var(--bg-primary);
+            background-color: #FAFBFC;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            color: var(--text-primary);
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* ========== HEADER ========== */
         .top-header {
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
             padding: 0.75rem 2rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .header-content {
@@ -96,33 +70,46 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             align-items: center;
             gap: 0.75rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-dark);
             text-decoration: none;
             white-space: nowrap;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--info-purple) 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            flex-shrink: 0;
         }
 
         .header-title {
             font-size: 16px;
             font-weight: 700;
-            color: var(--text-primary);
+            color: var(--text-dark);
             line-height: 1.2;
         }
 
         .header-subtitle {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: var(--gray-300);
             line-height: 1.2;
         }
 
         .header-nav {
             display: flex;
-            gap: 2.5rem;
+            gap: 1.5rem;
             align-items: center;
         }
 
         .nav-item {
             font-size: 14px;
-            color: var(--text-secondary);
+            color: var(--gray-300);
             text-decoration: none;
             font-weight: 500;
             transition: all 0.2s;
@@ -134,7 +121,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         }
 
         .nav-item:hover {
-            color: var(--text-primary);
+            color: var(--text-dark);
         }
 
         .nav-item.active {
@@ -183,7 +170,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         .icon-btn {
             background: none;
             border: none;
-            color: var(--text-secondary);
+            color: var(--gray-300);
             cursor: pointer;
             font-size: 18px;
             padding: 0.5rem;
@@ -195,7 +182,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         }
 
         .icon-btn:hover {
-            color: var(--text-primary);
+            color: var(--text-dark);
         }
 
         .notification-badge {
@@ -262,8 +249,8 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             position: absolute;
             top: 100%;
             right: 0;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            background: white;
+            border: 1px solid var(--gray-200);
             border-radius: 10px;
             min-width: 240px;
             margin-top: 0.75rem;
@@ -277,25 +264,53 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             overflow: hidden;
         }
 
+        .profile-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
         .profile-dropdown-header {
             display: flex;
             align-items: center;
             gap: 0.75rem;
             padding: 1rem;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border-color);
+            background: white;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .profile-dropdown-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--info-purple) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .profile-dropdown-info {
+            flex: 1;
         }
 
         .profile-dropdown-name {
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-dark);
             font-size: 14px;
             margin-bottom: 0.25rem;
         }
 
         .profile-dropdown-email {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: var(--gray-300);
+        }
+
+        .profile-dropdown-menu {
+            padding: 0.75rem 0;
         }
 
         .profile-dropdown-item {
@@ -303,7 +318,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             align-items: center;
             gap: 0.75rem;
             padding: 0.65rem 1rem;
-            color: var(--text-primary);
+            color: var(--text-dark);
             text-decoration: none;
             font-size: 14px;
             transition: background-color 0.2s;
@@ -320,7 +335,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         .profile-dropdown-item.logout {
             color: var(--danger-red);
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid var(--gray-200);
             margin-top: 0.25rem;
             padding-top: 0.65rem;
         }
@@ -331,7 +346,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         .profile-dropdown-item i {
             font-size: 16px;
-            color: var(--text-secondary);
+            color: var(--gray-300);
             width: 18px;
         }
 
@@ -342,7 +357,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         /* ========== MAIN CONTENT ========== */
         .main-container {
             padding: 2rem;
-            max-width: 1400px;
+            /* max-width: 1400px; */
             margin: 0 auto;
         }
 
@@ -502,7 +517,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             height: 36px;
             border: none;
             background: transparent;
-            color: var(--text-secondary);
+            color: var(--gray-300);
             cursor: pointer;
             border-radius: 6px;
             font-size: 16px;
@@ -513,7 +528,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         }
 
         .view-btn.active {
-            background: var(--bg-secondary);
+            background: white;
             color: var(--primary-blue);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
@@ -546,28 +561,26 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         /* ========== TABLE ========== */
         .table-container {
-            background: var(--bg-secondary);
+            background: white;
             border-radius: 12px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--gray-200);
             overflow: hidden;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
         .table {
             margin-bottom: 0;
             font-size: 14px;
-            color: var(--text-primary);
         }
 
         .table thead {
             background: var(--gray-100);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--gray-200);
         }
 
         .table thead th {
             padding: 1rem;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: var(--gray-300);
             text-transform: uppercase;
             font-size: 12px;
             letter-spacing: 0.5px;
@@ -577,8 +590,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         .table tbody td {
             padding: 1rem;
             vertical-align: middle;
-            border-color: var(--border-color);
-            color: var(--text-primary);
+            border-color: var(--gray-200);
         }
 
         .table tbody tr {
@@ -592,19 +604,43 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         /* ========== TABLE CELLS ========== */
         .engagement-id {
             font-weight: 500;
-            color: var(--text-secondary);
+            color: var(--gray-300);
             font-size: 13px;
+        }
+
+        .engagement-name {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .engagement-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 14px;
+        }
+
+        .engagement-avatar.color-1 { background: linear-gradient(135deg, #4487FC, #4DA6FF); }
+        .engagement-avatar.color-2 { background: linear-gradient(135deg, #A04DFD, #D67FFF); }
+        .engagement-avatar.color-3 { background: linear-gradient(135deg, #4DBFB8, #6FD9D2); }
+        .engagement-avatar.color-4 { background: linear-gradient(135deg, #F17313, #FFB347); }
+        .engagement-avatar.color-5 { background: linear-gradient(135deg, #4FC65F, #7FDD8A); }
+
+        .engagement-title {
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
         .engagement-subtitle {
             font-size: 13px;
-            color: var(--text-secondary);
+            color: var(--gray-300);
             margin-top: 0.25rem;
-        }
-
-        .engagement-title {
-            font-weight: 600;
-            color: var(--text-primary);
         }
 
         .badge {
@@ -962,30 +998,6 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Initialize dark mode from localStorage
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
-    if (isDarkMode) {
-        document.body.classList.add('dark-mode');
-    }
-
-    // Dark mode toggle
-    const darkModeBtn = document.querySelector('.icon-btn[title="Dark mode"]');
-    darkModeBtn?.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const isNowDark = document.body.classList.contains('dark-mode');
-        localStorage.setItem('darkMode', isNowDark);
-        
-        // Update icon
-        const icon = darkModeBtn.querySelector('i');
-        if (isNowDark) {
-            icon.classList.remove('bi-moon');
-            icon.classList.add('bi-sun');
-        } else {
-            icon.classList.remove('bi-sun');
-            icon.classList.add('bi-moon');
-        }
-    });
-
     // Profile dropdown toggle
     const profileToggle = document.getElementById('profileToggle');
     const profileDropdown = document.getElementById('profileDropdown');
