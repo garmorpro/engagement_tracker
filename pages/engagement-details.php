@@ -409,6 +409,266 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         .back-button:hover {
             color: var(--text-primary);
         }
+
+        /* ========== ENGAGEMENT HEADER ========== */
+        .engagement-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .engagement-header-left {
+            flex: 1;
+        }
+
+        .engagement-header-right {
+            width: 300px;
+        }
+
+        .engagement-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .engagement-badges {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .engagement-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-status {
+            background: rgba(79, 198, 95, 0.15);
+            color: var(--success-green);
+        }
+
+        .badge-priority {
+            background: rgba(201, 0, 18, 0.15);
+            color: var(--danger-red);
+        }
+
+        .badge-repeat {
+            background: rgba(68, 135, 252, 0.15);
+            color: var(--primary-blue);
+        }
+
+        .engagement-info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .engagement-info-item {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .engagement-info-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .engagement-info-content {
+            flex: 1;
+        }
+
+        .engagement-info-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .engagement-info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .engagement-meta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .engagement-meta-tag {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: var(--gray-100);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .engagement-meta-tag i {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* ========== RIGHT SIDEBAR ========== */
+        .engagement-sidebar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-edit {
+            flex: 1;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: #3671E0;
+            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3);
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            font-size: 18px;
+        }
+
+        .btn-icon:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+            background: rgba(68, 135, 252, 0.05);
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .critical-date {
+            text-align: center;
+            padding: 1rem;
+            background: var(--gray-100);
+            border-radius: 8px;
+        }
+
+        .critical-date-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.75rem;
+            border-radius: 50%;
+            background: rgba(201, 0, 18, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--danger-red);
+            font-size: 24px;
+        }
+
+        .critical-date-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .critical-date-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--danger-red);
+            margin-bottom: 0.25rem;
+        }
+
+        .critical-date-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .upcoming-item {
+            padding: 1rem;
+            background: var(--gray-100);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .upcoming-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .upcoming-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
     </style>
 </head>
 <body>
@@ -493,9 +753,144 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         Dashboard
     </a>
 
-    <!-- Content will go here -->
-    <h1><?php echo htmlspecialchars($engagement['eng_name']); ?></h1>
-    <p>Engagement ID: <?php echo htmlspecialchars($engagement['eng_idno']); ?></p>
+    <!-- Engagement Header -->
+    <div class="engagement-header">
+        <!-- Left Side -->
+        <div class="engagement-header-left">
+            <!-- Title -->
+            <h1 class="engagement-title"><?php echo htmlspecialchars($engagement['eng_name']); ?></h1>
+
+            <!-- Badges -->
+            <div class="engagement-badges">
+                <?php
+                    $statusText = str_replace('-', ' ', $engagement['eng_status']);
+                    $statusIcon = match($engagement['eng_status']) {
+                        'in-progress' => 'bi-play-circle-fill',
+                        'planning' => 'bi-clipboard-check',
+                        'in-review' => 'bi-search',
+                        'complete' => 'bi-check-circle-fill',
+                        'archived' => 'bi-archive',
+                        default => 'bi-circle'
+                    };
+                ?>
+                <span class="engagement-badge badge-status">
+                    <i class="bi <?php echo $statusIcon; ?>"></i>
+                    <?php echo strtoupper($statusText); ?>
+                </span>
+                <span class="engagement-badge badge-priority">
+                    <i class="bi bi-exclamation-circle"></i>
+                    High Priority
+                </span>
+                <span class="engagement-badge badge-repeat">
+                    <i class="bi bi-arrow-repeat"></i>
+                    Repeat
+                </span>
+            </div>
+
+            <!-- Info Grid -->
+            <div class="engagement-info-grid">
+                <!-- Location -->
+                <div class="engagement-info-item">
+                    <div class="engagement-info-icon">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <div class="engagement-info-content">
+                        <div class="engagement-info-label">Location</div>
+                        <div class="engagement-info-value"><?php echo htmlspecialchars($engagement['eng_location'] ?? 'N/A'); ?></div>
+                    </div>
+                </div>
+
+                <!-- Audit Type -->
+                <div class="engagement-info-item">
+                    <div class="engagement-info-icon" style="color: var(--info-purple);">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div class="engagement-info-content">
+                        <div class="engagement-info-label">Audit Type</div>
+                        <div class="engagement-info-value"><?php echo htmlspecialchars($engagement['eng_audit_type'] ?? 'N/A'); ?></div>
+                    </div>
+                </div>
+
+                <!-- Period -->
+                <div class="engagement-info-item">
+                    <div class="engagement-info-icon" style="color: var(--warning-orange);">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <div class="engagement-info-content">
+                        <div class="engagement-info-label">Period</div>
+                        <div class="engagement-info-value">FY 2024</div>
+                    </div>
+                </div>
+
+                <!-- Report Type -->
+                <div class="engagement-info-item">
+                    <div class="engagement-info-icon" style="color: var(--primary-blue);">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <div class="engagement-info-content">
+                        <div class="engagement-info-label">Report Type</div>
+                        <div class="engagement-info-value">Type II</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meta Tags -->
+            <div class="engagement-meta">
+                <div class="engagement-meta-tag">
+                    <i class="bi bi-hash"></i>
+                    <?php echo htmlspecialchars($engagement['eng_idno']); ?>
+                </div>
+                <div class="engagement-meta-tag">
+                    <i class="bi bi-person-circle"></i>
+                    Manager: <?php echo htmlspecialchars($engagement['eng_manager'] ?? 'Unassigned'); ?>
+                </div>
+                <div class="engagement-meta-tag">
+                    <i class="bi bi-person-check"></i>
+                    POC: Tom Wilson
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="engagement-header-right">
+            <div class="engagement-sidebar">
+                <!-- Action Buttons -->
+                <div class="sidebar-action-buttons">
+                    <button class="btn-edit">
+                        <i class="bi bi-pencil"></i>
+                        Edit
+                    </button>
+                    <button class="btn-icon">
+                        <i class="bi bi-archive"></i>
+                    </button>
+                    <button class="btn-icon">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+
+                <!-- Critical Date Section -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Next Critical Date</div>
+                    <div class="critical-date">
+                        <div class="critical-date-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div class="critical-date-value">37 days</div>
+                        <div class="critical-date-status">overdue</div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Section -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Upcoming</div>
+                    <div class="upcoming-item">
+                        <div class="upcoming-label">Next Milestone</div>
+                        <div class="upcoming-title">Leadsheet Due</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 
@@ -539,13 +934,41 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         profileDropdown?.classList.toggle('active');
     });
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!profileToggle?.contains(e.target) && !profileDropdown?.contains(e.target)) {
-            profileDropdown?.classList.remove('active');
-        }
-    });
-</script>
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .engagement-header {
+                flex-direction: column;
+            }
 
-</body>
-</html>
+            .engagement-header-right {
+                width: 100%;
+                position: static;
+            }
+
+            .engagement-sidebar {
+                position: static;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .engagement-title {
+                font-size: 24px;
+            }
+
+            .engagement-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .engagement-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .sidebar-action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-edit {
+                width: 100%;
+            }
+        }
