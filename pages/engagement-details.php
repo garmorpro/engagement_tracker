@@ -337,9 +337,9 @@ if (!$engagement) {
             0%, 100% {
                 box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.7);
             }
-            /* 50% {
+            50% {
                 box-shadow: 0 0 0 8px rgba(201, 0, 18, 0);
-            } */
+            }
         }
 
         .critical-date-label {
@@ -528,6 +528,17 @@ if (!$engagement) {
                 flex: 1;
             }
         }
+
+        hr {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
     </style>
 </head>
 <body>
@@ -692,7 +703,7 @@ if (!$engagement) {
     </div>
 
     <hr>
-    
+
 
     <!-- Dark Mode Button -->
     <button class="dark-mode-btn" id="darkModeBtn" title="Toggle dark mode">
