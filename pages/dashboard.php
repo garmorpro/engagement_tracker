@@ -129,17 +129,18 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         }
 
         .nav-item .badge {
-            background: #F33 !important;
+            background: var(--danger-red) !important;
             color: white !important;
             margin-left: 0.5rem;
-            padding: 0.25rem 0.5rem !important;
-            font-size: 11px !important;
-            border-radius: 4px;
+            padding: 0.2rem 0.45rem !important;
+            font-size: 10px !important;
+            border-radius: 3px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 20px;
-            height: 20px;
+            min-width: 18px;
+            height: 18px;
+            font-weight: 700;
         }
 
         .header-right {
@@ -248,7 +249,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             background: white;
             border: 1px solid var(--gray-200);
             border-radius: 10px;
-            min-width: 275px;
+            min-width: 240px;
             margin-top: 0.75rem;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
             opacity: 0;
@@ -343,7 +344,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         .profile-dropdown-item i {
             font-size: 16px;
             color: var(--gray-300);
-            width: 23px;
+            width: 18px;
         }
 
         .profile-dropdown-item.logout i {
