@@ -451,6 +451,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     <?php if (!empty($accounts)): ?>
         <div class="account-list">
             <?php foreach ($accounts as $account): ?>
+                <?php if ($account['role'] === 'super_admin') continue; ?>
                 <div class="account-item"
                      data-user-id="<?= $account['user_id'] ?>"
                      data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
