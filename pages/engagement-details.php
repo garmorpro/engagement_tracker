@@ -312,7 +312,7 @@ if (!$engagement) {
             font-size: 24px;
         }
 
-        .critical-date-content.overdue {
+        .overdue-badge.overdue {
             animation: pulse 2s infinite;
         }
 
@@ -667,7 +667,7 @@ if (!$engagement) {
                             </div>
                         </div>
                         <div class="critical-date-content overdue">
-                            <span class="overdue-badge">Overdue</span>
+                            <span class="overdue-badge overdue">Overdue</span>
                         </div>
                     </div>
 
