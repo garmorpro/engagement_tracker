@@ -149,6 +149,20 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             margin-left: auto;
         }
 
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding-right: 1.5rem;
+            border-right: 1px solid var(--gray-200);
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
         .icon-btn {
             background: none;
             border: none;
@@ -196,15 +210,92 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            position: relative;
         }
 
         .profile-btn:hover {
             box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3);
         }
 
+        .profile-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .profile-dropdown-toggle {
+            background: none;
+            border: none;
+            color: var(--gray-300);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+
+        .profile-dropdown-toggle:hover {
+            color: var(--text-dark);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            min-width: 200px;
+            margin-top: 0.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s;
+            z-index: 1000;
+            padding: 0.5rem 0;
+        }
+
+        .profile-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+        }
+
+        .profile-dropdown-item:hover {
+            background-color: var(--gray-100);
+        }
+
+        .profile-dropdown-item.logout {
+            color: var(--danger-red);
+            border-top: 1px solid var(--gray-200);
+            margin-top: 0.5rem;
+            padding-top: 0.75rem;
+        }
+
+        .profile-dropdown-item.logout:hover {
+            background-color: rgba(201, 0, 18, 0.05);
+        }
+
         /* ========== MAIN CONTENT ========== */
         .main-container {
             padding: 2rem;
+            /* max-width: 1400px; */
             margin: 0 auto;
         }
 
@@ -349,6 +440,35 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         .filter-btn:hover {
             border-color: var(--primary-blue);
             background: rgba(68, 135, 252, 0.02);
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--gray-100);
+            padding: 0.25rem;
+            border-radius: 8px;
+        }
+
+        .view-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--gray-300);
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view-btn.active {
+            background: white;
+            color: var(--primary-blue);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .action-buttons {
@@ -595,17 +715,42 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         </div>
 
         <div class="header-right">
-            <button class="icon-btn" title="Dark mode">
-                <i class="bi bi-moon"></i>
-            </button>
-            <button class="icon-btn" title="Notifications">
-                <i class="bi bi-bell"></i>
-                <div class="notification-badge">2</div>
-            </button>
-            <button class="icon-btn" title="Settings">
-                <i class="bi bi-gear"></i>
-            </button>
-            <button class="profile-btn" title="Profile">A</button>
+            <div class="header-icons">
+                <button class="icon-btn" title="Dark mode">
+                    <i class="bi bi-moon"></i>
+                </button>
+                <button class="icon-btn" title="Notifications">
+                    <i class="bi bi-bell"></i>
+                    <div class="notification-badge">2</div>
+                </button>
+                <button class="icon-btn" title="Settings">
+                    <i class="bi bi-gear"></i>
+                </button>
+            </div>
+
+            <div class="profile-section">
+                <div class="profile-wrapper" id="profileToggle">
+                    <button class="profile-btn" title="Profile">A</button>
+                    <button class="profile-dropdown-toggle">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div class="profile-dropdown" id="profileDropdown">
+                    <a href="#" class="profile-dropdown-item">
+                        <i class="bi bi-person"></i> Profile
+                    </a>
+                    <a href="#" class="profile-dropdown-item">
+                        <i class="bi bi-gear"></i> Settings
+                    </a>
+                    <a href="#" class="profile-dropdown-item">
+                        <i class="bi bi-question-circle"></i> Help & Support
+                    </a>
+                    <a href="#" class="profile-dropdown-item logout">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -679,6 +824,14 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         </div>
 
         <div class="action-buttons">
+            <div class="view-toggle">
+                <button class="view-btn active" title="List view">
+                    <i class="bi bi-list-ul"></i>
+                </button>
+                <button class="view-btn" title="Grid view">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                </button>
+            </div>
             <button class="btn-new-engagement">
                 <i class="bi bi-plus"></i> New Engagement
             </button>
@@ -773,6 +926,22 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // Profile dropdown toggle
+    const profileToggle = document.getElementById('profileToggle');
+    const profileDropdown = document.getElementById('profileDropdown');
+
+    profileToggle?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        profileDropdown?.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!profileToggle?.contains(e.target) && !profileDropdown?.contains(e.target)) {
+            profileDropdown?.classList.remove('active');
+        }
+    });
+
     // Search functionality
     document.querySelector('.search-input')?.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase();
