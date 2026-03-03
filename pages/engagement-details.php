@@ -261,18 +261,49 @@ if (!$engagement) {
             font-weight: 600;
         }
 
-        .critical-date {
-            text-align: center;
-            padding: 1.5rem 1rem;
-            background: var(--gray-100);
-            border-radius: 10px;
+        /* ========== SIDEBAR ========== */
+        .engagement-sidebar {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            width: 280px;
+            height: fit-content;
+        }
+
+        .sidebar-section {
+            margin-bottom: 1.75rem;
+        }
+
+        .sidebar-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-section-title {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Critical Date Container */
+        .critical-date-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .critical-date-icon-wrapper {
+            flex-shrink: 0;
         }
 
         .critical-date-icon {
             width: 48px;
             height: 48px;
-            margin: 0 auto 0.75rem;
-            border-radius: 8px;
+            border-radius: 10px;
             background: rgba(201, 0, 18, 0.15);
             display: flex;
             align-items: center;
@@ -294,12 +325,28 @@ if (!$engagement) {
             }
         }
 
+        .overdue-badge {
+            display: inline-block;
+            background: rgba(201, 0, 18, 0.15);
+            color: var(--danger-red);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .critical-date-content {
+            flex: 1;
+        }
+
         .critical-date-label {
             font-size: 10px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             font-weight: 600;
         }
 
@@ -308,6 +355,7 @@ if (!$engagement) {
             font-weight: 700;
             color: var(--danger-red);
             margin-bottom: 0.25rem;
+            line-height: 1;
         }
 
         .critical-date-value.remaining {
@@ -322,20 +370,26 @@ if (!$engagement) {
         .critical-date-status.overdue {
             color: var(--danger-red);
             font-weight: 600;
-            animation: pulse-text 2s infinite;
         }
 
-        @keyframes pulse-text {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.7;
-            }
+        /* Critical Date Box */
+        .critical-date {
+            background: var(--gray-100);
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
         }
 
+        .critical-date-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Upcoming Item */
         .upcoming-item {
-            padding: 0.85rem 0.75rem;
+            padding: 1rem;
             background: var(--gray-100);
             border-radius: 10px;
             text-align: center;
@@ -346,12 +400,12 @@ if (!$engagement) {
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.3rem;
             font-weight: 600;
         }
 
         .upcoming-title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-primary);
         }
@@ -605,13 +659,25 @@ if (!$engagement) {
             <div class="engagement-sidebar">
                 <!-- Critical Date Section -->
                 <div class="sidebar-section">
-                    <div class="critical-date">
-                        <div class="critical-date-icon overdue">
-                            <i class="bi bi-clock-history"></i>
+                    <!-- Icon and Overdue Badge Row -->
+                    <div class="critical-date-wrapper">
+                        <div class="critical-date-icon-wrapper">
+                            <div class="critical-date-icon overdue">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
                         </div>
-                        <div class="critical-date-label">Next Critical Date</div>
-                        <div class="critical-date-value">37 days</div>
-                        <div class="critical-date-status overdue">overdue</div>
+                        <div class="critical-date-content">
+                            <span class="overdue-badge">Overdue</span>
+                        </div>
+                    </div>
+
+                    <!-- Main Content Box -->
+                    <div class="critical-date">
+                        <div class="critical-date-inner">
+                            <div class="critical-date-label">Next Critical Date</div>
+                            <div class="critical-date-value">37 days</div>
+                            <div class="critical-date-status overdue">overdue</div>
+                        </div>
                     </div>
                 </div>
 
