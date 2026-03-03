@@ -2,16 +2,19 @@
 require_once '../path.php';
 require_once '../includes/functions.php';
 
-// Get engagements data
-$engagements = getAllEngagements($conn);
+// Get all engagements data
+$allEngagements = getAllEngagements($conn);
 
-// Calculate status counts
-$totalCount = count($engagements);
-$inProgressCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'in-progress'));
-$planningCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'planning'));
-$reviewCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'in-review'));
-$completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'complete'));
-$archiveCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'archived'));
+// Filter to only show archived engagements
+$engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] === 'archived');
+
+// Calculate status counts from ALL engagements (not just archived)
+$totalCount = count($allEngagements);
+$inProgressCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'in-progress'));
+$planningCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'planning'));
+$reviewCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'in-review'));
+$completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'complete'));
+$archiveCount = count($engagements);
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +50,7 @@ $archiveCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 
             --gray-200: #2D3847;
             --gray-300: #8B95A6;
             --text-dark: #E8EAED;
-            --bg-primary: #0f1419;
+            --bg-primary: #0F1419;
             --bg-secondary: #1A2332;
             --border-color: #2D3847;
             --text-primary: #E8EAED;
@@ -802,15 +805,15 @@ $archiveCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 
                     <i class="bi bi-bar-chart-fill"></i>
                 </div>
                 <div>
-                    <div class="header-title">Engagement Tracker</div>
-                    <div class="header-subtitle">Manage your audit engagements</div>
+                    <div class="header-title">Engagement Pro</div>
+                    <div class="header-subtitle">Light Edition</div>
                 </div>
             </a>
 
             <div class="header-nav">
-                <a href="dashboard.php" class="nav-item active">Dashboard</a>
+                <a href="dashboard.php" class="nav-item">Dashboard</a>
                 <a href="#" class="nav-item">Analytics</a>
-                <a href="archive.php" class="nav-item">Archive <span class="badge"><?php echo $archiveCount; ?></span></a>
+                <a href="archive.php" class="nav-item active">Archive <span class="badge"><?php echo $archiveCount; ?></span></a>
             </div>
         </div>
 
@@ -1012,7 +1015,7 @@ $archiveCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <button class="action-icon" title="Duplicate">
-                                        <i class="bi bi-archive"></i>
+                                        <i class="bi bi-files"></i>
                                     </button>
                                     <button class="action-icon" title="Delete">
                                         <i class="bi bi-trash"></i>
