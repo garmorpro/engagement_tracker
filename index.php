@@ -242,16 +242,21 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
     .modal-close {
         position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
+        top: 1rem;
+        right: 1rem;
         width: 32px;
         height: 32px;
         border: none;
         background: transparent;
         color: var(--text-secondary);
-        font-size: 20px;
+        font-size: 24px;
         cursor: pointer;
         transition: color 0.2s;
+        padding: 0;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .modal-close:hover {
@@ -478,7 +483,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             <input type="hidden" name="user_id" id="pinUserId">
             <label class="form-label">PIN</label>
             <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" 
-                   id="pinInput" name="passcode" required autofocus autocomplete="off">
+                   id="pinInput" name="passcode" required autofocus autocomplete="off" data-lpignore="true" data-form-type="other">
         </form>
     </div>
 </div>
@@ -498,7 +503,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <div id="adminPinStep">
             <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
             <input type="password" maxlength="6" pattern="\d{6}" 
-                   class="form-control text-center fs-4" id="adminPinInput" required autofocus autocomplete="off">
+                   class="form-control text-center fs-4" id="adminPinInput" required autofocus autocomplete="off" data-lpignore="true" data-form-type="other">
             <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
         </div>
 
@@ -516,7 +521,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                 <div class="mb-3">
                     <label class="form-label">4-Digit PIN</label>
                     <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center" 
-                           name="passcode" required autocomplete="off">
+                           name="passcode" required autocomplete="off" data-lpignore="true" data-form-type="other">
                 </div>
                 <div class="button-group">
                     <button type="button" class="btn btn-secondary" onclick="goBackToAdminPin()">Back</button>
@@ -528,6 +533,26 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 </div>
 
 <script>
+// Prevent password manager autofill
+document.addEventListener('DOMContentLoaded', function() {
+    // Clear all password inputs on load
+    document.querySelectorAll('input[type="password"]').forEach(input => {
+        input.value = '';
+        input.setAttribute('autocomplete', 'off');
+        input.setAttribute('data-lpignore', 'true');
+        input.setAttribute('data-form-type', 'other');
+    });
+});
+
+// Prevent autofill on form reset
+document.addEventListener('input', function(e) {
+    if (e.target.type === 'password') {
+        // Don't let the browser or extensions autofill
+        e.target.removeAttribute('data-lastpass');
+        e.target.removeAttribute('data-bitwarden');
+    }
+});
+
 // PIN Modal Functions
 function openPinModal(btn) {
     const userId = btn.dataset.userId;
@@ -537,7 +562,7 @@ function openPinModal(btn) {
     document.getElementById('pinUserId').value = userId;
     document.getElementById('pinInput').value = '';
     document.getElementById('pinModal').classList.add('active');
-    document.getElementById('pinInput').focus();
+    setTimeout(() => document.getElementById('pinInput').focus(), 100);
 }
 
 function closePinModal() {
@@ -555,9 +580,10 @@ document.getElementById('pinInput')?.addEventListener('input', function() {
 function openAddUserModal() {
     document.getElementById('addUserModal').classList.add('active');
     document.getElementById('adminPinInput').value = '';
+    document.getElementById('adminPinInput').setAttribute('autocomplete', 'off');
     document.getElementById('adminPinStep').style.display = 'block';
     document.getElementById('registerStep').style.display = 'none';
-    document.getElementById('adminPinInput').focus();
+    setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
 }
 
 function closeAddUserModal() {
