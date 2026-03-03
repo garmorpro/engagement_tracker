@@ -293,7 +293,7 @@ if (!$engagement) {
             display: flex;
             gap: 1rem;
             align-items: flex-start;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
         }
 
         .critical-date-icon-wrapper {
@@ -312,7 +312,7 @@ if (!$engagement) {
             font-size: 24px;
         }
 
-        .overdue-badge.overdue {
+        .critical-date-icon.overdue {
             animation: pulse 2s infinite;
         }
 
@@ -374,17 +374,17 @@ if (!$engagement) {
 
         /* Critical Date Box */
         .critical-date {
-            background: var(--gray-100);
-            border-radius: 10px;
-            padding: 1.25rem;
-            text-align: center;
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            text-align: left;
         }
 
         .critical-date-inner {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
+            align-items: flex-start;
+            gap: 0.25rem;
         }
 
         /* Upcoming Item */
@@ -392,7 +392,7 @@ if (!$engagement) {
             padding: 1rem;
             background: var(--gray-100);
             border-radius: 10px;
-            text-align: center;
+            text-align: left;
         }
 
         .upcoming-label {
@@ -666,8 +666,8 @@ if (!$engagement) {
                                 <i class="bi bi-clock-history"></i>
                             </div>
                         </div>
-                        <div class="critical-date-content overdue">
-                            <span class="overdue-badge overdue">Overdue</span>
+                        <div class="critical-date-content">
+                            <span class="overdue-badge">Overdue</span>
                         </div>
                     </div>
 
