@@ -103,7 +103,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         .header-nav {
             display: flex;
-            gap: 2.5rem;
+            gap: 1.5rem;
             align-items: center;
         }
 
