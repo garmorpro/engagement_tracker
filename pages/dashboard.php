@@ -595,6 +595,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             margin-bottom: 0;
             font-size: 14px;
             color: var(--text-primary);
+            background-color: var(--bg-secondary);
         }
 
         .table thead {
@@ -610,6 +611,11 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             font-size: 12px;
             letter-spacing: 0.5px;
             border: none;
+            background-color: var(--gray-100) !important;
+        }
+
+        .table tbody {
+            background-color: var(--bg-secondary);
         }
 
         .table tbody td {
@@ -617,14 +623,15 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             vertical-align: middle;
             border-color: var(--border-color);
             color: var(--text-primary);
+            background-color: var(--bg-secondary) !important;
         }
 
         .table tbody tr {
             transition: background-color 0.2s;
         }
 
-        .table tbody tr:hover {
-            background-color: var(--gray-100);
+        .table tbody tr:hover td {
+            background-color: var(--gray-100) !important;
         }
 
         /* ========== TABLE CELLS ========== */
