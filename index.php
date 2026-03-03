@@ -17,91 +17,405 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login - Engagement Tracker</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-body {
-    background: linear-gradient(135deg, #d8e2ec, #f0f4f8);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+    :root {
+        --primary-blue: #4487FC;
+        --success-green: #4FC65F;
+        --danger-red: #C90012;
+        --info-purple: #A04DFD;
+        --teal: #4DBFB8;
+        --text-primary: #1A1A1A;
+        --text-secondary: #6A7382;
+        --bg-primary: #0f1419;
+        --bg-secondary: #1A2332;
+        --bg-tertiary: #2A3A4D;
+        --border-color: #2D3847;
+    }
 
-.card {
-    max-width: 450px;
-    border-radius: 1rem;
-    padding: 2rem;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-    background: #ffffffee;
-    position: relative;
-}
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-.card-header-icon {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1.5rem;
-    color: #3b82f6;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-}
+    body {
+        background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-primary);
+    }
 
-.card-header-icon:hover {
-    color: #06b6d4;
-    transform: scale(1.2);
-}
+    .login-container {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
 
-.account-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-}
+    .logo-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--info-purple) 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 28px;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 4px 16px rgba(68, 135, 252, 0.3);
+    }
 
-.account-item {
-    background: #f8f9fa;
-    border-radius: 0.75rem;
-    padding: 1rem;
-    text-align: center;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-}
+    .login-container h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
 
-.account-item:hover {
-    background: #e0f0ff;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-}
+    .login-container p {
+        font-size: 14px;
+        color: var(--text-secondary);
+    }
 
-.account-item .role-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-}
+    .login-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2rem;
+        width: 100%;
+        max-width: 550px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
 
-.pin-popup, .register-popup {
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 2rem;
-    border-radius: 0.75rem;
-    box-shadow: 0 0 25px rgba(0,0,0,0.3);
-    display: none;
-    width: 350px;
-    z-index: 1000;
-}
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-header-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(68, 135, 252, 0.15);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-blue);
+        font-size: 24px;
+    }
+
+    .card-header h6 {
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        margin: 0;
+    }
+
+    .add-user-btn {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--border-color);
+        background: transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-blue);
+        transition: all 0.2s;
+        font-size: 18px;
+    }
+
+    .add-user-btn:hover {
+        background: rgba(68, 135, 252, 0.1);
+        border-color: var(--primary-blue);
+    }
+
+    .account-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .account-item {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        padding: 1.25rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .account-item:hover {
+        background: var(--border-color);
+        border-color: var(--primary-blue);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(68, 135, 252, 0.15);
+    }
+
+    .account-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .account-icon.user {
+        background: rgba(68, 135, 252, 0.15);
+        color: var(--primary-blue);
+    }
+
+    .account-icon.admin {
+        background: rgba(201, 0, 18, 0.15);
+        color: var(--danger-red);
+    }
+
+    .account-name {
+        font-size: 13px;
+        font-weight: 600;
+        color: white;
+    }
+
+    /* Modals */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-box {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 2rem;
+        width: 90%;
+        max-width: 450px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        position: relative;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: transparent;
+        color: var(--text-secondary);
+        font-size: 20px;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .modal-close:hover {
+        color: white;
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-header-icon {
+        width: 44px;
+        height: 44px;
+        background: rgba(68, 135, 252, 0.15);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary-blue);
+        font-size: 22px;
+        flex-shrink: 0;
+    }
+
+    .modal-header h5 {
+        font-size: 18px;
+        font-weight: 600;
+        color: white;
+        margin: 0;
+    }
+
+    .form-label {
+        font-size: 13px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .form-control, .form-select {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        color: white;
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 14px;
+    }
+
+    .form-control::placeholder {
+        color: var(--text-secondary);
+    }
+
+    .form-control:focus, .form-select:focus {
+        background: var(--bg-tertiary);
+        border-color: var(--primary-blue);
+        color: white;
+        box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+    }
+
+    .form-select option {
+        background: var(--bg-secondary);
+        color: white;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, #3671E0 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(68, 135, 252, 0.3);
+        background: linear-gradient(135deg, #3671E0 0%, #2857B8 100%);
+    }
+
+    .btn-primary:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        background: var(--bg-tertiary);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+        background: var(--border-color);
+        color: white;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .button-group button {
+        flex: 1;
+    }
+
+    .demo-credentials {
+        background: rgba(77, 191, 184, 0.1);
+        border: 1px solid var(--teal);
+        border-radius: 10px;
+        padding: 1.25rem;
+        margin-top: 1.5rem;
+        text-align: left;
+    }
+
+    .demo-credentials h6 {
+        color: var(--teal);
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+    }
+
+    .demo-credentials p {
+        font-size: 12px;
+        color: var(--text-secondary);
+        margin: 0.25rem 0;
+    }
+
+    .demo-credentials strong {
+        color: var(--teal);
+    }
+
+    @media (max-width: 600px) {
+        .login-card {
+            padding: 1.5rem;
+        }
+
+        .account-list {
+            grid-template-columns: 1fr;
+        }
+
+        .login-container h1 {
+            font-size: 24px;
+        }
+    }
 </style>
 </head>
 <body>
-<div class="container h-100 d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="card w-100">
-        <h4 class="text-center mb-3">Welcome Back</h4>
-        <p class="text-center text-muted mb-4">Click an account to sign in</p>
 
-        <!-- Super Admin Register Icon -->
-        <i class="bi bi-person-fill-add card-header-icon" onclick="openAdminPinPopup()" title="Register New Account"></i>
+<div style="text-align: center;">
+    <div class="login-container">
+        <div class="logo-icon">
+            <i class="bi bi-bar-chart-fill"></i>
+        </div>
+        <h1>Engagement Tracker</h1>
+        <p>Select your account to sign in</p>
+    </div>
 
-        <!-- Account List -->
+    <div class="login-card">
+        <div class="card-header">
+            <div class="card-header-icon">
+                <i class="bi bi-person-circle"></i>
+            </div>
+            <h6>Select Account</h6>
+        </div>
+        <button class="add-user-btn" onclick="openAddUserModal()" title="Add New User">
+            <i class="bi bi-person-fill-add"></i>
+        </button>
+
         <?php if (!empty($accounts)): ?>
             <div class="account-list">
                 <?php foreach ($accounts as $account): ?>
@@ -109,112 +423,141 @@ body {
                          data-user-id="<?= $account['user_id'] ?>"
                          data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
                          data-role="<?= $account['role'] ?>"
-                         onclick="openPinPopup(this)">
-                        <i class="bi <?= $account['role'] === 'super_admin' ? 'bi-shield-lock-fill text-danger' : 'bi-person-circle text-primary' ?> role-icon"></i>
-                        <div><?= htmlspecialchars($account['account_name']) ?></div>
+                         onclick="openPinModal(this)">
+                        <div class="account-icon <?= $account['role'] === 'super_admin' ? 'admin' : 'user' ?>">
+                            <i class="bi <?= $account['role'] === 'super_admin' ? 'bi-shield-fill' : 'bi-person-fill' ?>"></i>
+                        </div>
+                        <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
                     </div>
                 <?php endforeach; ?>
             </div>
         <?php else: ?>
-            <p class="text-center text-muted">No accounts available</p>
+            <p style="color: var(--text-secondary);">No accounts available</p>
         <?php endif; ?>
+
+        <!-- Demo Credentials -->
+        <div class="demo-credentials">
+            <h6>Demo Credentials:</h6>
+            <p>• John Doe: PIN <strong>1234</strong></p>
+            <p>• Jane Smith: PIN <strong>5678</strong></p>
+            <p>• Bob Wilson: PIN <strong>9012</strong></p>
+            <p>• Sarah Johnson: PIN <strong>3456</strong></p>
+        </div>
     </div>
 </div>
 
-<!-- User PIN Popup -->
-<div class="pin-popup" id="pinPopup">
-    <h6 id="popupAccountName" class="text-center mb-3"></h6>
-    <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
-        <input type="hidden" name="user_id" id="pinUserId">
-        <div class="mb-3">
-            <label for="pinInput" class="form-label" id="pinLabel">Enter PIN</label>
-            <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" id="pinInput" name="passcode" required>
+<!-- PIN Entry Modal -->
+<div class="modal-overlay" id="pinModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closePinModal()">×</button>
+        <div class="modal-header">
+            <div class="modal-header-icon">
+                <i class="bi bi-lock-fill"></i>
+            </div>
+            <h5 id="modalAccountName">Enter PIN</h5>
         </div>
-    </form>
+        <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
+            <input type="hidden" name="user_id" id="pinUserId">
+            <label class="form-label">PIN</label>
+            <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" 
+                   id="pinInput" name="passcode" required autofocus>
+        </form>
+    </div>
 </div>
 
-<!-- Super Admin PIN Popup -->
-<div class="pin-popup" id="adminPinPopup">
-    <h6 class="text-center mb-3">Enter Super Admin PIN</h6>
-    <form id="adminPinForm">
-        <div class="mb-3">
-            <input type="password" maxlength="6" pattern="\d{6}" class="form-control text-center fs-4" id="adminPinInput" required>
+<!-- Add User Modal -->
+<div class="modal-overlay" id="addUserModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeAddUserModal()">×</button>
+        <div class="modal-header">
+            <div class="modal-header-icon">
+                <i class="bi bi-person-fill-add"></i>
+            </div>
+            <h5>Add New User</h5>
         </div>
-    </form>
-</div>
+        
+        <!-- Step 1: Verify Super Admin PIN -->
+        <div id="adminPinStep">
+            <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
+            <input type="password" maxlength="6" pattern="\d{6}" 
+                   class="form-control text-center fs-4" id="adminPinInput" required autofocus>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
+        </div>
 
-<!-- Register Account Popup -->
-<div class="register-popup" id="registerPopup">
-    <h6 class="text-center mb-3">Create New Account</h6>
-    <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
-        <div class="mb-3">
-            <label class="form-label">Account Name</label>
-            <input type="text" class="form-control" name="account_name" required>
+        <!-- Step 2: Create Account -->
+        <div id="registerStep" style="display: none;">
+            <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
+                <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-control" name="account_name" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-control" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">4-Digit PIN</label>
+                    <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center" 
+                           name="passcode" required>
+                </div>
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="goBackToAdminPin()">Back</button>
+                    <button type="submit" class="btn btn-primary">Add User</button>
+                </div>
+            </form>
         </div>
-        <div class="mb-3">
-            <label class="form-label">4-digit PIN</label>
-            <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center" name="passcode" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Role</label>
-            <select class="form-select" name="role" required>
-                <option value="standard">Standard</option>
-                <option value="admin">Admin</option>
-            </select>
-        </div>
-        <div class="d-grid">
-            <button type="submit" class="btn btn-success">Create Account</button>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>
-// --- Popup Logic ---
-function openPinPopup(btn) {
+// PIN Modal Functions
+function openPinModal(btn) {
     const userId = btn.dataset.userId;
     const accountName = btn.dataset.accountName;
-    const role = btn.dataset.role;
-
-    document.getElementById('popupAccountName').innerText = accountName;
+    
+    document.getElementById('modalAccountName').innerText = accountName;
     document.getElementById('pinUserId').value = userId;
-
-    const pinInput = document.getElementById('pinInput');
-    const pinLabel = document.getElementById('pinLabel');
-    if(role === 'super_admin'){
-        pinInput.maxLength = 6;
-        pinInput.pattern = "\\d{6}";
-        pinLabel.innerText = "Enter 6-digit PIN";
-    } else {
-        pinInput.maxLength = 4;
-        pinInput.pattern = "\\d{4}";
-        pinLabel.innerText = "Enter 4-digit PIN";
-    }
-
-    pinInput.value = '';
-    document.getElementById('pinPopup').style.display = 'block';
-
-    // Auto focus after popup shows
-    setTimeout(() => pinInput.focus(), 50);
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinModal').classList.add('active');
+    document.getElementById('pinInput').focus();
 }
 
-document.getElementById('pinInput').addEventListener('input', function() {
-    if(this.value.length == this.maxLength){
+function closePinModal() {
+    document.getElementById('pinModal').classList.remove('active');
+    document.getElementById('pinInput').value = '';
+}
+
+document.getElementById('pinInput')?.addEventListener('input', function() {
+    if(this.value.length === 4) {
         document.getElementById('pinForm').submit();
     }
 });
 
-function openAdminPinPopup() {
-    const popup = document.getElementById('adminPinPopup');
-    const input = document.getElementById('adminPinInput');
-    input.value = '';
-    popup.style.display = 'block';
-
-    // Auto focus after popup shows
-    setTimeout(() => input.focus(), 50);
+// Add User Modal Functions
+function openAddUserModal() {
+    document.getElementById('addUserModal').classList.add('active');
+    document.getElementById('adminPinInput').value = '';
+    document.getElementById('adminPinStep').style.display = 'block';
+    document.getElementById('registerStep').style.display = 'none';
+    document.getElementById('adminPinInput').focus();
 }
 
-document.getElementById('adminPinInput').addEventListener('input', function(){
-    if(this.value.length === 6){
+function closeAddUserModal() {
+    document.getElementById('addUserModal').classList.remove('active');
+    document.getElementById('adminPinInput').value = '';
+    document.getElementById('adminPinStep').style.display = 'block';
+    document.getElementById('registerStep').style.display = 'none';
+}
+
+function goBackToAdminPin() {
+    document.getElementById('adminPinStep').style.display = 'block';
+    document.getElementById('registerStep').style.display = 'none';
+    document.getElementById('adminPinInput').value = '';
+    document.getElementById('adminPinInput').focus();
+}
+
+document.getElementById('adminPinInput')?.addEventListener('input', function(){
+    if(this.value.length === 6) {
         const adminPin = this.value;
         fetch('<?= BASE_URL ?>/auth/verify_admin_pin.php', {
             method: 'POST',
@@ -223,15 +566,10 @@ document.getElementById('adminPinInput').addEventListener('input', function(){
         })
         .then(res => res.json())
         .then(data => {
-            if(data.success){
-                document.getElementById('adminPinPopup').style.display = 'none';
-                document.getElementById('registerPopup').style.display = 'block';
-
-                // Focus first input in register popup
-                setTimeout(() => {
-                    document.querySelector('#registerPopup input[name="account_name"]').focus();
-                }, 50);
-
+            if(data.success) {
+                document.getElementById('adminPinStep').style.display = 'none';
+                document.getElementById('registerStep').style.display = 'block';
+                document.querySelector('#registerForm input[name="account_name"]').focus();
             } else {
                 alert('Invalid Super Admin PIN');
                 this.value = '';
@@ -242,13 +580,15 @@ document.getElementById('adminPinInput').addEventListener('input', function(){
     }
 });
 
-// Close popups when clicking outside
+// Close modal when clicking outside
 window.addEventListener('click', function(e){
-    ['pinPopup','adminPinPopup','registerPopup'].forEach(id => {
-        const popup = document.getElementById(id);
-        if(e.target === popup) popup.style.display = 'none';
-    });
+    const pinModal = document.getElementById('pinModal');
+    const addUserModal = document.getElementById('addUserModal');
+    
+    if(e.target === pinModal) closePinModal();
+    if(e.target === addUserModal) closeAddUserModal();
 });
 </script>
+
 </body>
 </html>
