@@ -1015,7 +1015,7 @@ $archiveCount = count($engagements);
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <button class="action-icon" title="Duplicate">
-                                        <i class="bi bi-files"></i>
+                                        <i class="bi bi-arrow-counterclockwise"></i>
                                     </button>
                                     <button class="action-icon" title="Delete">
                                         <i class="bi bi-trash"></i>
