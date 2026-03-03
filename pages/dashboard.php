@@ -271,7 +271,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             align-items: center;
             gap: 0.75rem;
             padding: 1rem;
-            background: var(--gray-100);
+            background: white;
             border-bottom: 1px solid var(--gray-200);
         }
 
@@ -306,14 +306,14 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         }
 
         .profile-dropdown-menu {
-            padding: 0.5rem 0;
+            padding: 0.75rem 0;
         }
 
         .profile-dropdown-item {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.75rem 1rem;
+            padding: 0.65rem 1rem;
             color: var(--text-dark);
             text-decoration: none;
             font-size: 14px;
@@ -332,8 +332,8 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         .profile-dropdown-item.logout {
             color: var(--danger-red);
             border-top: 1px solid var(--gray-200);
-            margin-top: 0.5rem;
-            padding-top: 0.75rem;
+            margin-top: 0.25rem;
+            padding-top: 0.65rem;
         }
 
         .profile-dropdown-item.logout:hover {
@@ -343,6 +343,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         .profile-dropdown-item i {
             font-size: 16px;
             color: var(--gray-300);
+            width: 18px;
         }
 
         .profile-dropdown-item.logout i {
