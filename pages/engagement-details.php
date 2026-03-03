@@ -666,7 +666,7 @@ if (!$engagement) {
                                 <i class="bi bi-clock-history"></i>
                             </div>
                         </div>
-                        <div class="critical-date-content">
+                        <div class="critical-date-content overdue">
                             <span class="overdue-badge">Overdue</span>
                         </div>
                     </div>
