@@ -47,28 +47,30 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+        padding: 2rem;
         color: var(--text-primary);
     }
 
     .login-container {
         text-align: center;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
     }
 
     .logo-icon {
         width: 60px;
         height: 60px;
-        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--info-purple) 100%);
-        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, #2196F3 100%);
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-size: 28px;
         margin: 0 auto 1.5rem;
-        box-shadow: 0 4px 16px rgba(68, 135, 252, 0.3);
+        box-shadow: 0 4px 16px rgba(33, 150, 243, 0.4);
     }
 
     .login-container h1 {
@@ -89,7 +91,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         border-radius: 16px;
         padding: 2rem;
         width: 100%;
-        max-width: 550px;
+        max-width: 800px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         position: relative;
     }
@@ -143,11 +145,12 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     .add-user-btn:hover {
         background: rgba(68, 135, 252, 0.1);
         border-color: var(--primary-blue);
+        transform: scale(1.1);
     }
 
     .account-list {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 1rem;
     }
 
@@ -155,20 +158,18 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         background: var(--bg-tertiary);
         border: 1px solid var(--border-color);
         border-radius: 10px;
-        padding: 1.25rem;
-        text-align: center;
+        padding: 1rem 1.25rem;
         cursor: pointer;
         transition: all 0.2s ease;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: 0.75rem;
+        gap: 1rem;
     }
 
     .account-item:hover {
         background: var(--border-color);
         border-color: var(--primary-blue);
-        transform: translateY(-4px);
+        transform: translateX(4px);
         box-shadow: 0 8px 24px rgba(68, 135, 252, 0.15);
     }
 
@@ -180,6 +181,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         align-items: center;
         justify-content: center;
         font-size: 24px;
+        flex-shrink: 0;
     }
 
     .account-icon.user {
@@ -192,10 +194,21 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         color: var(--danger-red);
     }
 
+    .account-info {
+        flex: 1;
+        text-align: left;
+    }
+
     .account-name {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 600;
         color: white;
+        margin-bottom: 0.25rem;
+    }
+
+    .account-email {
+        font-size: 12px;
+        color: var(--text-secondary);
     }
 
     /* Modals */
@@ -229,16 +242,21 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 
     .modal-close {
         position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
+        top: 1rem;
+        right: 1rem;
         width: 32px;
         height: 32px;
         border: none;
         background: transparent;
         color: var(--text-secondary);
-        font-size: 20px;
+        font-size: 24px;
         cursor: pointer;
         transition: color 0.2s;
+        padding: 0;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .modal-close:hover {
@@ -252,6 +270,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         margin-bottom: 1.5rem;
         padding-bottom: 1.5rem;
         border-bottom: 1px solid var(--border-color);
+        position: relative;
     }
 
     .modal-header-icon {
@@ -272,6 +291,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         font-weight: 600;
         color: white;
         margin: 0;
+        flex: 1;
     }
 
     .form-label {
@@ -353,13 +373,24 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         flex: 1;
     }
 
+    /* PIN Field - Numeric input masked with JavaScript */
+    .pin-field {
+        letter-spacing: 0.2em;
+        font-family: 'Courier New', monospace;
+        font-size: 24px !important;
+        font-weight: 600;
+        text-align: center;
+    }
+
     .demo-credentials {
         background: rgba(77, 191, 184, 0.1);
         border: 1px solid var(--teal);
         border-radius: 10px;
         padding: 1.25rem;
-        margin-top: 1.5rem;
+        margin-top: 2rem;
         text-align: left;
+        width: 100%;
+        max-width: 800px;
     }
 
     .demo-credentials h6 {
@@ -384,66 +415,68 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             padding: 1.5rem;
         }
 
-        .account-list {
-            grid-template-columns: 1fr;
-        }
-
         .login-container h1 {
             font-size: 24px;
+        }
+
+        .demo-credentials {
+            margin-top: 1.5rem;
         }
     }
 </style>
 </head>
 <body>
 
-<div style="text-align: center;">
-    <div class="login-container">
-        <div class="logo-icon">
-            <i class="bi bi-bar-chart-fill"></i>
-        </div>
-        <h1>Engagement Tracker</h1>
-        <p>Select your account to sign in</p>
+<div class="login-container">
+    <div class="logo-icon">
+        <i class="bi bi-bar-chart-fill"></i>
     </div>
+    <h1>Engagement Tracker</h1>
+    <p>Select your account to sign in</p>
+</div>
 
-    <div class="login-card">
-        <div class="card-header">
-            <div class="card-header-icon">
-                <i class="bi bi-person-circle"></i>
-            </div>
-            <h6>Select Account</h6>
+<div class="login-card">
+    <div class="card-header">
+        <div class="card-header-icon">
+            <i class="bi bi-person-circle"></i>
         </div>
-        <button class="add-user-btn" onclick="openAddUserModal()" title="Add New User">
-            <i class="bi bi-person-fill-add"></i>
-        </button>
+        <h6>Select Account</h6>
+    </div>
+    <button class="add-user-btn" onclick="openAddUserModal()" title="Add New User">
+        <i class="bi bi-person-fill-add"></i>
+    </button>
 
-        <?php if (!empty($accounts)): ?>
-            <div class="account-list">
-                <?php foreach ($accounts as $account): ?>
-                    <div class="account-item"
-                         data-user-id="<?= $account['user_id'] ?>"
-                         data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
-                         data-role="<?= $account['role'] ?>"
-                         onclick="openPinModal(this)">
-                        <div class="account-icon <?= $account['role'] === 'super_admin' ? 'admin' : 'user' ?>">
-                            <i class="bi <?= $account['role'] === 'super_admin' ? 'bi-shield-fill' : 'bi-person-fill' ?>"></i>
-                        </div>
-                        <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
+    <?php if (!empty($accounts)): ?>
+        <div class="account-list">
+            <?php foreach ($accounts as $account): ?>
+                <?php if ($account['role'] === 'super_admin') continue; ?>
+                <div class="account-item"
+                     data-user-id="<?= $account['user_id'] ?>"
+                     data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
+                     data-role="<?= $account['role'] ?>"
+                     onclick="openPinModal(this)">
+                    <div class="account-icon <?= $account['role'] === 'super_admin' ? 'admin' : 'user' ?>">
+                        <i class="bi <?= $account['role'] === 'super_admin' ? 'bi-shield-fill' : 'bi-person-fill' ?>"></i>
                     </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <p style="color: var(--text-secondary);">No accounts available</p>
-        <?php endif; ?>
-
-        <!-- Demo Credentials -->
-        <div class="demo-credentials">
-            <h6>Demo Credentials:</h6>
-            <p>• John Doe: PIN <strong>1234</strong></p>
-            <p>• Jane Smith: PIN <strong>5678</strong></p>
-            <p>• Bob Wilson: PIN <strong>9012</strong></p>
-            <p>• Sarah Johnson: PIN <strong>3456</strong></p>
+                    <div class="account-info">
+                        <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
+                        <div class="account-email"><?= strtolower(str_replace(' ', '.', htmlspecialchars($account['account_name']))) . '@company.com' ?></div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
-    </div>
+    <?php else: ?>
+        <p style="color: var(--text-secondary);">No accounts available</p>
+    <?php endif; ?>
+</div>
+
+<!-- Demo Credentials Section (Outside Card) -->
+<div class="demo-credentials">
+    <h6>Demo Credentials:</h6>
+    <p>• John Doe: PIN <strong>1234</strong></p>
+    <p>• Jane Smith: PIN <strong>5678</strong></p>
+    <p>• Bob Wilson: PIN <strong>9012</strong></p>
+    <p>• Sarah Johnson: PIN <strong>3456</strong></p>
 </div>
 
 <!-- PIN Entry Modal -->
@@ -456,10 +489,10 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             </div>
             <h5 id="modalAccountName">Enter PIN</h5>
         </div>
-        <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
+        <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php" autocomplete="off">
             <input type="hidden" name="user_id" id="pinUserId">
             <label class="form-label">PIN</label>
-            <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" 
+            <input type="text" inputmode="numeric" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4 pin-field" 
                    id="pinInput" name="passcode" required autofocus>
         </form>
     </div>
@@ -479,25 +512,25 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <!-- Step 1: Verify Super Admin PIN -->
         <div id="adminPinStep">
             <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
-            <input type="password" maxlength="6" pattern="\d{6}" 
-                   class="form-control text-center fs-4" id="adminPinInput" required autofocus>
+            <input type="text" inputmode="numeric" maxlength="6" pattern="\d{6}" 
+                   class="form-control text-center fs-4 pin-field" id="adminPinInput" required autofocus>
             <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
         </div>
 
         <!-- Step 2: Create Account -->
         <div id="registerStep" style="display: none;">
-            <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
+            <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php" autocomplete="off">
                 <div class="mb-3">
                     <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control" name="account_name" required>
+                    <input type="text" class="form-control" name="account_name" required autocomplete="off">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email Address</label>
-                    <input type="email" class="form-control" name="email" required>
+                    <input type="email" class="form-control" name="email" required autocomplete="off">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">4-Digit PIN</label>
-                    <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center" 
+                    <input type="text" inputmode="numeric" maxlength="4" pattern="\d{4}" class="form-control text-center pin-field" 
                            name="passcode" required>
                 </div>
                 <div class="button-group">
@@ -510,6 +543,75 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 </div>
 
 <script>
+// PIN Masking Storage
+const pinInputs = {};
+
+// Setup PIN masking for a field
+function setupPinMasking(inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    
+    pinInputs[inputId] = '';
+    
+    input.addEventListener('input', function(e) {
+        // Store the actual numeric value only
+        pinInputs[inputId] = e.target.value.replace(/[^\d•]/g, '').replace(/•/g, '');
+        
+        // Display masked value (dots)
+        e.target.value = '•'.repeat(pinInputs[inputId].length);
+        
+        // Auto-submit PIN form when 4 digits entered
+        if (inputId === 'pinInput' && pinInputs[inputId].length === 4) {
+            document.getElementById('pinForm').passcode.value = pinInputs[inputId];
+            setTimeout(() => document.getElementById('pinForm').submit(), 50);
+        }
+        
+        // Auto-verify admin PIN when 6 digits entered
+        if (inputId === 'adminPinInput' && pinInputs[inputId].length === 6) {
+            verifyAdminPin(pinInputs[inputId]);
+        }
+    });
+    
+    // Only allow numeric input
+    input.addEventListener('keydown', function(e) {
+        if (['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+            return;
+        }
+        if (!/\d/.test(e.key)) {
+            e.preventDefault();
+        }
+    });
+}
+
+// Verify admin PIN
+function verifyAdminPin(adminPin) {
+    fetch('<?= BASE_URL ?>/auth/verify_admin_pin.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({passcode: adminPin})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            document.getElementById('adminPinStep').style.display = 'none';
+            document.getElementById('registerStep').style.display = 'block';
+            document.querySelector('#registerForm input[name="account_name"]').focus();
+        } else {
+            alert('Invalid Super Admin PIN');
+            document.getElementById('adminPinInput').value = '';
+            pinInputs['adminPinInput'] = '';
+            document.getElementById('adminPinInput').focus();
+        }
+    })
+    .catch(() => alert('Error verifying Super Admin PIN'));
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    setupPinMasking('pinInput');
+    setupPinMasking('adminPinInput');
+});
+
 // PIN Modal Functions
 function openPinModal(btn) {
     const userId = btn.dataset.userId;
@@ -518,33 +620,31 @@ function openPinModal(btn) {
     document.getElementById('modalAccountName').innerText = accountName;
     document.getElementById('pinUserId').value = userId;
     document.getElementById('pinInput').value = '';
+    pinInputs['pinInput'] = '';
     document.getElementById('pinModal').classList.add('active');
-    document.getElementById('pinInput').focus();
+    setTimeout(() => document.getElementById('pinInput').focus(), 100);
 }
 
 function closePinModal() {
     document.getElementById('pinModal').classList.remove('active');
     document.getElementById('pinInput').value = '';
+    pinInputs['pinInput'] = '';
 }
-
-document.getElementById('pinInput')?.addEventListener('input', function() {
-    if(this.value.length === 4) {
-        document.getElementById('pinForm').submit();
-    }
-});
 
 // Add User Modal Functions
 function openAddUserModal() {
     document.getElementById('addUserModal').classList.add('active');
     document.getElementById('adminPinInput').value = '';
+    pinInputs['adminPinInput'] = '';
     document.getElementById('adminPinStep').style.display = 'block';
     document.getElementById('registerStep').style.display = 'none';
-    document.getElementById('adminPinInput').focus();
+    setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
 }
 
 function closeAddUserModal() {
     document.getElementById('addUserModal').classList.remove('active');
     document.getElementById('adminPinInput').value = '';
+    pinInputs['adminPinInput'] = '';
     document.getElementById('adminPinStep').style.display = 'block';
     document.getElementById('registerStep').style.display = 'none';
 }
@@ -553,32 +653,9 @@ function goBackToAdminPin() {
     document.getElementById('adminPinStep').style.display = 'block';
     document.getElementById('registerStep').style.display = 'none';
     document.getElementById('adminPinInput').value = '';
+    pinInputs['adminPinInput'] = '';
     document.getElementById('adminPinInput').focus();
 }
-
-document.getElementById('adminPinInput')?.addEventListener('input', function(){
-    if(this.value.length === 6) {
-        const adminPin = this.value;
-        fetch('<?= BASE_URL ?>/auth/verify_admin_pin.php', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({passcode: adminPin})
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success) {
-                document.getElementById('adminPinStep').style.display = 'none';
-                document.getElementById('registerStep').style.display = 'block';
-                document.querySelector('#registerForm input[name="account_name"]').focus();
-            } else {
-                alert('Invalid Super Admin PIN');
-                this.value = '';
-                this.focus();
-            }
-        })
-        .catch(() => alert('Error verifying Super Admin PIN'));
-    }
-});
 
 // Close modal when clicking outside
 window.addEventListener('click', function(e){
