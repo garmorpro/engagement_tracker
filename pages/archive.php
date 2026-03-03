@@ -805,8 +805,8 @@ $archiveCount = count($engagements);
                     <i class="bi bi-bar-chart-fill"></i>
                 </div>
                 <div>
-                    <div class="header-title">Engagement Pro</div>
-                    <div class="header-subtitle">Light Edition</div>
+                    <div class="header-title">Engagement Tracker</div>
+                    <div class="header-subtitle">Manage your audit engagements</div>
                 </div>
             </a>
 
