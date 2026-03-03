@@ -245,7 +245,7 @@ if (!$engagement) {
         }
 
         .sidebar-section {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .sidebar-section:last-child {
@@ -263,22 +263,22 @@ if (!$engagement) {
 
         .critical-date {
             text-align: center;
-            padding: 1rem 0.75rem;
+            padding: 1.5rem 1rem;
             background: var(--gray-100);
             border-radius: 10px;
         }
 
         .critical-date-icon {
-            width: 44px;
-            height: 44px;
-            margin: 0 auto 0.5rem;
-            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.75rem;
+            border-radius: 8px;
             background: rgba(201, 0, 18, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--danger-red);
-            font-size: 22px;
+            font-size: 24px;
         }
 
         .critical-date-icon.overdue {
@@ -290,19 +290,32 @@ if (!$engagement) {
                 box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.4);
             }
             50% {
-                box-shadow: 0 0 0 8px rgba(201, 0, 18, 0);
+                box-shadow: 0 0 0 10px rgba(201, 0, 18, 0);
             }
         }
 
+        .critical-date-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
         .critical-date-value {
-            font-size: 22px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--danger-red);
-            margin-bottom: 0.15rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .critical-date-value.remaining {
+            color: var(--primary-blue);
         }
 
         .critical-date-status {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-secondary);
         }
 
@@ -592,11 +605,11 @@ if (!$engagement) {
             <div class="engagement-sidebar">
                 <!-- Critical Date Section -->
                 <div class="sidebar-section">
-                    <div class="sidebar-section-title">Next Critical Date</div>
                     <div class="critical-date">
                         <div class="critical-date-icon overdue">
                             <i class="bi bi-clock-history"></i>
                         </div>
+                        <div class="critical-date-label">Next Critical Date</div>
                         <div class="critical-date-value">37 days</div>
                         <div class="critical-date-status overdue">overdue</div>
                     </div>
