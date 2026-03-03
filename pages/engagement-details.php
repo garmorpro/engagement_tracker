@@ -547,7 +547,7 @@ if (!$engagement) {
    hr {
     margin: 0;
     padding: 0;
-    width: 100% !important;
+    width: 100vw !important;
 }
     </style>
 </head>
