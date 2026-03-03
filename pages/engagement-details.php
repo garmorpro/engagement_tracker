@@ -262,7 +262,7 @@ if (!$engagement) {
         }
 
         .critical-date {
-            text-align: left;
+            text-align: center;
             padding: 1.5rem 1rem;
             background: var(--gray-100);
             border-radius: 10px;
