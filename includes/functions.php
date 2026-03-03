@@ -56,7 +56,7 @@ function loginUser($conn)
     }
 
     $stmt = $conn->prepare(
-        "SELECT user_id, account_name, password
+        "SELECT user_id, name, account_name, password
          FROM service_accounts
          WHERE account_name = ?
          LIMIT 1"
@@ -80,6 +80,7 @@ function loginUser($conn)
     session_regenerate_id(true);
 
     $_SESSION['user_id']      = $account['user_id'];
+    $_SESSION['name']    = $account['name'];
     $_SESSION['account_name'] = $account['account_name'];
 
     // Update login state
