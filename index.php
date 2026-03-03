@@ -22,407 +22,286 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-    :root {
-        --primary-blue: #4487FC;
-        --success-green: #4FC65F;
-        --danger-red: #C90012;
-        --info-purple: #A04DFD;
-        --teal: #4DBFB8;
-        --text-primary: #1A1A1A;
-        --text-secondary: #6A7382;
-        --bg-primary: #0f1419;
-        --bg-secondary: #1A2332;
-        --bg-tertiary: #2A3A4D;
-        --border-color: #2D3847;
-    }
+:root {
+    --primary-blue: #4487FC;
+    --danger-red: #C90012;
+    --info-purple: #A04DFD;
+    --teal: #4DBFB8;
+    --bg-primary: #0f1419;
+    --bg-secondary: #1A2332;
+    --bg-tertiary: #2A3A4D;
+    --border-color: #2D3847;
+    --text-secondary: #6A7382;
+}
 
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    body {
-        background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-        color: var(--text-primary);
-    }
+body {
+    background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: white;
+}
 
-    .login-container {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
+.login-container { text-align: center; margin-bottom: 2rem; }
+.logo-icon {
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #2196F3 100%);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 28px;
+    margin: 0 auto 1.5rem;
+    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.4);
+}
 
-    .logo-icon {
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, var(--primary-blue) 0%, #2196F3 100%);
-        border-radius: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 28px;
-        margin: 0 auto 1.5rem;
-        box-shadow: 0 4px 16px rgba(33, 150, 243, 0.4);
-    }
+.login-container h1 {
+    font-size: 32px; font-weight: 700;
+    margin-bottom: 0.5rem; color: white;
+}
 
-    .login-container h1 {
-        font-size: 32px;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        color: white;
-    }
+.login-container p {
+    font-size: 14px; color: var(--text-secondary);
+}
 
-    .login-container p {
-        font-size: 14px;
-        color: var(--text-secondary);
-    }
+.login-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
 
-    .login-card {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
-        padding: 2rem;
-        width: 100%;
-        max-width: 800px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        position: relative;
-    }
+.card-header {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
 
-    .card-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-    }
+.card-header-icon {
+    width: 48px; height: 48px;
+    background: rgba(68, 135, 252, 0.15);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--primary-blue);
+    font-size: 24px;
+}
 
-    .card-header-icon {
-        width: 48px;
-        height: 48px;
-        background: rgba(68, 135, 252, 0.15);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-blue);
-        font-size: 24px;
-    }
+.card-header h6 {
+    font-size: 18px; font-weight: 600;
+    color: white; margin: 0;
+}
 
-    .card-header h6 {
-        font-size: 18px;
-        font-weight: 600;
-        color: white;
-        margin: 0;
-    }
+.add-user-btn {
+    position: absolute; top: 1rem; right: 1rem;
+    width: 36px; height: 36px;
+    border: 1px solid var(--border-color);
+    background: transparent; border-radius: 8px;
+    cursor: pointer; color: var(--primary-blue);
+    transition: all 0.2s; font-size: 18px;
+}
 
-    .add-user-btn {
-        position: absolute;
-        top: 1.5rem;
-        right: 1.5rem;
-        width: 36px;
-        height: 36px;
-        border: 1px solid var(--border-color);
-        background: transparent;
-        border-radius: 8px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-blue);
-        transition: all 0.2s;
-        font-size: 18px;
-    }
+.add-user-btn:hover {
+    background: rgba(68, 135, 252, 0.1);
+    border-color: var(--primary-blue);
+    transform: scale(1.1);
+}
 
-    .add-user-btn:hover {
-        background: rgba(68, 135, 252, 0.1);
-        border-color: var(--primary-blue);
-        transform: scale(1.1);
-    }
+.account-list { display: flex; flex-direction: column; gap: 1rem; }
 
-    .account-list {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
+.account-item {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex; align-items: center; gap: 1rem;
+}
 
-    .account-item {
-        background: var(--bg-tertiary);
-        border: 1px solid var(--border-color);
-        border-radius: 10px;
-        padding: 1rem 1.25rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
+.account-item:hover {
+    background: var(--border-color);
+    border-color: var(--primary-blue);
+    transform: translateX(4px);
+    box-shadow: 0 8px 24px rgba(68, 135, 252, 0.15);
+}
 
-    .account-item:hover {
-        background: var(--border-color);
-        border-color: var(--primary-blue);
-        transform: translateX(4px);
-        box-shadow: 0 8px 24px rgba(68, 135, 252, 0.15);
-    }
+.account-icon {
+    width: 48px; height: 48px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; flex-shrink: 0;
+}
 
-    .account-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        flex-shrink: 0;
-    }
+.account-icon.user {
+    background: rgba(68, 135, 252, 0.15);
+    color: var(--primary-blue);
+}
 
-    .account-icon.user {
-        background: rgba(68, 135, 252, 0.15);
-        color: var(--primary-blue);
-    }
+.account-icon.admin {
+    background: rgba(201, 0, 18, 0.15);
+    color: var(--danger-red);
+}
 
-    .account-icon.admin {
-        background: rgba(201, 0, 18, 0.15);
-        color: var(--danger-red);
-    }
+.account-info { flex: 1; text-align: left; }
+.account-name { font-size: 14px; font-weight: 600; color: white; margin-bottom: 0.25rem; }
+.account-email { font-size: 12px; color: var(--text-secondary); }
 
-    .account-info {
-        flex: 1;
-        text-align: left;
-    }
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: none; align-items: center; justify-content: center;
+    z-index: 1000;
+}
 
-    .account-name {
-        font-size: 14px;
-        font-weight: 600;
-        color: white;
-        margin-bottom: 0.25rem;
-    }
+.modal-overlay.active { display: flex; }
 
-    .account-email {
-        font-size: 12px;
-        color: var(--text-secondary);
-    }
+.modal-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
 
-    /* Modals */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-    }
+.modal-close {
+    position: absolute; top: 1rem; right: 1rem;
+    width: 32px; height: 32px;
+    border: none; background: transparent;
+    color: var(--text-secondary); font-size: 24px;
+    cursor: pointer; transition: color 0.2s;
+    padding: 0; line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+}
 
-    .modal-overlay.active {
-        display: flex;
-    }
+.modal-close:hover { color: white; }
 
-    .modal-box {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
-        padding: 2rem;
-        width: 90%;
-        max-width: 450px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-        position: relative;
-    }
+.modal-header {
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
 
-    .modal-close {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        width: 32px;
-        height: 32px;
-        border: none;
-        background: transparent;
-        color: var(--text-secondary);
-        font-size: 24px;
-        cursor: pointer;
-        transition: color 0.2s;
-        padding: 0;
-        line-height: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+.modal-header-icon {
+    width: 44px; height: 44px;
+    background: rgba(68, 135, 252, 0.15);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--primary-blue);
+    font-size: 22px;
+    flex-shrink: 0;
+}
 
-    .modal-close:hover {
-        color: white;
-    }
+.modal-header h5 {
+    font-size: 18px; font-weight: 600;
+    color: white; margin: 0; flex: 1;
+}
 
-    .modal-header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-        position: relative;
-    }
+.form-label {
+    font-size: 13px; color: var(--text-secondary);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 0.5rem; font-weight: 600;
+}
 
-    .modal-header-icon {
-        width: 44px;
-        height: 44px;
-        background: rgba(68, 135, 252, 0.15);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--primary-blue);
-        font-size: 22px;
-        flex-shrink: 0;
-    }
+.form-control {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: white;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 14px;
+}
 
-    .modal-header h5 {
-        font-size: 18px;
-        font-weight: 600;
-        color: white;
-        margin: 0;
-        flex: 1;
-    }
+.form-control::placeholder { color: var(--text-secondary); }
 
-    .form-label {
-        font-size: 13px;
-        color: var(--text-secondary);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
-    }
+.form-control:focus {
+    background: var(--bg-tertiary);
+    border-color: var(--primary-blue);
+    color: white;
+    box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+}
 
-    .form-control, .form-select {
-        background: var(--bg-tertiary);
-        border: 1px solid var(--border-color);
-        color: white;
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-        font-size: 14px;
-    }
+.pin-field {
+    letter-spacing: 0.2em;
+    font-family: 'Courier New', monospace;
+    font-size: 24px !important;
+    font-weight: 600;
+    text-align: center;
+}
 
-    .form-control::placeholder {
-        color: var(--text-secondary);
-    }
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #3671E0 100%);
+    border: none; color: white;
+    font-weight: 600; border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.2s;
+}
 
-    .form-control:focus, .form-select:focus {
-        background: var(--bg-tertiary);
-        border-color: var(--primary-blue);
-        color: white;
-        box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
-    }
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(68, 135, 252, 0.3);
+    background: linear-gradient(135deg, #3671E0 0%, #2857B8 100%);
+}
 
-    .form-select option {
-        background: var(--bg-secondary);
-        color: white;
-    }
+.btn-secondary {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-weight: 600; border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.2s;
+}
 
-    .btn-primary {
-        background: linear-gradient(135deg, var(--primary-blue) 0%, #3671E0 100%);
-        border: none;
-        color: white;
-        font-weight: 600;
-        border-radius: 8px;
-        padding: 0.75rem 1.5rem;
-        transition: all 0.2s;
-    }
+.btn-secondary:hover {
+    background: var(--border-color);
+    color: white;
+}
 
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 16px rgba(68, 135, 252, 0.3);
-        background: linear-gradient(135deg, #3671E0 0%, #2857B8 100%);
-    }
+.button-group {
+    display: flex; gap: 1rem;
+    margin-top: 1.5rem;
+}
 
-    .btn-primary:active {
-        transform: translateY(0);
-    }
+.button-group button { flex: 1; }
 
-    .btn-secondary {
-        background: var(--bg-tertiary);
-        border: 1px solid var(--border-color);
-        color: var(--text-secondary);
-        font-weight: 600;
-        border-radius: 8px;
-        padding: 0.75rem 1.5rem;
-        transition: all 0.2s;
-    }
+.demo-credentials {
+    background: rgba(77, 191, 184, 0.1);
+    border: 1px solid var(--teal);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-top: 2rem;
+    text-align: left;
+    width: 100%;
+    max-width: 800px;
+}
 
-    .btn-secondary:hover {
-        background: var(--border-color);
-        color: white;
-    }
+.demo-credentials h6 {
+    color: var(--teal);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
 
-    .button-group {
-        display: flex;
-        gap: 1rem;
-        margin-top: 1.5rem;
-    }
+.demo-credentials p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 0.25rem 0;
+}
 
-    .button-group button {
-        flex: 1;
-    }
+.demo-credentials strong { color: var(--teal); }
 
-    /* PIN Field - Numeric input masked with JavaScript */
-    .pin-field {
-        letter-spacing: 0.2em;
-        font-family: 'Courier New', monospace;
-        font-size: 24px !important;
-        font-weight: 600;
-        text-align: center;
-    }
-
-    .demo-credentials {
-        background: rgba(77, 191, 184, 0.1);
-        border: 1px solid var(--teal);
-        border-radius: 10px;
-        padding: 1.25rem;
-        margin-top: 2rem;
-        text-align: left;
-        width: 100%;
-        max-width: 800px;
-    }
-
-    .demo-credentials h6 {
-        color: var(--teal);
-        font-size: 13px;
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-    }
-
-    .demo-credentials p {
-        font-size: 12px;
-        color: var(--text-secondary);
-        margin: 0.25rem 0;
-    }
-
-    .demo-credentials strong {
-        color: var(--teal);
-    }
-
-    @media (max-width: 600px) {
-        .login-card {
-            padding: 1.5rem;
-        }
-
-        .login-container h1 {
-            font-size: 24px;
-        }
-
-        .demo-credentials {
-            margin-top: 1.5rem;
-        }
-    }
+.mb-3 { margin-bottom: 1rem; }
 </style>
 </head>
 <body>
@@ -455,8 +334,8 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                      data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
                      data-role="<?= $account['role'] ?>"
                      onclick="openPinModal(this)">
-                    <div class="account-icon <?= $account['role'] === 'super_admin' ? 'admin' : 'user' ?>">
-                        <i class="bi <?= $account['role'] === 'super_admin' ? 'bi-shield-fill' : 'bi-person-fill' ?>"></i>
+                    <div class="account-icon user">
+                        <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="account-info">
                         <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
@@ -470,7 +349,6 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     <?php endif; ?>
 </div>
 
-<!-- Demo Credentials Section (Outside Card) -->
 <div class="demo-credentials">
     <h6>Demo Credentials:</h6>
     <p>• John Doe: PIN <strong>1234</strong></p>
@@ -489,11 +367,11 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             </div>
             <h5 id="modalAccountName">Enter PIN</h5>
         </div>
-        <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php" autocomplete="off">
+        <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
             <input type="hidden" name="user_id" id="pinUserId">
             <label class="form-label">PIN</label>
             <input type="text" class="form-control text-center fs-4 pin-field" 
-                   id="pinInput" name="passcode" required autofocus>
+                   id="pinInput" required autofocus>
         </form>
     </div>
 </div>
@@ -509,7 +387,6 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             <h5>Add New User</h5>
         </div>
         
-        <!-- Step 1: Verify Super Admin PIN -->
         <div id="adminPinStep">
             <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
             <input type="text" class="form-control text-center fs-4 pin-field" 
@@ -517,16 +394,15 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
         </div>
 
-        <!-- Step 2: Create Account -->
         <div id="registerStep" style="display: none;">
-            <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php" autocomplete="off">
+            <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
                 <div class="mb-3">
                     <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control" name="account_name" required autocomplete="off">
+                    <input type="text" class="form-control" name="account_name" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email Address</label>
-                    <input type="email" class="form-control" name="email" required autocomplete="off">
+                    <input type="email" class="form-control" name="email" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">4-Digit PIN</label>
@@ -543,10 +419,8 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 </div>
 
 <script>
-// PIN Masking Storage
 const pinInputs = {};
 
-// Setup PIN masking for a field
 function setupPinMasking(inputId) {
     const input = document.getElementById(inputId);
     if (!input) return;
@@ -554,38 +428,43 @@ function setupPinMasking(inputId) {
     pinInputs[inputId] = '';
     const maxLength = inputId === 'adminPinInput' ? 6 : 4;
     
+    input.addEventListener('beforeinput', function(e) {
+        // Allow deletion
+        if (['deleteContentBackward', 'deleteContentForward'].includes(e.inputType)) {
+            return;
+        }
+        // Only allow numeric
+        if (!/\d/.test(e.data)) {
+            e.preventDefault();
+        }
+    });
+    
     input.addEventListener('input', function(e) {
-        // Get only the numeric digits from what was typed
-        let numericOnly = e.target.value.replace(/\D/g, '');
+        let value = e.target.value.replace(/\D/g, '');
+        value = value.slice(0, maxLength);
+        pinInputs[inputId] = value;
+        e.target.value = '•'.repeat(value.length);
         
-        // Enforce max length
-        numericOnly = numericOnly.slice(0, maxLength);
-        
-        // Store the actual numeric value
-        pinInputs[inputId] = numericOnly;
-        
-        // Display masked value (dots)
-        e.target.value = '•'.repeat(numericOnly.length);
-        
-        // Auto-submit PIN form when max length reached
-        if (inputId === 'pinInput' && numericOnly.length === 4) {
-            document.getElementById('pinForm').passcode.value = numericOnly;
+        if (inputId === 'pinInput' && value.length === 4) {
+            document.getElementById('pinForm').passcode = document.createElement('input');
+            document.getElementById('pinForm').passcode.type = 'hidden';
+            document.getElementById('pinForm').passcode.name = 'passcode';
+            document.getElementById('pinForm').passcode.value = value;
+            document.getElementById('pinForm').appendChild(document.getElementById('pinForm').passcode);
             setTimeout(() => document.getElementById('pinForm').submit(), 50);
         }
         
-        // Auto-verify admin PIN when 6 digits entered
-        if (inputId === 'adminPinInput' && numericOnly.length === 6) {
-            verifyAdminPin(numericOnly);
+        if (inputId === 'adminPinInput' && value.length === 6) {
+            verifyAdminPin(value);
         }
     });
 }
 
-// Verify admin PIN
-function verifyAdminPin(adminPin) {
+function verifyAdminPin(pin) {
     fetch('<?= BASE_URL ?>/auth/verify_admin_pin.php', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({passcode: adminPin})
+        body: JSON.stringify({passcode: pin})
     })
     .then(res => res.json())
     .then(data => {
@@ -603,17 +482,9 @@ function verifyAdminPin(adminPin) {
     .catch(() => alert('Error verifying Super Admin PIN'));
 }
 
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    setupPinMasking('pinInput');
-    setupPinMasking('adminPinInput');
-});
-
-// PIN Modal Functions
 function openPinModal(btn) {
     const userId = btn.dataset.userId;
     const accountName = btn.dataset.accountName;
-    
     document.getElementById('modalAccountName').innerText = accountName;
     document.getElementById('pinUserId').value = userId;
     document.getElementById('pinInput').value = '';
@@ -628,7 +499,6 @@ function closePinModal() {
     pinInputs['pinInput'] = '';
 }
 
-// Add User Modal Functions
 function openAddUserModal() {
     document.getElementById('addUserModal').classList.add('active');
     document.getElementById('adminPinInput').value = '';
@@ -642,8 +512,6 @@ function closeAddUserModal() {
     document.getElementById('addUserModal').classList.remove('active');
     document.getElementById('adminPinInput').value = '';
     pinInputs['adminPinInput'] = '';
-    document.getElementById('adminPinStep').style.display = 'block';
-    document.getElementById('registerStep').style.display = 'none';
 }
 
 function goBackToAdminPin() {
@@ -654,13 +522,14 @@ function goBackToAdminPin() {
     document.getElementById('adminPinInput').focus();
 }
 
-// Close modal when clicking outside
+document.addEventListener('DOMContentLoaded', function() {
+    setupPinMasking('pinInput');
+    setupPinMasking('adminPinInput');
+});
+
 window.addEventListener('click', function(e){
-    const pinModal = document.getElementById('pinModal');
-    const addUserModal = document.getElementById('addUserModal');
-    
-    if(e.target === pinModal) closePinModal();
-    if(e.target === addUserModal) closeAddUserModal();
+    if(e.target === document.getElementById('pinModal')) closePinModal();
+    if(e.target === document.getElementById('addUserModal')) closeAddUserModal();
 });
 </script>
 
