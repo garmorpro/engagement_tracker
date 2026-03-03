@@ -484,7 +484,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <!-- Add User Modal -->
 <div class="modal-overlay" id="addUserModal">
     <div class="modal-box">
-        <button class="modal-close" onclick="closeAddUserModal()">×</button>
+        <button class="modal-close pb-3" onclick="closeAddUserModal()">×</button>
         <div class="modal-header">
             <div class="modal-header-icon">
                 <i class="bi bi-person-fill-add"></i>
@@ -497,7 +497,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
             <input type="password" maxlength="6" pattern="\d{6}" 
                    class="form-control text-center fs-4" id="adminPinInput" required autofocus>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
+            <!-- <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p> -->
         </div>
 
         <!-- Step 2: Create Account -->
