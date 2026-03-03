@@ -97,6 +97,10 @@ if (!$engagement) {
 
         body.dark-mode .page-header.scrolled {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
         }
 
         /* ========== BACK BUTTON ========== */
@@ -541,8 +545,7 @@ if (!$engagement) {
                 flex: 1;
             }
         }
-        hr,
-        .page-header {
+        hr {
     margin: 0;
     padding: 0;
     width: 100vw;
