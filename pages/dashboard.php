@@ -248,7 +248,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             background: white;
             border: 1px solid var(--gray-200);
             border-radius: 10px;
-            min-width: 240px;
+            min-width: 265px;
             margin-top: 0.75rem;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
             opacity: 0;
