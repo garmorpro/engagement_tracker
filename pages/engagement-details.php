@@ -93,8 +93,7 @@ if (!$engagement) {
 
         .page-header.scrolled {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            left: 50%;
-    right: 50%;
+          
     margin-left: -50vw;
     margin-right: -50vw;
         }
