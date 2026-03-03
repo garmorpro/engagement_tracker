@@ -831,7 +831,21 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             <div class="profile-section">
                 <div class="profile-wrapper" id="profileToggle">
                     <button class="profile-btn" title="Profile">
-                        <?php echo $initials; ?>
+                        <?php
+                            $initials = '';
+                    
+                            if (!empty($_SESSION['name'])) {
+                                $nameParts = explode(' ', trim($_SESSION['name']));
+                                
+                                foreach ($nameParts as $part) {
+                                    if (!empty($part)) {
+                                        $initials .= strtoupper($part[0]);
+                                    }
+                                }
+                            }
+                    
+                            echo $initials;
+                        ?>
                     </button>
                     <button class="profile-dropdown-toggle">
                         <i class="bi bi-chevron-down"></i>
@@ -841,21 +855,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
                 <div class="profile-dropdown" id="profileDropdown">
                     <div class="profile-dropdown-header">
                         <div class="profile-dropdown-avatar">
-                            <?php
-                                $initials = '';
-                        
-                                if (!empty($_SESSION['name'])) {
-                                    $nameParts = explode(' ', trim($_SESSION['name']));
-                                    
-                                    foreach ($nameParts as $part) {
-                                        if (!empty($part)) {
-                                            $initials .= strtoupper($part[0]);
-                                        }
-                                    }
-                                }
-                        
-                                echo $initials;
-                            ?>
+                            <?php echo $initials; ?>
                         </div>
                         <div class="profile-dropdown-info">
                             <div class="profile-dropdown-name">John Doe</div>
