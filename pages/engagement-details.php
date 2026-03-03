@@ -262,7 +262,7 @@ if (!$engagement) {
         }
 
         .critical-date {
-            text-align: center;
+            text-align: left;
             padding: 1.5rem 1rem;
             background: var(--gray-100);
             border-radius: 10px;
@@ -275,8 +275,8 @@ if (!$engagement) {
             border-radius: 8px;
             background: rgba(201, 0, 18, 0.15);
             display: flex;
-            align-items: left;
-            justify-content: left;
+            align-items: center;
+            justify-content: center;
             color: var(--danger-red);
             font-size: 24px;
         }
