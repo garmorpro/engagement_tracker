@@ -1035,8 +1035,8 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
     const isDarkMode = localStorage.getItem('darkMode') === 'true';
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
-        updateDarkModeIcon(true);
     }
+    updateDarkModeIcon(isDarkMode);
 
     // Dark mode toggle
     const darkModeBtn = document.querySelector('.icon-btn[title="Dark mode"]');
