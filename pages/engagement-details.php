@@ -545,9 +545,7 @@ if (!$engagement) {
         }
 
    hr {
-    margin-left: -2rem;
-    margin: 0 !important;
-    padding: 0 !important;
+    margin-left: -2rem !important;
     width: 100vw !important;
 }
     </style>
