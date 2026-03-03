@@ -269,8 +269,8 @@ if (!$engagement) {
         }
 
         .critical-date-icon {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             margin: 0 auto 0.75rem;
             border-radius: 50%;
             background: rgba(201, 0, 18, 0.15);
@@ -282,7 +282,7 @@ if (!$engagement) {
         }
 
         .critical-date-value {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--danger-red);
             margin-bottom: 0.25rem;
