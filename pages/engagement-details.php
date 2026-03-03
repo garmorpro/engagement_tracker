@@ -275,8 +275,8 @@ if (!$engagement) {
             border-radius: 8px;
             background: rgba(201, 0, 18, 0.15);
             display: flex;
-            align-items: center;
-            justify-content: center;
+            align-items: left;
+            justify-content: left;
             color: var(--danger-red);
             font-size: 24px;
         }
