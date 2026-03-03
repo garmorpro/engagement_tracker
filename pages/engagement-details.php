@@ -330,7 +330,7 @@ if (!$engagement) {
         }
 
         .overdue-badge.pulse {
-            animation: pulse 2s infinite;
+            animation: pulse 1s infinite;
         }
 
         @keyframes pulse {
