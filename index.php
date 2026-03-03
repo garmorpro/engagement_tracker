@@ -265,6 +265,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         margin-bottom: 1.5rem;
         padding-bottom: 1.5rem;
         border-bottom: 1px solid var(--border-color);
+        position: relative;
     }
 
     .modal-header-icon {
@@ -285,6 +286,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         font-weight: 600;
         color: white;
         margin: 0;
+        flex: 1;
     }
 
     .form-label {
@@ -472,11 +474,11 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             </div>
             <h5 id="modalAccountName">Enter PIN</h5>
         </div>
-        <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
+        <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php" autocomplete="off">
             <input type="hidden" name="user_id" id="pinUserId">
             <label class="form-label">PIN</label>
             <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4" 
-                   id="pinInput" name="passcode" required autofocus>
+                   id="pinInput" name="passcode" required autofocus autocomplete="off">
         </form>
     </div>
 </div>
@@ -484,37 +486,37 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <!-- Add User Modal -->
 <div class="modal-overlay" id="addUserModal">
     <div class="modal-box">
-        <button class="modal-close pb-3" onclick="closeAddUserModal()">×</button>
+        <button class="modal-close" onclick="closeAddUserModal()">×</button>
         <div class="modal-header">
             <div class="modal-header-icon">
                 <i class="bi bi-person-fill-add"></i>
             </div>
-            <h5 class="text-center">Add New User</h5>
+            <h5>Add New User</h5>
         </div>
         
         <!-- Step 1: Verify Super Admin PIN -->
         <div id="adminPinStep">
             <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
             <input type="password" maxlength="6" pattern="\d{6}" 
-                   class="form-control text-center fs-4" id="adminPinInput" required autofocus>
-            <!-- <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p> -->
+                   class="form-control text-center fs-4" id="adminPinInput" required autofocus autocomplete="off">
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
         </div>
 
         <!-- Step 2: Create Account -->
         <div id="registerStep" style="display: none;">
-            <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
+            <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php" autocomplete="off">
                 <div class="mb-3">
                     <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control" name="account_name" required>
+                    <input type="text" class="form-control" name="account_name" required autocomplete="off">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Email Address</label>
-                    <input type="email" class="form-control" name="email" required>
+                    <input type="email" class="form-control" name="email" required autocomplete="off">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">4-Digit PIN</label>
                     <input type="password" maxlength="4" pattern="\d{4}" class="form-control text-center" 
-                           name="passcode" required>
+                           name="passcode" required autocomplete="off">
                 </div>
                 <div class="button-group">
                     <button type="button" class="btn btn-secondary" onclick="goBackToAdminPin()">Back</button>
