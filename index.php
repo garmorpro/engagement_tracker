@@ -489,7 +489,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             <div class="modal-header-icon">
                 <i class="bi bi-person-fill-add"></i>
             </div>
-            <h5>Add New User</h5>
+            <h5 class="text-center">Add New User</h5>
         </div>
         
         <!-- Step 1: Verify Super Admin PIN -->
