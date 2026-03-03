@@ -11,6 +11,7 @@ $inProgressCount = count(array_filter($engagements, fn($e) => $e['eng_status'] =
 $planningCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'planning'));
 $reviewCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'in-review'));
 $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'complete'));
+$archiveCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'archived'));
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +47,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             --gray-200: #2D3847;
             --gray-300: #8B95A6;
             --text-dark: #E8EAED;
-            --bg-primary: #0F1419;
+            --bg-primary: #0f1419;
             --bg-secondary: #1A2332;
             --border-color: #2D3847;
             --text-primary: #E8EAED;
@@ -801,15 +802,15 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
                     <i class="bi bi-bar-chart-fill"></i>
                 </div>
                 <div>
-                    <div class="header-title">Engagement Pro</div>
-                    <div class="header-subtitle">Light Edition</div>
+                    <div class="header-title">Engagement Tracker</div>
+                    <div class="header-subtitle">Manage your audit engagements</div>
                 </div>
             </a>
 
             <div class="header-nav">
                 <a href="#" class="nav-item active">Dashboard</a>
                 <a href="#" class="nav-item">Analytics</a>
-                <a href="#" class="nav-item">Archive <span class="badge">1</span></a>
+                <a href="#" class="nav-item">Archive <span class="badge"><?php echo $archiveCount; ?></span></a>
             </div>
         </div>
 
