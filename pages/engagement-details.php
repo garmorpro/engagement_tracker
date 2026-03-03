@@ -428,16 +428,16 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         }
 
         .engagement-title {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             line-height: 1.2;
         }
 
         .engagement-badges {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
             margin-bottom: 1.5rem;
             flex-wrap: wrap;
         }
@@ -445,10 +445,10 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         .engagement-badge {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 13px;
+            gap: 0.4rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 16px;
+            font-size: 12px;
             font-weight: 600;
         }
 
@@ -470,27 +470,28 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         .engagement-info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
+            gap: 2rem 3rem;
             margin-bottom: 1.5rem;
         }
 
         .engagement-info-item {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             align-items: flex-start;
         }
 
         .engagement-info-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
             background: var(--gray-100);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary-blue);
-            font-size: 18px;
+            font-size: 16px;
             flex-shrink: 0;
+            margin-top: 0.1rem;
         }
 
         .engagement-info-content {
@@ -498,54 +499,55 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         }
 
         .engagement-info-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
         }
 
         .engagement-info-value {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
         }
 
         .engagement-meta {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             flex-wrap: wrap;
         }
 
         .engagement-meta-tag {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
+            gap: 0.4rem;
+            padding: 0.4rem 0.75rem;
             background: var(--gray-100);
             border-radius: 6px;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-primary);
         }
 
         .engagement-meta-tag i {
             color: var(--text-secondary);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         /* ========== RIGHT SIDEBAR ========== */
         .engagement-sidebar {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.5rem;
+            border-radius: 10px;
+            padding: 1.25rem;
             position: sticky;
             top: 100px;
         }
 
         .sidebar-action-buttons {
             display: flex;
-            gap: 0.75rem;
+            gap: 0.5rem;
             margin-bottom: 1.5rem;
         }
 
@@ -554,15 +556,15 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
             background: var(--primary-blue);
             color: white;
             border: none;
-            padding: 0.75rem 1rem;
+            padding: 0.65rem 1rem;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
             transition: all 0.2s;
         }
 
@@ -572,18 +574,18 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         }
 
         .btn-icon {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border: 1px solid var(--border-color);
             background: var(--bg-secondary);
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--text-secondary);
             transition: all 0.2s;
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .btn-icon:hover {
@@ -593,7 +595,7 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         }
 
         .sidebar-section {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
 
         .sidebar-section:last-child {
@@ -601,11 +603,11 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         }
 
         .sidebar-section-title {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.6rem;
             font-weight: 600;
         }
 
@@ -617,55 +619,55 @@ $archiveCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] =
         }
 
         .critical-date-icon {
-            width: 48px;
-            height: 48px;
-            margin: 0 auto 0.75rem;
+            width: 44px;
+            height: 44px;
+            margin: 0 auto 0.5rem;
             border-radius: 50%;
             background: rgba(201, 0, 18, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--danger-red);
-            font-size: 24px;
+            font-size: 22px;
         }
 
         .critical-date-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
         .critical-date-value {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: var(--danger-red);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.2rem;
         }
 
         .critical-date-status {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
         }
 
         .upcoming-item {
-            padding: 1rem;
+            padding: 0.9rem;
             background: var(--gray-100);
             border-radius: 8px;
             text-align: center;
         }
 
         .upcoming-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
         .upcoming-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-primary);
         }
