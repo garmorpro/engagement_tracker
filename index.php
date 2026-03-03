@@ -47,28 +47,30 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         min-height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
+        padding: 2rem;
         color: var(--text-primary);
     }
 
     .login-container {
         text-align: center;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
     }
 
     .logo-icon {
         width: 60px;
         height: 60px;
-        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--info-purple) 100%);
-        border-radius: 12px;
+        background: linear-gradient(135deg, var(--primary-blue) 0%, #2196F3 100%);
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
         font-size: 28px;
         margin: 0 auto 1.5rem;
-        box-shadow: 0 4px 16px rgba(68, 135, 252, 0.3);
+        box-shadow: 0 4px 16px rgba(33, 150, 243, 0.4);
     }
 
     .login-container h1 {
@@ -89,7 +91,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         border-radius: 16px;
         padding: 2rem;
         width: 100%;
-        max-width: 550px;
+        max-width: 800px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         position: relative;
     }
@@ -143,11 +145,12 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     .add-user-btn:hover {
         background: rgba(68, 135, 252, 0.1);
         border-color: var(--primary-blue);
+        transform: scale(1.1);
     }
 
     .account-list {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 1rem;
     }
 
@@ -155,20 +158,18 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         background: var(--bg-tertiary);
         border: 1px solid var(--border-color);
         border-radius: 10px;
-        padding: 1.25rem;
-        text-align: center;
+        padding: 1rem 1.25rem;
         cursor: pointer;
         transition: all 0.2s ease;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: 0.75rem;
+        gap: 1rem;
     }
 
     .account-item:hover {
         background: var(--border-color);
         border-color: var(--primary-blue);
-        transform: translateY(-4px);
+        transform: translateX(4px);
         box-shadow: 0 8px 24px rgba(68, 135, 252, 0.15);
     }
 
@@ -180,6 +181,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         align-items: center;
         justify-content: center;
         font-size: 24px;
+        flex-shrink: 0;
     }
 
     .account-icon.user {
@@ -192,10 +194,21 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         color: var(--danger-red);
     }
 
+    .account-info {
+        flex: 1;
+        text-align: left;
+    }
+
     .account-name {
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 600;
         color: white;
+        margin-bottom: 0.25rem;
+    }
+
+    .account-email {
+        font-size: 12px;
+        color: var(--text-secondary);
     }
 
     /* Modals */
@@ -358,8 +371,10 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         border: 1px solid var(--teal);
         border-radius: 10px;
         padding: 1.25rem;
-        margin-top: 1.5rem;
+        margin-top: 2rem;
         text-align: left;
+        width: 100%;
+        max-width: 800px;
     }
 
     .demo-credentials h6 {
@@ -384,66 +399,67 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
             padding: 1.5rem;
         }
 
-        .account-list {
-            grid-template-columns: 1fr;
-        }
-
         .login-container h1 {
             font-size: 24px;
+        }
+
+        .demo-credentials {
+            margin-top: 1.5rem;
         }
     }
 </style>
 </head>
 <body>
 
-<div style="text-align: center;">
-    <div class="login-container">
-        <div class="logo-icon">
-            <i class="bi bi-bar-chart-fill"></i>
-        </div>
-        <h1>Engagement Tracker</h1>
-        <p>Select your account to sign in</p>
+<div class="login-container">
+    <div class="logo-icon">
+        <i class="bi bi-bar-chart-fill"></i>
     </div>
+    <h1>Engagement Tracker</h1>
+    <p>Select your account to sign in</p>
+</div>
 
-    <div class="login-card">
-        <div class="card-header">
-            <div class="card-header-icon">
-                <i class="bi bi-person-circle"></i>
-            </div>
-            <h6>Select Account</h6>
+<div class="login-card">
+    <div class="card-header">
+        <div class="card-header-icon">
+            <i class="bi bi-person-circle"></i>
         </div>
-        <button class="add-user-btn" onclick="openAddUserModal()" title="Add New User">
-            <i class="bi bi-person-fill-add"></i>
-        </button>
+        <h6>Select Account</h6>
+    </div>
+    <button class="add-user-btn" onclick="openAddUserModal()" title="Add New User">
+        <i class="bi bi-person-fill-add"></i>
+    </button>
 
-        <?php if (!empty($accounts)): ?>
-            <div class="account-list">
-                <?php foreach ($accounts as $account): ?>
-                    <div class="account-item"
-                         data-user-id="<?= $account['user_id'] ?>"
-                         data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
-                         data-role="<?= $account['role'] ?>"
-                         onclick="openPinModal(this)">
-                        <div class="account-icon <?= $account['role'] === 'super_admin' ? 'admin' : 'user' ?>">
-                            <i class="bi <?= $account['role'] === 'super_admin' ? 'bi-shield-fill' : 'bi-person-fill' ?>"></i>
-                        </div>
-                        <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
+    <?php if (!empty($accounts)): ?>
+        <div class="account-list">
+            <?php foreach ($accounts as $account): ?>
+                <div class="account-item"
+                     data-user-id="<?= $account['user_id'] ?>"
+                     data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
+                     data-role="<?= $account['role'] ?>"
+                     onclick="openPinModal(this)">
+                    <div class="account-icon <?= $account['role'] === 'super_admin' ? 'admin' : 'user' ?>">
+                        <i class="bi <?= $account['role'] === 'super_admin' ? 'bi-shield-fill' : 'bi-person-fill' ?>"></i>
                     </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <p style="color: var(--text-secondary);">No accounts available</p>
-        <?php endif; ?>
-
-        <!-- Demo Credentials -->
-        <div class="demo-credentials">
-            <h6>Demo Credentials:</h6>
-            <p>• John Doe: PIN <strong>1234</strong></p>
-            <p>• Jane Smith: PIN <strong>5678</strong></p>
-            <p>• Bob Wilson: PIN <strong>9012</strong></p>
-            <p>• Sarah Johnson: PIN <strong>3456</strong></p>
+                    <div class="account-info">
+                        <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
+                        <div class="account-email"><?= strtolower(str_replace(' ', '.', htmlspecialchars($account['account_name']))) . '@company.com' ?></div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
-    </div>
+    <?php else: ?>
+        <p style="color: var(--text-secondary);">No accounts available</p>
+    <?php endif; ?>
+</div>
+
+<!-- Demo Credentials Section (Outside Card) -->
+<div class="demo-credentials">
+    <h6>Demo Credentials:</h6>
+    <p>• John Doe: PIN <strong>1234</strong></p>
+    <p>• Jane Smith: PIN <strong>5678</strong></p>
+    <p>• Bob Wilson: PIN <strong>9012</strong></p>
+    <p>• Sarah Johnson: PIN <strong>3456</strong></p>
 </div>
 
 <!-- PIN Entry Modal -->
