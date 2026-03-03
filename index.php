@@ -492,7 +492,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
         <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php" autocomplete="off">
             <input type="hidden" name="user_id" id="pinUserId">
             <label class="form-label">PIN</label>
-            <input type="text" inputmode="numeric" maxlength="4" pattern="\d{4}" class="form-control text-center fs-4 pin-field" 
+            <input type="text" inputmode="numeric" maxlength="6" pattern="\d{6}" class="form-control text-center fs-4 pin-field" 
                    id="pinInput" name="passcode" required autofocus>
         </form>
     </div>
@@ -530,7 +530,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
                 </div>
                 <div class="mb-3">
                     <label class="form-label">4-Digit PIN</label>
-                    <input type="text" inputmode="numeric" maxlength="4" pattern="\d{4}" class="form-control text-center pin-field" 
+                    <input type="text" inputmode="numeric" maxlength="6" pattern="\d{6}" class="form-control text-center pin-field" 
                            name="passcode" required>
                 </div>
                 <div class="button-group">
