@@ -338,7 +338,7 @@ if (!$engagement) {
                 box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.7);
             }
             to {
-                box-shadow: 0 0 0 8px rgba(201, 0, 18, 0);
+                box-shadow: 0 0 0 6px rgba(201, 0, 18, 0);
             }
         }
 
