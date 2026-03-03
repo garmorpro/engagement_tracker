@@ -808,9 +808,9 @@ $archiveCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 
             </a>
 
             <div class="header-nav">
-                <a href="#" class="nav-item active">Dashboard</a>
+                <a href="dashboard.php" class="nav-item active">Dashboard</a>
                 <a href="#" class="nav-item">Analytics</a>
-                <a href="#" class="nav-item">Archive <span class="badge"><?php echo $archiveCount; ?></span></a>
+                <a href="archive.php" class="nav-item">Archive <span class="badge"><?php echo $archiveCount; ?></span></a>
             </div>
         </div>
 
