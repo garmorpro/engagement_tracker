@@ -855,7 +855,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
                         <a href="#" class="profile-dropdown-item">
                             <i class="bi bi-question-circle"></i> Help & Support
                         </a>
-                        <a href="#" class="profile-dropdown-item logout">
+                        <a href="<?php echo BASE_URL . '/auth/logout.php'; ?>" class="profile-dropdown-item logout">
                             <i class="bi bi-box-arrow-right"></i> Log Out
                         </a>
                     </div>
