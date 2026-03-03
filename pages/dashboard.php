@@ -248,21 +248,65 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             background: white;
             border: 1px solid var(--gray-200);
             border-radius: 10px;
-            min-width: 200px;
-            margin-top: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-width: 240px;
+            margin-top: 0.75rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
             opacity: 0;
             visibility: hidden;
             transform: translateY(-8px);
             transition: all 0.2s;
             z-index: 1000;
-            padding: 0.5rem 0;
+            padding: 0;
+            overflow: hidden;
         }
 
         .profile-dropdown.active {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
+        }
+
+        .profile-dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--gray-100);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .profile-dropdown-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--info-purple) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .profile-dropdown-info {
+            flex: 1;
+        }
+
+        .profile-dropdown-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 14px;
+            margin-bottom: 0.25rem;
+        }
+
+        .profile-dropdown-email {
+            font-size: 12px;
+            color: var(--gray-300);
+        }
+
+        .profile-dropdown-menu {
+            padding: 0.5rem 0;
         }
 
         .profile-dropdown-item {
@@ -275,6 +319,10 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             font-size: 14px;
             transition: background-color 0.2s;
             cursor: pointer;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
         }
 
         .profile-dropdown-item:hover {
@@ -290,6 +338,15 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         .profile-dropdown-item.logout:hover {
             background-color: rgba(201, 0, 18, 0.05);
+        }
+
+        .profile-dropdown-item i {
+            font-size: 16px;
+            color: var(--gray-300);
+        }
+
+        .profile-dropdown-item.logout i {
+            color: var(--danger-red);
         }
 
         /* ========== MAIN CONTENT ========== */
@@ -737,18 +794,28 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
                 </div>
 
                 <div class="profile-dropdown" id="profileDropdown">
-                    <a href="#" class="profile-dropdown-item">
-                        <i class="bi bi-person"></i> Profile
-                    </a>
-                    <a href="#" class="profile-dropdown-item">
-                        <i class="bi bi-gear"></i> Settings
-                    </a>
-                    <a href="#" class="profile-dropdown-item">
-                        <i class="bi bi-question-circle"></i> Help & Support
-                    </a>
-                    <a href="#" class="profile-dropdown-item logout">
-                        <i class="bi bi-box-arrow-right"></i> Logout
-                    </a>
+                    <div class="profile-dropdown-header">
+                        <div class="profile-dropdown-avatar">JD</div>
+                        <div class="profile-dropdown-info">
+                            <div class="profile-dropdown-name">John Doe</div>
+                            <div class="profile-dropdown-email">john.doe@company.com</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-dropdown-menu">
+                        <a href="#" class="profile-dropdown-item">
+                            <i class="bi bi-person-circle"></i> My Profile
+                        </a>
+                        <a href="#" class="profile-dropdown-item">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                        <a href="#" class="profile-dropdown-item">
+                            <i class="bi bi-question-circle"></i> Help & Support
+                        </a>
+                        <a href="#" class="profile-dropdown-item logout">
+                            <i class="bi bi-box-arrow-right"></i> Log Out
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
