@@ -45,7 +45,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         .top-header {
             background: white;
             border-bottom: 1px solid var(--gray-200);
-            padding: 1rem 0;
+            padding: 0.75rem 2rem;
             position: sticky;
             top: 0;
             z-index: 100;
@@ -55,13 +55,14 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 2rem;
+            height: 56px;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 3rem;
+            flex: 1;
         }
 
         .header-logo {
@@ -71,11 +72,12 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             font-weight: 600;
             color: var(--text-dark);
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .logo-icon {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             background: linear-gradient(135deg, var(--primary-blue) 0%, var(--info-purple) 100%);
             border-radius: 8px;
             display: flex;
@@ -83,22 +85,26 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             justify-content: center;
             color: white;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
         .header-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-dark);
+            line-height: 1.2;
         }
 
         .header-subtitle {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--gray-300);
+            line-height: 1.2;
         }
 
         .header-nav {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
+            align-items: center;
         }
 
         .nav-item {
@@ -108,6 +114,9 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             font-weight: 500;
             transition: color 0.2s;
             position: relative;
+            white-space: nowrap;
+            padding-bottom: 8px;
+            border-bottom: 2px solid transparent;
         }
 
         .nav-item:hover {
@@ -115,23 +124,15 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         }
 
         .nav-item.active {
-            color: var(--primary-blue);
-        }
-
-        .nav-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--primary-blue);
+            color: var(--text-dark);
+            border-bottom-color: var(--primary-blue);
         }
 
         .header-right {
             display: flex;
             align-items: center;
             gap: 1.5rem;
+            margin-left: auto;
         }
 
         .icon-btn {
@@ -145,6 +146,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             align-items: center;
             justify-content: center;
             transition: color 0.2s;
+            position: relative;
         }
 
         .icon-btn:hover {
@@ -153,8 +155,8 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         .notification-badge {
             position: absolute;
-            top: -4px;
-            right: -4px;
+            top: -6px;
+            right: -6px;
             width: 20px;
             height: 20px;
             background: #F33;
@@ -163,7 +165,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
         }
 
@@ -179,12 +181,16 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .profile-btn:hover {
+            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3);
         }
 
         /* ========== MAIN CONTENT ========== */
         .main-container {
             padding: 2rem;
-            /* max-width: 1400px; */
             margin: 0 auto;
         }
 
@@ -284,7 +290,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
         .search-input-wrapper {
             position: relative;
-            width: 350px;
+            width: 280px;
         }
 
         .search-input {
@@ -330,35 +336,6 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             border-color: var(--primary-blue);
             background: rgba(68, 135, 252, 0.02);
         }
-
-        /* .view-toggle {
-            display: flex;
-            gap: 0.25rem;
-            background: var(--gray-100);
-            padding: 0.25rem;
-            border-radius: 8px;
-        } */
-
-        /* .view-btn {
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: transparent;
-            color: var(--gray-300);
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .view-btn.active {
-            background: white;
-            color: var(--primary-blue);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        } */
 
         .action-buttons {
             display: flex;
@@ -595,12 +572,12 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
                     <div class="header-subtitle">Light Edition</div>
                 </div>
             </a>
-        </div>
 
-        <div class="header-nav">
-            <a href="#" class="nav-item active">Dashboard</a>
-            <a href="#" class="nav-item">Analytics</a>
-            <a href="#" class="nav-item">Archive <span class="badge" style="background: #F33; color: white; margin-left: 0.5rem;">1</span></a>
+            <div class="header-nav">
+                <a href="#" class="nav-item active">Dashboard</a>
+                <a href="#" class="nav-item">Analytics</a>
+                <a href="#" class="nav-item">Archive <span class="badge" style="background: #F33; color: white; margin-left: 0.5rem; padding: 0.3rem 0.5rem; font-size: 10px;">1</span></a>
+            </div>
         </div>
 
         <div class="header-right">
@@ -609,7 +586,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             </button>
             <button class="icon-btn" title="Notifications">
                 <i class="bi bi-bell"></i>
-                <!-- <div class="notification-badge">2</div> -->
+                <div class="notification-badge">2</div>
             </button>
             <button class="icon-btn" title="Settings">
                 <i class="bi bi-gear"></i>
@@ -688,14 +665,6 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
         </div>
 
         <div class="action-buttons">
-            <!-- <div class="view-toggle">
-                <button class="view-btn active" title="List view">
-                    <i class="bi bi-list-ul"></i>
-                </button>
-                <button class="view-btn" title="Grid view">
-                    <i class="bi bi-grid-3x3-gap"></i>
-                </button>
-            </div> -->
             <button class="btn-new-engagement">
                 <i class="bi bi-plus"></i> New Engagement
             </button>
