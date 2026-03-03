@@ -416,7 +416,7 @@ if (!$engagement) {
             background: var(--primary-blue);
             color: white;
             border: none;
-            padding: 0.45rem 1.25rem;
+            padding: 0.40rem 1.25rem;
             border-radius: 8px;
             font-size: 12px;
             font-weight: 600;
