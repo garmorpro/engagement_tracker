@@ -236,16 +236,16 @@ if (!$engagement) {
 
         /* ========== SIDEBAR ========== */
         .engagement-sidebar {
-            background: var(--bg-secondary);
+            background: transparent;
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 1.25rem;
-            width: 300px;
+            border-radius: 12px;
+            padding: 1.5rem;
+            width: 280px;
             height: fit-content;
         }
 
         .sidebar-section {
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .sidebar-section:last-child {
@@ -257,46 +257,46 @@ if (!$engagement) {
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.75rem;
             font-weight: 600;
         }
 
         .critical-date {
             text-align: center;
-            padding: 1rem;
+            padding: 1.25rem 1rem;
             background: var(--gray-100);
-            border-radius: 8px;
+            border-radius: 10px;
         }
 
         .critical-date-icon {
-            width: 44px;
-            height: 44px;
-            margin: 0 auto 0.5rem;
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 0.75rem;
             border-radius: 50%;
             background: rgba(201, 0, 18, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--danger-red);
-            font-size: 22px;
+            font-size: 24px;
         }
 
         .critical-date-value {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--danger-red);
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.25rem;
         }
 
         .critical-date-status {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-secondary);
         }
 
         .upcoming-item {
-            padding: 0.9rem;
+            padding: 1rem;
             background: var(--gray-100);
-            border-radius: 8px;
+            border-radius: 10px;
             text-align: center;
         }
 
@@ -305,11 +305,12 @@ if (!$engagement) {
             color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
         }
 
         .upcoming-title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-primary);
         }
@@ -537,7 +538,7 @@ if (!$engagement) {
                     </div>
                     <div class="engagement-meta-tag">
                         <i class="bi bi-person-check"></i>
-                        POC: <?php echo htmlspecialchars($engagement['eng_poc'] ?? 'Unassigned'); ?>
+                        POC: Tom Wilson
                     </div>
                 </div>
             </div>
