@@ -579,7 +579,6 @@ function openAdminPanel() {
     pinInputs['adminPanelPinInput'] = '';
     document.getElementById('adminVerifyStep').style.display = 'block';
     document.getElementById('adminDashboardStep').style.display = 'none';
-    setupPinMasking('adminPanelPinInput');
     setTimeout(() => document.getElementById('adminPanelPinInput').focus(), 100);
 }
 
