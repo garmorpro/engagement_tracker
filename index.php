@@ -349,13 +349,12 @@ body {
     <?php endif; ?>
 </div>
 
-<!-- <div class="demo-credentials">
-    <h6>Demo Credentials:</h6>
-    <p>• John Doe: PIN <strong>1234</strong></p>
-    <p>• Jane Smith: PIN <strong>5678</strong></p>
-    <p>• Bob Wilson: PIN <strong>9012</strong></p>
-    <p>• Sarah Johnson: PIN <strong>3456</strong></p>
-</div> -->
+<div class="demo-credentials">
+    <h6>Account Access:</h6>
+    <p>• Each account requires a 4-digit PIN</p>
+    <p>• Click the + icon to add new accounts</p>
+    <p>• New accounts require admin PIN verification</p>
+</div>
 
 <!-- PIN Entry Modal -->
 <div class="modal-overlay" id="pinModal">
