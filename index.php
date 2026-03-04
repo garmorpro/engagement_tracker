@@ -429,40 +429,49 @@ function setupPinMasking(inputId) {
     pinInputs[inputId] = '';
     const maxLength = inputId === 'adminPinInput' ? 6 : 4;
     
-    input.addEventListener('input', function(e) {
-        // Get the raw input value and remove all dots
-        let rawValue = e.target.value.replace(/•/g, '');
+    input.addEventListener('keydown', function(e) {
+        const key = e.key;
         
-        // Keep only numeric digits
-        let value = rawValue.replace(/\D/g, '');
-        
-        // Enforce max length
-        value = value.slice(0, maxLength);
-        
-        // Store the actual numeric value
-        pinInputs[inputId] = value;
-        
-        // Display masked value (dots) - one dot per digit
-        e.target.value = '•'.repeat(value.length);
-        
-        // Auto-submit PIN form when 4 digits entered
-        if (inputId === 'pinInput' && value.length === 4) {
-            console.log('Submitting PIN:', value);
-            const form = document.getElementById('pinForm');
-            const passcodeField = document.getElementById('pinFormPasscode');
-            if (passcodeField) {
-                passcodeField.value = value;
-            }
-            setTimeout(() => {
-                form.submit();
-            }, 100);
+        // Allow backspace
+        if (key === 'Backspace') {
+            e.preventDefault();
+            pinInputs[inputId] = pinInputs[inputId].slice(0, -1);
+            e.target.value = '•'.repeat(pinInputs[inputId].length);
             return;
         }
         
+        // Only allow numbers
+        if (!/\d/.test(key)) {
+            e.preventDefault();
+            return;
+        }
+        
+        // Don't exceed max length
+        if (pinInputs[inputId].length >= maxLength) {
+            e.preventDefault();
+            return;
+        }
+        
+        e.preventDefault();
+        
+        // Add the digit
+        pinInputs[inputId] += key;
+        e.target.value = '•'.repeat(pinInputs[inputId].length);
+        
+        // Auto-submit PIN form when 4 digits entered
+        if (inputId === 'pinInput' && pinInputs[inputId].length === 4) {
+            console.log('Submitting PIN:', pinInputs[inputId]);
+            const passcodeField = document.getElementById('pinFormPasscode');
+            passcodeField.value = pinInputs[inputId];
+            setTimeout(() => {
+                document.getElementById('pinForm').submit();
+            }, 100);
+        }
+        
         // Auto-verify admin PIN when 6 digits entered
-        if (inputId === 'adminPinInput' && value.length === 6) {
-            console.log('Verifying admin PIN:', value);
-            verifyAdminPin(value);
+        if (inputId === 'adminPinInput' && pinInputs[inputId].length === 6) {
+            console.log('Verifying admin PIN:', pinInputs[inputId]);
+            verifyAdminPin(pinInputs[inputId]);
         }
     });
 }
