@@ -430,8 +430,11 @@ function setupPinMasking(inputId) {
     const maxLength = inputId === 'adminPinInput' ? 6 : 4;
     
     input.addEventListener('input', function(e) {
-        // Get only numeric digits
-        let value = e.target.value.replace(/\D/g, '');
+        // Get the raw input value and remove all dots
+        let rawValue = e.target.value.replace(/•/g, '');
+        
+        // Keep only numeric digits
+        let value = rawValue.replace(/\D/g, '');
         
         // Enforce max length
         value = value.slice(0, maxLength);
@@ -439,7 +442,7 @@ function setupPinMasking(inputId) {
         // Store the actual numeric value
         pinInputs[inputId] = value;
         
-        // Display masked value (dots)
+        // Display masked value (dots) - one dot per digit
         e.target.value = '•'.repeat(value.length);
         
         // Auto-submit PIN form when max length reached
