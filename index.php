@@ -283,7 +283,7 @@ body {
     margin-top: 2rem;
     text-align: left;
     width: 100%;
-    max-width: 800px;
+    max-width: 650px;
 }
 
 .demo-credentials h6 {
