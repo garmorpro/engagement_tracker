@@ -5,7 +5,7 @@ require_once 'includes/init.php';
 
 // Fetch active service accounts
 $result = $conn->query("
-    SELECT `user_id`, `name`, `email`, `account_name`, `passcode`, `role`
+    SELECT `user_id`, `account_name`, `passcode`, `role`
     FROM `service_accounts`
     WHERE `status` = 'active'
     ORDER BY `account_name`
@@ -74,7 +74,7 @@ body {
     border-radius: 16px;
     padding: 2rem;
     width: 100%;
-    max-width: 650px;
+    max-width: 800px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     position: relative;
 }
@@ -283,7 +283,7 @@ body {
     margin-top: 2rem;
     text-align: left;
     width: 100%;
-    max-width: 650px;
+    max-width: 800px;
 }
 
 .demo-credentials h6 {
@@ -338,8 +338,8 @@ body {
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="account-info">
-                        <div class="account-name"><?= htmlspecialchars($account['name']) ?></div>
-                        <div class="account-email"><?= htmlspecialchars($account['email']) ?></div>
+                        <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
+                        <div class="account-email"><?= strtolower(str_replace(' ', '.', htmlspecialchars($account['account_name']))) . '@company.com' ?></div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -350,10 +350,11 @@ body {
 </div>
 
 <div class="demo-credentials">
-    <h6>Account Access:</h6>
-    <p>• Each account requires a 4-digit PIN</p>
-    <p>• Click the + icon to add new accounts</p>
-    <p>• New accounts require admin PIN verification</p>
+    <h6>Demo Credentials:</h6>
+    <p>• John Doe: PIN <strong>1234</strong></p>
+    <p>• Jane Smith: PIN <strong>5678</strong></p>
+    <p>• Bob Wilson: PIN <strong>9012</strong></p>
+    <p>• Sarah Johnson: PIN <strong>3456</strong></p>
 </div>
 
 <!-- PIN Entry Modal -->
@@ -459,7 +460,6 @@ function setupPinMasking(inputId) {
         
         // Auto-submit PIN form when 4 digits entered
         if (inputId === 'pinInput' && pinInputs[inputId].length === 4) {
-            console.log('Submitting PIN:', pinInputs[inputId]);
             const passcodeField = document.getElementById('pinFormPasscode');
             passcodeField.value = pinInputs[inputId];
             setTimeout(() => {
@@ -469,7 +469,6 @@ function setupPinMasking(inputId) {
         
         // Auto-verify admin PIN when 6 digits entered
         if (inputId === 'adminPinInput' && pinInputs[inputId].length === 6) {
-            console.log('Verifying admin PIN:', pinInputs[inputId]);
             verifyAdminPin(pinInputs[inputId]);
         }
     });
