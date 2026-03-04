@@ -12,7 +12,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Sanitize inputs
+$name = trim($_POST['name'] ?? '');
 $account_name = trim($_POST['account_name'] ?? '');
+$email = trim($_POST['email'] ?? '');
 $passcode = trim($_POST['passcode'] ?? '');
 $role = trim($_POST['role'] ?? 'standard');
 
@@ -20,6 +22,8 @@ $role = trim($_POST['role'] ?? 'standard');
 $errors = [];
 
 if (!$account_name) $errors[] = 'Account name is required.';
+if (!$email) $errors[] = 'Email is required.';
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format.';
 if (!preg_match('/^\d{4}$/', $passcode)) $errors[] = 'PIN must be 4 digits.';
 if (!in_array($role, ['standard', 'admin'])) $errors[] = 'Invalid role.';
 
@@ -44,14 +48,14 @@ if ($count > 0) {
 }
 
 // Insert new account
-$stmt = $conn->prepare("INSERT INTO service_accounts (account_name, passcode, role, status, account_created, account_updated) VALUES (?, ?, ?, 'active', NOW(), NOW())");
-$stmt->bind_param('sss', $account_name, $passcode, $role);
+$stmt = $conn->prepare("INSERT INTO service_accounts (name, account_name, email, passcode, role, status, account_created, account_updated) VALUES (?, ?, ?, ?, ?, 'active', NOW(), NOW())");
+$stmt->bind_param('sssss', $name, $account_name, $email, $passcode, $role);
 $success = $stmt->execute();
 $stmt->close();
 
 if ($success) {
     // Redirect to dashboard
-    header('Location: ' . BASE_URL . '/pages/dashboard.php');
+    header('Location: ' . BASE_URL . '/');
     exit;
 } else {
     $_SESSION['error'] = 'Failed to create account.';
