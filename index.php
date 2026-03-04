@@ -5,7 +5,7 @@ require_once 'includes/init.php';
 
 // Fetch active service accounts
 $result = $conn->query("
-    SELECT `user_id`, `name`, `email`, `account_name`, `passcode`, `role`
+    SELECT `user_id`, `account_name`, `passcode`, `role`
     FROM `service_accounts`
     WHERE `status` = 'active'
     ORDER BY `account_name`
@@ -74,7 +74,7 @@ body {
     border-radius: 16px;
     padding: 2rem;
     width: 100%;
-    max-width: 650px;
+    max-width: 800px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     position: relative;
 }
@@ -283,7 +283,7 @@ body {
     margin-top: 2rem;
     text-align: left;
     width: 100%;
-    max-width: 650px;
+    max-width: 800px;
 }
 
 .demo-credentials h6 {
@@ -321,8 +321,8 @@ body {
         </div>
         <h6>Select Account</h6>
     </div>
-    <button class="add-user-btn" onclick="openAddUserModal()" title="Add New User">
-        <i class="bi bi-person-fill-add"></i>
+    <button class="add-user-btn" onclick="openAdminPanel()" title="Admin Panel">
+        <i class="bi bi-shield-fill"></i>
     </button>
 
     <?php if (!empty($accounts)): ?>
@@ -331,15 +331,15 @@ body {
                 <?php if ($account['role'] === 'super_admin') continue; ?>
                 <div class="account-item"
                      data-user-id="<?= $account['user_id'] ?>"
-                     data-account-name="<?= htmlspecialchars($account['name']) ?>"
+                     data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
                      data-role="<?= $account['role'] ?>"
                      onclick="openPinModal(this)">
                     <div class="account-icon user">
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="account-info">
-                        <div class="account-name"><?= htmlspecialchars($account['name']) ?></div>
-                        <div class="account-email"><?= htmlspecialchars($account['email']) ?></div>
+                        <div class="account-name"><?= htmlspecialchars($account['name'] ?? $account['account_name']) ?></div>
+                        <div class="account-email"><?= htmlspecialchars($account['email'] ?? strtolower(str_replace(' ', '.', $account['account_name'])) . '@company.com') ?></div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -350,10 +350,11 @@ body {
 </div>
 
 <div class="demo-credentials">
-    <h6>Account Access:</h6>
-    <p>• Each account requires a 4-digit PIN</p>
-    <p>• Click the + icon to add new accounts</p>
-    <p>• New accounts require admin PIN verification</p>
+    <h6>Demo Credentials:</h6>
+    <p>• John Doe: PIN <strong>1234</strong></p>
+    <p>• Jane Smith: PIN <strong>5678</strong></p>
+    <p>• Bob Wilson: PIN <strong>9012</strong></p>
+    <p>• Sarah Johnson: PIN <strong>3456</strong></p>
 </div>
 
 <!-- PIN Entry Modal -->
@@ -391,17 +392,13 @@ body {
             <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
             <input type="text" class="form-control text-center fs-4 pin-field" 
                    id="adminPinInput" required autofocus>
-            <!-- <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p> -->
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
         </div>
 
         <div id="registerStep" style="display: none;">
             <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
                 <div class="mb-3">
                     <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control" name="name" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">User Name</label>
                     <input type="text" class="form-control" name="account_name" required>
                 </div>
                 <div class="mb-3">
@@ -418,6 +415,42 @@ body {
                     <button type="submit" class="btn btn-primary">Add User</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Panel Modal -->
+<div class="modal-overlay" id="adminPanelModal">
+    <div class="modal-box" style="max-width: 500px;">
+        <button class="modal-close" onclick="closeAdminPanel()">×</button>
+        <div class="modal-header">
+            <div class="modal-header-icon">
+                <i class="bi bi-shield-fill"></i>
+            </div>
+            <h5>Admin Panel</h5>
+        </div>
+        
+        <div id="adminVerifyStep">
+            <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
+            <input type="text" class="form-control text-center fs-4 pin-field" 
+                   id="adminPanelPinInput" required autofocus>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
+        </div>
+
+        <div id="adminDashboardStep" style="display: none;">
+            <div style="margin-bottom: 1.5rem;">
+                <h6 style="font-size: 16px; font-weight: 600; color: white; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="bi bi-shield-fill" style="color: var(--primary-blue);"></i>
+                    Admin Dashboard
+                </h6>
+                <button type="button" class="btn btn-primary" style="width: 100%;" onclick="openAddUserModal()">
+                    <i class="bi bi-person-fill-add"></i> Add New User
+                </button>
+            </div>
+            
+            <div id="accountsList" style="max-height: 400px; overflow-y: auto;">
+                <!-- Accounts will be dynamically populated here -->
+            </div>
         </div>
     </div>
 </div>
@@ -522,7 +555,113 @@ function openAddUserModal() {
     pinInputs['adminPinInput'] = '';
     document.getElementById('adminPinStep').style.display = 'block';
     document.getElementById('registerStep').style.display = 'none';
+    setupPinMasking('adminPinInput');
     setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
+}
+
+function closeAddUserModal() {
+    document.getElementById('addUserModal').classList.remove('active');
+    document.getElementById('adminPinInput').value = '';
+    pinInputs['adminPinInput'] = '';
+}
+
+function goBackToAdminPin() {
+    document.getElementById('adminPinStep').style.display = 'block';
+    document.getElementById('registerStep').style.display = 'none';
+    document.getElementById('adminPinInput').value = '';
+    pinInputs['adminPinInput'] = '';
+    document.getElementById('adminPinInput').focus();
+}
+
+function openAdminPanel() {
+    document.getElementById('adminPanelModal').classList.add('active');
+    document.getElementById('adminPanelPinInput').value = '';
+    pinInputs['adminPanelPinInput'] = '';
+    document.getElementById('adminVerifyStep').style.display = 'block';
+    document.getElementById('adminDashboardStep').style.display = 'none';
+    setupPinMasking('adminPanelPinInput');
+    setTimeout(() => document.getElementById('adminPanelPinInput').focus(), 100);
+}
+
+function closeAdminPanel() {
+    document.getElementById('adminPanelModal').classList.remove('active');
+    document.getElementById('adminPanelPinInput').value = '';
+    pinInputs['adminPanelPinInput'] = '';
+}
+
+function verifyAdminPanelPin(pin) {
+    fetch('<?= BASE_URL ?>/auth/verify_admin_pin.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({passcode: pin})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            document.getElementById('adminVerifyStep').style.display = 'none';
+            document.getElementById('adminDashboardStep').style.display = 'block';
+            loadAccountsList();
+        } else {
+            alert('Invalid Super Admin PIN');
+            document.getElementById('adminPanelPinInput').value = '';
+            pinInputs['adminPanelPinInput'] = '';
+            document.getElementById('adminPanelPinInput').focus();
+        }
+    })
+    .catch(() => alert('Error verifying Super Admin PIN'));
+}
+
+function loadAccountsList() {
+    fetch('<?= BASE_URL ?>/auth/get_accounts.php')
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            const accountsList = document.getElementById('accountsList');
+            accountsList.innerHTML = '';
+            
+            data.accounts.forEach(account => {
+                const accountEl = document.createElement('div');
+                accountEl.className = 'account-item';
+                accountEl.style.marginBottom = '0.75rem';
+                accountEl.innerHTML = `
+                    <div class="account-icon user">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div class="account-info">
+                        <div class="account-name">${account.name || account.account_name}</div>
+                        <div class="account-email">${account.email}</div>
+                    </div>
+                    <button type="button" class="btn" style="background: none; border: none; color: #ff4444; cursor: pointer; font-size: 18px; padding: 0;" onclick="deleteAccount(${account.user_id}, '${account.name || account.account_name}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                `;
+                accountsList.appendChild(accountEl);
+            });
+        }
+    })
+    .catch(() => alert('Error loading accounts'));
+}
+
+function deleteAccount(userId, accountName) {
+    if(confirm(`Are you sure you want to delete "${accountName}"? This action cannot be undone.`)) {
+        fetch('<?= BASE_URL ?>/auth/delete_account.php', {
+            method: 'POST',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify({user_id: userId})
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success) {
+                alert('Account deleted successfully');
+                loadAccountsList();
+                // Reload the main page to update account list
+                window.location.reload();
+            } else {
+                alert('Error deleting account: ' + data.message);
+            }
+        })
+        .catch(() => alert('Error deleting account'));
+    }
 }
 
 function closeAddUserModal() {
@@ -542,7 +681,45 @@ function goBackToAdminPin() {
 document.addEventListener('DOMContentLoaded', function() {
     setupPinMasking('pinInput');
     setupPinMasking('adminPinInput');
+    setupAdminPanelPin();
 });
+
+function setupAdminPanelPin() {
+    const input = document.getElementById('adminPanelPinInput');
+    if (!input) return;
+    
+    pinInputs['adminPanelPinInput'] = '';
+    const maxLength = 6;
+    
+    input.addEventListener('keydown', function(e) {
+        const key = e.key;
+        
+        if (key === 'Backspace') {
+            e.preventDefault();
+            pinInputs['adminPanelPinInput'] = pinInputs['adminPanelPinInput'].slice(0, -1);
+            e.target.value = '•'.repeat(pinInputs['adminPanelPinInput'].length);
+            return;
+        }
+        
+        if (!/\d/.test(key)) {
+            e.preventDefault();
+            return;
+        }
+        
+        if (pinInputs['adminPanelPinInput'].length >= maxLength) {
+            e.preventDefault();
+            return;
+        }
+        
+        e.preventDefault();
+        pinInputs['adminPanelPinInput'] += key;
+        e.target.value = '•'.repeat(pinInputs['adminPanelPinInput'].length);
+        
+        if (pinInputs['adminPanelPinInput'].length === 6) {
+            verifyAdminPanelPin(pinInputs['adminPanelPinInput']);
+        }
+    });
+}
 
 window.addEventListener('click', function(e){
     if(e.target === document.getElementById('pinModal')) closePinModal();
