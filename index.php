@@ -369,6 +369,7 @@ body {
         </div>
         <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
             <input type="hidden" name="user_id" id="pinUserId">
+            <input type="hidden" name="passcode" id="pinFormPasscode">
             <label class="form-label">PIN</label>
             <input type="text" class="form-control text-center fs-4 pin-field" 
                    id="pinInput" required autofocus>
@@ -446,11 +447,7 @@ function setupPinMasking(inputId) {
         e.target.value = '•'.repeat(value.length);
         
         if (inputId === 'pinInput' && value.length === 4) {
-            document.getElementById('pinForm').passcode = document.createElement('input');
-            document.getElementById('pinForm').passcode.type = 'hidden';
-            document.getElementById('pinForm').passcode.name = 'passcode';
-            document.getElementById('pinForm').passcode.value = value;
-            document.getElementById('pinForm').appendChild(document.getElementById('pinForm').passcode);
+            document.getElementById('pinFormPasscode').value = value;
             setTimeout(() => document.getElementById('pinForm').submit(), 50);
         }
         
