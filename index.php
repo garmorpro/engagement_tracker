@@ -445,14 +445,23 @@ function setupPinMasking(inputId) {
         // Display masked value (dots) - one dot per digit
         e.target.value = '•'.repeat(value.length);
         
-        // Auto-submit PIN form when max length reached
+        // Auto-submit PIN form when 4 digits entered
         if (inputId === 'pinInput' && value.length === 4) {
-            document.getElementById('pinFormPasscode').value = value;
-            setTimeout(() => document.getElementById('pinForm').submit(), 50);
+            console.log('Submitting PIN:', value);
+            const form = document.getElementById('pinForm');
+            const passcodeField = document.getElementById('pinFormPasscode');
+            if (passcodeField) {
+                passcodeField.value = value;
+            }
+            setTimeout(() => {
+                form.submit();
+            }, 100);
+            return;
         }
         
         // Auto-verify admin PIN when 6 digits entered
         if (inputId === 'adminPinInput' && value.length === 6) {
+            console.log('Verifying admin PIN:', value);
             verifyAdminPin(value);
         }
     });
