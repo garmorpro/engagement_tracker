@@ -429,28 +429,26 @@ function setupPinMasking(inputId) {
     pinInputs[inputId] = '';
     const maxLength = inputId === 'adminPinInput' ? 6 : 4;
     
-    input.addEventListener('beforeinput', function(e) {
-        // Allow deletion
-        if (['deleteContentBackward', 'deleteContentForward'].includes(e.inputType)) {
-            return;
-        }
-        // Only allow numeric
-        if (!/\d/.test(e.data)) {
-            e.preventDefault();
-        }
-    });
-    
     input.addEventListener('input', function(e) {
+        // Get only numeric digits
         let value = e.target.value.replace(/\D/g, '');
+        
+        // Enforce max length
         value = value.slice(0, maxLength);
+        
+        // Store the actual numeric value
         pinInputs[inputId] = value;
+        
+        // Display masked value (dots)
         e.target.value = '•'.repeat(value.length);
         
+        // Auto-submit PIN form when max length reached
         if (inputId === 'pinInput' && value.length === 4) {
             document.getElementById('pinFormPasscode').value = value;
             setTimeout(() => document.getElementById('pinForm').submit(), 50);
         }
         
+        // Auto-verify admin PIN when 6 digits entered
         if (inputId === 'adminPinInput' && value.length === 6) {
             verifyAdminPin(value);
         }
