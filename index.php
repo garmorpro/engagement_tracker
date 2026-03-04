@@ -391,7 +391,7 @@ body {
             <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
             <input type="text" class="form-control text-center fs-4 pin-field" 
                    id="adminPinInput" required autofocus>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
+            <!-- <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p> -->
         </div>
 
         <div id="registerStep" style="display: none;">
