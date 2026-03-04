@@ -331,7 +331,7 @@ body {
                 <?php if ($account['role'] === 'super_admin') continue; ?>
                 <div class="account-item"
                      data-user-id="<?= $account['user_id'] ?>"
-                     data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
+                     data-account-name="<?= htmlspecialchars($account['name']) ?>"
                      data-role="<?= $account['role'] ?>"
                      onclick="openPinModal(this)">
                     <div class="account-icon user">
