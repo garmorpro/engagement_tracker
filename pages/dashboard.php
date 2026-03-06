@@ -320,19 +320,14 @@ function getTimeAgo($datetime) {
             color: var(--warning-orange);
         }
 
-        .notification-icon.status {
-            background: rgba(79, 198, 95, 0.1);
-            color: var(--success-green);
-        }
-
-        .notification-icon.team {
-            background: rgba(68, 135, 252, 0.1);
-            color: var(--primary-blue);
-        }
-
         .notification-icon.milestone {
             background: rgba(160, 77, 253, 0.1);
             color: var(--info-purple);
+        }
+
+        .notification-icon.archive {
+            background: rgba(128, 128, 128, 0.1);
+            color: #6b7280;
         }
 
         .notification-content {
@@ -1037,18 +1032,97 @@ function getTimeAgo($datetime) {
                                 <?php
                                     $iconClass = 'upcoming';
                                     $icon = 'bi-calendar-event';
-                                    if ($notif['notif_type'] === 'status_updated') {
-                                        $iconClass = 'status';
-                                        $icon = 'bi-arrow-repeat';
-                                    } elseif ($notif['notif_type'] === 'team_assignment') {
-                                        $iconClass = 'team';
-                                        $icon = 'bi-people';
-                                    } elseif ($notif['notif_type'] === 'milestone_complete') {
+                                    if ($notif['notif_type'] === 'upcoming_milestone') {
                                         $iconClass = 'milestone';
                                         $icon = 'bi-check-circle';
+                                    } elseif ($notif['notif_type'] === 'ready_to_archive') {
+                                        $iconClass = 'archive';
+                                        $icon = 'bi-archive';
                                     }
                                     
                                     $timeAgo = getTimeAgo($notif['notif_timestamp']);
+                                    
+                                    // For key dates and milestones, dynamically calculate days away
+                                    $displayMessage = $notif['notif_message'];
+                                    
+                                    if ($notif['notif_type'] === 'upcoming_key_date') {
+                                        $engIdno = $notif['engagement_idno'];
+                                        $timelineQuery = "SELECT 
+                                            internal_planning_call_date, internal_planning_call_completed_at,
+                                            planning_memo_date, planning_memo_completed_at,
+                                            irl_due_date, irl_completed_at,
+                                            client_planning_call_date, client_planning_call_completed_at,
+                                            fieldwork_date, fieldwork_completed_at,
+                                            leadsheet_date, leadsheet_completed_at,
+                                            conclusion_memo_date, conclusion_memo_completed_at,
+                                            draft_report_due_date, draft_report_completed_at,
+                                            final_report_date, final_report_completed_at,
+                                            archive_date, archive_completed_at
+                                            FROM engagement_timeline WHERE engagement_idno = ?";
+                                        $stmt = $conn->prepare($timelineQuery);
+                                        $stmt->bind_param('s', $engIdno);
+                                        $stmt->execute();
+                                        $tlResult = $stmt->get_result();
+                                        $timeline = $tlResult->fetch_assoc();
+                                        $stmt->close();
+                                        
+                                        if ($timeline) {
+                                            $dateFields = [
+                                                'internal_planning_call_date' => 'internal_planning_call_completed_at',
+                                                'planning_memo_date' => 'planning_memo_completed_at',
+                                                'irl_due_date' => 'irl_completed_at',
+                                                'client_planning_call_date' => 'client_planning_call_completed_at',
+                                                'fieldwork_date' => 'fieldwork_completed_at',
+                                                'leadsheet_date' => 'leadsheet_completed_at',
+                                                'conclusion_memo_date' => 'conclusion_memo_completed_at',
+                                                'draft_report_due_date' => 'draft_report_completed_at',
+                                                'final_report_date' => 'final_report_completed_at',
+                                                'archive_date' => 'archive_completed_at'
+                                            ];
+                                            
+                                            $titleMap = [
+                                                'internal_planning_call_date' => 'Internal Planning Call',
+                                                'planning_memo_date' => 'Planning Memo',
+                                                'irl_due_date' => 'IRL Due Date',
+                                                'client_planning_call_date' => 'Client Planning Call',
+                                                'fieldwork_date' => 'Fieldwork',
+                                                'leadsheet_date' => 'Leadsheet',
+                                                'conclusion_memo_date' => 'Conclusion Memo',
+                                                'draft_report_due_date' => 'Draft Report Due',
+                                                'final_report_date' => 'Final Report',
+                                                'archive_date' => 'Archive'
+                                            ];
+                                            
+                                            foreach ($dateFields as $dateCol => $completedCol) {
+                                                if ($timeline[$dateCol] && !$timeline[$completedCol]) {
+                                                    $daysAway = round((strtotime($timeline[$dateCol]) - time()) / 86400);
+                                                    $engName = htmlspecialchars($notif['engagement_idno']);
+                                                    $dateTitle = $titleMap[$dateCol];
+                                                    $displayMessage = $engName . ' - ' . $dateTitle . ' due in ' . max(0, $daysAway) . ' days';
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    } elseif ($notif['notif_type'] === 'upcoming_milestone') {
+                                        $engIdno = $notif['engagement_idno'];
+                                        $milestoneQuery = "SELECT m.milestone_type, m.due_date, e.eng_name
+                                            FROM engagement_milestones m
+                                            JOIN engagements e ON m.engagement_idno = e.eng_idno
+                                            WHERE m.engagement_idno = ? AND m.is_completed = 'N' AND m.due_date IS NOT NULL
+                                            ORDER BY m.due_date ASC LIMIT 1";
+                                        $stmt = $conn->prepare($milestoneQuery);
+                                        $stmt->bind_param('s', $engIdno);
+                                        $stmt->execute();
+                                        $mResult = $stmt->get_result();
+                                        $milestone = $mResult->fetch_assoc();
+                                        $stmt->close();
+                                        
+                                        if ($milestone) {
+                                            $daysAway = round((strtotime($milestone['due_date']) - time()) / 86400);
+                                            $milestoneTitle = implode(' ', array_map('ucfirst', explode('_', strtolower($milestone['milestone_type']))));
+                                            $displayMessage = $milestone['eng_name'] . ' - ' . $milestoneTitle . ' due in ' . max(0, $daysAway) . ' days';
+                                        }
+                                    }
                                 ?>
                                 <div class="notification-item <?php echo $notif['is_read'] === 'N' ? 'unread' : ''; ?>" onclick="markNotificationAsRead(<?php echo $notif['notif_id']; ?>)">
                                     <div class="notification-icon <?php echo $iconClass; ?>">
@@ -1056,7 +1130,7 @@ function getTimeAgo($datetime) {
                                     </div>
                                     <div class="notification-content">
                                         <div class="notification-title"><?php echo htmlspecialchars($notif['notif_title']); ?></div>
-                                        <div class="notification-message"><?php echo htmlspecialchars($notif['notif_message']); ?></div>
+                                        <div class="notification-message"><?php echo htmlspecialchars($displayMessage); ?></div>
                                         <div class="notification-time"><?php echo $timeAgo; ?></div>
                                     </div>
                                 </div>
