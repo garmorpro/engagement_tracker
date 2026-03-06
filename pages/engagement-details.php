@@ -1532,7 +1532,7 @@ if (!$timeline) {
                                 </div>
                                 <div class="milestone-content">
                                     <div class="milestone-title <?php echo $isCompleted ? 'completed' : ''; ?>">
-                                        <?php echo htmlspecialchars($milestone['milestone_name']); ?>
+                                        <?php echo htmlspecialchars($milestone['milestone_type']); ?>
                                     </div>
                                     <div class="milestone-due">Due: <?php echo htmlspecialchars($dueDate); ?></div>
                                 </div>
