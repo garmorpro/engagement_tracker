@@ -21,6 +21,16 @@ foreach ($allEngagements as $eng) {
     }
 }
 
+// Get engagement timeline data
+$timeline = null;
+$allTimelineData = getAllTimelineData($conn);
+foreach ($allTimelineData as $timeline) {
+    if ($timeline['engagement_idno'] === $engagementId) {
+        $timeline = $timeline;
+        break;
+    }
+}
+
 if (!$engagement) {
     header('Location: dashboard.php');
     exit;
@@ -1143,7 +1153,7 @@ if (!$engagement) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-calendar" style="font-size: 12px;"></i> INTERNAL PLANNING CALL
                         </div>
-                        <div class="timeline-date">Nov 9, 2025</div>
+                        <div class="timeline-date"><?php echo htmlspecialchars($timeline['internal_planning_call_date']); ?></div>
                         <div class="timeline-status completed">
                             <i class="bi bi-check-circle-fill"></i> Completed
                         </div>

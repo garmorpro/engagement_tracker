@@ -139,6 +139,22 @@ function getAllEngagements(mysqli $conn): array
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+
+function getAllTimelineData(mysqli $conn): array
+{
+    $sql = "
+        SELECT * FROM engagement_timeline
+    ";
+
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        return [];
+    }
+
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
 function getAllActiveEngagements(mysqli $conn): array
 {
     $sql = "
