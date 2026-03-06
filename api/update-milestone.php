@@ -28,22 +28,29 @@ if ($is_completed !== 'Y' && $is_completed !== 'N') {
 }
 
 try {
-    // Update the milestone in the database
+    // Update the milestone in the database using positional parameters for mysqli
     $query = "UPDATE milestones 
-              SET is_completed = :is_completed 
-              WHERE engagement_idno = :engagement_id 
-              AND milestone_type = :milestone_type";
+              SET is_completed = ? 
+              WHERE engagement_idno = ? 
+              AND milestone_type = ?";
     
     $stmt = $conn->prepare($query);
-    $stmt->bindParam(':is_completed', $is_completed);
-    $stmt->bindParam(':engagement_id', $engagement_id);
-    $stmt->bindParam(':milestone_type', $milestone_type);
+    
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
+        exit;
+    }
+    
+    // Bind parameters: s = string for all three
+    $stmt->bind_param('sss', $is_completed, $engagement_id, $milestone_type);
     
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Milestone updated successfully']);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Database update failed']);
+        echo json_encode(['success' => false, 'message' => 'Database update failed: ' . $stmt->error]);
     }
-} catch (PDOException $e) {
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    
+    $stmt->close();
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
 }
