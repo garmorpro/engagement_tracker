@@ -18,8 +18,19 @@ $reviewCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] ==
 $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'complete'));
 
 // Get unread notifications
-$notificationQuery = "SELECT * FROM engagement_notifications WHERE is_read = 'N' ORDER BY notif_timestamp DESC LIMIT 10";
-$unreadNotificationCount = count($notifications);
+$notifications = [];
+$unreadNotificationCount = 0;
+
+// Check if table exists before querying
+$tableCheckQuery = "SHOW TABLES LIKE 'engagement_notifications'";
+$tableCheckResult = $conn->query($tableCheckQuery);
+
+if ($tableCheckResult && $tableCheckResult->num_rows > 0) {
+    $notificationQuery = "SELECT * FROM engagement_notifications WHERE is_read = 'N' ORDER BY notif_timestamp DESC LIMIT 10";
+    $notificationResult = $conn->query($notificationQuery);
+    $notifications = $notificationResult ? $notificationResult->fetch_all(MYSQLI_ASSOC) : [];
+    $unreadNotificationCount = count($notifications);
+}
 
 // Helper function for time ago display
 function getTimeAgo($datetime) {
