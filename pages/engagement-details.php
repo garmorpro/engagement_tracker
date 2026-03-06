@@ -2222,13 +2222,15 @@ if (!$timeline) {
                     .join(' ');
                 
                 milestonesHTML += `
-                    <div style="display: flex; gap: 1rem; padding: 1.1rem; background: ${isCompleted ? 'rgba(79, 198, 95, 0.08)' : 'var(--bg-primary)'}; border: 1.5px solid ${isCompleted ? 'rgba(79, 198, 95, 0.25)' : 'var(--border-color)'}; border-radius: 12px; align-items: center; transition: all 0.2s; cursor: default; box-shadow: ${isCompleted ? 'inset 0 0 0 1px rgba(79, 198, 95, 0.1)' : 'none'};">
+                    <div style="display: flex; gap: 1rem; padding: 1.1rem; background: var(--bg-primary); border: 1.5px solid var(--border-color); border-radius: 12px; align-items: center; transition: all 0.2s; cursor: default;">
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: 600; font-size: 15px; margin-bottom: 0.5rem; word-break: break-word; color: ${isCompleted ? 'rgba(79, 198, 95, 0.8)' : 'var(--text-primary)'}; ${isCompleted ? 'text-decoration: line-through;' : ''}">${milestoneTitle}</div>
-                            <div style="font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="bi bi-calendar3" style="font-size: 12px;"></i>
-                                <span>${milestone.due_date || 'No due date'}</span>
-                                ${isCompleted ? '<span style="margin-left: auto; color: var(--success-green); font-weight: 600; display: flex; align-items: center; gap: 0.3rem;"><i class="bi bi-check-circle-fill" style="font-size: 14px;"></i>Completed</span>' : ''}
+                            <div style="font-weight: 600; font-size: 15px; margin-bottom: 0.5rem; word-break: break-word; color: var(--text-primary); ${isCompleted ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${milestoneTitle}</div>
+                            <div style="font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                                <span style="display: flex; align-items: center; gap: 0.4rem;">
+                                    <i class="bi bi-calendar3" style="font-size: 12px;"></i>
+                                    ${milestone.due_date || 'No due date'}
+                                </span>
+                                ${isCompleted ? '<span style="color: var(--success-green); font-weight: 600; display: flex; align-items: center; gap: 0.3rem;"><i class="bi bi-check-circle-fill" style="font-size: 14px;"></i>Completed</span>' : ''}
                             </div>
                         </div>
                         <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
