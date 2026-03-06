@@ -46,8 +46,8 @@ if ($count > 0) {
 }
 
 // Insert new account
-$stmt = $conn->prepare("INSERT INTO service_accounts (name, account_name, email, passcode, role, status, account_created, account_updated) VALUES (?, ?, ?, ?, ?, 'active', NOW(), NOW())");
-$stmt->bind_param('sssss', $account_name, $account_name, $email, $passcode, $role);
+$stmt = $conn->prepare("INSERT INTO service_accounts (name, email, passcode, role, status, account_created, account_updated) VALUES (?, ?, ?, ?, 'active', NOW(), NOW())");
+$stmt->bind_param('ssss', $name, $email, $passcode, $role);
 $success = $stmt->execute();
 $stmt->close();
 

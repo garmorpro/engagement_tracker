@@ -48,7 +48,7 @@ try {
     
     $query = "
         UPDATE `service_accounts`
-        SET `account_name` = '$accountName',
+        SET `full` = '$accountName',
             `email` = '$email',
             `passcode` = '$passcode'
         WHERE `user_id` = $userId
