@@ -40,8 +40,68 @@ function createNotification($engagement_idno, $notif_type, $notif_title, $notif_
 }
 
 /**
- * Check for upcoming key dates (engagement archive dates)
- * Notifies when engagement archive date is exactly 7 days away
+ * Get all timeline date columns that have values
+ * Returns array of [column_name => date_value] for non-null dates
+ */
+function getTimelineKeyDates($engagement_idno) {
+    global $conn;
+    
+    $timelineColumns = [
+        'internal_planning_call_date',
+        'planning_memo_date',
+        'irl_due_date',
+        'client_planning_call_date',
+        'fieldwork_date',
+        'leadsheet_date',
+        'conclusion_memo_date',
+        'draft_report_due_date',
+        'final_report_date',
+        'archive_date'
+    ];
+    
+    $query = "SELECT " . implode(", ", $timelineColumns) . " FROM engagement_timeline WHERE engagement_idno = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param('s', $engagement_idno);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+    
+    $keyDates = [];
+    if ($row) {
+        foreach ($timelineColumns as $column) {
+            if ($row[$column] !== null) {
+                $keyDates[$column] = $row[$column];
+            }
+        }
+    }
+    
+    return $keyDates;
+}
+
+/**
+ * Convert timeline column name to readable title
+ */
+function getTimelineTitle($columnName) {
+    $titles = [
+        'internal_planning_call_date' => 'Internal Planning Call',
+        'planning_memo_date' => 'Planning Memo',
+        'irl_due_date' => 'IRL Due Date',
+        'client_planning_call_date' => 'Client Planning Call',
+        'fieldwork_date' => 'Fieldwork',
+        'leadsheet_date' => 'Leadsheet',
+        'conclusion_memo_date' => 'Conclusion Memo',
+        'draft_report_due_date' => 'Draft Report Due',
+        'final_report_date' => 'Final Report',
+        'archive_date' => 'Archive'
+    ];
+    
+    return $titles[$columnName] ?? $columnName;
+}
+
+/**
+ * Check for upcoming key dates from engagement_timeline
+ * Notifies when any timeline date is exactly 7 days away
  * Only sends if notification hasn't been sent for this engagement yet
  */
 function checkUpcomingKeyDates() {
@@ -49,39 +109,46 @@ function checkUpcomingKeyDates() {
     
     $dueDate = date('Y-m-d', strtotime('+7 days')); // 7 days from now
     
-    $query = "
-        SELECT eng_idno, eng_name, eng_archive 
-        FROM engagements 
-        WHERE eng_status != 'archived' 
-        AND eng_status != 'complete'
-        AND eng_archive IS NOT NULL
-        AND DATE(eng_archive) = ?
-        AND eng_idno NOT IN (
-            SELECT DISTINCT engagement_idno 
-            FROM engagement_notifications 
-            WHERE notif_type = 'upcoming_key_date'
-        )
-    ";
+    // Get all engagements
+    $query = "SELECT DISTINCT engagement_idno, e.eng_name 
+              FROM engagement_timeline t
+              JOIN engagements e ON t.engagement_idno = e.eng_idno
+              WHERE e.eng_status != 'archived' 
+              AND e.eng_status != 'complete'
+              AND t.engagement_idno NOT IN (
+                  SELECT DISTINCT engagement_idno 
+                  FROM engagement_notifications 
+                  WHERE notif_type = 'upcoming_key_date'
+              )";
     
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('s', $dueDate);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $result = $conn->query($query);
     
     if ($result) {
         while ($row = $result->fetch_assoc()) {
-            $title = 'Upcoming Key Date';
-            $message = $row['eng_name'] . ' is due in 7 days';
+            $engagement_idno = $row['engagement_idno'];
+            $eng_name = $row['eng_name'];
             
-            createNotification(
-                $row['eng_idno'],
-                'upcoming_key_date',
-                $title,
-                $message
-            );
+            // Get all key dates for this engagement
+            $keyDates = getTimelineKeyDates($engagement_idno);
+            
+            // Check if any key date matches 7 days from now
+            foreach ($keyDates as $columnName => $dateValue) {
+                if (date('Y-m-d', strtotime($dateValue)) === $dueDate) {
+                    $title = 'Upcoming Key Date';
+                    $dateTitle = getTimelineTitle($columnName);
+                    $message = $eng_name . ' - ' . $dateTitle . ' is due in 7 days';
+                    
+                    createNotification(
+                        $engagement_idno,
+                        'upcoming_key_date',
+                        $title,
+                        $message
+                    );
+                    break; // Only send one notification per engagement per check
+                }
+            }
         }
     }
-    $stmt->close();
 }
 
 /**
@@ -147,10 +214,9 @@ function checkEngagementsReadyToArchive() {
         AND eng_complete_date IS NOT NULL
         AND DATE(eng_complete_date) <= DATE_SUB(CURDATE(), INTERVAL 3 DAY)
         AND eng_idno NOT IN (
-            SELECT engagement_idno 
+            SELECT DISTINCT engagement_idno 
             FROM engagement_notifications 
-            WHERE notif_type = 'ready_to_archive' 
-            AND DATE(notif_timestamp) = CURDATE()
+            WHERE notif_type = 'ready_to_archive'
         )
     ";
     
