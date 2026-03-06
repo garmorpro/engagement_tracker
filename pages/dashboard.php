@@ -3,7 +3,7 @@ require_once '../path.php';
 require_once '../includes/functions.php';
 
 // Get engagements data
-$engagements = getAllEngagements($conn);
+$engagements = getAllActiveEngagements($conn);
 
 // Calculate status counts
 $totalCount = count($engagements);
