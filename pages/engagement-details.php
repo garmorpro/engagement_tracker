@@ -2275,7 +2275,7 @@ if (!$timeline) {
             if (result.isConfirmed) {
                 const updatedMilestone = {
                     engagement_id: '<?php echo $engagementId; ?>',
-                    milestone_id: milestone.milestone_idno,
+                    milestone_id: milestone.ms_id,
                     old_milestone_type: milestone.milestone_type,
                     milestone_type: document.getElementById('edit_milestone_name').value,
                     due_date: document.getElementById('edit_due_date').value

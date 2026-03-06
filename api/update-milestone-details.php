@@ -23,8 +23,8 @@ if (!$milestone_id || !$milestone_type) {
 
 try {
     $query = "UPDATE engagement_milestones 
-              SET milestone_type = ?, due_date = ? 
-              WHERE milestone_idno = ?";
+              SET due_date = ? 
+              WHERE ms_id = ?";
     
     $stmt = $conn->prepare($query);
     
@@ -33,7 +33,7 @@ try {
         exit;
     }
     
-    $stmt->bind_param('ssi', $milestone_type, $due_date, $milestone_id);
+    $stmt->bind_param('si', $due_date, $milestone_id);
     
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Milestone updated successfully']);

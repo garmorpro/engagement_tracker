@@ -21,7 +21,7 @@ if (!$milestone_id || !$engagement_id) {
 
 try {
     $query = "DELETE FROM engagement_milestones 
-              WHERE milestone_idno = ? AND engagement_idno = ?";
+              WHERE ms_id = ? AND engagement_idno = ?";
     
     $stmt = $conn->prepare($query);
     

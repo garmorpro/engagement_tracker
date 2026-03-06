@@ -22,8 +22,8 @@ if (!$engagement_id || !$milestone_type) {
 
 try {
     $query = "INSERT INTO engagement_milestones 
-              (engagement_idno, milestone_type, due_date, is_completed) 
-              VALUES (?, ?, ?, 'N')";
+              (engagement_idno, due_date, is_completed) 
+              VALUES (?, ?, 'N')";
     
     $stmt = $conn->prepare($query);
     
@@ -32,7 +32,7 @@ try {
         exit;
     }
     
-    $stmt->bind_param('sss', $engagement_id, $milestone_type, $due_date);
+    $stmt->bind_param('ss', $engagement_id, $due_date);
     
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Milestone added successfully']);
