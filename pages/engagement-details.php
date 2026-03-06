@@ -1081,8 +1081,6 @@ if (!$engagement) {
     // -----------------------------
     // Safely count unique audit types (ignore null/empty)
     $auditTypes = array_filter(array_column($team, 'audit_type'), fn($v) => !is_null($v) && $v !== '');
-    $auditTypeCounts = array_count_values($auditTypes);
-    $hasMultipleAuditTypes = count($auditTypeCounts) > 1;
 
     // Group members by employee name and role
     $groupedTeam = [];
@@ -1130,11 +1128,10 @@ if (!$engagement) {
                     <?php foreach ($member['audit_types'] as $auditType => $tags): ?>
                         <?php if (!empty($tags)): ?>
                             <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem; overflow-wrap: break-word; word-wrap: break-word;">
-                                <?php if ($hasMultipleAuditTypes): ?>
-                                    <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        Division of Labor for <?php echo htmlspecialchars($auditType); ?>
-                                    </div>
-                                <?php endif; ?>
+                                <!-- ALWAYS show audit type as header -->
+                                <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    <?php echo htmlspecialchars($auditType); ?> DOL
+                                </div>
                                 <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                                     <?php foreach ($tags as $tag): ?>
                                         <span class="team-member-tag" style="white-space: normal; overflow-wrap: break-word;"><?php echo htmlspecialchars(trim($tag)); ?></span>
