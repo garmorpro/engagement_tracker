@@ -1078,80 +1078,64 @@ if (!$engagement) {
             </button>
 
             <div class="team-members">
-                <!-- John Smith -->
-                <div class="team-member">
-                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #4487FC, #4DA6FF);">JS</div>
-                    <div class="team-member-info">
-                        <div class="team-member-name">John Smith</div>
-                        <div class="team-member-title">Manager</div>
-                    </div>
-                </div>
+<?php if (!empty($engagementTeam)): ?>
+    <?php foreach ($engagementTeam as $member): ?>
+        <?php
+            // Get initials for avatar
+            $nameParts = explode(' ', $member['member_name']);
+            $initials = '';
+            foreach ($nameParts as $part) {
+                $initials .= strtoupper($part[0]);
+            }
 
-                <!-- Sarah Johnson -->
-                <div class="team-member">
-                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #A04DFD, #D67FFF);">SJ</div>
-                    <div class="team-member-info">
-                        <div class="team-member-name">Sarah Johnson</div>
-                        <div class="team-member-title">Senior 1</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
-                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
-                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                <span class="team-member-tag">CC1</span>
-                                <span class="team-member-tag">CC2</span>
-                                <span class="team-member-tag">CC3</span>
-                            </div>
+            // Default gradient colors (you can customize based on role or member)
+            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default blue
+            if (isset($member['role'])) {
+                switch (strtolower($member['role'])) {
+                    case 'manager':
+                        $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
+                        break;
+                    case 'senior 1':
+                        $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)';
+                        break;
+                    case 'senior 2':
+                        $gradient = 'linear-gradient(135deg, #4DBFB8, #6FD9D2)';
+                        break;
+                    case 'staff 1':
+                        $gradient = 'linear-gradient(135deg, #F17313, #FFB347)';
+                        break;
+                    case 'staff 2':
+                        $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)';
+                        break;
+                }
+            }
+
+            // Division of labor tags
+            $tags = !empty($member['division_of_labor']) ? explode(',', $member['division_of_labor']) : [];
+        ?>
+        <div class="team-member">
+            <div class="team-member-avatar" style="background: <?php echo $gradient; ?>;"><?php echo htmlspecialchars($initials); ?></div>
+            <div class="team-member-info">
+                <div class="team-member-name"><?php echo htmlspecialchars($member['member_name']); ?></div>
+                <div class="team-member-title"><?php echo htmlspecialchars($member['role']); ?></div>
+
+                <?php if (!empty($tags)): ?>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
+                        <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <?php foreach ($tags as $tag): ?>
+                                <span class="team-member-tag"><?php echo htmlspecialchars(trim($tag)); ?></span>
+                            <?php endforeach; ?>
                         </div>
                     </div>
-                </div>
-
-                <!-- David Martinez -->
-                <div class="team-member">
-                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #4DBFB8, #6FD9D2);">DM</div>
-                    <div class="team-member-info">
-                        <div class="team-member-name">David Martinez</div>
-                        <div class="team-member-title">Senior 2</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
-                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
-                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                <span class="team-member-tag">CC4</span>
-                                <span class="team-member-tag">CC5</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mike Davis -->
-                <div class="team-member">
-                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #F17313, #FFB347);">MD</div>
-                    <div class="team-member-info">
-                        <div class="team-member-name">Mike Davis</div>
-                        <div class="team-member-title">Staff 1</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
-                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
-                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                <span class="team-member-tag">CC6</span>
-                                <span class="team-member-tag">CC7</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Jennifer White -->
-                <div class="team-member">
-                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #4FC65F, #7FDD8A);">JW</div>
-                    <div class="team-member-info">
-                        <div class="team-member-name">Jennifer White</div>
-                        <div class="team-member-title">Staff 2</div>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
-                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
-                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                                <span class="team-member-tag">CC8</span>
-                                <span class="team-member-tag">CC9</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    <p>No team assigned yet.</p>
+<?php endif; ?>
+</div>
         </div>
 
         <!-- ========== RIGHT COLUMN (Timeline & Milestones Stacked) ========== -->
