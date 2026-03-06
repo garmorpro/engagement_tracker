@@ -714,7 +714,11 @@ $engagementData = $engagement;
             border-color: var(--primary-blue);
         }
 
-        .timeline-item:hover .timeline-checkbox {
+        .timeline-item:hover .timeline-checkbox-container i {
+            opacity: 1 !important;
+        }
+
+        .timeline-checkbox-container.checked i {
             opacity: 1 !important;
         }
 
@@ -1787,7 +1791,9 @@ if (!$timeline) {
                             $timeline['internal_planning_call_completed_at']
                         );
                         ?>
-                        <input type="checkbox" class="timeline-checkbox" data-field-date="internal_planning_call_date" data-field-completed="internal_planning_call_completed_at" <?php echo !empty($timeline['internal_planning_call_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['internal_planning_call_completed_at']) ? 'checked' : ''; ?>" data-field-date="internal_planning_call_date" data-field-completed="internal_planning_call_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                        </div>
                     </div>
 
                     <!-- URL Due -->
@@ -1801,7 +1807,9 @@ if (!$timeline) {
                             $timeline['irl_completed_at']
                         );
                         ?>
-                        <input type="checkbox" class="timeline-checkbox" data-field-date="irl_due_date" data-field-completed="irl_completed_at" <?php echo !empty($timeline['irl_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['irl_completed_at']) ? 'checked' : ''; ?>" data-field-date="irl_due_date" data-field-completed="irl_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                        </div>
                     </div>
 
                     <!-- Client Planning Call -->
@@ -1815,7 +1823,9 @@ if (!$timeline) {
                             $timeline['client_planning_call_completed_at']
                         );
                         ?>
-                        <input type="checkbox" class="timeline-checkbox" data-field-date="client_planning_call_date" data-field-completed="client_planning_call_completed_at" <?php echo !empty($timeline['client_planning_call_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['client_planning_call_completed_at']) ? 'checked' : ''; ?>" data-field-date="client_planning_call_date" data-field-completed="client_planning_call_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                        </div>
                     </div>
 
                     <!-- Fieldwork -->
@@ -1829,7 +1839,9 @@ if (!$timeline) {
                             $timeline['fieldwork_completed_at']
                         );
                         ?>
-                        <input type="checkbox" class="timeline-checkbox" data-field-date="fieldwork_date" data-field-completed="fieldwork_completed_at" <?php echo !empty($timeline['fieldwork_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['fieldwork_completed_at']) ? 'checked' : ''; ?>" data-field-date="fieldwork_date" data-field-completed="fieldwork_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                        </div>
                     </div>
 
                     <!-- Leadsheet Due -->
@@ -1843,7 +1855,9 @@ if (!$timeline) {
                             $timeline['leadsheet_completed_at']
                         );
                         ?>
-                        <input type="checkbox" class="timeline-checkbox" data-field-date="leadsheet_date" data-field-completed="leadsheet_completed_at" <?php echo !empty($timeline['leadsheet_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['leadsheet_completed_at']) ? 'checked' : ''; ?>" data-field-date="leadsheet_date" data-field-completed="leadsheet_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                        </div>
                     </div>
 
                     <!-- Draft Report Due -->
@@ -1857,7 +1871,9 @@ if (!$timeline) {
                             $timeline['draft_report_completed_at']
                         );
                         ?>
-                        <input type="checkbox" class="timeline-checkbox" data-field-date="draft_report_due_date" data-field-completed="draft_report_completed_at" <?php echo !empty($timeline['draft_report_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['draft_report_completed_at']) ? 'checked' : ''; ?>" data-field-date="draft_report_due_date" data-field-completed="draft_report_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                        </div>
                     </div>
 
                     <!-- Final Report Due -->
@@ -1871,7 +1887,9 @@ if (!$timeline) {
                             $timeline['final_report_completed_at']
                         );
                         ?>
-                        <input type="checkbox" class="timeline-checkbox" data-field-date="final_report_date" data-field-completed="final_report_completed_at" <?php echo !empty($timeline['final_report_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['final_report_completed_at']) ? 'checked' : ''; ?>" data-field-date="final_report_date" data-field-completed="final_report_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                        </div>
                     </div>
 
                     <!-- Archive Date -->
@@ -1885,7 +1903,9 @@ if (!$timeline) {
                             $timeline['archive_completed_at']
                         );
                         ?>
-                        <input type="checkbox" class="timeline-checkbox" data-field-date="archive_date" data-field-completed="archive_completed_at" <?php echo !empty($timeline['archive_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['archive_completed_at']) ? 'checked' : ''; ?>" data-field-date="archive_date" data-field-completed="archive_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -2138,9 +2158,9 @@ if (!$timeline) {
     });
 
     // Timeline checkbox functionality
-    document.querySelectorAll('.timeline-checkbox').forEach((checkbox) => {
-        checkbox.style.cursor = 'pointer';
-        checkbox.addEventListener('click', async function(e) {
+    document.querySelectorAll('.timeline-checkbox-container').forEach((container) => {
+        container.style.cursor = 'pointer';
+        container.addEventListener('click', async function(e) {
             e.stopPropagation();
             
             const timelineItem = this.closest('.timeline-item');
@@ -2150,8 +2170,8 @@ if (!$timeline) {
             
             if (!engagementId || !dateField || !completedField) return;
 
-            const isChecked = this.checked;
-            const completedDateTime = isChecked ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null;
+            const isChecked = this.classList.contains('checked');
+            const completedDateTime = !isChecked ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null;
 
             try {
                 const response = await fetch('../api/update-timeline-checkbox.php', {
@@ -2170,22 +2190,20 @@ if (!$timeline) {
                 if (!response.ok) {
                     console.error('HTTP Error:', response.status);
                     alert('Error updating timeline');
-                    this.checked = !this.checked; // Revert checkbox
                     return;
                 }
 
                 const data = await response.json();
 
                 if (data.success) {
-                    showToast(isChecked ? 'Timeline marked as completed' : 'Timeline marked as pending');
+                    // Reload the page to refresh data
+                    location.reload();
                 } else {
                     alert('Error: ' + (data.message || 'Failed to update timeline'));
-                    this.checked = !this.checked; // Revert checkbox
                 }
             } catch (error) {
                 console.error('Error updating timeline:', error);
                 alert('Error: ' + error.message);
-                this.checked = !this.checked; // Revert checkbox
             }
         });
     });
