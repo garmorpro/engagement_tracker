@@ -21,18 +21,24 @@ foreach ($allEngagements as $eng) {
     }
 }
 
-$timeline = null;
+function getTimelineByEngagement($conn, $engagementId) {
+    $stmt = $conn->prepare("
+        SELECT *
+        FROM engagement_timeline
+        WHERE engagement_idno = ?
+        LIMIT 1
+    ");
 
-$allTimelineData = getAllTimelineData($conn);
+    $stmt->bind_param("i", $engagementId);
+    $stmt->execute();
 
-foreach ($allTimelineData as $row) {
-    if ($row['engagement_idno'] === $engagementId) {
-        $timeline = $row;
-        break;
-    }
+    return $stmt->get_result()->fetch_assoc();
 }
 
+$timeline = getTimelineByEngagement($conn, $engagementId);
+
 echo $timeline['engagement_idno'];
+
 
 if (!$engagement) {
     header('Location: dashboard.php');
