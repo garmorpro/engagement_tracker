@@ -170,6 +170,21 @@ function getAllTeamData(mysqli $conn): array
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+function getAllMilestones(mysqli $conn): array
+{
+    $sql = "
+        SELECT * FROM engagement_milestones
+    ";
+
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        return [];
+    }
+
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
 function getAllActiveEngagements(mysqli $conn): array
 {
     $sql = "
