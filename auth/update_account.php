@@ -1,7 +1,6 @@
 <?php
 require_once '../includes/functions.php';
 require_once '../path.php';
-require_once '../includes/init.php';
 
 header('Content-Type: application/json');
 
