@@ -922,6 +922,45 @@ if (!$engagement) {
             box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
         }
 
+        /* ========== TOAST STYLING ========== */
+        .swal2-toast {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+        }
+
+        body.dark-mode .swal2-toast {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .swal2-toast .swal2-title {
+            color: var(--text-primary);
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .swal2-toast .swal2-icon {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            margin-right: 0.75rem;
+        }
+
+        .swal2-toast .swal2-icon.swal2-success {
+            border-color: var(--success-green);
+        }
+
+        .swal2-toast .swal2-icon.swal2-success [class*='swal2-success-circular-line'] {
+            background: var(--success-green);
+        }
+
+        .swal2-toast .swal2-icon.swal2-success .swal2-success-ring {
+            border: 2px solid var(--success-green);
+        }
+
         /* ========== MILESTONES SECTION ========== */
         .milestones-header-right {
             display: flex;
@@ -2084,11 +2123,19 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        // Show toast notification instead of popup
                         Swal.fire({
-                            title: 'Success!',
-                            text: 'Timeline updated successfully',
+                            toast: true,
+                            position: 'bottom-left',
                             icon: 'success',
-                            confirmButtonText: 'OK'
+                            title: 'Timeline updated successfully',
+                            showConfirmButton: false,
+                            timer: 3000,
+                            timerProgressBar: true,
+                            didOpen: (toast) => {
+                                toast.addEventListener('mouseenter', Swal.stopTimer)
+                                toast.addEventListener('mouseleave', Swal.resumeTimer)
+                            }
                         }).then(() => {
                             location.reload();
                         });
