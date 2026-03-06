@@ -1089,10 +1089,10 @@ if (!$engagement) {
             $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default blue
             if (isset($member['role'])) {
                 switch (strtolower($member['role'])) {
-                    case 'Manager':
+                    case 'manager':
                         $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
                         break;
-                    case 'Senior':
+                    case 'senior':
                         $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)';
                         break;
                     case 'senior 2':
@@ -1101,7 +1101,7 @@ if (!$engagement) {
                     case 'staff 1':
                         $gradient = 'linear-gradient(135deg, #F17313, #FFB347)';
                         break;
-                    case 'Staff':
+                    case 'staff':
                         $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)';
                         break;
                 }
