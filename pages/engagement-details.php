@@ -1354,7 +1354,12 @@ $engagementData = $engagement;
                         </div>
                         <div class="engagement-info-content">
                             <div class="engagement-info-label">Report Type</div>
-                            <div class="engagement-info-value"><?php echo htmlspecialchars($engagement['eng_soc_type']); ?></div>
+                            <div class="engagement-info-value">
+                                <?php 
+                                $socType = $engagement['eng_soc_type'];
+                                echo $socType === 'Type 1' ? 'Type I' : ($socType === 'Type 2' ? 'Type II' : htmlspecialchars($socType));
+                                ?>
+                            </div>
                         </div>
                     </div>
                     <?php endif; ?>
