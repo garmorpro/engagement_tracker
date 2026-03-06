@@ -714,6 +714,11 @@ $engagementData = $engagement;
             border-color: var(--primary-blue);
         }
 
+        .timeline-checkbox-container i {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
         .timeline-item:hover .timeline-checkbox-container i {
             opacity: 1 !important;
         }
@@ -1792,7 +1797,7 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['internal_planning_call_completed_at']) ? 'checked' : ''; ?>" data-field-date="internal_planning_call_date" data-field-completed="internal_planning_call_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
-                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
 
@@ -1808,7 +1813,7 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['irl_completed_at']) ? 'checked' : ''; ?>" data-field-date="irl_due_date" data-field-completed="irl_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
-                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
 
@@ -1824,7 +1829,7 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['client_planning_call_completed_at']) ? 'checked' : ''; ?>" data-field-date="client_planning_call_date" data-field-completed="client_planning_call_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
-                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
 
@@ -1840,7 +1845,7 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['fieldwork_completed_at']) ? 'checked' : ''; ?>" data-field-date="fieldwork_date" data-field-completed="fieldwork_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
-                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
 
@@ -1856,7 +1861,7 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['leadsheet_completed_at']) ? 'checked' : ''; ?>" data-field-date="leadsheet_date" data-field-completed="leadsheet_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
-                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
 
@@ -1872,7 +1877,7 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['draft_report_completed_at']) ? 'checked' : ''; ?>" data-field-date="draft_report_due_date" data-field-completed="draft_report_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
-                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
 
@@ -1888,7 +1893,7 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['final_report_completed_at']) ? 'checked' : ''; ?>" data-field-date="final_report_date" data-field-completed="final_report_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
-                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
 
@@ -1904,7 +1909,7 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['archive_completed_at']) ? 'checked' : ''; ?>" data-field-date="archive_date" data-field-completed="archive_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
-                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green); opacity: 0; transition: opacity 0.2s;"></i>
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
                 </div>
