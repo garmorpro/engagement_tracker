@@ -1074,7 +1074,8 @@ if (!$engagement) {
                 <i class="bi bi-gear"></i> Manage DOL
             </button>
 
-            <div class="team-members">
+            <div class="team-members" style="display: flex; flex-direction: column; gap: 1rem;">
+
 <?php if (!empty($team)): ?>
 
     <?php
@@ -1105,43 +1106,31 @@ if (!$engagement) {
                 $initials .= strtoupper($part[0]);
             }
 
-            // Default gradient colors (customizable by role)
+            // Gradient colors based on role
             $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default blue
-            if (isset($member['role'])) {
-                switch (strtolower($member['role'])) {
-                    case 'manager':
-                        $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
-                        break;
-                    case 'senior':
-                        $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)';
-                        break;
-                    case 'senior 2':
-                        $gradient = 'linear-gradient(135deg, #4DBFB8, #6FD9D2)';
-                        break;
-                    case 'staff 1':
-                        $gradient = 'linear-gradient(135deg, #F17313, #FFB347)';
-                        break;
-                    case 'staff':
-                        $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)';
-                        break;
-                }
+            switch (strtolower($member['role'] ?? '')) {
+                case 'manager': $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; break;
+                case 'senior': $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)'; break;
+                case 'senior 2': $gradient = 'linear-gradient(135deg, #4DBFB8, #6FD9D2)'; break;
+                case 'staff 1': $gradient = 'linear-gradient(135deg, #F17313, #FFB347)'; break;
+                case 'staff': $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)'; break;
             }
         ?>
-        <div class="team-member">
-            <div class="team-member-avatar" style="background: <?php echo $gradient; ?>;"><?php echo htmlspecialchars($initials); ?></div>
-            <div class="team-member-info">
+        <div class="team-member" style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div class="team-member-avatar" style="background: <?php echo $gradient; ?>; flex-shrink: 0;"><?php echo htmlspecialchars($initials); ?></div>
+            <div class="team-member-info" style="flex: 1; min-width: 0;">
                 <div class="team-member-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
                 <div class="team-member-title"><?php echo htmlspecialchars($member['role']); ?></div>
 
                 <?php if (!empty($member['audit_types'])): ?>
                     <?php foreach ($member['audit_types'] as $auditType => $tags): ?>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem; overflow-wrap: break-word; word-wrap: break-word;">
                             <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
                                 Division of Labor for <?php echo htmlspecialchars($auditType); ?>
                             </div>
-                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
                                 <?php foreach ($tags as $tag): ?>
-                                    <span class="team-member-tag"><?php echo htmlspecialchars(trim($tag)); ?></span>
+                                    <span class="team-member-tag" style="white-space: normal; overflow-wrap: break-word;"><?php echo htmlspecialchars(trim($tag)); ?></span>
                                 <?php endforeach; ?>
                             </div>
                         </div>
