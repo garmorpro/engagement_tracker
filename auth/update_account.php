@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 $json_input = file_get_contents('php://input');
 $data = json_decode($json_input, true);
 
-if (!$data || !isset($_POST['user_id']) || !isset($_POST['name']) || !isset($_POST['email']) || !isset($_POST['passcode'])) {
+if (!$data || !isset($data['user_id']) || !isset($data['name']) || !isset($data['email']) || !isset($data['passcode'])) {
     http_response_code(400);
     die(json_encode(['success' => false, 'message' => 'Missing required fields']));
 }
