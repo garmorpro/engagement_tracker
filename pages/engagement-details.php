@@ -2165,10 +2165,13 @@ if (!$timeline) {
                         `;
                         document.body.appendChild(toast);
                         
-                        // Show toast for 5 seconds, then remove
+                        // Show toast for 5 seconds, then reload page to show updates
                         setTimeout(() => {
                             toast.classList.add('hide');
-                            setTimeout(() => toast.remove(), 300);
+                            setTimeout(() => {
+                                toast.remove();
+                                location.reload();
+                            }, 300);
                         }, 5000);
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
@@ -2290,7 +2293,7 @@ if (!$timeline) {
                 .then(data => {
                     if (data.success) {
                         showToast('Milestone updated successfully');
-                        setTimeout(() => location.reload(), 1000);
+                        setTimeout(() => location.reload(), 5500);
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update milestone', 'error');
                     }
@@ -2338,7 +2341,7 @@ if (!$timeline) {
                 .then(data => {
                     if (data.success) {
                         showToast('Milestone added successfully');
-                        setTimeout(() => location.reload(), 1000);
+                        setTimeout(() => location.reload(), 5500);
                     } else {
                         Swal.fire('Error', data.message || 'Failed to add milestone', 'error');
                     }
@@ -2373,7 +2376,7 @@ if (!$timeline) {
                 .then(data => {
                     if (data.success) {
                         showToast('Milestone deleted successfully');
-                        setTimeout(() => location.reload(), 1000);
+                        setTimeout(() => location.reload(), 5500);
                     } else {
                         Swal.fire('Error', data.message || 'Failed to delete milestone', 'error');
                     }
