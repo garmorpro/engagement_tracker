@@ -1918,7 +1918,7 @@ if (!$timeline) {
                                     $dueDate = 'No due date';
                                 }
                             ?>
-                            <div class="milestone-item">
+                            <div class="milestone-item" data-milestone-id="<?php echo htmlspecialchars($milestone['ms_id']); ?>">
                                 <div class="milestone-checkbox <?php echo $isCompleted ? 'completed' : 'pending'; ?>">
                                     <?php if ($isCompleted): ?>
                                         <i class="bi bi-check-circle-fill"></i>
@@ -2020,9 +2020,9 @@ if (!$timeline) {
             e.stopPropagation();
             
             const milestoneItem = this.closest('.milestone-item');
-            const milestoneTitle = milestoneItem.querySelector('.milestone-title').textContent.trim();
+            const milestoneId = milestoneItem.getAttribute('data-milestone-id');
             
-            if (!milestoneTitle) return;
+            if (!milestoneId) return;
 
             // Determine current state based on the 'completed' class
             const hasCompletedClass = this.classList.contains('completed');
@@ -2036,7 +2036,7 @@ if (!$timeline) {
                     },
                     body: JSON.stringify({
                         engagement_id: '<?php echo $engagementId; ?>',
-                        milestone_type: milestoneTitle,
+                        milestone_id: milestoneId,
                         is_completed: newStatus
                     })
                 });
@@ -2078,6 +2078,33 @@ if (!$timeline) {
                     const icon = this.querySelector('i');
                     if (icon) {
                         icon.classList.remove('bi-check-circle-fill');
+                        if (newStatus === 'Y') {
+                            icon.classList.add('bi-check-circle-fill');
+                        }
+                    } else if (newStatus === 'Y') {
+                        const newIcon = document.createElement('i');
+                        newIcon.className = 'bi bi-check-circle-fill';
+                        this.appendChild(newIcon);
+                    }
+                    
+                    // Update the milestone title styling
+                    const milestoneTitle = milestoneItem.querySelector('.milestone-title');
+                    if (milestoneTitle) {
+                        if (newStatus === 'Y') {
+                            milestoneTitle.classList.add('completed');
+                        } else {
+                            milestoneTitle.classList.remove('completed');
+                        }
+                    }
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to update milestone'));
+                }
+            } catch (error) {
+                console.error('Error updating milestone:', error);
+                alert('Error: ' + error.message);
+            }
+        });
+    });
                         if (newStatus === 'Y') {
                             icon.classList.add('bi-check-circle-fill');
                         }

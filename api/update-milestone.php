@@ -13,10 +13,10 @@ if (!$data) {
 }
 
 $engagement_id = $data['engagement_id'] ?? null;
-$milestone_type = $data['milestone_type'] ?? null;
+$milestone_id = $data['milestone_id'] ?? null;
 $is_completed = $data['is_completed'] ?? null;
 
-if (!$engagement_id || !$milestone_type || !$is_completed) {
+if (!$engagement_id || !$milestone_id || !$is_completed) {
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
     exit;
 }
@@ -28,11 +28,11 @@ if ($is_completed !== 'Y' && $is_completed !== 'N') {
 }
 
 try {
-    // Update the milestone in the database using positional parameters for mysqli
+    // Update the milestone in the database using ms_id
     $query = "UPDATE engagement_milestones 
               SET is_completed = ? 
               WHERE engagement_idno = ? 
-              AND milestone_type = ?";
+              AND ms_id = ?";
     
     $stmt = $conn->prepare($query);
     
@@ -41,8 +41,8 @@ try {
         exit;
     }
     
-    // Bind parameters: s = string for all three
-    $stmt->bind_param('sss', $is_completed, $engagement_id, $milestone_type);
+    // Bind parameters: s = string, i = integer for ms_id
+    $stmt->bind_param('ssi', $is_completed, $engagement_id, $milestone_id);
     
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Milestone updated successfully']);
@@ -54,3 +54,4 @@ try {
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
 }
+?>
