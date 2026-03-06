@@ -673,7 +673,9 @@ function closeAdminVerify() {
 }
 
 function verifyAdminPin(pin) {
-    fetch('<?= BASE_URL ?>/auth/verify_admin_pin.php', {
+    const apiUrl = getApiUrl('verify_admin_pin.php');
+    
+    fetch(apiUrl, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({passcode: pin})
@@ -718,7 +720,9 @@ function closeEditUserModal() {
 }
 
 function loadAccountsList() {
-    fetch('<?= BASE_URL ?>/auth/get_accounts.php')
+    const apiUrl = getApiUrl('get_accounts.php');
+    
+    fetch(apiUrl)
     .then(res => res.json())
     .then(data => {
         if(data.success) {
@@ -757,9 +761,38 @@ function loadAccountsList() {
     .catch(() => alert('Error loading accounts'));
 }
 
+// Helper function to get correct API URL
+function getApiUrl(endpoint) {
+    // If BASE_URL exists and is set, use it
+    let baseUrl = '<?= BASE_URL ?>';
+    
+    // If BASE_URL is empty or just contains PHP, construct it
+    if (!baseUrl || baseUrl.includes('<?') || baseUrl === '/') {
+        // Use current location to determine base
+        const protocol = window.location.protocol;
+        const host = window.location.host;
+        const pathname = window.location.pathname;
+        
+        // Remove filename from path
+        const pathParts = pathname.split('/').filter(p => p);
+        // Remove last part if it's a file (has extension or is 'index.php')
+        if (pathParts[pathParts.length - 1].includes('.php')) {
+            pathParts.pop();
+        }
+        baseUrl = protocol + '//' + host + '/' + pathParts.join('/');
+    }
+    
+    // Ensure no double slashes
+    return baseUrl.replace(/\/$/, '') + '/auth/' + endpoint;
+}
+
 function editAccount(userId, accountName) {
     // Fetch account details from server
-    fetch('<?= BASE_URL ?>/auth/get_account_details.php', {
+    const apiUrl = getApiUrl('get_account_details.php');
+    
+    console.log('Fetching from:', apiUrl);
+    
+    fetch(apiUrl, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({user_id: userId})
@@ -843,7 +876,9 @@ function deleteAccount(userId, accountName) {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch('<?= BASE_URL ?>/auth/delete_account.php', {
+            const apiUrl = getApiUrl('delete_account.php');
+            
+            fetch(apiUrl, {
                 method: 'POST',
                 headers: {'Content-Type':'application/json'},
                 body: JSON.stringify({user_id: userId})
