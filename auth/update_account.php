@@ -34,7 +34,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 // Include your database connection
 require_once '../includes/functions.php';
 require_once '../path.php';
-require_once '../includes/init.php';
+// require_once '../includes/init.php';
 
 try {
     // Check if $conn exists
