@@ -889,6 +889,17 @@ if (!$engagement) {
             margin-left: -2rem !important;
             width: calc(100vw - 1rem) !important;
         }
+        .no-team-members {
+            padding: 1rem;
+        background-color: #f9f9f9;
+        border: 1px dashed #ccc;
+        border-radius: 0.5rem;
+        text-align: center;
+        color: #666;
+        font-size: 14px;
+        font-style: italic;
+        margin-top: 0.5rem;
+        }
     </style>
 </head>
 <body>
@@ -1153,7 +1164,7 @@ if (!$engagement) {
     <?php endforeach; ?>
 
 <?php else: ?>
-    <p>No team assigned yet.</p>
+    <p class="no-team-members">No team assigned yet.</p>
 <?php endif; ?>
 </div>
         </div>
