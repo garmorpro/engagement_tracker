@@ -1247,14 +1247,14 @@ if (!$timeline) {
 // -----------------------------
 // Render each timeline step
 // -----------------------------
-renderTimelineStatus($timeline['internal_planning_call_date'], $timeline['internal_planning_call_completed_at']);
-renderTimelineStatus($timeline['irl_due_date'], $timeline['irl_completed_at']);
-renderTimelineStatus($timeline['client_planning_call_date'], $timeline['client_planning_call_completed_at']);
-renderTimelineStatus($timeline['fieldwork_date'], $timeline['fieldwork_completed_at']);
-renderTimelineStatus($timeline['leadsheet_date'], $timeline['leadsheet_completed_at']);
-renderTimelineStatus($timeline['draft_report_due_date'], $timeline['draft_report_completed_at']);
-renderTimelineStatus($timeline['final_report_date'], $timeline['final_report_completed_at']);
-renderTimelineStatus($timeline['archive_date'], $timeline['archive_completed_at']);
+// renderTimelineStatus($timeline['internal_planning_call_date'], $timeline['internal_planning_call_completed_at']);
+// renderTimelineStatus($timeline['irl_due_date'], $timeline['irl_completed_at']);
+// renderTimelineStatus($timeline['client_planning_call_date'], $timeline['client_planning_call_completed_at']);
+// renderTimelineStatus($timeline['fieldwork_date'], $timeline['fieldwork_completed_at']);
+// renderTimelineStatus($timeline['leadsheet_date'], $timeline['leadsheet_completed_at']);
+// renderTimelineStatus($timeline['draft_report_due_date'], $timeline['draft_report_completed_at']);
+// renderTimelineStatus($timeline['final_report_date'], $timeline['final_report_completed_at']);
+// renderTimelineStatus($timeline['archive_date'], $timeline['archive_completed_at']);
 ?>
                     <!-- Internal Planning -->
                     <!-- <div class="timeline-item">
