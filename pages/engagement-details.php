@@ -922,23 +922,31 @@ if (!$engagement) {
             box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
         }
 
-        /* ========== TOAST STYLING ========== */
-        .swal2-toast {
-            background: var(--bg-secondary) !important;
-            border: 1px solid var(--border-color) !important;
+        /* ========== CUSTOM TOAST STYLING ========== */
+        .custom-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 1rem 1.25rem;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        body.dark-mode .swal2-toast {
-            background: #1A2332 !important;
-            border-color: #2D3847 !important;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-        }
-
-        .swal2-toast.swal2-show {
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
             animation: slideInLeft 0.3s ease-out;
+        }
+
+        body.dark-mode .custom-toast {
+            background: #1A2332;
+            border-color: #2D3847;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .custom-toast.hide {
+            animation: slideOutLeft 0.3s ease-in forwards;
         }
 
         @keyframes slideInLeft {
@@ -952,63 +960,15 @@ if (!$engagement) {
             }
         }
 
-        .swal2-toast .swal2-title {
-            color: var(--text-primary) !important;
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            line-height: 1.4 !important;
-        }
-
-        body.dark-mode .swal2-toast .swal2-title {
-            color: #E8EAED !important;
-        }
-
-        .swal2-toast .swal2-icon {
-            width: 28px;
-            height: 28px;
-            min-width: 28px;
-            margin-right: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .swal2-toast .swal2-icon.swal2-success {
-            border-color: var(--success-green) !important;
-            background: rgba(79, 198, 95, 0.2) !important;
-        }
-
-        body.dark-mode .swal2-toast .swal2-icon.swal2-success {
-            background: rgba(79, 198, 95, 0.25) !important;
-            border-color: #4FC65F !important;
-        }
-
-        .swal2-toast .swal2-icon.swal2-success .swal2-success-circular-line,
-        .swal2-toast .swal2-icon.swal2-success .swal2-success-line-tip,
-        .swal2-toast .swal2-icon.swal2-success .swal2-success-line-long,
-        .swal2-toast .swal2-icon.swal2-success .swal2-success-ring,
-        .swal2-toast .swal2-icon.swal2-success .swal2-success-fix {
-            display: none !important;
-        }
-
-        .swal2-toast .swal2-icon.swal2-success::after {
-            content: '✓' !important;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            width: 100% !important;
-            height: 100% !important;
-            color: var(--success-green) !important;
-            font-size: 20px !important;
-            font-weight: bold !important;
-        }
-
-        .swal2-popup.swal2-toast .swal2-timer-progress-bar {
-            background: var(--success-green) !important;
-            height: 3px;
-            border-radius: 12px;
+        @keyframes slideOutLeft {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
         }
 
         /* ========== MILESTONES SECTION ========== */
@@ -2173,22 +2133,25 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Show toast notification instead of popup
-                        Swal.fire({
-                            toast: true,
-                            position: 'bottom-left',
-                            icon: 'success',
-                            title: 'Timeline updated successfully',
-                            showConfirmButton: false,
-                            timer: 3000,
-                            timerProgressBar: true,
-                            didOpen: (toast) => {
-                                toast.addEventListener('mouseenter', Swal.stopTimer)
-                                toast.addEventListener('mouseleave', Swal.resumeTimer)
-                            }
-                        }).then(() => {
-                            location.reload();
-                        });
+                        // Show custom toast notification
+                        const toast = document.createElement('div');
+                        toast.className = 'custom-toast success';
+                        toast.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <i class="bi bi-check-circle-fill" style="font-size: 20px; color: var(--success-green);"></i>
+                                <span>Timeline updated successfully</span>
+                            </div>
+                        `;
+                        document.body.appendChild(toast);
+                        
+                        // Remove after 3 seconds
+                        setTimeout(() => {
+                            toast.classList.add('hide');
+                            setTimeout(() => toast.remove(), 300);
+                        }, 3000);
+                        
+                        // Reload page after 1 second
+                        setTimeout(() => location.reload(), 1000);
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
                     }
