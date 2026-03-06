@@ -987,14 +987,33 @@ if (!$engagement) {
                         <div class="engagement-info-icon" style="color: var(--info-purple);">
                             <i class="bi bi-shield-check"></i>
                         </div>
+                        <style>
+                            .audit-pill {
+    display: inline-block;
+    background: #eef2ff;
+    color: #3730a3;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 6px;
+}
+                        </style>
                         <div class="engagement-info-content">
                             <div class="engagement-info-label">Audit Type</div>
                             <div class="engagement-info-value">
-                                <?php 
-                                $auditTypes = $engagement['eng_audit_type'] ?? 'N/A';
-                                $auditTypes = str_replace(',', ', ', $auditTypes);
-                                echo htmlspecialchars($auditTypes);
-                                ?>
+                                <?php
+$auditTypes = $engagement['eng_audit_type'] ?? '';
+
+if ($auditTypes) {
+    $types = array_map('trim', explode(',', $auditTypes));
+    foreach ($types as $type) {
+        echo '<span class="audit-pill">' . htmlspecialchars($type) . '</span>';
+    }
+} else {
+    echo 'N/A';
+}
+?>
                             </div>
                         </div>
                     </div>
