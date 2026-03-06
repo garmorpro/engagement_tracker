@@ -2165,14 +2165,14 @@ if (!$timeline) {
                         `;
                         document.body.appendChild(toast);
                         
-                        // Remove after 8 seconds
+                        // Show toast for 8 seconds, then reload
                         setTimeout(() => {
                             toast.classList.add('hide');
-                            setTimeout(() => toast.remove(), 300);
+                            setTimeout(() => {
+                                toast.remove();
+                                location.reload();
+                            }, 300);
                         }, 8000);
-                        
-                        // Reload page after 1 second
-                        setTimeout(() => location.reload(), 1000);
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
                     }
