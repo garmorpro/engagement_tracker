@@ -993,7 +993,7 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
                             $colorClass = 'color-' . (($index % 5) + 1);
                             $initials = strtoupper(substr($eng['eng_name'], 0, 1) . substr(explode(' ', $eng['eng_name'])[1] ?? '', 0, 1));
                             $dueDate = $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : 'N/A';
-                            $statusClass = strtolower(str_replace('-', '', $eng['eng_status'] ?? 'planning'));
+                            $statusClass = strtolower($eng['eng_status'] ?? 'planning');
                         ?>
                         <tr style="cursor: pointer;" onclick="window.location.href='engagement-details.php?id=<?php echo htmlspecialchars($eng['eng_idno']); ?>'">
                             <td>
