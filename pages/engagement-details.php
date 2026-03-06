@@ -2363,18 +2363,6 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // If status was changed to 'complete', trigger a notification
-                        if (updatedData.eng_status === 'complete') {
-                            fetch('../api/trigger-notification.php', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    engagement_id: '<?php echo $engagementId; ?>',
-                                    notification_type: 'ready_to_archive'
-                                })
-                            });
-                        }
-                        
                         sessionStorage.setItem('showMilestoneToast', 'Engagement updated successfully');
                         location.reload();
                     } else {
