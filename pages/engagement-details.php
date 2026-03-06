@@ -1346,16 +1346,18 @@ $engagementData = $engagement;
                         </div>
                     </div>
 
-                    <!-- Report Type -->
+                    <!-- Report Type (only show if SOC type exists) -->
+                    <?php if ($engagement['eng_soc_type']): ?>
                     <div class="engagement-info-item">
                         <div class="engagement-info-icon" style="color: var(--primary-blue);">
                             <i class="bi bi-file-earmark-text"></i>
                         </div>
                         <div class="engagement-info-content">
                             <div class="engagement-info-label">Report Type</div>
-                            <div class="engagement-info-value">Type II</div>
+                            <div class="engagement-info-value"><?php echo htmlspecialchars($engagement['eng_soc_type']); ?></div>
                         </div>
                     </div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Meta Tags -->
