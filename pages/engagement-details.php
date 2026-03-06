@@ -2165,11 +2165,11 @@ if (!$timeline) {
                         `;
                         document.body.appendChild(toast);
                         
-                        // Remove after 5 seconds
+                        // Remove after 8 seconds
                         setTimeout(() => {
                             toast.classList.add('hide');
                             setTimeout(() => toast.remove(), 300);
-                        }, 5000);
+                        }, 8000);
                         
                         // Reload page after 1 second
                         setTimeout(() => location.reload(), 1000);
