@@ -1283,10 +1283,12 @@ $engagementData = $engagement;
                         <i class="bi bi-exclamation-circle"></i>
                         High Priority
                     </span>
+                    <?php if ($engagement['eng_repeat'] === 'Y'): ?>
                     <span class="engagement-badge badge-repeat">
                         <i class="bi bi-arrow-repeat"></i>
                         Repeat
                     </span>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Info Grid -->
