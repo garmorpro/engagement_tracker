@@ -755,60 +755,53 @@ if (!$engagement) {
         }
 
         /* ========== RESPONSIVE ========== */
-        @media (max-width: 1024px) {
-            .page-header {
-                flex-direction: column;
-            }
-
-            .engagement-header {
-                flex-direction: column;
-            }
-
-            .engagement-right {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
-            }
-
-            .engagement-sidebar {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                padding: 1.5rem;
-            }
-
-            .engagement-title {
-                font-size: 24px;
-            }
-
-            .engagement-info-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .engagement-meta {
-                flex-direction: column;
-            }
-
-            .top-actions {
-                width: 100%;
-                order: -1;
-            }
-
-            .btn-edit {
-                flex: 1;
-            }
-
+        @media (max-width: 1400px) {
             .timeline-grid {
                 grid-template-columns: 1fr;
             }
 
             .milestones-grid {
                 grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            /* Change 3-column to 2-column layout */
+            body div[style*="grid-template-columns: 1fr 1.5fr 1.5fr"] {
+                grid-template-columns: 1fr 1fr !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            main-container {
+                padding: 1.5rem;
+            }
+
+            engagement-title {
+                font-size: 24px;
+            }
+
+            engagement-info-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            engagement-meta {
+                flex-direction: column;
+            }
+
+            top-actions {
+                width: 100%;
+                order: -1;
+            }
+
+            btn-edit {
+                flex: 1;
+            }
+
+            /* Stack sections vertically on mobile */
+            body div[style*="grid-template-columns: 1fr 1.5fr 1.5fr"] {
+                grid-template-columns: 1fr !important;
             }
         }
 
@@ -984,250 +977,283 @@ if (!$engagement) {
 
     <hr>
 
-    <!-- ========== TEAM SECTION ========== -->
-    <div style="margin-bottom: 3rem;">
-        <div class="section-header">
-            <div class="section-header-left">
-                <div class="section-icon team">
-                    <i class="bi bi-people-fill"></i>
+    <!-- ========== THREE COLUMN LAYOUT ========== -->
+    <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: 2rem; margin-bottom: 3rem; margin-top: 2rem;">
+
+        <!-- ========== TEAM SECTION (LEFT) ========== -->
+        <div>
+            <div class="section-header" style="margin-bottom: 1.5rem;">
+                <div class="section-header-left">
+                    <div class="section-icon team">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h2 class="section-title">Team</h2>
                 </div>
-                <h2 class="section-title">Team</h2>
             </div>
-            <button class="manage-btn">
+            <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; justify-content: center;">
                 <i class="bi bi-gear"></i> Manage DOL
             </button>
+
+            <div class="team-members">
+                <!-- John Smith -->
+                <div class="team-member">
+                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #4487FC, #4DA6FF);">JS</div>
+                    <div class="team-member-info">
+                        <div class="team-member-name">John Smith</div>
+                        <div class="team-member-title">Manager</div>
+                    </div>
+                </div>
+
+                <!-- Sarah Johnson -->
+                <div class="team-member">
+                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #A04DFD, #D67FFF);">SJ</div>
+                    <div class="team-member-info">
+                        <div class="team-member-name">Sarah Johnson</div>
+                        <div class="team-member-title">Senior 1</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
+                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <span class="team-member-tag">CC1</span>
+                                <span class="team-member-tag">CC2</span>
+                                <span class="team-member-tag">CC3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- David Martinez -->
+                <div class="team-member">
+                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #4DBFB8, #6FD9D2);">DM</div>
+                    <div class="team-member-info">
+                        <div class="team-member-name">David Martinez</div>
+                        <div class="team-member-title">Senior 2</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
+                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <span class="team-member-tag">CC4</span>
+                                <span class="team-member-tag">CC5</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mike Davis -->
+                <div class="team-member">
+                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #F17313, #FFB347);">MD</div>
+                    <div class="team-member-info">
+                        <div class="team-member-name">Mike Davis</div>
+                        <div class="team-member-title">Staff 1</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
+                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <span class="team-member-tag">CC6</span>
+                                <span class="team-member-tag">CC7</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jennifer White -->
+                <div class="team-member">
+                    <div class="team-member-avatar" style="background: linear-gradient(135deg, #4FC65F, #7FDD8A);">JW</div>
+                    <div class="team-member-info">
+                        <div class="team-member-name">Jennifer White</div>
+                        <div class="team-member-title">Staff 2</div>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
+                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <span class="team-member-tag">CC8</span>
+                                <span class="team-member-tag">CC9</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="team-members">
-            <!-- John Smith -->
-            <div class="team-member">
-                <div class="team-member-avatar" style="background: linear-gradient(135deg, #4487FC, #4DA6FF);">JS</div>
-                <div class="team-member-info">
-                    <div class="team-member-name">John Smith</div>
-                    <div class="team-member-title">Manager</div>
-                </div>
-            </div>
-
-            <!-- Sarah Johnson -->
-            <div class="team-member">
-                <div class="team-member-avatar" style="background: linear-gradient(135deg, #A04DFD, #D67FFF);">SJ</div>
-                <div class="team-member-info">
-                    <div class="team-member-name">Sarah Johnson</div>
-                    <div class="team-member-title">Senior 1</div>
-                    <div class="team-member-tags">
-                        <span class="team-member-tag">CC1</span>
-                        <span class="team-member-tag">CC2</span>
-                        <span class="team-member-tag">CC3</span>
+        <!-- ========== TIMELINE & KEY DATES SECTION (CENTER) ========== -->
+        <div>
+            <div class="section-header" style="margin-bottom: 1.5rem;">
+                <div class="section-header-left">
+                    <div class="section-icon timeline">
+                        <i class="bi bi-calendar2"></i>
                     </div>
+                    <h2 class="section-title">Timeline & Key Dates</h2>
                 </div>
             </div>
-
-            <!-- David Martinez -->
-            <div class="team-member">
-                <div class="team-member-avatar" style="background: linear-gradient(135deg, #4DBFB8, #6FD9D2);">DM</div>
-                <div class="team-member-info">
-                    <div class="team-member-name">David Martinez</div>
-                    <div class="team-member-title">Senior 2</div>
-                    <div class="team-member-tags">
-                        <span class="team-member-tag">CC4</span>
-                        <span class="team-member-tag">CC5</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mike Davis -->
-            <div class="team-member">
-                <div class="team-member-avatar" style="background: linear-gradient(135deg, #F17313, #FFB347);">MD</div>
-                <div class="team-member-info">
-                    <div class="team-member-name">Mike Davis</div>
-                    <div class="team-member-title">Staff 1</div>
-                    <div class="team-member-tags">
-                        <span class="team-member-tag">CC6</span>
-                        <span class="team-member-tag">CC7</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Jennifer White -->
-            <div class="team-member">
-                <div class="team-member-avatar" style="background: linear-gradient(135deg, #4FC65F, #7FDD8A);">JW</div>
-                <div class="team-member-info">
-                    <div class="team-member-name">Jennifer White</div>
-                    <div class="team-member-title">Staff 2</div>
-                    <div class="team-member-tags">
-                        <span class="team-member-tag">CC8</span>
-                        <span class="team-member-tag">CC9</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========== TIMELINE & KEY DATES SECTION ========== -->
-    <div style="margin-bottom: 3rem;">
-        <div class="section-header">
-            <div class="section-header-left">
-                <div class="section-icon timeline">
-                    <i class="bi bi-calendar2"></i>
-                </div>
-                <h2 class="section-title">Timeline & Key Dates</h2>
-            </div>
-            <button class="manage-btn">
+            <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; justify-content: center;">
                 <i class="bi bi-gear"></i> Manage
             </button>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <!-- Internal Planning -->
+                <div class="timeline-item" style="grid-column: 1;">
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="bi bi-calendar" style="font-size: 12px;"></i> INTERNAL PLANNING
+                    </div>
+                    <div class="timeline-date">Nov 9, 2025</div>
+                    <div class="timeline-status completed">
+                        <i class="bi bi-check-circle-fill"></i> Completed
+                    </div>
+                </div>
+
+                <!-- URL Due -->
+                <div class="timeline-item" style="grid-column: 2;">
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="bi bi-info-circle" style="font-size: 12px;"></i> URL DUE
+                    </div>
+                    <div class="timeline-date">Mar 14, 2026</div>
+                    <div class="timeline-status">9d remaining</div>
+                </div>
+
+                <!-- Client Planning Call -->
+                <div class="timeline-item" style="grid-column: 1;">
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="bi bi-calendar" style="font-size: 12px;"></i> CLIENT PLANNING CALL
+                    </div>
+                    <div class="timeline-date">Nov 14, 2025</div>
+                    <div class="timeline-status completed">
+                        <i class="bi bi-check-circle-fill"></i> Completed
+                    </div>
+                </div>
+
+                <!-- Fieldwork -->
+                <div class="timeline-item" style="grid-column: 2;">
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="bi bi-bar-chart" style="font-size: 12px;"></i> FIELDWORK
+                    </div>
+                    <div class="timeline-date">Nov 30, 2025</div>
+                    <div class="timeline-status completed">
+                        <i class="bi bi-check-circle-fill"></i> Completed
+                    </div>
+                </div>
+
+                <!-- Leadsheet Due -->
+                <div class="timeline-item" style="grid-column: 1;">
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="bi bi-info-circle" style="font-size: 12px;"></i> LEADSHEET DUE
+                    </div>
+                    <div class="timeline-date">Jan 24, 2026</div>
+                    <div class="timeline-status overdue">
+                        <i class="bi bi-x-circle-fill"></i> 40d overdue
+                    </div>
+                </div>
+
+                <!-- Draft Report Due -->
+                <div class="timeline-item" style="grid-column: 2;">
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="bi bi-file-text" style="font-size: 12px;"></i> DRAFT REPORT DUE
+                    </div>
+                    <div class="timeline-date">Feb 19, 2026</div>
+                    <div class="timeline-status overdue">
+                        <i class="bi bi-x-circle-fill"></i> 14d overdue
+                    </div>
+                </div>
+
+                <!-- Final Report Due -->
+                <div class="timeline-item" style="grid-column: 1;">
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="bi bi-file-earmark" style="font-size: 12px;"></i> FINAL REPORT DUE
+                    </div>
+                    <div class="timeline-date">Mar 14, 2026</div>
+                    <div class="timeline-status">9d remaining</div>
+                </div>
+
+                <!-- Archive Date -->
+                <div class="timeline-item" style="grid-column: 2;">
+                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                        <i class="bi bi-archive" style="font-size: 12px;"></i> ARCHIVE DATE
+                    </div>
+                    <div class="timeline-date">Mar 31, 2026</div>
+                    <div class="timeline-status">26d remaining</div>
+                </div>
+            </div>
         </div>
 
-        <div class="timeline-grid">
-            <!-- Internal Planning -->
-            <div class="timeline-item">
-                <div class="timeline-label">Internal Planning</div>
-                <div class="timeline-date">Nov 9, 2025</div>
-                <div class="timeline-status completed">
-                    <i class="bi bi-check-circle-fill"></i> Completed
+        <!-- ========== MILESTONES SECTION (RIGHT) ========== -->
+        <div>
+            <div class="section-header" style="margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
+                <div class="section-header-left">
+                    <div class="section-icon milestones">
+                        <i class="bi bi-flag-fill"></i>
+                    </div>
+                    <h2 class="section-title">Milestones</h2>
                 </div>
             </div>
-
-            <!-- URL Due -->
-            <div class="timeline-item">
-                <div class="timeline-label">URL Due</div>
-                <div class="timeline-date">Mar 14, 2026</div>
-                <div class="timeline-status">9d remaining</div>
-            </div>
-
-            <!-- Client Planning Call -->
-            <div class="timeline-item">
-                <div class="timeline-label">Client Planning Call</div>
-                <div class="timeline-date">Nov 14, 2025</div>
-                <div class="timeline-status completed">
-                    <i class="bi bi-check-circle-fill"></i> Completed
-                </div>
-            </div>
-
-            <!-- Fieldwork -->
-            <div class="timeline-item">
-                <div class="timeline-label">Fieldwork</div>
-                <div class="timeline-date">Nov 30, 2025</div>
-                <div class="timeline-status completed">
-                    <i class="bi bi-check-circle-fill"></i> Completed
-                </div>
-            </div>
-
-            <!-- Leadsheet Due -->
-            <div class="timeline-item">
-                <div class="timeline-label">Leadsheet Due</div>
-                <div class="timeline-date">Jan 24, 2026</div>
-                <div class="timeline-status overdue">
-                    <i class="bi bi-x-circle-fill"></i> 40d overdue
-                </div>
-            </div>
-
-            <!-- Draft Report Due -->
-            <div class="timeline-item">
-                <div class="timeline-label">Draft Report Due</div>
-                <div class="timeline-date">Feb 19, 2026</div>
-                <div class="timeline-status overdue">
-                    <i class="bi bi-x-circle-fill"></i> 14d overdue
-                </div>
-            </div>
-
-            <!-- Final Report Due -->
-            <div class="timeline-item">
-                <div class="timeline-label">Final Report Due</div>
-                <div class="timeline-date">Mar 14, 2026</div>
-                <div class="timeline-status">9d remaining</div>
-            </div>
-
-            <!-- Archive Date -->
-            <div class="timeline-item">
-                <div class="timeline-label">Archive Date</div>
-                <div class="timeline-date">Mar 31, 2026</div>
-                <div class="timeline-status">26d remaining</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ========== MILESTONES SECTION ========== -->
-    <div style="margin-bottom: 3rem;">
-        <div class="section-header">
-            <div class="section-header-left">
-                <div class="section-icon milestones">
-                    <i class="bi bi-flag-fill"></i>
-                </div>
-                <h2 class="section-title">Milestones</h2>
-            </div>
-            <div class="milestones-header-right">
-                <span class="milestone-stat">3/6</span>
-                <span class="milestone-progress">50% Complete</span>
-                <button class="manage-btn">
+            <div class="milestones-header-right" style="margin-bottom: 1.5rem; width: 100%; justify-content: space-between;">
+                <button class="manage-btn" style="flex: 1;">
                     <i class="bi bi-gear"></i> Manage
                 </button>
+                <span class="milestone-stat" style="margin: 0 0.5rem;">3/6</span>
+                <span class="milestone-progress">50% Complete</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">
+                <!-- Kickoff meeting completed -->
+                <div class="milestone-item">
+                    <div class="milestone-checkbox completed">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="milestone-content">
+                        <div class="milestone-title completed">Kickoff meeting completed</div>
+                        <div class="milestone-due">Due: Oct 31, 2025</div>
+                    </div>
+                </div>
+
+                <!-- Risk assessment finalized -->
+                <div class="milestone-item">
+                    <div class="milestone-checkbox completed">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="milestone-content">
+                        <div class="milestone-title completed">Risk assessment finalized</div>
+                        <div class="milestone-due">Due: Nov 14, 2025</div>
+                    </div>
+                </div>
+
+                <!-- Fieldwork completed -->
+                <div class="milestone-item">
+                    <div class="milestone-checkbox completed">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="milestone-content">
+                        <div class="milestone-title completed">Fieldwork completed</div>
+                        <div class="milestone-due">Due: Dec 14, 2025</div>
+                    </div>
+                </div>
+
+                <!-- Draft report prepared -->
+                <div class="milestone-item">
+                    <div class="milestone-checkbox pending">
+                    </div>
+                    <div class="milestone-content">
+                        <div class="milestone-title">Draft report prepared</div>
+                        <div class="milestone-due">Due: Feb 19, 2026</div>
+                    </div>
+                </div>
+
+                <!-- Management response received -->
+                <div class="milestone-item">
+                    <div class="milestone-checkbox pending">
+                    </div>
+                    <div class="milestone-content">
+                        <div class="milestone-title">Management response received</div>
+                        <div class="milestone-due">Due: Feb 28, 2026</div>
+                    </div>
+                </div>
+
+                <!-- Final report issued -->
+                <div class="milestone-item">
+                    <div class="milestone-checkbox pending">
+                    </div>
+                    <div class="milestone-content">
+                        <div class="milestone-title">Final report issued</div>
+                        <div class="milestone-due">Due: Mar 14, 2026</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="milestones-grid">
-            <!-- Kickoff meeting completed -->
-            <div class="milestone-item">
-                <div class="milestone-checkbox completed">
-                    <i class="bi bi-check-circle-fill"></i>
-                </div>
-                <div class="milestone-content">
-                    <div class="milestone-title completed">Kickoff meeting completed</div>
-                    <div class="milestone-due">Due: Oct 31, 2025</div>
-                </div>
-            </div>
-
-            <!-- Risk assessment finalized -->
-            <div class="milestone-item">
-                <div class="milestone-checkbox completed">
-                    <i class="bi bi-check-circle-fill"></i>
-                </div>
-                <div class="milestone-content">
-                    <div class="milestone-title completed">Risk assessment finalized</div>
-                    <div class="milestone-due">Due: Nov 14, 2025</div>
-                </div>
-            </div>
-
-            <!-- Fieldwork completed -->
-            <div class="milestone-item">
-                <div class="milestone-checkbox completed">
-                    <i class="bi bi-check-circle-fill"></i>
-                </div>
-                <div class="milestone-content">
-                    <div class="milestone-title completed">Fieldwork completed</div>
-                    <div class="milestone-due">Due: Dec 14, 2025</div>
-                </div>
-            </div>
-
-            <!-- Draft report prepared -->
-            <div class="milestone-item">
-                <div class="milestone-checkbox pending">
-                </div>
-                <div class="milestone-content">
-                    <div class="milestone-title">Draft report prepared</div>
-                    <div class="milestone-due">Due: Feb 19, 2026</div>
-                </div>
-            </div>
-
-            <!-- Management response received -->
-            <div class="milestone-item">
-                <div class="milestone-checkbox pending">
-                </div>
-                <div class="milestone-content">
-                    <div class="milestone-title">Management response received</div>
-                    <div class="milestone-due">Due: Feb 28, 2026</div>
-                </div>
-            </div>
-
-            <!-- Final report issued -->
-            <div class="milestone-item">
-                <div class="milestone-checkbox pending">
-                </div>
-                <div class="milestone-content">
-                    <div class="milestone-title">Final report issued</div>
-                    <div class="milestone-due">Due: Mar 14, 2026</div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Dark Mode Button -->
