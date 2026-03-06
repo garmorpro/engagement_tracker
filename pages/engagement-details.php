@@ -1084,7 +1084,6 @@ if (!$engagement) {
 
     // Group members by employee name and role
     $groupedTeam = [];
-
     foreach ($team as $member) {
         $key = $member['emp_name'] . '|' . $member['role'];
         if (!isset($groupedTeam[$key])) {
@@ -1097,8 +1096,18 @@ if (!$engagement) {
 
         // Only explode emp_dol if it's not empty
         $dolArray = !empty($member['emp_dol']) ? explode(',', $member['emp_dol']) : [];
-        $groupedTeam[$key]['audit_types'][$member['audit_type']] = $dolArray;
+        $auditType = $member['audit_type'] ?? 'General';
+        $groupedTeam[$key]['audit_types'][$auditType] = $dolArray;
     }
+
+    // -----------------------------
+    // Sort grouped team by role priority
+    $roleOrder = ['manager' => 1, 'senior' => 2, 'staff' => 3];
+    uasort($groupedTeam, function($a, $b) use ($roleOrder) {
+        $roleA = strtolower($a['role'] ?? '');
+        $roleB = strtolower($b['role'] ?? '');
+        return ($roleOrder[$roleA] ?? 999) <=> ($roleOrder[$roleB] ?? 999);
+    });
     ?>
 
     <?php foreach ($groupedTeam as $member): ?>
@@ -1109,12 +1118,10 @@ if (!$engagement) {
             foreach ($nameParts as $part) { $initials .= strtoupper($part[0]); }
 
             // Gradient colors by role
-            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
+            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default
             switch (strtolower($member['role'] ?? '')) {
                 case 'manager': $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; break;
                 case 'senior': $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)'; break;
-                case 'senior 2': $gradient = 'linear-gradient(135deg, #4DBFB8, #6FD9D2)'; break;
-                case 'staff 1': $gradient = 'linear-gradient(135deg, #F17313, #FFB347)'; break;
                 case 'staff': $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)'; break;
             }
         ?>
@@ -1128,7 +1135,7 @@ if (!$engagement) {
                     <?php foreach ($member['audit_types'] as $auditType => $tags): ?>
                         <?php if (!empty($tags)): ?>
                             <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem; overflow-wrap: break-word; word-wrap: break-word;">
-                                <!-- ALWAYS show audit type as header -->
+                                <!-- Always show audit type DOL header -->
                                 <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
                                     <?php echo htmlspecialchars($auditType); ?> DOL
                                 </div>
