@@ -204,13 +204,13 @@ function getAllActiveEngagements(mysqli $conn): array
            AND LOWER(mgr.role) = 'manager'
 
         LEFT JOIN engagement_milestones ms
-            ON ms.eng_id = e.eng_id
+            ON ms.engagement_idno = e.eng_idno
            AND ms.milestone_type LIKE 'final%'
 
         WHERE e.eng_status != 'archived'
 
-        GROUP BY e.eng_id
-        ORDER BY e.eng_id DESC
+        GROUP BY e.eng_idno
+        ORDER BY e.eng_idno DESC
     ";
 
     $result = $conn->query($sql);
@@ -334,11 +334,11 @@ function getOverdueEngagements(mysqli $conn): array
             MIN(ms.due_date) AS final_due_date
         FROM engagements e
         JOIN engagement_milestones ms
-            ON ms.eng_id = e.eng_id
+            ON ms.engagement_idno = e.eng_idno
            AND ms.milestone_type LIKE 'final%'
         WHERE e.eng_status != 'archived'
           AND ms.due_date < CURDATE()
-        GROUP BY e.eng_id
+        GROUP BY e.eng_idno
         ORDER BY e.eng_updated DESC
         LIMIT 3
     ";
@@ -363,12 +363,12 @@ function getEngagementsDueThisWeek(mysqli $conn): array
             MIN(ms.due_date) AS final_due_date
         FROM engagements e
         JOIN engagement_milestones ms
-            ON ms.eng_id = e.eng_id
+            ON ms.engagement_idno = e.eng_idno
            AND ms.milestone_type LIKE 'final%'
         WHERE e.eng_status != 'archived'
           AND ms.due_date BETWEEN CURDATE()
                               AND DATE_ADD(CURDATE(), INTERVAL (7 - WEEKDAY(CURDATE())) DAY)
-        GROUP BY e.eng_id
+        GROUP BY e.eng_idno
         ORDER BY final_due_date ASC
         LIMIT 3
     ";
@@ -393,11 +393,11 @@ function getNewClientEngagements(mysqli $conn): array
             MIN(ms.due_date) AS final_due_date
         FROM engagements e
         LEFT JOIN engagement_milestones ms
-            ON ms.eng_id = e.eng_id
+            ON ms.engagement_idno = e.eng_idno
            AND ms.milestone_type LIKE 'final%'
         WHERE e.eng_status != 'archived'
           AND e.eng_repeat = 'N'
-        GROUP BY e.eng_id
+        GROUP BY e.eng_idno
         ORDER BY final_due_date ASC
         LIMIT 3
     ";
@@ -422,10 +422,10 @@ function getRecentlyUpdatedEngagements(mysqli $conn): array
             MIN(ms.due_date) AS final_due_date
         FROM engagements e
         LEFT JOIN engagement_milestones ms
-            ON ms.eng_id = e.eng_id
+            ON ms.engagement_idno = e.eng_idno
            AND ms.milestone_type LIKE 'final%'
         WHERE e.eng_status != 'archived'
-        GROUP BY e.eng_id
+        GROUP BY e.eng_idno
         ORDER BY e.eng_updated DESC
         LIMIT 3
     ";
@@ -451,10 +451,10 @@ function getAllActiveEngagementsMobile(mysqli $conn): array
             e.eng_audit_type,
             -- Get manager name
             (SELECT emp_name FROM engagement_team t 
-             WHERE t.eng_id = e.eng_id AND t.role = 'Manager' LIMIT 1) AS manager_name,
+             WHERE t.engagement_idno = e.eng_idno AND t.role = 'Manager' LIMIT 1) AS manager_name,
             -- Count of team members excluding manager
             (SELECT COUNT(*) FROM engagement_team t 
-             WHERE t.eng_id = e.eng_id AND t.role != 'Manager') AS team_count
+             WHERE t.engagement_idno = e.eng_idno AND t.role != 'Manager') AS team_count
         FROM engagements e
         WHERE e.eng_status != 'archived'
         ORDER BY e.eng_name ASC
@@ -486,7 +486,7 @@ function getAllActiveEngagementsMobile(mysqli $conn): array
         $milestone_sql = "
             SELECT milestone_type, due_date, is_completed
             FROM engagement_milestones
-            WHERE eng_id = '$eng_id' AND is_completed = 'N' AND due_date IS NOT NULL
+            WHERE engagement_idno = '$eng_id' AND is_completed = 'N' AND due_date IS NOT NULL
             ORDER BY due_date ASC
             LIMIT 1
         ";
