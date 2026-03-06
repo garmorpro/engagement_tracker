@@ -69,6 +69,9 @@ if (!$engagement) {
     header('Location: dashboard.php');
     exit;
 }
+
+// Alias engagement data for easier access in forms
+$engagementData = $engagement;
 ?>
 
 <!DOCTYPE html>
