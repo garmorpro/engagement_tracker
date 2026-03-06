@@ -883,8 +883,8 @@ if (!$engagement) {
 
         @media (max-width: 1200px) {
             /* Change 3-column to 2-column layout */
-            body div[style*="grid-template-columns: 1fr 1.5fr 1.5fr"] {
-                grid-template-columns: 1fr 1fr !important;
+            .two-column-wrapper {
+                grid-template-columns: 1fr !important;
             }
         }
 
@@ -1624,7 +1624,12 @@ if (!$timeline) {
             const newStatus = hasCompletedClass ? 'N' : 'Y';
 
             try {
-                const response = await fetch('update-milestone.php', {
+                // Get the current page directory to construct proper API path
+                const currentPath = window.location.pathname;
+                const pathParts = currentPath.split('/');
+                const apiPath = pathParts.slice(0, -1).join('/') + '/update-milestone.php';
+                
+                const response = await fetch(apiPath, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
