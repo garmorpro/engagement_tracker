@@ -772,6 +772,36 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
             color: var(--primary-blue);
         }
 
+        /* ========== SWEETALERT2 DARK MODE ========== */
+        body.dark-mode .swal2-popup {
+            background: #1A2332 !important;
+            color: #E8EAED !important;
+        }
+
+        body.dark-mode .swal2-title {
+            color: #E8EAED !important;
+        }
+
+        body.dark-mode .swal2-html-container {
+            color: #E8EAED !important;
+        }
+
+        body.dark-mode .swal2-input,
+        body.dark-mode .swal2-textarea {
+            background: #2D3847 !important;
+            border: 1px solid #2D3847 !important;
+            color: #E8EAED !important;
+        }
+
+        body.dark-mode .swal-dark-btn {
+            background: #4487FC !important;
+        }
+
+        body.dark-mode .swal-dark-cancel-btn {
+            background: #2D3847 !important;
+            color: #E8EAED !important;
+        }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
             .header-nav {
@@ -1075,6 +1105,8 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
 <script>
     // Archive engagement function
     async function archiveEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
         const result = await Swal.fire({
             title: 'Archive Engagement?',
             text: 'Are you sure you want to archive this engagement? It will be moved to the archive and hidden from the main dashboard.',
@@ -1082,7 +1114,11 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
             confirmButtonText: 'Archive',
             cancelButtonText: 'Cancel',
             showCancelButton: true,
-            confirmButtonColor: '#4487FC'
+            confirmButtonColor: '#4487FC',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A',
+            confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
+            cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
         });
 
         if (result.isConfirmed) {
@@ -1102,7 +1138,9 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
                         title: 'Archived!',
                         text: 'Engagement has been archived successfully.',
                         icon: 'success',
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        background: isDarkMode ? '#1A2332' : '#FFFFFF',
+                        color: isDarkMode ? '#E8EAED' : '#1A1A1A'
                     }).then(() => {
                         location.reload();
                     });
