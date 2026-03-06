@@ -5,11 +5,14 @@ require_once '../includes/functions.php';
 // Get engagements data
 $engagements = getAllActiveEngagements($conn);
 
+$archivedCount = getArchivedEngagementCount($conn);
+
 // Calculate status counts
 $totalCount = count($engagements);
 $inProgressCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'in-progress'));
 $planningCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'planning'));
 $reviewCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'in-review'));
+$completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'complete'));
 $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'complete'));
 ?>
 
@@ -810,7 +813,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             <div class="header-nav">
                 <a href="dashboard.php" class="nav-item active">Dashboard</a>
                 <a href="analytics.php" class="nav-item">Analytics</a>
-                <a href="archive.php" class="nav-item">Archive <span class="badge">1</span></a>
+                <a href="archive.php" class="nav-item">Archive <span class="badge"><?php echo $archivedCount; ?></span></a>
             </div>
         </div>
 

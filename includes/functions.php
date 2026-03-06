@@ -270,6 +270,25 @@ function getActiveEngagementCount(mysqli $conn): int
     return (int) ($row['active_count'] ?? 0);
 }
 
+function getArchivedEngagementCount(mysqli $conn): int
+{
+    $sql = "
+        SELECT COUNT(*) AS archived_count
+        FROM engagements
+        WHERE eng_status = 'archived'
+    ";
+
+    $result = $conn->query($sql);
+
+    if (!$result) {
+        return 0;
+    }
+
+    $row = $result->fetch_assoc();
+
+    return (int) ($row['archived_count'] ?? 0);
+}
+
 
 
 // Get final due date
