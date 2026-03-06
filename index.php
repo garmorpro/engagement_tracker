@@ -5,10 +5,10 @@ require_once 'includes/init.php';
 
 // Fetch active service accounts
 $result = $conn->query("
-    SELECT `user_id`, `account_name`, `passcode`, `role`
+    SELECT `user_id`, `name`, `passcode`, `role`
     FROM `service_accounts`
     WHERE `status` = 'active'
-    ORDER BY `account_name`
+    ORDER BY `name`
 ");
 $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 ?>
@@ -429,15 +429,15 @@ body {
                 <?php if ($account['role'] === 'super_admin') continue; ?>
                 <div class="account-item"
                      data-user-id="<?= $account['user_id'] ?>"
-                     data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
+                     data-account-name="<?= htmlspecialchars($account['name']) ?>"
                      data-role="<?= $account['role'] ?>"
                      onclick="openPinModal(this)">
                     <div class="account-icon user">
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="account-info">
-                        <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
-                        <div class="account-email"><?= htmlspecialchars(strtolower(str_replace(' ', '.', $account['account_name'])) . '@company.com') ?></div>
+                        <div class="account-name"><?= htmlspecialchars($account['name']) ?></div>
+                        <div class="account-email"><?= htmlspecialchars($account['email']) ?></div>
                     </div>
                 </div>
             <?php endforeach; ?>
