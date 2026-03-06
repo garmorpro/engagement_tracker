@@ -2360,7 +2360,7 @@ if (!$timeline) {
             if (result.isConfirmed) {
                 const deleteData = {
                     engagement_id: '<?php echo $engagementId; ?>',
-                    milestone_id: milestone.milestone_idno
+                    milestone_id: milestone.ms_id
                 };
                 
                 fetch('../api/delete-milestone.php', {
