@@ -765,13 +765,13 @@ if (!$engagement) {
         }
 
         .milestone-checkbox {
-            width: 48px;
-            height: 48px;
+            width: 30px;
+            height: 30px;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 12px;
             flex-shrink: 0;
             margin-top: 0.1rem;
         }
