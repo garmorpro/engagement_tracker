@@ -1618,8 +1618,6 @@ if (!$timeline) {
             if (!milestoneTitle) return;
 
             // Determine current state based on the 'completed' class
-            // If it has 'completed' class, it's currently Y, so toggle to N
-            // If it has 'pending' class, it's currently N, so toggle to Y
             const hasCompletedClass = this.classList.contains('completed');
             const newStatus = hasCompletedClass ? 'N' : 'Y';
 
@@ -1636,7 +1634,27 @@ if (!$timeline) {
                     })
                 });
 
-                const data = await response.json();
+                // First check if response is ok
+                if (!response.ok) {
+                    console.error('HTTP Error:', response.status, response.statusText);
+                    alert('HTTP Error: ' + response.status);
+                    return;
+                }
+
+                // Get the response text first
+                const responseText = await response.text();
+                console.log('Raw response:', responseText);
+
+                // Try to parse as JSON
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (parseError) {
+                    console.error('JSON Parse Error:', parseError);
+                    console.error('Response was:', responseText);
+                    alert('Invalid response from server: ' + responseText.substring(0, 100));
+                    return;
+                }
 
                 if (data.success) {
                     // Remove both classes first
@@ -1673,8 +1691,8 @@ if (!$timeline) {
                     alert('Error updating milestone: ' + (data.message || 'Unknown error'));
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to update milestone');
+                console.error('Fetch Error:', error);
+                alert('Failed to update milestone: ' + error.message);
             }
         });
     });
