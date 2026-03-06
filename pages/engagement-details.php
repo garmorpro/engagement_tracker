@@ -922,6 +922,55 @@ if (!$engagement) {
             box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
         }
 
+        /* ========== CUSTOM TOAST STYLING ========== */
+        .custom-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 9999;
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        body.dark-mode .custom-toast {
+            background: #1A2332;
+            border-color: #2D3847;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .custom-toast.hide {
+            animation: slideOutLeft 0.3s ease-in forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutLeft {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+        }
+
         /* ========== MILESTONES SECTION ========== */
         .milestones-header-right {
             display: flex;
@@ -2084,17 +2133,25 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Show alert modal
-                        Swal.fire({
-                            title: 'Success!',
-                            text: 'Timeline updated successfully',
-                            icon: 'success',
-                            confirmButtonText: 'OK',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        }).then(() => {
-                            location.reload();
-                        });
+                        // Show custom toast notification
+                        const toast = document.createElement('div');
+                        toast.className = 'custom-toast success';
+                        toast.innerHTML = `
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <i class="bi bi-check-circle-fill" style="font-size: 20px; color: var(--success-green);"></i>
+                                <span>Timeline updated successfully</span>
+                            </div>
+                        `;
+                        document.body.appendChild(toast);
+                        
+                        // Remove after 5 seconds
+                        setTimeout(() => {
+                            toast.classList.add('hide');
+                            setTimeout(() => toast.remove(), 300);
+                        }, 5000);
+                        
+                        // Reload page after 1 second
+                        setTimeout(() => location.reload(), 1000);
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
                     }
