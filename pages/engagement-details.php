@@ -886,6 +886,7 @@ if (!$engagement) {
         }
 
         hr {
+            margin-top: -250px !important;
             margin-left: -2rem !important;
             width: calc(100vw - 1rem) !important;
         }
@@ -1008,18 +1009,18 @@ if (!$engagement) {
                             <div class="engagement-info-label">Period</div>
                             <div class="engagement-info-value">
                                 <?php
-$start = $engagement['eng_start_period'] ?? null;
-$end = $engagement['eng_end_period'] ?? null;
-$asOf = $engagement['eng_as_of_date'] ?? null;
+                                $start = $engagement['eng_start_period'] ?? null;
+                                $end = $engagement['eng_end_period'] ?? null;
+                                $asOf = $engagement['eng_as_of_date'] ?? null;
 
-if ($start && $end) {
-    echo date("M j, Y", strtotime($start)) . " - " . date("M j, Y", strtotime($end));
-} elseif ($asOf) {
-    echo "As of " . date("M j, Y", strtotime($asOf));
-} else {
-    echo "N/A";
-}
-?>
+                                if ($start && $end) {
+                                    echo date("M j, Y", strtotime($start)) . " - " . date("M j, Y", strtotime($end));
+                                } elseif ($asOf) {
+                                    echo "As of " . date("M j, Y", strtotime($asOf));
+                                } else {
+                                    echo "N/A";
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>
