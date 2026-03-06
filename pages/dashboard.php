@@ -1,6 +1,6 @@
 <?php 
-require_once '../path.php';
-require_once '../includes/functions.php';
+require_once 'path.php';
+require_once 'includes/functions.php';
 
 // Get engagements data
 $engagements = getAllEngagements($conn);
@@ -11,6 +11,9 @@ $inProgressCount = count(array_filter($engagements, fn($e) => $e['eng_status'] =
 $planningCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'planning'));
 $reviewCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'in-review'));
 $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'complete'));
+
+// Get current page for active navigation
+$currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 
 <!DOCTYPE html>
@@ -21,7 +24,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
     <title>Dashboard - Engagement Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="assets/styles/main.css?v=<?php echo time(); ?>">
     <style>
         :root {
             --primary-blue: #4487FC;
@@ -797,7 +800,7 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 <div class="top-header">
     <div class="header-content">
         <div class="header-left">
-            <a href="#" class="header-logo">
+            <a href="<?php echo BASE_URL; ?>/dashboard.php" class="header-logo">
                 <div class="logo-icon">
                     <i class="bi bi-bar-chart-fill"></i>
                 </div>
@@ -808,9 +811,9 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
             </a>
 
             <div class="header-nav">
-                <a href="dashboard.php" class="nav-item active">Dashboard</a>
-                <a href="analytics.php" class="nav-item">Analytics</a>
-                <a href="archive.php" class="nav-item">Archive <span class="badge">1</span></a>
+                <a href="<?php echo BASE_URL; ?>/dashboard.php" class="nav-item <?php echo $currentPage === 'dashboard.php' ? 'active' : ''; ?>">Dashboard</a>
+                <a href="<?php echo BASE_URL; ?>/analytics.php" class="nav-item <?php echo $currentPage === 'analytics.php' ? 'active' : ''; ?>">Analytics</a>
+                <a href="<?php echo BASE_URL; ?>/archive.php" class="nav-item <?php echo $currentPage === 'archive.php' ? 'active' : ''; ?>">Archive <span class="badge">1</span></a>
             </div>
         </div>
 
@@ -1054,22 +1057,6 @@ $completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] ===
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Table row click handler
-    document.querySelectorAll('.table tbody tr').forEach(row => {
-        row.addEventListener('click', (e) => {
-            // Don't navigate if clicking on action icons
-            if (e.target.closest('.action-icon') || e.target.closest('.action-icons')) {
-                return;
-            }
-            
-            // Get the engagement ID from the first cell
-            const engagementId = row.querySelector('.engagement-id').textContent.trim();
-            if (engagementId) {
-                window.location.href = `engagement-details.php?id=${engagementId}`;
-            }
-        });
-    });
-
     // Dark mode toggle
     const darkModeBtn = document.querySelector('.icon-btn[title="Dark mode"]');
     
