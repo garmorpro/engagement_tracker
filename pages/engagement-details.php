@@ -1702,7 +1702,7 @@ $engagementData = $engagement;
                     </button>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
 
                 <?php
 // Your existing renderTimelineStatus function stays exactly the same
