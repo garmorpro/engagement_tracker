@@ -1191,18 +1191,32 @@ function renderTimelineStatus($date, $completed) {
 }
 ?>
                     <!-- Internal Planning -->
-                    <div class="timeline-item">
+                    <!-- <div class="timeline-item">
     <div class="timeline-title">
         <i class="bi bi-calendar"></i> INTERNAL PLANNING CALL
     </div>
 
     <?php
-    renderTimelineStatus(
-        $timeline['internal_planning_call_date'],
-        $timeline['internal_planning_call_completed_at']
-    );
+    // renderTimelineStatus(
+    //     $timeline['internal_planning_call_date'],
+    //     $timeline['internal_planning_call_completed_at']
+    // );
     ?>
-</div>
+</div> -->
+
+                    <div class="timeline-item">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-info-circle" style="font-size: 12px;"></i> INTERNAL PLANNING CALL
+                        </div>
+                        <!-- <div class="timeline-date">Mar 14, 2026</div>
+                        <div class="timeline-status">9d remaining</div> -->
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['internal_planning_call_date'],
+                            $timeline['internal_planning_call_completed_at']
+                        );
+                        ?>
+                    </div>
 
                     <!-- URL Due -->
                     <div class="timeline-item">
