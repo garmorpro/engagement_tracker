@@ -1075,75 +1075,83 @@ if (!$engagement) {
             </button>
 
             <div class="team-members">
-<?php
-// First, group all team members by emp_id (or emp_name if emp_id doesn't exist)
-$groupedTeam = [];
+<?php if (!empty($team)): ?>
 
-foreach ($team as $member) {
-    $empKey = $member['emp_id'] ?? $member['emp_name']; // unique key per employee
-    if (!isset($groupedTeam[$empKey])) {
-        $groupedTeam[$empKey] = [
-            'emp_name' => $member['emp_name'],
-            'role' => $member['role'],
-            'dol_tags' => [],
-        ];
-    }
-    // Add audit_type as a DOL tag
-    if (!empty($member['audit_type'])) {
-        $groupedTeam[$empKey]['dol_tags'][] = $member['audit_type'];
-    }
-}
+    <?php
+    // Group members by employee name and role
+    $groupedTeam = [];
 
-// Now render each member
-if (!empty($groupedTeam)):
-    foreach ($groupedTeam as $member):
-        // Get initials for avatar
-        $nameParts = explode(' ', $member['emp_name']);
-        $initials = '';
-        foreach ($nameParts as $part) {
-            $initials .= strtoupper($part[0]);
+    foreach ($team as $member) {
+        $key = $member['emp_name'] . '|' . $member['role'];
+        if (!isset($groupedTeam[$key])) {
+            $groupedTeam[$key] = [
+                'emp_name' => $member['emp_name'],
+                'role' => $member['role'],
+                'audit_types' => []
+            ];
         }
 
-        // Default gradient colors based on role
-        $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default blue
-        if (isset($member['role'])) {
-            switch (strtolower($member['role'])) {
-                case 'manager':
-                    $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
-                    break;
-                case 'senior':
-                    $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)';
-                    break;
-                case 'staff':
-                    $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)';
-                    break;
+        // Group DOLs by audit type
+        $groupedTeam[$key]['audit_types'][$member['audit_type']] = explode(',', $member['emp_dol']);
+    }
+    ?>
+
+    <?php foreach ($groupedTeam as $member): ?>
+        <?php
+            // Get initials for avatar
+            $nameParts = explode(' ', $member['emp_name']);
+            $initials = '';
+            foreach ($nameParts as $part) {
+                $initials .= strtoupper($part[0]);
             }
-        }
 
-        $tags = $member['dol_tags'];
-?>
+            // Default gradient colors (customizable by role)
+            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default blue
+            if (isset($member['role'])) {
+                switch (strtolower($member['role'])) {
+                    case 'manager':
+                        $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
+                        break;
+                    case 'senior':
+                        $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)';
+                        break;
+                    case 'senior 2':
+                        $gradient = 'linear-gradient(135deg, #4DBFB8, #6FD9D2)';
+                        break;
+                    case 'staff 1':
+                        $gradient = 'linear-gradient(135deg, #F17313, #FFB347)';
+                        break;
+                    case 'staff':
+                        $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)';
+                        break;
+                }
+            }
+        ?>
         <div class="team-member">
             <div class="team-member-avatar" style="background: <?php echo $gradient; ?>;"><?php echo htmlspecialchars($initials); ?></div>
             <div class="team-member-info">
                 <div class="team-member-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
                 <div class="team-member-title"><?php echo htmlspecialchars($member['role']); ?></div>
 
-                <?php if (!empty($tags)): ?>
-                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
-                        <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <?php foreach ($tags as $tag): ?>
-                                <span class="team-member-tag"><?php echo htmlspecialchars($tag); ?></span>
-                            <?php endforeach; ?>
+                <?php if (!empty($member['audit_types'])): ?>
+                    <?php foreach ($member['audit_types'] as $auditType => $tags): ?>
+                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem;">
+                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                Division of Labor for <?php echo htmlspecialchars($auditType); ?>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                <?php foreach ($tags as $tag): ?>
+                                    <span class="team-member-tag"><?php echo htmlspecialchars(trim($tag)); ?></span>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
-                    </div>
+                    <?php endforeach; ?>
                 <?php endif; ?>
             </div>
         </div>
-<?php
-    endforeach;
-else:
-?>
+    <?php endforeach; ?>
+
+<?php else: ?>
     <p>No team assigned yet.</p>
 <?php endif; ?>
 </div>
