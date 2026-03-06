@@ -977,38 +977,32 @@ if (!$engagement) {
 
         .swal2-toast .swal2-icon.swal2-success {
             border-color: var(--success-green) !important;
-            background: rgba(79, 198, 95, 0.15) !important;
+            background: rgba(79, 198, 95, 0.2) !important;
         }
 
         body.dark-mode .swal2-toast .swal2-icon.swal2-success {
-            background: rgba(79, 198, 95, 0.2) !important;
+            background: rgba(79, 198, 95, 0.25) !important;
             border-color: #4FC65F !important;
         }
 
-        .swal2-toast .swal2-icon.swal2-success [class*='swal2-success-circular-line'] {
-            background: var(--success-green) !important;
-        }
-
-        .swal2-toast .swal2-icon.swal2-success .swal2-success-ring {
-            border: 2px solid var(--success-green) !important;
-        }
-
+        .swal2-toast .swal2-icon.swal2-success .swal2-success-circular-line,
+        .swal2-toast .swal2-icon.swal2-success .swal2-success-line-tip,
+        .swal2-toast .swal2-icon.swal2-success .swal2-success-line-long,
+        .swal2-toast .swal2-icon.swal2-success .swal2-success-ring,
         .swal2-toast .swal2-icon.swal2-success .swal2-success-fix {
-            background: var(--bg-secondary) !important;
-        }
-
-        body.dark-mode .swal2-toast .swal2-icon.swal2-success .swal2-success-fix {
-            background: #1A2332 !important;
-        }
-
-        .swal2-toast .swal2-icon.swal2-success::before,
-        .swal2-toast .swal2-icon.swal2-success::after {
             display: none !important;
         }
 
-        .swal2-toast .swal2-icon.swal2-success .swal2-success-line-tip,
-        .swal2-toast .swal2-icon.swal2-success .swal2-success-line-long {
-            background-color: var(--success-green) !important;
+        .swal2-toast .swal2-icon.swal2-success::after {
+            content: '✓' !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            width: 100% !important;
+            height: 100% !important;
+            color: var(--success-green) !important;
+            font-size: 20px !important;
+            font-weight: bold !important;
         }
 
         .swal2-popup.swal2-toast .swal2-timer-progress-bar {
