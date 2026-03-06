@@ -4,21 +4,24 @@
  * Run this script periodically (e.g., daily) via cron job
  * 
  * Cron example (run daily at 8 AM):
- * 0 8 * * * php /path/to/notification-cron.php
+ * 0 8 * * * php /var/www/engagement_tracker/public_html/engagement_tracker/pages/notification-cron.php
  * 
  * This checks for:
- * - Upcoming key dates (engagement due dates within 7 days)
- * - Upcoming milestones (milestone due dates within 7 days)
+ * - Upcoming key dates (engagement due dates 7 days out)
+ * - Upcoming milestones (milestone due dates 5 days out)
+ * - Engagements ready to archive (3+ days after completion)
  */
 
-require_once '../path.php';
-require_once '../includes/functions.php';
-require_once 'notification-helper.php';
+// Use absolute path instead of relative path
+$basePath = dirname(dirname(__FILE__));
+require_once $basePath . '/path.php';
+require_once $basePath . '/includes/functions.php';
+require_once $basePath . '/pages/notification-helper.php';
 
 // Log file for debugging
-$logFile = '../logs/notification-cron.log';
-if (!is_dir('../logs')) {
-    mkdir('../logs', 0755, true);
+$logFile = $basePath . '/logs/notification-cron.log';
+if (!is_dir(dirname($logFile))) {
+    mkdir(dirname($logFile), 0755, true);
 }
 
 $logMessage = date('Y-m-d H:i:s') . ' - Starting notification cron job' . PHP_EOL;

@@ -1,5 +1,7 @@
 <?php
-require_once '../path.php';
+// Use absolute path instead of relative path
+$basePath = dirname(dirname(__FILE__));
+require_once $basePath . '/path.php';
 
 /**
  * Create a notification in the database
