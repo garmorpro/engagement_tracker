@@ -1972,6 +1972,18 @@ if (!$timeline) {
     }
     updateDarkModeIcon(isDarkMode);
 
+    // Check if we should show success toast after reload
+    if (sessionStorage.getItem('showTimelineToast')) {
+        sessionStorage.removeItem('showTimelineToast');
+        showToast('Timeline updated successfully');
+    }
+    
+    if (sessionStorage.getItem('showMilestoneToast')) {
+        const message = sessionStorage.getItem('showMilestoneToast');
+        sessionStorage.removeItem('showMilestoneToast');
+        showToast(message);
+    }
+
     darkModeBtn?.addEventListener('click', () => {
         const isDark = document.body.classList.toggle('dark-mode');
         localStorage.setItem('darkMode', isDark);
@@ -2154,7 +2166,8 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Reload the page immediately to refresh data
+                        // Set flag to show toast after reload
+                        sessionStorage.setItem('showTimelineToast', 'true');
                         location.reload();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
@@ -2275,6 +2288,7 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        sessionStorage.setItem('showMilestoneToast', 'Milestone updated successfully');
                         location.reload();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update milestone', 'error');
@@ -2322,6 +2336,7 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        sessionStorage.setItem('showMilestoneToast', 'Milestone added successfully');
                         location.reload();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to add milestone', 'error');
@@ -2356,6 +2371,7 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        sessionStorage.setItem('showMilestoneToast', 'Milestone deleted successfully');
                         location.reload();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to delete milestone', 'error');
