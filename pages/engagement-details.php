@@ -1853,7 +1853,7 @@ if (!$timeline) {
                         <h2 class="section-title">Milestones</h2>
                     </div>
                     <div style="display: flex; gap: 1rem; align-items: center;">
-                        <button class="manage-btn" style="margin: 0; padding: 0.5rem 1rem;">
+                        <button class="manage-btn" id="milestonesManageBtn" style="margin: 0; padding: 0.5rem 1rem;">
                             <i class="bi bi-gear"></i> Manage
                         </button>
                         <?php
@@ -2181,6 +2181,224 @@ if (!$timeline) {
             }
         });
     });
+
+    // Milestones Manage Button Handler
+    document.getElementById('milestonesManageBtn').addEventListener('click', function() {
+        // Get current milestones
+        const milestones = <?php echo json_encode($milestones); ?>;
+        
+        // Build HTML for milestone list
+        let milestonesHTML = '<div style="text-align: left; max-height: 400px; overflow-y: auto;">';
+        
+        if (milestones.length > 0) {
+            milestonesHTML += '<div style="margin-bottom: 1.5rem;">';
+            milestones.forEach((milestone, index) => {
+                milestonesHTML += `
+                    <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem; padding: 1rem; background: var(--bg-primary); border-radius: 8px; align-items: center;">
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 0.25rem;">${milestone.milestone_type}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Due: ${milestone.due_date || 'No due date'}</div>
+                        </div>
+                        <button class="edit-milestone-btn" data-index="${index}" style="background: var(--primary-blue); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                            Edit
+                        </button>
+                        <button class="delete-milestone-btn" data-index="${index}" style="background: #C90012; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                            Delete
+                        </button>
+                    </div>
+                `;
+            });
+            milestonesHTML += '</div>';
+        } else {
+            milestonesHTML += '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No milestones yet. Add one to get started!</p>';
+        }
+        
+        milestonesHTML += `
+            <button id="addMilestoneBtn" style="width: 100%; background: var(--primary-blue); color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 1rem;">
+                <i class="bi bi-plus-circle" style="margin-right: 0.5rem;"></i> Add New Milestone
+            </button>
+        </div>`;
+        
+        Swal.fire({
+            title: 'Manage Milestones',
+            html: milestonesHTML,
+            showConfirmButton: false,
+            cancelButtonText: 'Close',
+            width: '600px',
+            didOpen: () => {
+                // Add event listeners for edit and delete buttons
+                document.querySelectorAll('.edit-milestone-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = this.dataset.index;
+                        const milestone = milestones[index];
+                        editMilestone(milestone, index);
+                    });
+                });
+                
+                document.querySelectorAll('.delete-milestone-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = this.dataset.index;
+                        deleteMilestone(milestones[index]);
+                    });
+                });
+                
+                document.getElementById('addMilestoneBtn').addEventListener('click', function() {
+                    addNewMilestone();
+                });
+            }
+        });
+    });
+
+    // Edit milestone function
+    function editMilestone(milestone, index) {
+        Swal.fire({
+            title: 'Edit Milestone',
+            html: `
+                <div style="text-align: left; display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Milestone Name</label>
+                        <input type="text" id="edit_milestone_name" class="swal2-input" value="${milestone.milestone_type}" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Due Date</label>
+                        <input type="date" id="edit_due_date" class="swal2-input" value="${milestone.due_date}" style="width: 100%;">
+                    </div>
+                </div>
+            `,
+            confirmButtonText: 'Save Changes',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            didOpen: () => {
+                document.getElementById('edit_milestone_name').focus();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const updatedMilestone = {
+                    engagement_id: '<?php echo $engagementId; ?>',
+                    milestone_id: milestone.milestone_idno,
+                    old_milestone_type: milestone.milestone_type,
+                    milestone_type: document.getElementById('edit_milestone_name').value,
+                    due_date: document.getElementById('edit_due_date').value
+                };
+                
+                fetch('../api/update-milestone-details.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedMilestone)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Milestone updated successfully');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update milestone', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    // Add new milestone function
+    function addNewMilestone() {
+        Swal.fire({
+            title: 'Add New Milestone',
+            html: `
+                <div style="text-align: left; display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Milestone Name</label>
+                        <input type="text" id="new_milestone_name" class="swal2-input" placeholder="Enter milestone name" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Due Date</label>
+                        <input type="date" id="new_due_date" class="swal2-input" style="width: 100%;">
+                    </div>
+                </div>
+            `,
+            confirmButtonText: 'Add Milestone',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            didOpen: () => {
+                document.getElementById('new_milestone_name').focus();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const newMilestone = {
+                    engagement_id: '<?php echo $engagementId; ?>',
+                    milestone_type: document.getElementById('new_milestone_name').value,
+                    due_date: document.getElementById('new_due_date').value
+                };
+                
+                fetch('../api/add-milestone.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newMilestone)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Milestone added successfully');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to add milestone', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    // Delete milestone function
+    function deleteMilestone(milestone) {
+        Swal.fire({
+            title: 'Delete Milestone?',
+            text: `Are you sure you want to delete "${milestone.milestone_type}"? This action cannot be undone.`,
+            icon: 'warning',
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#C90012'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const deleteData = {
+                    engagement_id: '<?php echo $engagementId; ?>',
+                    milestone_id: milestone.milestone_idno
+                };
+                
+                fetch('../api/delete-milestone.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(deleteData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Milestone deleted successfully');
+                        setTimeout(() => location.reload(), 1000);
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to delete milestone', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    // Helper function to show toast
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'custom-toast success';
+        toast.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <i class="bi bi-check-circle-fill" style="font-size: 20px; color: var(--success-green);"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('hide');
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    }
 </script>
 
 </body>
