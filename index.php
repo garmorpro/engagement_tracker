@@ -534,7 +534,7 @@ body {
         <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" name="account_name" required>
+                <input type="text" class="form-control" name="name" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Email Address</label>

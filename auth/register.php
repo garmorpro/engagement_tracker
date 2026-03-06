@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Sanitize inputs
-$account_name = trim($_POST['account_name'] ?? '');
+$name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $passcode = trim($_POST['passcode'] ?? '');
 $role = trim($_POST['role'] ?? 'standard');
@@ -19,7 +19,7 @@ $role = trim($_POST['role'] ?? 'standard');
 // Validate inputs
 $errors = [];
 
-if (!$account_name) $errors[] = 'Full name is required.';
+if (!$name) $errors[] = 'Full name is required.';
 if (!$email) $errors[] = 'Email is required.';
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format.';
 if (!preg_match('/^\d{4}$/', $passcode)) $errors[] = 'PIN must be 4 digits.';
