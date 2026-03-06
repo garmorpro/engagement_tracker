@@ -929,30 +929,37 @@ if (!$engagement) {
             left: 2rem;
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
             color: var(--text-primary);
             font-size: 14px;
             font-weight: 600;
             z-index: 9999;
-            animation: slideInLeft 0.3s ease-out;
+            animation: slideInLeft 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(10px);
+            border-left: 4px solid var(--success-green);
         }
 
         body.dark-mode .custom-toast {
-            background: #1A2332;
-            border-color: #2D3847;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            background: rgba(26, 35, 50, 0.95);
+            border-color: rgba(45, 56, 71, 0.8);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #4FC65F;
         }
 
         .custom-toast.hide {
-            animation: slideOutLeft 0.3s ease-in forwards;
+            animation: slideOutLeft 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .custom-toast i {
+            animation: scalePopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         @keyframes slideInLeft {
             from {
                 opacity: 0;
-                transform: translateX(-100%);
+                transform: translateX(-120%);
             }
             to {
                 opacity: 1;
@@ -967,7 +974,21 @@ if (!$engagement) {
             }
             to {
                 opacity: 0;
-                transform: translateX(-100%);
+                transform: translateX(-120%);
+            }
+        }
+
+        @keyframes scalePopIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
             }
         }
 
