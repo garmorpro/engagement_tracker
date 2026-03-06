@@ -705,6 +705,17 @@ $engagementData = $engagement;
             border: 1px solid var(--border-color);
             border-radius: 12px;
             padding: 1.25rem;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .timeline-item:hover {
+            background: var(--gray-150);
+            border-color: var(--primary-blue);
+        }
+
+        .timeline-item:hover .timeline-checkbox {
+            opacity: 1 !important;
         }
 
         .timeline-label {
@@ -1766,7 +1777,7 @@ if (!$timeline) {
 
 ?>
 
-                    <div class="timeline-item">
+                    <div class="timeline-item" data-timeline-field="internal_planning_call" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> INTERNAL PLANNING CALL
                         </div>
@@ -1776,10 +1787,11 @@ if (!$timeline) {
                             $timeline['internal_planning_call_completed_at']
                         );
                         ?>
+                        <input type="checkbox" class="timeline-checkbox" data-field-date="internal_planning_call_date" data-field-completed="internal_planning_call_completed_at" <?php echo !empty($timeline['internal_planning_call_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
                     </div>
 
                     <!-- URL Due -->
-                    <div class="timeline-item">
+                    <div class="timeline-item" data-timeline-field="irl_due" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> IRL DUE
                         </div>
@@ -1789,10 +1801,11 @@ if (!$timeline) {
                             $timeline['irl_completed_at']
                         );
                         ?>
+                        <input type="checkbox" class="timeline-checkbox" data-field-date="irl_due_date" data-field-completed="irl_completed_at" <?php echo !empty($timeline['irl_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
                     </div>
 
                     <!-- Client Planning Call -->
-                    <div class="timeline-item">
+                    <div class="timeline-item" data-timeline-field="client_planning_call" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-calendar" style="font-size: 12px;"></i> CLIENT PLANNING CALL
                         </div>
@@ -1802,10 +1815,11 @@ if (!$timeline) {
                             $timeline['client_planning_call_completed_at']
                         );
                         ?>
+                        <input type="checkbox" class="timeline-checkbox" data-field-date="client_planning_call_date" data-field-completed="client_planning_call_completed_at" <?php echo !empty($timeline['client_planning_call_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
                     </div>
 
                     <!-- Fieldwork -->
-                    <div class="timeline-item">
+                    <div class="timeline-item" data-timeline-field="fieldwork" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-bar-chart" style="font-size: 12px;"></i> FIELDWORK
                         </div>
@@ -1815,10 +1829,11 @@ if (!$timeline) {
                             $timeline['fieldwork_completed_at']
                         );
                         ?>
+                        <input type="checkbox" class="timeline-checkbox" data-field-date="fieldwork_date" data-field-completed="fieldwork_completed_at" <?php echo !empty($timeline['fieldwork_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
                     </div>
 
                     <!-- Leadsheet Due -->
-                    <div class="timeline-item">
+                    <div class="timeline-item" data-timeline-field="leadsheet" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> LEADSHEET DUE
                         </div>
@@ -1828,10 +1843,11 @@ if (!$timeline) {
                             $timeline['leadsheet_completed_at']
                         );
                         ?>
+                        <input type="checkbox" class="timeline-checkbox" data-field-date="leadsheet_date" data-field-completed="leadsheet_completed_at" <?php echo !empty($timeline['leadsheet_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
                     </div>
 
                     <!-- Draft Report Due -->
-                    <div class="timeline-item">
+                    <div class="timeline-item" data-timeline-field="draft_report" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-text" style="font-size: 12px;"></i> DRAFT REPORT DUE
                         </div>
@@ -1841,10 +1857,11 @@ if (!$timeline) {
                             $timeline['draft_report_completed_at']
                         );
                         ?>
+                        <input type="checkbox" class="timeline-checkbox" data-field-date="draft_report_due_date" data-field-completed="draft_report_completed_at" <?php echo !empty($timeline['draft_report_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
                     </div>
 
                     <!-- Final Report Due -->
-                    <div class="timeline-item">
+                    <div class="timeline-item" data-timeline-field="final_report" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-earmark" style="font-size: 12px;"></i> FINAL REPORT DUE
                         </div>
@@ -1854,10 +1871,11 @@ if (!$timeline) {
                             $timeline['final_report_completed_at']
                         );
                         ?>
+                        <input type="checkbox" class="timeline-checkbox" data-field-date="final_report_date" data-field-completed="final_report_completed_at" <?php echo !empty($timeline['final_report_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
                     </div>
 
                     <!-- Archive Date -->
-                    <div class="timeline-item">
+                    <div class="timeline-item" data-timeline-field="archive" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-archive" style="font-size: 12px;"></i> ARCHIVE DATE
                         </div>
@@ -1867,6 +1885,7 @@ if (!$timeline) {
                             $timeline['archive_completed_at']
                         );
                         ?>
+                        <input type="checkbox" class="timeline-checkbox" data-field-date="archive_date" data-field-completed="archive_completed_at" <?php echo !empty($timeline['archive_completed_at']) ? 'checked' : ''; ?> style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer; width: 20px; height: 20px; opacity: 0; transition: opacity 0.2s;">
                     </div>
                 </div>
             </div>
@@ -2114,6 +2133,59 @@ if (!$timeline) {
             } catch (error) {
                 console.error('Error updating milestone:', error);
                 alert('Error: ' + error.message);
+            }
+        });
+    });
+
+    // Timeline checkbox functionality
+    document.querySelectorAll('.timeline-checkbox').forEach((checkbox) => {
+        checkbox.style.cursor = 'pointer';
+        checkbox.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            
+            const timelineItem = this.closest('.timeline-item');
+            const engagementId = timelineItem.getAttribute('data-engagement-id');
+            const dateField = this.getAttribute('data-field-date');
+            const completedField = this.getAttribute('data-field-completed');
+            
+            if (!engagementId || !dateField || !completedField) return;
+
+            const isChecked = this.checked;
+            const completedDateTime = isChecked ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null;
+
+            try {
+                const response = await fetch('../api/update-timeline-checkbox.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        engagement_id: engagementId,
+                        date_field: dateField,
+                        completed_field: completedField,
+                        completed_datetime: completedDateTime
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('HTTP Error:', response.status);
+                    alert('Error updating timeline');
+                    this.checked = !this.checked; // Revert checkbox
+                    return;
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast(isChecked ? 'Timeline marked as completed' : 'Timeline marked as pending');
+                } else {
+                    alert('Error: ' + (data.message || 'Failed to update timeline'));
+                    this.checked = !this.checked; // Revert checkbox
+                }
+            } catch (error) {
+                console.error('Error updating timeline:', error);
+                alert('Error: ' + error.message);
+                this.checked = !this.checked; // Revert checkbox
             }
         });
     });
