@@ -633,6 +633,7 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
             border-color: var(--border-color);
             color: var(--text-primary);
             background-color: var(--bg-secondary) !important;
+            word-break: break-word;
         }
 
         .table tbody tr {
@@ -707,6 +708,9 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
         .badge-audit-type {
             background: rgba(68, 135, 252, 0.15);
             color: var(--primary-blue);
+            display: inline-block;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
         }
 
         .status-badge {
