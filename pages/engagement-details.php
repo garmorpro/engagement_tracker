@@ -2154,25 +2154,8 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Show custom toast notification
-                        const toast = document.createElement('div');
-                        toast.className = 'custom-toast success';
-                        toast.innerHTML = `
-                            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                <i class="bi bi-check-circle-fill" style="font-size: 20px; color: var(--success-green);"></i>
-                                <span>Timeline updated successfully</span>
-                            </div>
-                        `;
-                        document.body.appendChild(toast);
-                        
-                        // Show toast for 5 seconds, then reload page to show updates
-                        setTimeout(() => {
-                            toast.classList.add('hide');
-                            setTimeout(() => {
-                                toast.remove();
-                                location.reload();
-                            }, 300);
-                        }, 5000);
+                        // Reload the page immediately to refresh data
+                        location.reload();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
                     }
@@ -2292,8 +2275,7 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('Milestone updated successfully');
-                        setTimeout(() => location.reload(), 5500);
+                        location.reload();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update milestone', 'error');
                     }
@@ -2340,8 +2322,7 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('Milestone added successfully');
-                        setTimeout(() => location.reload(), 5500);
+                        location.reload();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to add milestone', 'error');
                     }
@@ -2375,8 +2356,7 @@ if (!$timeline) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showToast('Milestone deleted successfully');
-                        setTimeout(() => location.reload(), 5500);
+                        location.reload();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to delete milestone', 'error');
                     }
