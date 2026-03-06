@@ -930,7 +930,9 @@ if (!$engagement) {
         }
 
         .left-column {
-            /* Team section will naturally be on the left */
+            display: grid;
+            grid-template-rows: auto auto auto;
+            gap: 2rem;
         }
 
         .right-column {
@@ -1337,10 +1339,6 @@ if (!$engagement) {
                 <?php endif; ?>
                 </div>
             </div>
-        </div>
-
-        <!-- ========== RIGHT COLUMN (Timeline & Milestones Stacked) ========== -->
-        <div class="right-column">
 
             <!-- ========== DETAILS SECTION ========== -->
             <div class="details-section">
@@ -1454,6 +1452,10 @@ if (!$engagement) {
                     ?>
                 </div>
             </div>
+        </div>
+
+        <!-- ========== RIGHT COLUMN (Timeline & Milestones Stacked) ========== -->
+        <div class="right-column">
 
             <!-- ========== TIMELINE & KEY DATES SECTION (TOP RIGHT) ========== -->
             <div class="timeline-section">
