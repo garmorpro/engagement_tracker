@@ -1489,7 +1489,7 @@ if (!$timeline) {
                         if (!empty($milestones)) {
                             $completedCount = 0;
                             foreach ($milestones as $milestone) {
-                                if (!empty($milestone['milestone_completed_at'])) {
+                                if (!empty($milestone['completed_at'])) {
                                     $completedCount++;
                                 }
                             }
@@ -1521,10 +1521,10 @@ if (!$timeline) {
                         ?>
                         <?php foreach ($milestones as $milestone): ?>
                             <?php
-                                $isCompleted = !empty($milestone['milestone_completed_at']);
+                                $isCompleted = !empty($milestone['completed_at']);
                                 
                                 // Safely handle the date - check for null, empty, or invalid dates
-                                $dueDateRaw = $milestone['milestone_due_date'] ?? null;
+                                $dueDateRaw = $milestone['due_date'] ?? null;
                                 if ($dueDateRaw && $dueDateRaw !== '0000-00-00' && $dueDateRaw !== '0000-00-00 00:00:00') {
                                     $dueDate = date("M j, Y", strtotime($dueDateRaw));
                                 } else {
@@ -1539,7 +1539,7 @@ if (!$timeline) {
                                 </div>
                                 <div class="milestone-content">
                                     <div class="milestone-title <?php echo $isCompleted ? 'completed' : ''; ?>">
-                                        <?php echo htmlspecialchars($milestone['milestone_name']); ?>
+                                        <?php echo htmlspecialchars($milestone['milestone_type']); ?>
                                     </div>
                                     <div class="milestone-due">Due: <?php echo htmlspecialchars($dueDate); ?></div>
                                 </div>
