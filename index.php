@@ -448,11 +448,8 @@ body {
 </div>
 
 <div class="demo-credentials">
-    <h6>Demo Credentials:</h6>
-    <p>• John Doe: PIN <strong>1234</strong></p>
-    <p>• Jane Smith: PIN <strong>5678</strong></p>
-    <p>• Bob Wilson: PIN <strong>9012</strong></p>
-    <p>• Sarah Johnson: PIN <strong>3456</strong></p>
+    <h6>Sign In Instructions:</h6>
+    <p>Select an account and enter your PIN to continue</p>
 </div>
 
 <!-- PIN Entry Modal -->
@@ -489,7 +486,9 @@ body {
         <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
         <input type="text" class="form-control text-center fs-4 pin-field" 
                id="adminVerifyPinInput" required autofocus>
-        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
+        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">
+            This is required to access the admin dashboard for user management.
+        </p>
     </div>
 </div>
 
