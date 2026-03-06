@@ -1,6 +1,7 @@
 <?php
 $basePath = dirname(dirname(__FILE__));
 require_once $basePath . '/path.php';
+require_once $basePath . '/includes/functions.php';
 
 echo "=== ENGAGEMENTS TABLE STRUCTURE ===\n\n";
 
