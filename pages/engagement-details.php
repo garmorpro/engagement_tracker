@@ -989,7 +989,13 @@ if (!$engagement) {
                         </div>
                         <div class="engagement-info-content">
                             <div class="engagement-info-label">Audit Type</div>
-                            <div class="engagement-info-value"><?php echo htmlspecialchars($engagement['eng_audit_type'] ?? 'N/A'); ?></div>
+                            <div class="engagement-info-value">
+                                <?php 
+                                $auditTypes = $engagement['eng_audit_type'] ?? 'N/A';
+                                $auditTypes = str_replace(',', ', ', $auditTypes);
+                                echo htmlspecialchars($auditTypes);
+                                ?>
+                            </div>
                         </div>
                     </div>
 
