@@ -1136,9 +1136,9 @@ if (!$engagement) {
                     </button>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
                     <!-- Internal Planning -->
-                    <div class="timeline-item" style="grid-column: 1;">
+                    <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-calendar" style="font-size: 12px;"></i> INTERNAL PLANNING CALL
                         </div>
@@ -1149,7 +1149,7 @@ if (!$engagement) {
                     </div>
 
                     <!-- URL Due -->
-                    <div class="timeline-item" style="grid-column: 2;">
+                    <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> URL DUE
                         </div>
@@ -1158,7 +1158,7 @@ if (!$engagement) {
                     </div>
 
                     <!-- Client Planning Call -->
-                    <div class="timeline-item" style="grid-column: 1;">
+                    <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-calendar" style="font-size: 12px;"></i> CLIENT PLANNING CALL
                         </div>
@@ -1169,7 +1169,7 @@ if (!$engagement) {
                     </div>
 
                     <!-- Fieldwork -->
-                    <div class="timeline-item" style="grid-column: 2;">
+                    <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-bar-chart" style="font-size: 12px;"></i> FIELDWORK
                         </div>
@@ -1180,7 +1180,7 @@ if (!$engagement) {
                     </div>
 
                     <!-- Leadsheet Due -->
-                    <div class="timeline-item" style="grid-column: 1;">
+                    <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> LEADSHEET DUE
                         </div>
@@ -1191,7 +1191,7 @@ if (!$engagement) {
                     </div>
 
                     <!-- Draft Report Due -->
-                    <div class="timeline-item" style="grid-column: 2;">
+                    <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-text" style="font-size: 12px;"></i> DRAFT REPORT DUE
                         </div>
@@ -1202,7 +1202,7 @@ if (!$engagement) {
                     </div>
 
                     <!-- Final Report Due -->
-                    <div class="timeline-item" style="grid-column: 1;">
+                    <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-earmark" style="font-size: 12px;"></i> FINAL REPORT DUE
                         </div>
@@ -1211,7 +1211,7 @@ if (!$engagement) {
                     </div>
 
                     <!-- Archive Date -->
-                    <div class="timeline-item" style="grid-column: 2;">
+                    <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-archive" style="font-size: 12px;"></i> ARCHIVE DATE
                         </div>
