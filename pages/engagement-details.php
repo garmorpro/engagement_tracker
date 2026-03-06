@@ -1624,12 +1624,7 @@ if (!$timeline) {
             const newStatus = hasCompletedClass ? 'N' : 'Y';
 
             try {
-                // Get the current page directory to construct proper API path
-                const currentPath = window.location.pathname;
-                const pathParts = currentPath.split('/');
-                const apiPath = pathParts.slice(0, -1).join('/') + '/update-milestone.php';
-                
-                const response = await fetch(apiPath, {
+                const response = await fetch('../api/update-milestone.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
