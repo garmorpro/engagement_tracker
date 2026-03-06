@@ -10,23 +10,24 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Accept both JSON and form data
+// Read the raw input to detect if it's JSON
+$raw_input = file_get_contents('php://input');
 $data = [];
 
-// Try to get JSON data first (for API calls)
-if (stripos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false) {
-    $json_input = file_get_contents('php://input');
-    $data = json_decode($json_input, true) ?? [];
+// If we have raw input, try to parse as JSON (API request)
+if (!empty($raw_input)) {
+    $data = json_decode($raw_input, true) ?? [];
+    $isJsonRequest = !empty($data); // Successfully parsed JSON
 } else {
-    // Fall back to POST data (for form submissions)
+    // Fall back to POST data (form submission)
     $data = $_POST;
+    $isJsonRequest = false;
 }
 
-// Check if user is authenticated (for session-based requests)
-// BUT: Allow API requests (JSON) without session for admin dashboard
-$isApiRequest = stripos($_SERVER['CONTENT_TYPE'] ?? '', 'application/json') !== false;
-
-if (!$isApiRequest && !isset($_SESSION['user_id'])) {
+// AUTHORIZATION CHECK:
+// - Allow JSON requests (API calls from admin dashboard) - NO session needed
+// - Require session for form POST requests - session needed
+if (!$isJsonRequest && !isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
     exit;
