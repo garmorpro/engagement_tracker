@@ -18,7 +18,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $userId = intval($_POST['user_id'] ?? 0);
-$accountName = trim($_POST['account_name'] ?? '');
+$name = trim($_POST['name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $passcode = trim($_POST['passcode'] ?? '');
 
@@ -42,13 +42,13 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 try {
-    $accountName = $conn->real_escape_string($accountName);
+    $name = $conn->real_escape_string($name);
     $email = $conn->real_escape_string($email);
     $passcode = $conn->real_escape_string($passcode);
     
     $query = "
         UPDATE `service_accounts`
-        SET `full` = '$accountName',
+        SET `full` = '$name',
             `email` = '$email',
             `passcode` = '$passcode'
         WHERE `user_id` = $userId
