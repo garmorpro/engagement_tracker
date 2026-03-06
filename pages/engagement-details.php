@@ -924,16 +924,17 @@ if (!$engagement) {
 
         /* ========== TOAST STYLING ========== */
         .swal2-toast {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
+            background: var(--bg-secondary) !important;
+            border: 1px solid var(--border-color) !important;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             padding: 1rem 1.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         body.dark-mode .swal2-toast {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            border-color: rgba(79, 198, 95, 0.3);
+            background: #1A2332 !important;
+            border-color: #2D3847 !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
         }
 
         .swal2-toast.swal2-show {
@@ -952,12 +953,16 @@ if (!$engagement) {
         }
 
         .swal2-toast .swal2-title {
-            color: var(--text-primary);
-            font-size: 14px;
-            font-weight: 600;
-            margin: 0;
-            padding: 0;
-            line-height: 1.4;
+            color: var(--text-primary) !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            line-height: 1.4 !important;
+        }
+
+        body.dark-mode .swal2-toast .swal2-title {
+            color: #E8EAED !important;
         }
 
         .swal2-toast .swal2-icon {
@@ -971,33 +976,33 @@ if (!$engagement) {
         }
 
         .swal2-toast .swal2-icon.swal2-success {
-            border-color: var(--success-green);
-            background: rgba(79, 198, 95, 0.15);
+            border-color: var(--success-green) !important;
+            background: rgba(79, 198, 95, 0.15) !important;
         }
 
         body.dark-mode .swal2-toast .swal2-icon.swal2-success {
-            background: rgba(79, 198, 95, 0.2);
-            border-color: var(--success-green);
+            background: rgba(79, 198, 95, 0.2) !important;
+            border-color: #4FC65F !important;
         }
 
         .swal2-toast .swal2-icon.swal2-success [class*='swal2-success-circular-line'] {
-            background: var(--success-green);
+            background: var(--success-green) !important;
         }
 
         .swal2-toast .swal2-icon.swal2-success .swal2-success-ring {
-            border: 2px solid var(--success-green);
+            border: 2px solid var(--success-green) !important;
         }
 
         .swal2-toast .swal2-icon.swal2-success .swal2-success-fix {
-            background: var(--bg-secondary);
+            background: var(--bg-secondary) !important;
         }
 
         body.dark-mode .swal2-toast .swal2-icon.swal2-success .swal2-success-fix {
-            background: var(--bg-secondary);
+            background: #1A2332 !important;
         }
 
         .swal2-popup.swal2-toast .swal2-timer-progress-bar {
-            background: var(--success-green);
+            background: var(--success-green) !important;
             height: 3px;
             border-radius: 12px;
         }
