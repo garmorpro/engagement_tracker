@@ -1101,7 +1101,7 @@ if (!$engagement) {
                     case 'staff 1':
                         $gradient = 'linear-gradient(135deg, #F17313, #FFB347)';
                         break;
-                    case 'staff':
+                    case 'Staff':
                         $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)';
                         break;
                 }
