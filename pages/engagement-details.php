@@ -977,10 +977,10 @@ if (!$engagement) {
 
     <hr>
 
-    <!-- ========== THREE COLUMN LAYOUT ========== -->
-    <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: 2rem; margin-bottom: 3rem; margin-top: 2rem;">
+    <!-- ========== TWO COLUMN LAYOUT ========== -->
+    <div style="display: grid; grid-template-columns: 380px 1fr; gap: 2rem; margin-bottom: 3rem; margin-top: 2rem;">
 
-        <!-- ========== TEAM SECTION (LEFT) ========== -->
+        <!-- ========== TEAM SECTION (LEFT - FULL HEIGHT) ========== -->
         <div>
             <div class="section-header" style="margin-bottom: 1.5rem;">
                 <div class="section-header-left">
@@ -1071,187 +1071,192 @@ if (!$engagement) {
             </div>
         </div>
 
-        <!-- ========== TIMELINE & KEY DATES SECTION (CENTER) ========== -->
-        <div>
-            <div class="section-header" style="margin-bottom: 1.5rem;">
-                <div class="section-header-left">
-                    <div class="section-icon timeline">
-                        <i class="bi bi-calendar2"></i>
-                    </div>
-                    <h2 class="section-title">Timeline & Key Dates</h2>
-                </div>
-            </div>
-            <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; justify-content: center;">
-                <i class="bi bi-gear"></i> Manage
-            </button>
+        <!-- ========== RIGHT COLUMN (Timeline & Milestones Stacked) ========== -->
+        <div style="display: grid; grid-template-rows: auto auto; gap: 2rem;">
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <!-- Internal Planning -->
-                <div class="timeline-item" style="grid-column: 1;">
-                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="bi bi-calendar" style="font-size: 12px;"></i> INTERNAL PLANNING
+            <!-- ========== TIMELINE & KEY DATES SECTION (TOP RIGHT) ========== -->
+            <div>
+                <div class="section-header" style="margin-bottom: 1.5rem;">
+                    <div class="section-header-left">
+                        <div class="section-icon timeline">
+                            <i class="bi bi-calendar2"></i>
+                        </div>
+                        <h2 class="section-title">Timeline & Key Dates</h2>
                     </div>
-                    <div class="timeline-date">Nov 9, 2025</div>
-                    <div class="timeline-status completed">
-                        <i class="bi bi-check-circle-fill"></i> Completed
-                    </div>
+                    <button class="manage-btn">
+                        <i class="bi bi-gear"></i> Manage
+                    </button>
                 </div>
 
-                <!-- URL Due -->
-                <div class="timeline-item" style="grid-column: 2;">
-                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="bi bi-info-circle" style="font-size: 12px;"></i> URL DUE
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <!-- Internal Planning -->
+                    <div class="timeline-item" style="grid-column: 1;">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-calendar" style="font-size: 12px;"></i> INTERNAL PLANNING CALL
+                        </div>
+                        <div class="timeline-date">Nov 9, 2025</div>
+                        <div class="timeline-status completed">
+                            <i class="bi bi-check-circle-fill"></i> Completed
+                        </div>
                     </div>
-                    <div class="timeline-date">Mar 14, 2026</div>
-                    <div class="timeline-status">9d remaining</div>
-                </div>
 
-                <!-- Client Planning Call -->
-                <div class="timeline-item" style="grid-column: 1;">
-                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="bi bi-calendar" style="font-size: 12px;"></i> CLIENT PLANNING CALL
+                    <!-- URL Due -->
+                    <div class="timeline-item" style="grid-column: 2;">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-info-circle" style="font-size: 12px;"></i> URL DUE
+                        </div>
+                        <div class="timeline-date">Mar 14, 2026</div>
+                        <div class="timeline-status">9d remaining</div>
                     </div>
-                    <div class="timeline-date">Nov 14, 2025</div>
-                    <div class="timeline-status completed">
-                        <i class="bi bi-check-circle-fill"></i> Completed
-                    </div>
-                </div>
 
-                <!-- Fieldwork -->
-                <div class="timeline-item" style="grid-column: 2;">
-                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="bi bi-bar-chart" style="font-size: 12px;"></i> FIELDWORK
+                    <!-- Client Planning Call -->
+                    <div class="timeline-item" style="grid-column: 1;">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-calendar" style="font-size: 12px;"></i> CLIENT PLANNING CALL
+                        </div>
+                        <div class="timeline-date">Nov 14, 2025</div>
+                        <div class="timeline-status completed">
+                            <i class="bi bi-check-circle-fill"></i> Completed
+                        </div>
                     </div>
-                    <div class="timeline-date">Nov 30, 2025</div>
-                    <div class="timeline-status completed">
-                        <i class="bi bi-check-circle-fill"></i> Completed
-                    </div>
-                </div>
 
-                <!-- Leadsheet Due -->
-                <div class="timeline-item" style="grid-column: 1;">
-                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="bi bi-info-circle" style="font-size: 12px;"></i> LEADSHEET DUE
+                    <!-- Fieldwork -->
+                    <div class="timeline-item" style="grid-column: 2;">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-bar-chart" style="font-size: 12px;"></i> FIELDWORK
+                        </div>
+                        <div class="timeline-date">Nov 30, 2025</div>
+                        <div class="timeline-status completed">
+                            <i class="bi bi-check-circle-fill"></i> Completed
+                        </div>
                     </div>
-                    <div class="timeline-date">Jan 24, 2026</div>
-                    <div class="timeline-status overdue">
-                        <i class="bi bi-x-circle-fill"></i> 40d overdue
-                    </div>
-                </div>
 
-                <!-- Draft Report Due -->
-                <div class="timeline-item" style="grid-column: 2;">
-                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="bi bi-file-text" style="font-size: 12px;"></i> DRAFT REPORT DUE
+                    <!-- Leadsheet Due -->
+                    <div class="timeline-item" style="grid-column: 1;">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-info-circle" style="font-size: 12px;"></i> LEADSHEET DUE
+                        </div>
+                        <div class="timeline-date">Jan 24, 2026</div>
+                        <div class="timeline-status overdue">
+                            <i class="bi bi-x-circle-fill"></i> 40d overdue
+                        </div>
                     </div>
-                    <div class="timeline-date">Feb 19, 2026</div>
-                    <div class="timeline-status overdue">
-                        <i class="bi bi-x-circle-fill"></i> 14d overdue
-                    </div>
-                </div>
 
-                <!-- Final Report Due -->
-                <div class="timeline-item" style="grid-column: 1;">
-                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="bi bi-file-earmark" style="font-size: 12px;"></i> FINAL REPORT DUE
+                    <!-- Draft Report Due -->
+                    <div class="timeline-item" style="grid-column: 2;">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-file-text" style="font-size: 12px;"></i> DRAFT REPORT DUE
+                        </div>
+                        <div class="timeline-date">Feb 19, 2026</div>
+                        <div class="timeline-status overdue">
+                            <i class="bi bi-x-circle-fill"></i> 14d overdue
+                        </div>
                     </div>
-                    <div class="timeline-date">Mar 14, 2026</div>
-                    <div class="timeline-status">9d remaining</div>
-                </div>
 
-                <!-- Archive Date -->
-                <div class="timeline-item" style="grid-column: 2;">
-                    <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-                        <i class="bi bi-archive" style="font-size: 12px;"></i> ARCHIVE DATE
+                    <!-- Final Report Due -->
+                    <div class="timeline-item" style="grid-column: 1;">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-file-earmark" style="font-size: 12px;"></i> FINAL REPORT DUE
+                        </div>
+                        <div class="timeline-date">Mar 14, 2026</div>
+                        <div class="timeline-status">9d remaining</div>
                     </div>
-                    <div class="timeline-date">Mar 31, 2026</div>
-                    <div class="timeline-status">26d remaining</div>
-                </div>
-            </div>
-        </div>
 
-        <!-- ========== MILESTONES SECTION (RIGHT) ========== -->
-        <div>
-            <div class="section-header" style="margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
-                <div class="section-header-left">
-                    <div class="section-icon milestones">
-                        <i class="bi bi-flag-fill"></i>
-                    </div>
-                    <h2 class="section-title">Milestones</h2>
-                </div>
-            </div>
-            <div class="milestones-header-right" style="margin-bottom: 1.5rem; width: 100%; justify-content: space-between;">
-                <button class="manage-btn" style="flex: 1;">
-                    <i class="bi bi-gear"></i> Manage
-                </button>
-                <span class="milestone-stat" style="margin: 0 0.5rem;">3/6</span>
-                <span class="milestone-progress">50% Complete</span>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">
-                <!-- Kickoff meeting completed -->
-                <div class="milestone-item">
-                    <div class="milestone-checkbox completed">
-                        <i class="bi bi-check-circle-fill"></i>
-                    </div>
-                    <div class="milestone-content">
-                        <div class="milestone-title completed">Kickoff meeting completed</div>
-                        <div class="milestone-due">Due: Oct 31, 2025</div>
-                    </div>
-                </div>
-
-                <!-- Risk assessment finalized -->
-                <div class="milestone-item">
-                    <div class="milestone-checkbox completed">
-                        <i class="bi bi-check-circle-fill"></i>
-                    </div>
-                    <div class="milestone-content">
-                        <div class="milestone-title completed">Risk assessment finalized</div>
-                        <div class="milestone-due">Due: Nov 14, 2025</div>
-                    </div>
-                </div>
-
-                <!-- Fieldwork completed -->
-                <div class="milestone-item">
-                    <div class="milestone-checkbox completed">
-                        <i class="bi bi-check-circle-fill"></i>
-                    </div>
-                    <div class="milestone-content">
-                        <div class="milestone-title completed">Fieldwork completed</div>
-                        <div class="milestone-due">Due: Dec 14, 2025</div>
-                    </div>
-                </div>
-
-                <!-- Draft report prepared -->
-                <div class="milestone-item">
-                    <div class="milestone-checkbox pending">
-                    </div>
-                    <div class="milestone-content">
-                        <div class="milestone-title">Draft report prepared</div>
-                        <div class="milestone-due">Due: Feb 19, 2026</div>
-                    </div>
-                </div>
-
-                <!-- Management response received -->
-                <div class="milestone-item">
-                    <div class="milestone-checkbox pending">
-                    </div>
-                    <div class="milestone-content">
-                        <div class="milestone-title">Management response received</div>
-                        <div class="milestone-due">Due: Feb 28, 2026</div>
-                    </div>
-                </div>
-
-                <!-- Final report issued -->
-                <div class="milestone-item">
-                    <div class="milestone-checkbox pending">
-                    </div>
-                    <div class="milestone-content">
-                        <div class="milestone-title">Final report issued</div>
-                        <div class="milestone-due">Due: Mar 14, 2026</div>
+                    <!-- Archive Date -->
+                    <div class="timeline-item" style="grid-column: 2;">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-archive" style="font-size: 12px;"></i> ARCHIVE DATE
+                        </div>
+                        <div class="timeline-date">Mar 31, 2026</div>
+                        <div class="timeline-status">26d remaining</div>
                     </div>
                 </div>
             </div>
+
+            <!-- ========== MILESTONES SECTION (BOTTOM RIGHT) ========== -->
+            <div>
+                <div class="section-header" style="margin-bottom: 1.5rem;">
+                    <div class="section-header-left">
+                        <div class="section-icon milestones">
+                            <i class="bi bi-flag-fill"></i>
+                        </div>
+                        <h2 class="section-title">Milestones</h2>
+                    </div>
+                    <div class="milestones-header-right" style="gap: 1rem;">
+                        <button class="manage-btn">
+                            <i class="bi bi-gear"></i> Manage
+                        </button>
+                        <span class="milestone-stat">3/6</span>
+                        <span class="milestone-progress">50% Complete</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <!-- Kickoff meeting completed -->
+                    <div class="milestone-item">
+                        <div class="milestone-checkbox completed">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="milestone-content">
+                            <div class="milestone-title completed">Kickoff meeting completed</div>
+                            <div class="milestone-due">Due: Oct 31, 2025</div>
+                        </div>
+                    </div>
+
+                    <!-- Risk assessment finalized -->
+                    <div class="milestone-item">
+                        <div class="milestone-checkbox completed">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="milestone-content">
+                            <div class="milestone-title completed">Risk assessment finalized</div>
+                            <div class="milestone-due">Due: Nov 14, 2025</div>
+                        </div>
+                    </div>
+
+                    <!-- Fieldwork completed -->
+                    <div class="milestone-item">
+                        <div class="milestone-checkbox completed">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="milestone-content">
+                            <div class="milestone-title completed">Fieldwork completed</div>
+                            <div class="milestone-due">Due: Dec 14, 2025</div>
+                        </div>
+                    </div>
+
+                    <!-- Draft report prepared -->
+                    <div class="milestone-item">
+                        <div class="milestone-checkbox pending">
+                        </div>
+                        <div class="milestone-content">
+                            <div class="milestone-title">Draft report prepared</div>
+                            <div class="milestone-due">Due: Feb 19, 2026</div>
+                        </div>
+                    </div>
+
+                    <!-- Management response received -->
+                    <div class="milestone-item">
+                        <div class="milestone-checkbox pending">
+                        </div>
+                        <div class="milestone-content">
+                            <div class="milestone-title">Management response received</div>
+                            <div class="milestone-due">Due: Feb 28, 2026</div>
+                        </div>
+                    </div>
+
+                    <!-- Final report issued -->
+                    <div class="milestone-item">
+                        <div class="milestone-checkbox pending">
+                        </div>
+                        <div class="milestone-content">
+                            <div class="milestone-title">Final report issued</div>
+                            <div class="milestone-due">Due: Mar 14, 2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
