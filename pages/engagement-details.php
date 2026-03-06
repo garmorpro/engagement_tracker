@@ -44,7 +44,7 @@ foreach ($allTimelineData as $row) {
 $team = null;
 
 // Get all timelines
-$allTimelineData = getAllTeamData($conn);
+$allTeamData = getAllTeamData($conn);
 
 // Find the one for the current engagement
 foreach ($allTeamData as $row) {
