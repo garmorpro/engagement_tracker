@@ -736,6 +736,75 @@ if (!$engagement) {
             color: var(--danger-red);
         }
 
+        /* ========== DETAILS & NOTES SECTIONS ========== */
+        .details-section,
+        .notes-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .details-section .section-header,
+        .notes-section .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-icon.details {
+            background: rgba(68, 135, 252, 0.2);
+            color: #2196F3;
+        }
+
+        .section-icon.notes {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+        }
+
+        .details-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .detail-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .detail-value.badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            width: fit-content;
+            background: var(--primary-blue);
+            color: white;
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .notes-content {
+            color: var(--text-primary);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
         /* ========== MILESTONES SECTION ========== */
         .milestones-header-right {
             display: flex;
@@ -866,7 +935,7 @@ if (!$engagement) {
 
         .right-column {
             display: grid;
-            grid-template-rows: auto auto;
+            grid-template-rows: auto auto auto auto;
             gap: 2rem;
         }
 
@@ -921,7 +990,7 @@ if (!$engagement) {
             }
 
             .right-column {
-                grid-template-rows: auto auto;
+                grid-template-rows: auto auto auto auto;
             }
         }
 
@@ -1272,6 +1341,119 @@ if (!$engagement) {
 
         <!-- ========== RIGHT COLUMN (Timeline & Milestones Stacked) ========== -->
         <div class="right-column">
+
+            <!-- ========== DETAILS SECTION ========== -->
+            <div class="details-section">
+                <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div class="section-header-left">
+                        <div class="section-icon details">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h2 class="section-title">Details</h2>
+                    </div>
+                </div>
+
+                <div class="details-grid" style="margin-top: 1.5rem;">
+                    <!-- Scope -->
+                    <div class="detail-item">
+                        <div class="detail-label">Scope</div>
+                        <div class="detail-value"><?php echo htmlspecialchars($engagement['eng_audit_type'] ?? 'N/A'); ?></div>
+                    </div>
+
+                    <!-- Last Contact -->
+                    <div class="detail-item">
+                        <div class="detail-label">Last Contact</div>
+                        <div class="detail-value">
+                            <?php 
+                            $lastContact = $engagement['eng_last_contact'] ?? null;
+                            echo ($lastContact && $lastContact !== '0000-00-00') 
+                                ? date("Y-m-d", strtotime($lastContact))
+                                : 'N/A';
+                            ?>
+                        </div>
+                    </div>
+
+                    <!-- Section 3 Requested -->
+                    <div class="detail-item">
+                        <div class="detail-label">Section 3 Requested</div>
+                        <div class="detail-value">
+                            <?php 
+                            $section3 = $engagement['eng_section_3_requested'] ?? null;
+                            if ($section3 && $section3 !== '0000-00-00') {
+                                echo '<span style="display: flex; align-items: center; gap: 0.5rem;">';
+                                echo date("Y-m-d", strtotime($section3));
+                                echo ' <i class="bi bi-check-circle-fill" style="color: var(--success-green); font-size: 14px;"></i>';
+                                echo '</span>';
+                            } else {
+                                echo 'N/A';
+                            }
+                            ?>
+                        </div>
+                    </div>
+
+                    <!-- Created -->
+                    <div class="detail-item">
+                        <div class="detail-label">Created</div>
+                        <div class="detail-value">
+                            <?php 
+                            $created = $engagement['eng_created_date'] ?? null;
+                            echo ($created && $created !== '0000-00-00') 
+                                ? date("M d, Y", strtotime($created))
+                                : 'N/A';
+                            ?>
+                        </div>
+                    </div>
+
+                    <!-- Last Updated -->
+                    <div class="detail-item">
+                        <div class="detail-label">Last Updated</div>
+                        <div class="detail-value">
+                            <?php 
+                            $updated = $engagement['eng_last_updated_date'] ?? null;
+                            echo ($updated && $updated !== '0000-00-00') 
+                                ? date("M d, Y", strtotime($updated))
+                                : 'N/A';
+                            ?>
+                        </div>
+                    </div>
+
+                    <!-- Archive Date -->
+                    <div class="detail-item">
+                        <div class="detail-label">Archive Date</div>
+                        <div class="detail-value">
+                            <?php 
+                            $archiveDate = $engagement['eng_archive_date'] ?? null;
+                            echo ($archiveDate && $archiveDate !== '0000-00-00') 
+                                ? date("M d, Y", strtotime($archiveDate))
+                                : 'N/A';
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========== NOTES SECTION ========== -->
+            <div class="notes-section">
+                <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div class="section-header-left">
+                        <div class="section-icon notes">
+                            <i class="bi bi-sticky"></i>
+                        </div>
+                        <h2 class="section-title">Notes</h2>
+                    </div>
+                </div>
+
+                <div class="notes-content" style="margin-top: 1.5rem;">
+                    <?php 
+                    $notes = $engagement['eng_notes'] ?? '';
+                    if (!empty($notes)) {
+                        echo htmlspecialchars($notes);
+                    } else {
+                        echo '<span style="color: var(--text-secondary); font-style: italic;">No notes added yet.</span>';
+                    }
+                    ?>
+                </div>
+            </div>
 
             <!-- ========== TIMELINE & KEY DATES SECTION (TOP RIGHT) ========== -->
             <div class="timeline-section">
