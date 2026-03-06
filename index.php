@@ -568,7 +568,7 @@ body {
             <input type="hidden" name="user_id" id="editUserId">
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="editAccountName" name="account_name" required>
+                <input type="text" class="form-control" id="editAccountName" name="name" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Email Address</label>
@@ -706,7 +706,7 @@ function closeAdminDashboard() {
 
 function openAddUserModal() {
     document.getElementById('addUserModal').classList.add('active');
-    document.querySelector('#registerForm input[name="account_name"]').focus();
+    document.querySelector('#registerForm input[name="name"]').focus();
 }
 
 function closeAddUserModal() {
@@ -742,14 +742,14 @@ function loadAccountsList() {
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="dashboard-user-info">
-                        <div class="dashboard-user-name">${account.account_name}</div>
+                        <div class="dashboard-user-name">${account.name}</div>
                         <div class="dashboard-user-email">${account.email}</div>
                     </div>
                     <div class="user-actions">
-                        <button type="button" title="Edit" onclick="editAccount(${account.user_id}, '${account.account_name}')">
+                        <button type="button" title="Edit" onclick="editAccount(${account.user_id}, '${account.name}')">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button type="button" class="delete" title="Delete" onclick="deleteAccount(${account.user_id}, '${account.account_name}')">
+                        <button type="button" class="delete" title="Delete" onclick="deleteAccount(${account.user_id}, '${account.name}')">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -813,7 +813,7 @@ function editAccount(userId, accountName) {
         if(data.success && data.account) {
             const account = data.account;
             document.getElementById('editUserId').value = account.user_id;
-            document.getElementById('editAccountName').value = account.account_name;
+            document.getElementById('editAccountName').value = account.name;
             document.getElementById('editEmail').value = account.email;
             document.getElementById('editPasscode').value = account.passcode;
             document.getElementById('editUserModal').classList.add('active');
