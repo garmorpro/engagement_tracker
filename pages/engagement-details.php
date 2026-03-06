@@ -21,12 +21,6 @@ foreach ($allEngagements as $eng) {
     }
 }
 
-// Fetch all timelines
-function getAllTimelineData($conn) {
-    $result = $conn->query("SELECT * FROM engagement_timeline");
-    return $result->fetch_all(MYSQLI_ASSOC);
-}
-
 // Current engagement you are viewing
 $currentEngagementId = $engagementId; // assume this is set somewhere
 
