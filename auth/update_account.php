@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once '../includes/functions.php';
 require_once '../path.php';
 
@@ -11,17 +10,33 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// Check if user is authenticated
-// if (!isset($_SESSION['user_id'])) {
-//     http_response_code(401);
-//     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-//     exit;
-// }
+// Read the raw input to detect if it's JSON
+$raw_input = file_get_contents('php://input');
+$data = [];
 
-$userId = intval($_POST['user_id'] ?? 0);
-$name = trim($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$passcode = trim($_POST['passcode'] ?? '');
+// If we have raw input, try to parse as JSON (API request)
+if (!empty($raw_input)) {
+    $data = json_decode($raw_input, true) ?? [];
+    $isJsonRequest = !empty($data); // Successfully parsed JSON
+} else {
+    // Fall back to POST data (form submission)
+    $data = $_POST;
+    $isJsonRequest = false;
+}
+
+// AUTHORIZATION CHECK:
+// - Allow JSON requests (API calls from admin dashboard) - NO session needed
+// - Require session for form POST requests - session needed
+if (!$isJsonRequest && !isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit;
+}
+
+$userId = intval($data['user_id'] ?? 0);
+$name = trim($data['name'] ?? '');
+$email = trim($data['email'] ?? '');
+$passcode = trim($data['passcode'] ?? '');
 
 // Validation
 if (!$userId || !$name || !$email || !$passcode) {
@@ -43,26 +58,36 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 try {
-    $name = $conn->real_escape_string($name);
-    $email = $conn->real_escape_string($email);
-    $passcode = $conn->real_escape_string($passcode);
-    
+    // Use prepared statement to prevent SQL injection
     $query = "
         UPDATE `service_accounts`
-        SET `full` = '$name',
-            `email` = '$email',
-            `passcode` = '$passcode'
-        WHERE `user_id` = $userId
+        SET `name` = ?,
+            `email` = ?,
+            `passcode` = ?
+        WHERE `user_id` = ?
     ";
     
-    if ($conn->query($query)) {
+    $stmt = $conn->prepare($query);
+    
+    if (!$stmt) {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
+        exit;
+    }
+    
+    $stmt->bind_param('sssi', $name, $email, $passcode, $userId);
+    
+    if ($stmt->execute()) {
+        http_response_code(200);
         echo json_encode(['success' => true, 'message' => 'Account updated successfully']);
     } else {
         http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Failed to update account']);
+        echo json_encode(['success' => false, 'message' => 'Failed to update account: ' . $stmt->error]);
     }
+    
+    $stmt->close();
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Database error']);
+    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
 }
 ?>

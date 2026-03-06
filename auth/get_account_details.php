@@ -1,77 +1,76 @@
 <?php
-// auth/login.php
-session_start();
 require_once '../includes/functions.php';
 require_once '../path.php';
 
-// CRITICAL: Set content type FIRST before any output
-header('Content-Type: application/json; charset=UTF-8');
-header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
 
-// Suppress all output except JSON
-ini_set('display_errors', 0);
-error_reporting(E_ALL);
-ini_set('log_errors', 1);
-ini_set('error_log', dirname(__FILE__) . '/error.log');
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+    exit;
+}
+
+// Read the raw input to detect if it's JSON
+$raw_input = file_get_contents('php://input');
+$data = [];
+
+// If we have raw input, try to parse as JSON (API request)
+if (!empty($raw_input)) {
+    $data = json_decode($raw_input, true) ?? [];
+    $isJsonRequest = !empty($data); // Successfully parsed JSON
+} else {
+    // Fall back to POST data (form submission)
+    $data = $_POST;
+    $isJsonRequest = false;
+}
+
+// AUTHORIZATION CHECK:
+// - Allow JSON requests (API calls from admin dashboard) - NO session needed
+// - Require session for form POST requests - session needed
+if (!$isJsonRequest && !isset($_SESSION['user_id'])) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+    exit;
+}
+
+$userId = intval($data['user_id'] ?? 0);
+
+if (!$userId) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Missing or invalid user_id']);
+    exit;
+}
 
 try {
-    // Read JSON input
-    $json_input = file_get_contents('php://input');
-    
-    if (empty($json_input)) {
-        http_response_code(400);
-        die(json_encode(['success' => false, 'message' => 'Empty request']));
-    }
-    
-    $data = json_decode($json_input, true);
-    
-    if (!$data || !isset($data['user_id'])) {
-        http_response_code(400);
-        die(json_encode(['success' => false, 'message' => 'Missing user_id']));
-    }
-    
-    $userId = intval($data['user_id']);
-    
-    if ($userId <= 0) {
-        http_response_code(400);
-        die(json_encode(['success' => false, 'message' => 'Invalid user_id']));
-    }
-    
-    
-    // Query database
-    $query = "SELECT `user_id`, `name`,`account_name`, `email`, `passcode` FROM `service_accounts` WHERE `user_id` = ?";
+    // Use prepared statement
+    $query = "SELECT `user_id`, `name`, `email`, `passcode` FROM `service_accounts` WHERE `user_id` = ?";
     $stmt = $conn->prepare($query);
     
     if (!$stmt) {
         http_response_code(500);
-        die(json_encode(['success' => false, 'message' => 'Prepare error: ' . $conn->error]));
+        echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
+        exit;
     }
     
     $stmt->bind_param('i', $userId);
     
     if (!$stmt->execute()) {
         http_response_code(500);
-        die(json_encode(['success' => false, 'message' => 'Execute error: ' . $stmt->error]));
+        echo json_encode(['success' => false, 'message' => 'Query error: ' . $stmt->error]);
+        exit;
     }
     
     $result = $stmt->get_result();
     
-    if (!$result) {
-        http_response_code(500);
-        die(json_encode(['success' => false, 'message' => 'Result error']));
-    }
-    
     if ($result->num_rows > 0) {
         $account = $result->fetch_assoc();
         
-        // Build response
         http_response_code(200);
         echo json_encode([
             'success' => true,
             'account' => [
                 'user_id' => intval($account['user_id']),
                 'name' => $account['name'] ?: '',
-                'account_name' => $account['account_name'] ?: '',
                 'email' => $account['email'] ?: '',
                 'passcode' => $account['passcode'] ?: ''
             ]
@@ -82,8 +81,6 @@ try {
     }
     
     $stmt->close();
-    $conn->close();
-    
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
