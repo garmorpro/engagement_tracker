@@ -922,6 +922,22 @@ if (!$engagement) {
             box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
         }
 
+        /* Milestone Modal Styling */
+        .milestone-modal-popup {
+            max-height: 600px !important;
+            height: 600px !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .milestone-modal-popup .swal2-html-container {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+        }
+
         /* ========== CUSTOM TOAST STYLING ========== */
         .custom-toast {
             position: fixed;
@@ -2187,40 +2203,47 @@ if (!$timeline) {
         const milestones = <?php echo json_encode($milestones); ?>;
         
         // Build HTML for milestone list
-        let milestonesHTML = '<div style="text-align: left; max-height: 400px; overflow-y: auto;">';
-        
-        milestonesHTML += `
-            <button id="addMilestoneBtn" style="width: 100%; background: var(--primary-blue); color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 14px;">
-                <i class="bi bi-plus-circle" style="font-size: 16px;"></i> Add New Milestone
-            </button>
+        let milestonesHTML = `
+            <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
+                <button id="addMilestoneBtn" style="width: 100%; background: linear-gradient(135deg, var(--primary-blue), #3671E0); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; font-size: 14px; box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3); transition: all 0.2s;">
+                    <i class="bi bi-plus-circle" style="font-size: 16px;"></i> Add New Milestone
+                </button>
+                
+                <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; padding-right: 0.5rem;">
         `;
         
         if (milestones.length > 0) {
-            milestonesHTML += '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
             milestones.forEach((milestone, index) => {
+                const isCompleted = milestone.is_completed === 'Y';
                 milestonesHTML += `
-                    <div style="display: flex; gap: 1rem; padding: 1rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 10px; align-items: center; transition: all 0.2s;">
+                    <div style="display: flex; gap: 1rem; padding: 1rem; background: ${isCompleted ? 'rgba(79, 198, 95, 0.1)' : 'var(--bg-primary)'}; border: 1px solid ${isCompleted ? 'rgba(79, 198, 95, 0.3)' : 'var(--border-color)'}; border-radius: 10px; align-items: center; transition: all 0.2s; cursor: default; hover: {box-shadow: 0 2px 8px rgba(0,0,0,0.1);}">
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 0.4rem; word-break: break-word;">${milestone.milestone_type}</div>
-                            <div style="font-size: 12px; color: var(--text-secondary);">Due: ${milestone.due_date || 'No due date'}</div>
+                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 0.4rem; word-break: break-word; ${isCompleted ? 'color: var(--success-green); text-decoration: line-through;' : ''}">${milestone.milestone_type}</div>
+                            <div style="font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="bi bi-calendar-event" style="font-size: 11px;"></i>
+                                ${milestone.due_date || 'No due date'}
+                                ${isCompleted ? '<i class="bi bi-check-circle-fill" style="color: var(--success-green); margin-left: 0.5rem;"></i>' : ''}
+                            </div>
                         </div>
                         <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
-                            <button class="edit-milestone-btn" data-index="${index}" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s;">
-                                <i class="bi bi-pencil" style="margin-right: 0.3rem;"></i>Edit
+                            <button class="edit-milestone-btn" data-index="${index}" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.3rem;" title="Edit milestone">
+                                <i class="bi bi-pencil" style="font-size: 13px;"></i>Edit
                             </button>
-                            <button class="delete-milestone-btn" data-index="${index}" style="background: #C90012; color: white; border: none; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s;">
-                                <i class="bi bi-trash" style="margin-right: 0.3rem;"></i>Delete
+                            <button class="delete-milestone-btn" data-index="${index}" style="background: #C90012; color: white; border: none; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.3rem;" title="Delete milestone">
+                                <i class="bi bi-trash" style="font-size: 13px;"></i>Delete
                             </button>
                         </div>
                     </div>
                 `;
             });
-            milestonesHTML += '</div>';
         } else {
-            milestonesHTML += '<div style="text-align: center; padding: 2rem; color: var(--text-secondary); background: var(--bg-primary); border-radius: 10px; border: 1px dashed var(--border-color);"><i class="bi bi-inbox" style="font-size: 32px; display: block; margin-bottom: 0.5rem;"></i>No milestones yet. Click "Add New Milestone" to get started!</div>';
+            milestonesHTML += '<div style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary);"><div><i class="bi bi-inbox" style="font-size: 40px; display: block; margin-bottom: 0.75rem; opacity: 0.5;"></i><div style="font-size: 14px; font-weight: 500;">No milestones yet</div><div style="font-size: 12px; margin-top: 0.5rem;">Click "Add New Milestone" to get started!</div></div></div>';
         }
         
-        milestonesHTML += '</div>';
+        milestonesHTML += `
+                </div>
+            </div>
+        `;
         
         Swal.fire({
             title: 'Manage Milestones',
@@ -2228,6 +2251,10 @@ if (!$timeline) {
             showConfirmButton: false,
             cancelButtonText: 'Close',
             width: '600px',
+            heightAuto: false,
+            customClass: {
+                popup: 'milestone-modal-popup'
+            },
             didOpen: () => {
                 // Add event listeners for edit and delete buttons
                 document.querySelectorAll('.edit-milestone-btn').forEach(btn => {
