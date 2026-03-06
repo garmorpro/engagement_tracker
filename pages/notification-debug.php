@@ -6,6 +6,7 @@
 
 $basePath = dirname(dirname(__FILE__));
 require_once $basePath . '/path.php';
+require_once $basePath . '/includes/functions.php';
 
 echo "=== COMPREHENSIVE NOTIFICATION DEBUG ===\n\n";
 
