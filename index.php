@@ -763,27 +763,12 @@ function loadAccountsList() {
 
 // Helper function to get correct API URL
 function getApiUrl(endpoint) {
-    // If BASE_URL exists and is set, use it
-    let baseUrl = '<?= BASE_URL ?>';
+    const protocol = window.location.protocol;
+    const host = window.location.host;
     
-    // If BASE_URL is empty or just contains PHP, construct it
-    if (!baseUrl || baseUrl.includes('<?') || baseUrl === '/') {
-        // Use current location to determine base
-        const protocol = window.location.protocol;
-        const host = window.location.host;
-        const pathname = window.location.pathname;
-        
-        // Remove filename from path
-        const pathParts = pathname.split('/').filter(p => p);
-        // Remove last part if it's a file (has extension or is 'index.php')
-        if (pathParts[pathParts.length - 1].includes('.php')) {
-            pathParts.pop();
-        }
-        baseUrl = protocol + '//' + host + '/' + pathParts.join('/');
-    }
-    
-    // Ensure no double slashes
-    return baseUrl.replace(/\/$/, '') + '/auth/' + endpoint;
+    // Build direct URL to auth endpoint
+    // Result: https://engagements.morganserver.com/auth/[endpoint]
+    return protocol + '//' + host + '/auth/' + endpoint;
 }
 
 function editAccount(userId, accountName) {
