@@ -1,14 +1,14 @@
 <?php
 require_once 'includes/functions.php';
 require_once 'path.php';
-// require_once 'includes/init.php';
+require_once 'includes/init.php';
 
 // Fetch active service accounts
 $result = $conn->query("
-    SELECT *
+    SELECT `user_id`, `account_name`, `passcode`, `role`
     FROM `service_accounts`
     WHERE `status` = 'active'
-    ORDER BY `name`
+    ORDER BY `account_name`
 ");
 $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 ?>
@@ -429,15 +429,15 @@ body {
                 <?php if ($account['role'] === 'super_admin') continue; ?>
                 <div class="account-item"
                      data-user-id="<?= $account['user_id'] ?>"
-                     data-account-name="<?= htmlspecialchars($account['name']) ?>"
+                     data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
                      data-role="<?= $account['role'] ?>"
                      onclick="openPinModal(this)">
                     <div class="account-icon user">
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="account-info">
-                        <div class="account-name"><?= htmlspecialchars($account['name']) ?></div>
-                        <div class="account-email"><?= htmlspecialchars($account['email']) ?></div>
+                        <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
+                        <div class="account-email"><?= htmlspecialchars(strtolower(str_replace(' ', '.', $account['account_name'])) . '@company.com') ?></div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -489,7 +489,7 @@ body {
         <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
         <input type="text" class="form-control text-center fs-4 pin-field" 
                id="adminVerifyPinInput" required autofocus>
-        <!-- <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p> -->
+        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
     </div>
 </div>
 
@@ -534,7 +534,7 @@ body {
         <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" name="name" required>
+                <input type="text" class="form-control" name="account_name" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Email Address</label>
@@ -564,9 +564,8 @@ body {
             <h5>Edit User</h5>
         </div>
         
-        <form id="editForm" method="POST" action="<?= BASE_URL ?>/auth/update_account.php">
+        <form id="editForm" onsubmit="submitEditForm(event)">
             <input type="hidden" name="user_id" id="editUserId">
-            <?php var_dump($_SESSION); ?>
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
                 <input type="text" class="form-control" id="editAccountName" name="name" required>
@@ -707,7 +706,7 @@ function closeAdminDashboard() {
 
 function openAddUserModal() {
     document.getElementById('addUserModal').classList.add('active');
-    document.querySelector('#registerForm input[name="name"]').focus();
+    document.querySelector('#registerForm input[name="account_name"]').focus();
 }
 
 function closeAddUserModal() {
@@ -743,14 +742,14 @@ function loadAccountsList() {
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="dashboard-user-info">
-                        <div class="dashboard-user-name">${account.name}</div>
+                        <div class="dashboard-user-name">${account.account_name}</div>
                         <div class="dashboard-user-email">${account.email}</div>
                     </div>
                     <div class="user-actions">
-                        <button type="button" title="Edit" onclick="editAccount(${account.user_id}, '${account.name}')">
+                        <button type="button" title="Edit" onclick="editAccount(${account.user_id}, '${account.account_name}')">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button type="button" class="delete" title="Delete" onclick="deleteAccount(${account.user_id}, '${account.name}')">
+                        <button type="button" class="delete" title="Delete" onclick="deleteAccount(${account.user_id}, '${account.account_name}')">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -836,6 +835,86 @@ function editAccount(userId, accountName) {
             icon: 'error',
             title: 'Error',
             text: 'Error loading user details: ' + error.message,
+            background: 'var(--bg-secondary)',
+            color: 'white',
+            confirmButtonColor: 'var(--primary-blue)'
+        });
+    });
+}
+
+function submitEditForm(event) {
+    event.preventDefault();
+    
+    const userId = document.getElementById('editUserId').value;
+    const name = document.getElementById('editAccountName').value;
+    const email = document.getElementById('editEmail').value;
+    const passcode = document.getElementById('editPasscode').value;
+    
+    if (!userId || !name || !email || !passcode) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Missing Fields',
+            text: 'Please fill in all fields',
+            background: 'var(--bg-secondary)',
+            color: 'white',
+            confirmButtonColor: 'var(--primary-blue)'
+        });
+        return;
+    }
+    
+    const apiUrl = getApiUrl('update_account.php');
+    
+    console.log('Submitting update to:', apiUrl);
+    console.log('Data:', { user_id: userId, name, email, passcode });
+    
+    fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            user_id: parseInt(userId),
+            name: name,
+            email: email,
+            passcode: passcode
+        })
+    })
+    .then(res => {
+        console.log('Update response status:', res.status);
+        return res.json();
+    })
+    .then(data => {
+        console.log('Update response data:', data);
+        
+        if (data.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Updated!',
+                text: 'Account updated successfully',
+                background: 'var(--bg-secondary)',
+                color: 'white',
+                confirmButtonColor: 'var(--primary-blue)'
+            }).then(() => {
+                closeEditUserModal();
+                loadAccountsList();
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: data.message || 'Failed to update account',
+                background: 'var(--bg-secondary)',
+                color: 'white',
+                confirmButtonColor: 'var(--primary-blue)'
+            });
+        }
+    })
+    .catch((error) => {
+        console.error('Update error:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error updating account: ' + error.message,
             background: 'var(--bg-secondary)',
             color: 'white',
             confirmButtonColor: 'var(--primary-blue)'
