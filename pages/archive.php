@@ -800,7 +800,7 @@ $archiveCount = count($engagements);
 <div class="top-header">
     <div class="header-content">
         <div class="header-left">
-            <a href="#" class="header-logo">
+            <a href="dashboard.php" class="header-logo">
                 <div class="logo-icon">
                     <i class="bi bi-bar-chart-fill"></i>
                 </div>

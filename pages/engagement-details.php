@@ -39,6 +39,22 @@ foreach ($allTimelineData as $row) {
 }
 
 
+// ENGAGEMENT TEAM
+// Initialize
+$team = null;
+
+// Get all timelines
+$allTimelineData = getAllTeamData($conn);
+
+// Find the one for the current engagement
+foreach ($allTeamData as $row) {
+    if ($row['engagement_idno'] == $currentEngagementId) {
+        $team = $row;
+        break;
+    }
+}
+
+
 if (!$engagement) {
     header('Location: dashboard.php');
     exit;
@@ -1244,31 +1260,8 @@ if (!$timeline) {
     ];
 }
 
-// -----------------------------
-// Render each timeline step
-// -----------------------------
-// renderTimelineStatus($timeline['internal_planning_call_date'], $timeline['internal_planning_call_completed_at']);
-// renderTimelineStatus($timeline['irl_due_date'], $timeline['irl_completed_at']);
-// renderTimelineStatus($timeline['client_planning_call_date'], $timeline['client_planning_call_completed_at']);
-// renderTimelineStatus($timeline['fieldwork_date'], $timeline['fieldwork_completed_at']);
-// renderTimelineStatus($timeline['leadsheet_date'], $timeline['leadsheet_completed_at']);
-// renderTimelineStatus($timeline['draft_report_due_date'], $timeline['draft_report_completed_at']);
-// renderTimelineStatus($timeline['final_report_date'], $timeline['final_report_completed_at']);
-// renderTimelineStatus($timeline['archive_date'], $timeline['archive_completed_at']);
 ?>
-                    <!-- Internal Planning -->
-                    <!-- <div class="timeline-item">
-    <div class="timeline-title">
-        <i class="bi bi-calendar"></i> INTERNAL PLANNING CALL
-    </div>
 
-    <?php
-    // renderTimelineStatus(
-    //     $timeline['internal_planning_call_date'],
-    //     $timeline['internal_planning_call_completed_at']
-    // );
-    ?>
-</div> -->
 
                     <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
