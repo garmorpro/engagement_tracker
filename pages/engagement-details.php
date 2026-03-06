@@ -1223,8 +1223,12 @@ function renderTimelineStatus($date, $completed) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> IRL DUE
                         </div>
-                        <div class="timeline-date">Mar 14, 2026</div>
-                        <div class="timeline-status">9d remaining</div>
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['irl_due_date'],
+                            $timeline['irl_completed_at']
+                        );
+                        ?>
                     </div>
 
                     <!-- Client Planning Call -->
@@ -1232,10 +1236,12 @@ function renderTimelineStatus($date, $completed) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-calendar" style="font-size: 12px;"></i> CLIENT PLANNING CALL
                         </div>
-                        <div class="timeline-date">Nov 14, 2025</div>
-                        <div class="timeline-status completed">
-                            <i class="bi bi-check-circle-fill"></i> Completed
-                        </div>
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['client_planning_call_date'],
+                            $timeline['client_planning_call_completed_at']
+                        );
+                        ?>
                     </div>
 
                     <!-- Fieldwork -->
@@ -1243,10 +1249,12 @@ function renderTimelineStatus($date, $completed) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-bar-chart" style="font-size: 12px;"></i> FIELDWORK
                         </div>
-                        <div class="timeline-date">Nov 30, 2025</div>
-                        <div class="timeline-status completed">
-                            <i class="bi bi-check-circle-fill"></i> Completed
-                        </div>
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['fieldwork_date'],
+                            $timeline['fieldwork_completed_at']
+                        );
+                        ?>
                     </div>
 
                     <!-- Leadsheet Due -->
@@ -1254,10 +1262,12 @@ function renderTimelineStatus($date, $completed) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> LEADSHEET DUE
                         </div>
-                        <div class="timeline-date">Jan 24, 2026</div>
-                        <div class="timeline-status overdue">
-                            <i class="bi bi-x-circle-fill"></i> 40d overdue
-                        </div>
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['leadsheet_date'],
+                            $timeline['leadsheet_completed_at']
+                        );
+                        ?>
                     </div>
 
                     <!-- Draft Report Due -->
@@ -1265,10 +1275,12 @@ function renderTimelineStatus($date, $completed) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-text" style="font-size: 12px;"></i> DRAFT REPORT DUE
                         </div>
-                        <div class="timeline-date">Feb 19, 2026</div>
-                        <div class="timeline-status overdue">
-                            <i class="bi bi-x-circle-fill"></i> 14d overdue
-                        </div>
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['draft_report_date'],
+                            $timeline['draft_report_completed_at']
+                        );
+                        ?>
                     </div>
 
                     <!-- Final Report Due -->
@@ -1276,8 +1288,12 @@ function renderTimelineStatus($date, $completed) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-earmark" style="font-size: 12px;"></i> FINAL REPORT DUE
                         </div>
-                        <div class="timeline-date">Mar 14, 2026</div>
-                        <div class="timeline-status">9d remaining</div>
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['final_report_date'],
+                            $timeline['final_report_completed_at']
+                        );
+                        ?>
                     </div>
 
                     <!-- Archive Date -->
@@ -1285,8 +1301,12 @@ function renderTimelineStatus($date, $completed) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-archive" style="font-size: 12px;"></i> ARCHIVE DATE
                         </div>
-                        <div class="timeline-date">Mar 31, 2026</div>
-                        <div class="timeline-status">26d remaining</div>
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['archive_date'],
+                            $timeline['archive_completed_at']
+                        );
+                        ?>
                     </div>
                 </div>
             </div>
