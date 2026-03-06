@@ -40,17 +40,14 @@ foreach ($allTimelineData as $row) {
 
 
 // ENGAGEMENT TEAM
-// Initialize
-$team = null;
+$team = []; // start as empty array
 
-// Get all timelines
 $allTeamData = getAllTeamData($conn);
 
-// Find the one for the current engagement
+// Collect all members for the current engagement
 foreach ($allTeamData as $row) {
     if ($row['engagement_idno'] == $currentEngagementId) {
-        $team = $row;
-        break;
+        $team[] = $row;
     }
 }
 
@@ -1078,8 +1075,8 @@ if (!$engagement) {
             </button>
 
             <div class="team-members">
-<?php if (!empty($engagementTeam)): ?>
-    <?php foreach ($engagementTeam as $member): ?>
+<?php if (!empty($team)): ?>
+    <?php foreach ($team as $member): ?>
         <?php
             // Get initials for avatar
             $nameParts = explode(' ', $member['member_name']);
