@@ -817,6 +817,8 @@ if (!$engagement) {
             border-radius: 16px;
             padding: 2rem;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            max-width: 600px;
+            width: 90vw;
         }
 
         body.dark-mode .swal2-popup {
@@ -825,13 +827,15 @@ if (!$engagement) {
 
         .swal2-title {
             color: var(--text-primary);
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             margin-bottom: 1.5rem;
+            line-height: 1.3;
         }
 
         .swal2-html-container {
             color: var(--text-primary);
+            padding: 0;
         }
 
         .swal2-input {
@@ -839,9 +843,11 @@ if (!$engagement) {
             border: 1px solid var(--border-color);
             color: var(--text-primary);
             border-radius: 8px;
-            padding: 0.75rem !important;
-            font-size: 14px !important;
+            padding: 0.625rem 0.75rem !important;
+            font-size: 13px !important;
             transition: all 0.2s;
+            width: 100% !important;
+            box-sizing: border-box;
         }
 
         .swal2-input:focus {
@@ -855,20 +861,27 @@ if (!$engagement) {
         }
 
         .swal2-actions {
-            gap: 1rem;
+            gap: 0.75rem;
             margin-top: 2rem;
+            display: flex;
+        }
+
+        .swal2-confirm,
+        .swal2-cancel {
+            flex: 1;
+            margin: 0 !important;
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+            min-width: 0;
         }
 
         .swal2-confirm {
             background: var(--primary-blue);
             color: white;
             border: none;
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s;
-            flex: 1;
         }
 
         .swal2-confirm:hover {
@@ -885,12 +898,6 @@ if (!$engagement) {
             background: var(--border-color);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s;
-            flex: 1;
         }
 
         .swal2-cancel:hover {
@@ -1998,38 +2005,38 @@ if (!$timeline) {
         Swal.fire({
             title: 'Edit Timeline & Key Dates',
             html: `
-                <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Internal Planning Call</label>
-                        <input type="date" id="internal_planning_call_date" class="swal2-input" value="${timelineData.internal_planning_call_date}" style="width: 100%;">
+                <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 1.5rem; width: 100%; box-sizing: border-box;">
+                    <div style="width: 100%;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Internal Planning Call</label>
+                        <input type="date" id="internal_planning_call_date" class="swal2-input" value="${timelineData.internal_planning_call_date}">
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">IRL Due</label>
-                        <input type="date" id="irl_due_date" class="swal2-input" value="${timelineData.irl_due_date}" style="width: 100%;">
+                    <div style="width: 100%;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">IRL Due</label>
+                        <input type="date" id="irl_due_date" class="swal2-input" value="${timelineData.irl_due_date}">
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Client Planning Call</label>
-                        <input type="date" id="client_planning_call_date" class="swal2-input" value="${timelineData.client_planning_call_date}" style="width: 100%;">
+                    <div style="width: 100%;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Client Planning Call</label>
+                        <input type="date" id="client_planning_call_date" class="swal2-input" value="${timelineData.client_planning_call_date}">
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Fieldwork</label>
-                        <input type="date" id="fieldwork_date" class="swal2-input" value="${timelineData.fieldwork_date}" style="width: 100%;">
+                    <div style="width: 100%;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Fieldwork</label>
+                        <input type="date" id="fieldwork_date" class="swal2-input" value="${timelineData.fieldwork_date}">
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Leadsheet Due</label>
-                        <input type="date" id="leadsheet_date" class="swal2-input" value="${timelineData.leadsheet_date}" style="width: 100%;">
+                    <div style="width: 100%;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Leadsheet Due</label>
+                        <input type="date" id="leadsheet_date" class="swal2-input" value="${timelineData.leadsheet_date}">
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Draft Report Due</label>
-                        <input type="date" id="draft_report_due_date" class="swal2-input" value="${timelineData.draft_report_due_date}" style="width: 100%;">
+                    <div style="width: 100%;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Draft Report Due</label>
+                        <input type="date" id="draft_report_due_date" class="swal2-input" value="${timelineData.draft_report_due_date}">
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Final Report Due</label>
-                        <input type="date" id="final_report_date" class="swal2-input" value="${timelineData.final_report_date}" style="width: 100%;">
+                    <div style="width: 100%;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Final Report Due</label>
+                        <input type="date" id="final_report_date" class="swal2-input" value="${timelineData.final_report_date}">
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Archive Date</label>
-                        <input type="date" id="archive_date" class="swal2-input" value="${timelineData.archive_date}" style="width: 100%;">
+                    <div style="width: 100%;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Archive Date</label>
+                        <input type="date" id="archive_date" class="swal2-input" value="${timelineData.archive_date}">
                     </div>
                 </div>
             `,
