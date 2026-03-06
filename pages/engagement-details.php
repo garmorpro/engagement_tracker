@@ -928,29 +928,51 @@ if (!$engagement) {
             border: 1px solid var(--border-color);
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            padding: 1rem;
+            padding: 1rem 1.25rem;
         }
 
         body.dark-mode .swal2-toast {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
+        .swal2-toast.swal2-show {
+            animation: slideInLeft 0.3s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         .swal2-toast .swal2-title {
             color: var(--text-primary);
             font-size: 14px;
+            font-weight: 600;
             margin: 0;
             padding: 0;
+            line-height: 1.4;
         }
 
         .swal2-toast .swal2-icon {
-            width: 24px;
-            height: 24px;
-            min-width: 24px;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
             margin-right: 0.75rem;
         }
 
         .swal2-toast .swal2-icon.swal2-success {
             border-color: var(--success-green);
+            background: rgba(79, 198, 95, 0.1);
+        }
+
+        body.dark-mode .swal2-toast .swal2-icon.swal2-success {
+            background: rgba(79, 198, 95, 0.15);
         }
 
         .swal2-toast .swal2-icon.swal2-success [class*='swal2-success-circular-line'] {
@@ -959,6 +981,19 @@ if (!$engagement) {
 
         .swal2-toast .swal2-icon.swal2-success .swal2-success-ring {
             border: 2px solid var(--success-green);
+        }
+
+        .swal2-toast .swal2-icon.swal2-success .swal2-success-fix {
+            background: var(--bg-secondary);
+        }
+
+        body.dark-mode .swal2-toast .swal2-icon.swal2-success .swal2-success-fix {
+            background: var(--bg-secondary);
+        }
+
+        .swal2-popup.swal2-toast .swal2-timer-progress-bar {
+            background: var(--success-green);
+            height: 3px;
         }
 
         /* ========== MILESTONES SECTION ========== */
