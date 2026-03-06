@@ -834,6 +834,26 @@ if (!$engagement) {
             color: var(--primary-blue);
         }
 
+        /* ========== TWO COLUMN LAYOUT FIX ========== */
+        .two-column-wrapper {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            margin-top: 2rem;
+            align-items: start;
+        }
+
+        .left-column {
+            /* Team section will naturally be on the left */
+        }
+
+        .right-column {
+            display: grid;
+            grid-template-rows: auto auto;
+            gap: 2rem;
+        }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 1400px) {
             .timeline-grid {
@@ -880,8 +900,12 @@ if (!$engagement) {
             }
 
             /* Stack sections vertically on mobile */
-            body div[style*="grid-template-columns: 1fr 1.5fr 1.5fr"] {
+            .two-column-wrapper {
                 grid-template-columns: 1fr !important;
+            }
+
+            .right-column {
+                grid-template-rows: auto auto;
             }
         }
 
@@ -891,23 +915,24 @@ if (!$engagement) {
             margin-left: -2rem !important;
             width: calc(100vw - 1rem) !important;
         }
+
         .no-team-members {
             padding: 1rem;
-        background-color: var(--primary-color);
-        border: 1px dashed #ccc;
-        border-radius: 0.5rem;
-        text-align: center;
-        color: var(--text-secondary);
-        font-size: 14px;
-        font-style: italic;
-        margin-top: 0.5rem;
+            background-color: var(--primary-color);
+            border: 1px dashed #ccc;
+            border-radius: 0.5rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-style: italic;
+            margin-top: 0.5rem;
         }
 
         @keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
-}
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -1097,138 +1122,140 @@ if (!$engagement) {
     <hr>
 
     <!-- ========== TWO COLUMN LAYOUT ========== -->
-    <div style="display: grid; grid-template-columns: 380px 1fr; gap: 2rem; margin-bottom: 3rem; margin-top: 2rem;">
+    <div class="two-column-wrapper">
 
-        <!-- ========== TEAM SECTION (LEFT - FULL HEIGHT) ========== -->
-        <div class="team-section" style="position: relative;">
-    <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-        <div class="section-header-left">
-            <div class="section-icon team">
-                <i class="bi bi-people-fill"></i>
-            </div>
-            <h2 class="section-title">Team</h2>
-        </div>
+        <!-- ========== TEAM SECTION (LEFT COLUMN) ========== -->
+        <div class="left-column">
+            <div class="team-section" style="position: relative;">
+                <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <div class="section-header-left">
+                        <div class="section-icon team">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <h2 class="section-title">Team</h2>
+                    </div>
 
-        <?php
-        // Check if there is any DOL assigned
-        $hasDOL = false;
-        if (!empty($team)) {
-            foreach ($team as $member) {
-                if (!empty($member['emp_dol'])) {
-                    $hasDOL = true;
-                    break;
-                }
-            }
-        }
-        ?>
+                    <?php
+                    // Check if there is any DOL assigned
+                    $hasDOL = false;
+                    if (!empty($team)) {
+                        foreach ($team as $member) {
+                            if (!empty($member['emp_dol'])) {
+                                $hasDOL = true;
+                                break;
+                            }
+                        }
+                    }
+                    ?>
 
-        <?php if (!$hasDOL): ?>
-            <div style="
-                background-color: #ff4d4f;
-                color: white;
-                font-weight: 600;
-                padding: 0.25rem 0.6rem;
-                border-radius: 0.5rem;
-                font-size: 12px;
-                animation: pulse 1.5s infinite;
-            ">
-                No DOL Set
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; margin-top: 1.5rem; justify-content: center;">
-        <i class="bi bi-gear"></i> Manage DOL
-    </button>
-
-    <div class="team-members">
-    <?php if (!empty($team)): ?>
-
-        <?php
-        // -----------------------------
-        // Safely count unique audit types (ignore null/empty)
-        $auditTypes = array_filter(array_column($team, 'audit_type'), fn($v) => !is_null($v) && $v !== '');
-
-        // Group members by employee name and role
-        $groupedTeam = [];
-        foreach ($team as $member) {
-            $key = $member['emp_name'] . '|' . $member['role'];
-            if (!isset($groupedTeam[$key])) {
-                $groupedTeam[$key] = [
-                    'emp_name' => $member['emp_name'],
-                    'role' => $member['role'],
-                    'audit_types' => []
-                ];
-            }
-
-            // Only explode emp_dol if it's not empty
-            $dolArray = !empty($member['emp_dol']) ? explode(',', $member['emp_dol']) : [];
-            $auditType = $member['audit_type'] ?? 'General';
-            $groupedTeam[$key]['audit_types'][$auditType] = $dolArray;
-        }
-
-        // -----------------------------
-        // Sort grouped team by role priority
-        $roleOrder = ['manager' => 1, 'senior' => 2, 'staff' => 3];
-        uasort($groupedTeam, function($a, $b) use ($roleOrder) {
-            $roleA = strtolower($a['role'] ?? '');
-            $roleB = strtolower($b['role'] ?? '');
-            return ($roleOrder[$roleA] ?? 999) <=> ($roleOrder[$roleB] ?? 999);
-        });
-        ?>
-
-        <?php foreach ($groupedTeam as $member): ?>
-            <?php
-                // Get initials
-                $nameParts = explode(' ', $member['emp_name']);
-                $initials = '';
-                foreach ($nameParts as $part) { $initials .= strtoupper($part[0]); }
-
-                // Gradient colors by role
-                $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default
-                switch (strtolower($member['role'] ?? '')) {
-                    case 'manager': $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; break;
-                    case 'senior': $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)'; break;
-                    case 'staff': $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)'; break;
-                }
-            ?>
-            <div class="team-member" style="display: flex; gap: 0.75rem; align-items: flex-start;">
-                <div class="team-member-avatar" style="background: <?php echo $gradient; ?>; flex-shrink: 0;"><?php echo htmlspecialchars($initials); ?></div>
-                <div class="team-member-info" style="flex: 1; min-width: 0;">
-                    <div class="team-member-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
-                    <div class="team-member-title"><?php echo htmlspecialchars($member['role']); ?></div>
-
-                    <?php if (!empty($member['audit_types'])): ?>
-                        <?php foreach ($member['audit_types'] as $auditType => $tags): ?>
-                            <?php if (!empty($tags)): ?>
-                                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem; overflow-wrap: break-word; word-wrap: break-word;">
-                                    <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        <?php echo htmlspecialchars($auditType); ?> DOL
-                                    </div>
-                                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                        <?php foreach ($tags as $tag): ?>
-                                            <span class="team-member-tag" style="white-space: normal; overflow-wrap: break-word;"><?php echo htmlspecialchars(trim($tag)); ?></span>
-                                        <?php endforeach; ?>
-                                    </div>
-                                </div>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
+                    <?php if (!$hasDOL): ?>
+                        <div style="
+                            background-color: #ff4d4f;
+                            color: white;
+                            font-weight: 600;
+                            padding: 0.25rem 0.6rem;
+                            border-radius: 0.5rem;
+                            font-size: 12px;
+                            animation: pulse 1.5s infinite;
+                        ">
+                            No DOL Set
+                        </div>
                     <?php endif; ?>
                 </div>
-            </div>
-        <?php endforeach; ?>
 
-    <?php else: ?>
-        <div class="no-team-members">
-            <i class="bi bi-exclamation-triangle-fill" style="margin-right: 0.3rem;"></i>
-            No team assigned yet.
+                <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; margin-top: 1.5rem; justify-content: center;">
+                    <i class="bi bi-gear"></i> Manage DOL
+                </button>
+
+                <div class="team-members">
+                <?php if (!empty($team)): ?>
+
+                    <?php
+                    // -----------------------------
+                    // Safely count unique audit types (ignore null/empty)
+                    $auditTypes = array_filter(array_column($team, 'audit_type'), fn($v) => !is_null($v) && $v !== '');
+
+                    // Group members by employee name and role
+                    $groupedTeam = [];
+                    foreach ($team as $member) {
+                        $key = $member['emp_name'] . '|' . $member['role'];
+                        if (!isset($groupedTeam[$key])) {
+                            $groupedTeam[$key] = [
+                                'emp_name' => $member['emp_name'],
+                                'role' => $member['role'],
+                                'audit_types' => []
+                            ];
+                        }
+
+                        // Only explode emp_dol if it's not empty
+                        $dolArray = !empty($member['emp_dol']) ? explode(',', $member['emp_dol']) : [];
+                        $auditType = $member['audit_type'] ?? 'General';
+                        $groupedTeam[$key]['audit_types'][$auditType] = $dolArray;
+                    }
+
+                    // -----------------------------
+                    // Sort grouped team by role priority
+                    $roleOrder = ['manager' => 1, 'senior' => 2, 'staff' => 3];
+                    uasort($groupedTeam, function($a, $b) use ($roleOrder) {
+                        $roleA = strtolower($a['role'] ?? '');
+                        $roleB = strtolower($b['role'] ?? '');
+                        return ($roleOrder[$roleA] ?? 999) <=> ($roleOrder[$roleB] ?? 999);
+                    });
+                    ?>
+
+                    <?php foreach ($groupedTeam as $member): ?>
+                        <?php
+                            // Get initials
+                            $nameParts = explode(' ', $member['emp_name']);
+                            $initials = '';
+                            foreach ($nameParts as $part) { $initials .= strtoupper($part[0]); }
+
+                            // Gradient colors by role
+                            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default
+                            switch (strtolower($member['role'] ?? '')) {
+                                case 'manager': $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; break;
+                                case 'senior': $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)'; break;
+                                case 'staff': $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)'; break;
+                            }
+                        ?>
+                        <div class="team-member" style="display: flex; gap: 0.75rem; align-items: flex-start;">
+                            <div class="team-member-avatar" style="background: <?php echo $gradient; ?>; flex-shrink: 0;"><?php echo htmlspecialchars($initials); ?></div>
+                            <div class="team-member-info" style="flex: 1; min-width: 0;">
+                                <div class="team-member-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
+                                <div class="team-member-title"><?php echo htmlspecialchars($member['role']); ?></div>
+
+                                <?php if (!empty($member['audit_types'])): ?>
+                                    <?php foreach ($member['audit_types'] as $auditType => $tags): ?>
+                                        <?php if (!empty($tags)): ?>
+                                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem; overflow-wrap: break-word; word-wrap: break-word;">
+                                                <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                    <?php echo htmlspecialchars($auditType); ?> DOL
+                                                </div>
+                                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                                    <?php foreach ($tags as $tag): ?>
+                                                        <span class="team-member-tag" style="white-space: normal; overflow-wrap: break-word;"><?php echo htmlspecialchars(trim($tag)); ?></span>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+
+                <?php else: ?>
+                    <div class="no-team-members">
+                        <i class="bi bi-exclamation-triangle-fill" style="margin-right: 0.3rem;"></i>
+                        No team assigned yet.
+                    </div>
+                <?php endif; ?>
+                </div>
+            </div>
         </div>
-    <?php endif; ?>
-    </div>
-</div>
 
         <!-- ========== RIGHT COLUMN (Timeline & Milestones Stacked) ========== -->
-        <div style="display: grid; grid-template-rows: auto auto; gap: 2rem;">
+        <div class="right-column">
 
             <!-- ========== TIMELINE & KEY DATES SECTION (TOP RIGHT) ========== -->
             <div class="timeline-section">
@@ -1247,9 +1274,7 @@ if (!$engagement) {
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
 
                 <?php
-// -----------------------------
 // Your existing renderTimelineStatus function stays exactly the same
-// -----------------------------
 function renderTimelineStatus($date, $completed) {
 
     if (!$date) {
@@ -1290,18 +1315,12 @@ function renderTimelineStatus($date, $completed) {
     }
 }
 
-// -----------------------------
-// Current engagement you are viewing
-// -----------------------------
-$currentEngagementId = $engagementId; // assume set
+$currentEngagementId = $engagementId;
 
-// Initialize timeline
 $timeline = null;
 
-// Get all timelines
 $allTimelineData = getAllTimelineData($conn);
 
-// Find the one for the current engagement
 foreach ($allTimelineData as $row) {
     if ($row['engagement_idno'] == $currentEngagementId) {
         $timeline = $row;
@@ -1309,9 +1328,6 @@ foreach ($allTimelineData as $row) {
     }
 }
 
-// -----------------------------
-// If no timeline exists, create "dummy" values so each call outputs Not Scheduled
-// -----------------------------
 if (!$timeline) {
     $timeline = [
         'internal_planning_call_date' => null,
@@ -1335,13 +1351,10 @@ if (!$timeline) {
 
 ?>
 
-
                     <div class="timeline-item">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> INTERNAL PLANNING CALL
                         </div>
-                        <!-- <div class="timeline-date">Mar 14, 2026</div>
-                        <div class="timeline-status">9d remaining</div> -->
                         <?php
                         renderTimelineStatus(
                             $timeline['internal_planning_call_date'],
