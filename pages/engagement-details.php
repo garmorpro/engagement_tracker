@@ -929,7 +929,7 @@ if (!$engagement) {
             border: 2px solid var(--border-color);
             margin-top: -25px !important;
             margin-left: -2rem !important;
-            width: calc(100vw - 1rem) !important;
+            width: 100% !important;
         }
 
         .no-team-members {
