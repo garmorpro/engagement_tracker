@@ -11,12 +11,12 @@ $engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'arc
 $archivedCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'archived'));
 
 // Calculate status counts
-$totalCount = count($engagements);
-$inProgressCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'in-progress'));
-$planningCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'planning'));
-$reviewCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'in-review'));
-$completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'complete'));
-$completeCount = count(array_filter($engagements, fn($e) => $e['eng_status'] === 'complete'));
+$totalCount = count($allEngagements);
+$inProgressCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'in-progress'));
+$planningCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'planning'));
+$reviewCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'in-review'));
+$completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'complete'));
+$completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'complete'));
 ?>
 
 <!DOCTYPE html>
