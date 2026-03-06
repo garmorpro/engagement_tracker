@@ -1489,7 +1489,7 @@ if (!$timeline) {
                         if (!empty($milestones)) {
                             $completedCount = 0;
                             foreach ($milestones as $milestone) {
-                                if (!empty($milestone['is_completed'])) {
+                                if ($milestone['is_completed'] === 'Y') {
                                     $completedCount++;
                                 }
                             }
@@ -1521,7 +1521,7 @@ if (!$timeline) {
                         ?>
                         <?php foreach ($milestones as $milestone): ?>
                             <?php
-                                $isCompleted = !empty($milestone['is_completed']);
+                                $isCompleted = ($milestone['is_completed'] === 'Y');
                                 
                                 // Safely handle the date - check for null, empty, or invalid dates
                                 $dueDateRaw = $milestone['due_date'] ?? null;
