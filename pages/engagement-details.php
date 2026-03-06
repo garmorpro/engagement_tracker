@@ -889,29 +889,29 @@ if (!$engagement) {
         }
 
         @media (max-width: 768px) {
-            main-container {
+            .main-container {
                 padding: 1.5rem;
             }
 
-            engagement-title {
+            .engagement-title {
                 font-size: 24px;
             }
 
-            engagement-info-grid {
+            .engagement-info-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
 
-            engagement-meta {
+            .engagement-meta {
                 flex-direction: column;
             }
 
-            top-actions {
+            .top-actions {
                 width: 100%;
                 order: -1;
             }
 
-            btn-edit {
+            .btn-edit {
                 flex: 1;
             }
 
@@ -1622,7 +1622,7 @@ if (!$timeline) {
             const newStatus = isCurrentlyCompleted ? 'N' : 'Y';
 
             try {
-                const response = await fetch('./update-milestone.php', {
+                const response = await fetch('update-milestone.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
