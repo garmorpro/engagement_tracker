@@ -38,13 +38,6 @@ foreach ($allTimelineData as $row) {
     }
 }
 
-// Now $timeline is either null (no timeline exists) or the timeline for this engagement
-if ($timeline) {
-    echo "Timeline found for engagement ID: " . htmlspecialchars($timeline['engagement_idno']);
-} else {
-    echo "No timeline exists for engagement ID: " . htmlspecialchars($currentEngagementId);
-}
-
 
 if (!$engagement) {
     header('Location: dashboard.php');
@@ -1165,10 +1158,71 @@ if (!$engagement) {
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
 
                 <?php
-// Get the timeline for the current engagement
-$timeline = getTimelineByEngagement($conn, $engagementId);
+// -----------------------------
+// Your existing renderTimelineStatus function stays exactly the same
+// -----------------------------
+function renderTimelineStatus($date, $completed) {
 
-// If no timeline exists, create a "dummy" timeline with all dates/completions null
+    if (!$date) {
+        echo '<div class="timeline-date">—</div>';
+        echo '<div class="timeline-status">Not scheduled</div>';
+        return;
+    }
+
+    $formattedDate = date("M j, Y", strtotime($date));
+
+    $today = new DateTime();
+    $dueDate = new DateTime($date);
+
+    $diff = $today->diff($dueDate);
+    $days = $diff->days;
+
+    echo '<div class="timeline-date">'.htmlspecialchars($formattedDate).'</div>';
+
+    if (!empty($completed)) {
+
+        echo '<div class="timeline-status completed">
+                <i class="bi bi-check-circle-fill"></i> Completed
+              </div>';
+
+    } else {
+
+        if ($today <= $dueDate) {
+
+            echo '<div class="timeline-status">'.$days.'d remaining</div>';
+
+        } else {
+
+            echo '<div class="timeline-status overdue">
+                    <i class="bi bi-x-circle-fill"></i> '.$days.'d overdue
+                  </div>';
+
+        }
+    }
+}
+
+// -----------------------------
+// Current engagement you are viewing
+// -----------------------------
+$currentEngagementId = $engagementId; // assume set
+
+// Initialize timeline
+$timeline = null;
+
+// Get all timelines
+$allTimelineData = getAllTimelineData($conn);
+
+// Find the one for the current engagement
+foreach ($allTimelineData as $row) {
+    if ($row['engagement_idno'] == $currentEngagementId) {
+        $timeline = $row;
+        break;
+    }
+}
+
+// -----------------------------
+// If no timeline exists, create "dummy" values so each call outputs Not Scheduled
+// -----------------------------
 if (!$timeline) {
     $timeline = [
         'internal_planning_call_date' => null,
@@ -1190,7 +1244,9 @@ if (!$timeline) {
     ];
 }
 
-// Now render all the timeline items
+// -----------------------------
+// Render each timeline step
+// -----------------------------
 renderTimelineStatus($timeline['internal_planning_call_date'], $timeline['internal_planning_call_completed_at']);
 renderTimelineStatus($timeline['irl_due_date'], $timeline['irl_completed_at']);
 renderTimelineStatus($timeline['client_planning_call_date'], $timeline['client_planning_call_completed_at']);
