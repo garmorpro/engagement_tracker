@@ -5,7 +5,7 @@ require_once 'includes/init.php';
 
 // Fetch active service accounts
 $result = $conn->query("
-    SELECT `user_id`, `name`, `email`, `passcode`, `role`
+    SELECT *
     FROM `service_accounts`
     WHERE `status` = 'active'
     ORDER BY `name`
