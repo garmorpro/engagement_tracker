@@ -1277,7 +1277,7 @@ function renderTimelineStatus($date, $completed) {
                         </div>
                         <?php
                         renderTimelineStatus(
-                            $timeline['draft_report_date'],
+                            $timeline['draft_report_due_date'],
                             $timeline['draft_report_completed_at']
                         );
                         ?>
