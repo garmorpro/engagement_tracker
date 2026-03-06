@@ -470,6 +470,265 @@ if (!$engagement) {
             background: rgba(68, 135, 252, 0.05);
         }
 
+        /* ========== SECTION HEADERS ========== */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .section-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .section-icon.team {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+
+        .section-icon.timeline {
+            background: rgba(33, 150, 243, 0.2);
+            color: #2196F3;
+        }
+
+        .section-icon.milestones {
+            background: rgba(160, 77, 253, 0.2);
+            color: #A04DFD;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .manage-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .manage-btn:hover {
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        /* ========== TEAM SECTION ========== */
+        .team-members {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .team-member {
+            background: var(--gray-100);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .team-member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .team-member-info {
+            flex: 1;
+        }
+
+        .team-member-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .team-member-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .team-member-tags {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .team-member-tag {
+            background: rgba(68, 135, 252, 0.15);
+            color: var(--primary-blue);
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* ========== TIMELINE SECTION ========== */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .timeline-item {
+            background: var(--gray-100);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .timeline-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .timeline-date {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .timeline-status.completed {
+            color: var(--success-green);
+        }
+
+        .timeline-status.overdue {
+            color: var(--danger-red);
+        }
+
+        /* ========== MILESTONES SECTION ========== */
+        .milestones-header-right {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .milestone-stat {
+            background: var(--gray-100);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .milestone-progress {
+            background: rgba(160, 77, 253, 0.15);
+            color: #A04DFD;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .milestones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .milestone-item {
+            background: var(--gray-100);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .milestone-checkbox {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .milestone-checkbox.completed {
+            background: rgba(79, 198, 95, 0.2);
+            color: var(--success-green);
+        }
+
+        .milestone-checkbox.pending {
+            background: rgba(220, 220, 220, 0.3);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+        }
+
+        .milestone-content {
+            flex: 1;
+        }
+
+        .milestone-title {
+            font-size: 12px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .milestone-title.completed {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .milestone-due {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
         /* ========== DARK MODE BUTTON ========== */
         .dark-mode-btn {
             position: fixed;
@@ -543,12 +802,20 @@ if (!$engagement) {
             .btn-edit {
                 flex: 1;
             }
+
+            .timeline-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .milestones-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-   hr {
-    margin-left: -2rem !important;
-    width: calc(100vw - 1rem) !important;
-}
+        hr {
+            margin-left: -2rem !important;
+            width: calc(100vw - 1rem) !important;
+        }
     </style>
 </head>
 <body>
@@ -717,9 +984,251 @@ if (!$engagement) {
 
     <hr>
 
-    <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam rhoncus euismod enim, ut commodo orci commodo venenatis. Nam erat tortor, mollis vitae ex interdum, egestas tincidunt turpis. Fusce aliquet est quis ante euismod ultricies. Morbi nibh ligula, porta et fermentum ac, dignissim in lacus. Donec quis accumsan ante, eget feugiat ante. Mauris efficitur odio magna, at auctor libero rhoncus quis. Aliquam erat volutpat. Proin bibendum elit at ligula sagittis, id interdum velit porttitor. Praesent venenatis arcu ac metus ultrices rutrum. Suspendisse potenti. Donec orci neque, auctor in metus et, mollis lacinia purus. Maecenas a augue eros. Praesent ullamcorper ultricies felis eget facilisis. Donec sodales est sed ipsum elementum tristique. Aenean at diam consectetur, luctus risus nec, fringilla ligula. Nam sit amet leo lectus. Integer pulvinar erat orci, sed tempus dui faucibus sit amet. Nam in nibh consectetur ex vehicula luctus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Curabitur ornare consequat lorem, eu aliquet magna sollicitudin ut. Sed elementum, nibh a dapibus condimentum, sapien magna maximus odio, eget scelerisque dolor erat eget augue. Aliquam consequat ligula et felis imperdiet blandit. Morbi vehicula arcu vitae felis eleifend, ac ornare ligula luctus. Vivamus vehicula lectus sed eleifend sollicitudin. Etiam vel odio eu ligula sollicitudin tristique ut nec metus. In fringilla sit amet purus at gravida. Vestibulum in tortor vitae mi sagittis cursus sed eget purus. Aenean ut augue dui. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse vitae quam finibus metus posuere consequat. Curabitur at egestas lacus. Nam vel quam ante. Aliquam non justo vestibulum, ultricies velit a, tempor metus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Suspendisse bibendum vulputate tortor, non sollicitudin nisi facilisis in. Donec bibendum sed diam venenatis tempus. Nam dictum tempor lectus sed feugiat. Fusce sollicitudin, purus nec scelerisque dapibus, lectus orci ornare metus, ut faucibus massa eros nec mauris. Sed volutpat est nec aliquam sodales. Curabitur tincidunt sodales tellus et varius. Nulla ex lacus, commodo nec turpis quis, egestas imperdiet nibh. Integer vel tortor libero. Fusce id sollicitudin felis. Proin sapien est, vehicula in libero quis, malesuada sollicitudin lacus. Maecenas augue enim, rhoncus vel eleifend ut, molestie nec quam. Nunc ullamcorper facilisis augue ac tincidunt. Aliquam at volutpat sem. Vestibulum finibus, felis sed ultrices convallis, ligula erat finibus elit, vitae accumsan risus sapien non felis. Curabitur aliquam arcu a elementum ultricies. Phasellus auctor mi sit amet pellentesque vehicula. Vivamus vitae vestibulum augue. Aenean rhoncus et odio ac malesuada. Vestibulum vitae leo a dolor iaculis semper. Nunc auctor tellus id quam luctus, eget tempus arcu elementum. Ut sodales lorem at quam luctus convallis. Phasellus a mattis erat, at accumsan velit. In nec molestie orci, vel malesuada velit. Phasellus id bibendum est, in vestibulum nunc. Etiam tincidunt tellus ut turpis vulputate eleifend. Fusce malesuada posuere nunc et vestibulum. Vivamus sed cursus erat, vitae laoreet lorem. In eu iaculis velit. Donec tristique tellus eu nunc pretium, consequat pharetra lacus pharetra. Donec ultricies enim ut nulla lobortis, tempor vehicula urna convallis. Aenean ut facilisis tellus. Sed faucibus lorem a egestas consequat. Quisque sagittis aliquet pellentesque. In rutrum nulla dui, nec mattis mauris pharetra et. Sed et nunc tristique, facilisis elit ut, pretium urna. Proin pretium tortor metus, sed varius lorem interdum eget. Mauris sem felis, fringilla vel condimentum sed, interdum sed ex. Nullam egestas varius massa, eu aliquam enim aliquam sed. Maecenas faucibus odio sed lectus laoreet auctor. In molestie velit a rhoncus cursus. Nulla lacinia nisl ipsum, eget dictum elit efficitur non. Vivamus fringilla, dui luctus consequat tempor, nisl risus cursus massa, a ullamcorper eros libero in ante. Nulla scelerisque scelerisque risus eu laoreet. Nullam consequat sapien enim, eget tempor odio imperdiet et. Fusce blandit sagittis vulputate. Praesent vel arcu id velit varius volutpat in ac magna. Fusce vitae fringilla tortor. Mauris tincidunt posuere lacus vitae placerat. Curabitur ut mauris vitae ex tincidunt scelerisque non vel mi. Vestibulum auctor nisl venenatis, sodales elit et, egestas lectus. Duis suscipit pellentesque lorem, nec posuere ipsum tincidunt a. Nunc vulputate ornare justo quis volutpat. In nec felis varius nisi mollis fermentum finibus vitae nunc. Nam vel nibh fermentum, molestie tortor vel, volutpat metus. Donec commodo, nibh nec tristique rhoncus, urna nisi aliquet dui, id congue tellus enim eleifend diam. Suspendisse vehicula nisi eu arcu lobortis pellentesque. Praesent sed cursus mi. Donec bibendum metus eget sodales tincidunt. Mauris quis erat et tortor sodales semper. Donec tincidunt, sem eget dignissim sollicitudin, dolor magna blandit enim, eget pellentesque dui nisi in nisi. Maecenas a ullamcorper nulla, at rhoncus libero. Pellentesque commodo elit vel diam egestas commodo. Ut quis mi placerat, dictum urna sed, congue tellus. Mauris interdum pretium augue sit amet molestie. Etiam vel metus vitae nisl sagittis malesuada eget sed lacus. Aenean quis congue arcu. Phasellus feugiat quis tortor quis finibus. Nulla semper ultricies sapien non dapibus. Fusce pulvinar consectetur urna, a mattis orci condimentum et. Vivamus magna nulla, aliquam a ullamcorper vulputate, semper vel magna. Fusce et imperdiet mauris. Sed volutpat pellentesque ex, ac lacinia dui consectetur vel. Donec a urna quam. In in diam sit amet odio cursus congue sit amet id ante. Praesent at facilisis est. Etiam cursus egestas dictum. Donec venenatis dignissim enim, eu tempus dolor volutpat non. Donec dictum euismod risus, vel tristique diam pharetra id. Sed pellentesque, ligula dignissim euismod tristique, lectus orci venenatis mi, id mattis nisl mi ac risus. Aenean dapibus rutrum est nec dignissim. Nulla suscipit at diam sed condimentum. Integer dictum commodo ultricies. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam ultrices, diam a luctus tempor, arcu orci condimentum justo, in dapibus nunc tellus laoreet erat. Cras hendrerit bibendum hendrerit. Sed gravida lorem eget lacus fringilla, vitae faucibus lorem pharetra. Sed non velit ac est finibus lobortis nec vitae purus. Suspendisse potenti. Nullam augue justo, feugiat non dapibus at, convallis at turpis. Proin ultricies suscipit feugiat. Donec efficitur feugiat enim sit amet venenatis. Donec molestie quis eros et pellentesque. Vestibulum in suscipit eros, nec pretium quam. Curabitur scelerisque leo ut dolor varius placerat. Pellentesque massa libero, aliquet ut lectus pharetra, pretium pulvinar eros. Proin condimentum turpis eu pulvinar blandit. Sed vel mi pulvinar, tristique purus sit amet, varius risus. Phasellus et nunc neque. Sed hendrerit condimentum orci vitae auctor. Nulla consequat sagittis tortor, sed auctor quam interdum ut. Suspendisse sit amet nisi fringilla tellus lacinia vulputate. Proin sodales tellus risus, non dapibus metus ultricies id. Morbi mollis vitae neque aliquam convallis. Mauris dictum nisi elit. Sed non congue tellus, consequat posuere libero. Proin efficitur aliquam turpis at elementum. In ligula erat, egestas in mattis quis, commodo ut neque. Suspendisse pellentesque mattis lectus. Nam vel eros viverra erat interdum auctor eget eget dolor. Donec nec lectus vel nisl efficitur blandit. Nullam vitae nibh id mi tempus commodo ac quis nibh. Vestibulum pellentesque ex in egestas sodales. Donec varius, odio a pulvinar hendrerit, quam elit tempor sem, et pellentesque nunc lorem sit amet lectus. Proin auctor pretium tellus, vitae dignissim nisl hendrerit in. Praesent fermentum eu metus in dapibus. Sed ligula purus, fermentum ac libero in, placerat auctor lacus. Nunc pharetra est pharetra aliquam gravida. Sed at fermentum dui. Phasellus ac quam est. Mauris sollicitudin dolor eget erat tempus viverra. Sed venenatis risus et convallis faucibus. Aliquam scelerisque erat lectus, in efficitur tellus luctus quis. Nulla neque justo, lacinia eget enim nec, imperdiet venenatis ante. In ornare tellus nec dolor blandit porttitor. Nulla pretium neque sed semper efficitur. Nam molestie, est lobortis porttitor ultrices, lorem leo luctus felis, eu porta nunc diam in elit. Nulla vulputate, dui quis tempus facilisis, risus augue placerat odio, eu maximus libero felis blandit dolor. Sed auctor maximus sem ac sodales. Sed vulputate eget erat ut convallis. Phasellus porta neque quis vulputate tincidunt. Donec accumsan nulla molestie commodo feugiat. Proin commodo, risus non porta viverra, libero lectus aliquam velit, in accumsan quam leo eget risus. Nulla tristique urna eget ligula varius, at mollis enim lacinia. In hac habitasse platea dictumst. Donec posuere dui eu neque auctor, vel fermentum arcu varius. Nullam vel ex congue, varius felis ac, euismod erat. Donec finibus vitae orci id ultrices. Praesent ut eros rutrum, elementum enim ut, euismod est. Donec sagittis faucibus augue. Praesent suscipit laoreet cursus. Donec bibendum augue vel cursus pharetra. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Cras ut justo lectus. Donec sed orci rutrum, finibus justo sed, vehicula libero. Sed at ex augue. Duis blandit tincidunt sapien sed mattis. Pellentesque non tristique magna. Vivamus purus dui, pretium non quam vitae, laoreet ornare dolor. Sed vitae risus orci. In malesuada ex ut nibh commodo, id imperdiet elit sollicitudin. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In iaculis, odio luctus tristique porta, felis ligula varius diam, nec lacinia enim ligula non enim. Curabitur a massa sed risus molestie fermentum quis id quam. Maecenas vulputate aliquet porttitor. Vivamus et porta nunc, at ultrices velit. Mauris at ante nibh. Donec sit amet ipsum aliquet eros pulvinar feugiat at a quam. Nunc tincidunt tortor in tortor vestibulum, vitae feugiat mi condimentum. Donec cursus ipsum sed massa faucibus maximus. Ut suscipit tellus sit amet mi elementum interdum. Sed justo eros, bibendum eget pharetra efficitur, sodales tempus diam. Etiam venenatis, risus vel viverra facilisis, arcu ipsum venenatis erat, eu ullamcorper urna sapien accumsan metus. Curabitur efficitur purus quis mattis euismod. Nullam tincidunt, odio quis scelerisque fringilla, nibh mi facilisis dolor, et vulputate leo elit eget orci. Vivamus est nulla, posuere ac eleifend quis, sodales et neque. Quisque feugiat, nulla in faucibus tincidunt, velit ante porta turpis, nec hendrerit lacus tortor semper ipsum. Donec sed tortor tincidunt nunc molestie congue sed et nisl. Etiam nec fermentum dolor, vitae porttitor ex. Nullam facilisis tempor dui eu posuere. Donec sollicitudin arcu vel efficitur mollis. Aenean aliquam nisl sit amet efficitur pretium. Suspendisse suscipit nunc facilisis, iaculis nibh id, suscipit sapien. Donec ipsum mauris, pharetra bibendum sem at, volutpat viverra nisl. Nullam mauris turpis, commodo nec tellus quis, ullamcorper varius ipsum. Mauris pharetra sem ante, posuere euismod eros iaculis id. Nullam sit amet facilisis lectus. Praesent dignissim viverra nisl, vel laoreet est faucibus at. Donec at nulla consequat, posuere est non, molestie massa. Duis nec eleifend turpis. Maecenas vulputate ipsum vitae risus feugiat maximus. Aenean vitae bibendum nisl. Nullam quis lacus quis dolor ultricies dictum. Nunc id enim molestie, efficitur leo id, porta lacus. Mauris volutpat mi vitae lorem porta dignissim. Donec feugiat, odio non eleifend laoreet, orci dui rhoncus ipsum, eget fermentum turpis eros eu massa. Vestibulum ut dolor eu dui fringilla scelerisque. Nullam iaculis nulla sed est ullamcorper sodales. Pellentesque sem velit, commodo id faucibus ac, porttitor id sapien. Nunc efficitur sem sit amet lacinia blandit. Aenean euismod felis ut vehicula euismod. Cras enim lorem, venenatis quis sodales quis, ultrices in augue. Mauris tortor magna, luctus eget pellentesque a, mattis at eros. Donec in nunc luctus, tincidunt nisl at, vulputate diam. Sed vehicula pulvinar elit id consequat. Vivamus malesuada tristique elit vel blandit. Fusce quis lorem id lectus lobortis semper at pretium urna. Integer in dolor vitae mauris auctor accumsan quis non magna. Morbi justo massa, condimentum quis vulputate id, imperdiet et purus. Fusce accumsan mi orci, nec tristique quam commodo a. Vestibulum lobortis id elit sed tempus. Sed luctus malesuada metus cursus sodales. Fusce tempus nisl dolor, ac accumsan ante vestibulum sed. Nullam in pharetra orci, id scelerisque metus. Fusce massa mi, venenatis sed viverra sit amet, tristique in sapien. Mauris eros nisi, lobortis ut orci sit amet, aliquam ornare nisi. Nulla euismod lacus eu mollis fringilla. Quisque eget massa vitae erat tincidunt ultricies. Proin a ligula et eros facilisis luctus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris elit augue, dictum ut iaculis suscipit, mattis a urna. Mauris placerat, mi a vestibulum auctor, tellus leo sagittis metus, a rhoncus risus enim sed dui. Nam faucibus sem sed justo tristique bibendum. Cras et ipsum eget leo consequat pharetra. Cras nec vehicula magna. Vivamus malesuada purus ac pellentesque commodo. Proin ac neque vel massa gravida cursus id ac ante. Vivamus dictum euismod justo quis sagittis. Nunc vehicula erat at sapien lobortis, a interdum mi semper. Morbi eu enim blandit, maximus sapien vitae, consectetur augue. Curabitur varius lacinia ipsum ac imperdiet. Morbi non tincidunt nibh. Aenean tincidunt, velit non aliquam mollis, massa tellus sollicitudin elit, a pretium velit arcu in eros. Aliquam facilisis, lacus ac feugiat laoreet, enim libero commodo nibh, vitae imperdiet dolor nisl et metus. Duis finibus augue non magna rutrum ultricies. Ut finibus erat at cursus iaculis. Ut sit amet tellus id nulla efficitur malesuada. Donec mattis ipsum non mauris blandit, eget tincidunt quam pretium. Sed luctus porta velit, non lacinia dolor iaculis a. Integer et odio non tellus dapibus placerat. Nunc eget orci in augue ultrices scelerisque. Sed eget placerat ipsum. Aliquam nec metus vel enim mollis elementum ut eu nulla. Curabitur tempus eros vitae interdum luctus. Suspendisse potenti. Morbi a nibh auctor, feugiat ante non, laoreet nisi. Mauris iaculis turpis luctus ipsum varius imperdiet. Nulla facilisi. Cras posuere suscipit elit a malesuada. In ac dolor eget diam rutrum porttitor a at nulla. Quisque ultrices ante eu eros fringilla dapibus. Nulla placerat diam id sem porta consequat. Maecenas ut ex at est egestas laoreet ut id justo. Integer et auctor urna. Vestibulum tellus ex, commodo sed est vitae, fermentum suscipit arcu. Nam non elementum diam. Pellentesque sed erat risus. Donec sit amet nibh et odio suscipit euismod quis ac tellus. Aenean placerat dolor in quam dignissim, a tempor urna commodo. Nullam lectus turpis, faucibus sit amet dui a, blandit gravida metus. In imperdiet ac odio in mollis. Ut et cursus ligula, quis sodales odio. Proin vitae sem eu quam mattis commodo.
-    </p>
+    <!-- ========== TEAM SECTION ========== -->
+    <div style="margin-bottom: 3rem;">
+        <div class="section-header">
+            <div class="section-header-left">
+                <div class="section-icon team">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <h2 class="section-title">Team</h2>
+            </div>
+            <button class="manage-btn">
+                <i class="bi bi-gear"></i> Manage DOL
+            </button>
+        </div>
+
+        <div class="team-members">
+            <!-- John Smith -->
+            <div class="team-member">
+                <div class="team-member-avatar" style="background: linear-gradient(135deg, #4487FC, #4DA6FF);">JS</div>
+                <div class="team-member-info">
+                    <div class="team-member-name">John Smith</div>
+                    <div class="team-member-title">Manager</div>
+                </div>
+            </div>
+
+            <!-- Sarah Johnson -->
+            <div class="team-member">
+                <div class="team-member-avatar" style="background: linear-gradient(135deg, #A04DFD, #D67FFF);">SJ</div>
+                <div class="team-member-info">
+                    <div class="team-member-name">Sarah Johnson</div>
+                    <div class="team-member-title">Senior 1</div>
+                    <div class="team-member-tags">
+                        <span class="team-member-tag">CC1</span>
+                        <span class="team-member-tag">CC2</span>
+                        <span class="team-member-tag">CC3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- David Martinez -->
+            <div class="team-member">
+                <div class="team-member-avatar" style="background: linear-gradient(135deg, #4DBFB8, #6FD9D2);">DM</div>
+                <div class="team-member-info">
+                    <div class="team-member-name">David Martinez</div>
+                    <div class="team-member-title">Senior 2</div>
+                    <div class="team-member-tags">
+                        <span class="team-member-tag">CC4</span>
+                        <span class="team-member-tag">CC5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mike Davis -->
+            <div class="team-member">
+                <div class="team-member-avatar" style="background: linear-gradient(135deg, #F17313, #FFB347);">MD</div>
+                <div class="team-member-info">
+                    <div class="team-member-name">Mike Davis</div>
+                    <div class="team-member-title">Staff 1</div>
+                    <div class="team-member-tags">
+                        <span class="team-member-tag">CC6</span>
+                        <span class="team-member-tag">CC7</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jennifer White -->
+            <div class="team-member">
+                <div class="team-member-avatar" style="background: linear-gradient(135deg, #4FC65F, #7FDD8A);">JW</div>
+                <div class="team-member-info">
+                    <div class="team-member-name">Jennifer White</div>
+                    <div class="team-member-title">Staff 2</div>
+                    <div class="team-member-tags">
+                        <span class="team-member-tag">CC8</span>
+                        <span class="team-member-tag">CC9</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== TIMELINE & KEY DATES SECTION ========== -->
+    <div style="margin-bottom: 3rem;">
+        <div class="section-header">
+            <div class="section-header-left">
+                <div class="section-icon timeline">
+                    <i class="bi bi-calendar2"></i>
+                </div>
+                <h2 class="section-title">Timeline & Key Dates</h2>
+            </div>
+            <button class="manage-btn">
+                <i class="bi bi-gear"></i> Manage
+            </button>
+        </div>
+
+        <div class="timeline-grid">
+            <!-- Internal Planning -->
+            <div class="timeline-item">
+                <div class="timeline-label">Internal Planning</div>
+                <div class="timeline-date">Nov 9, 2025</div>
+                <div class="timeline-status completed">
+                    <i class="bi bi-check-circle-fill"></i> Completed
+                </div>
+            </div>
+
+            <!-- URL Due -->
+            <div class="timeline-item">
+                <div class="timeline-label">URL Due</div>
+                <div class="timeline-date">Mar 14, 2026</div>
+                <div class="timeline-status">9d remaining</div>
+            </div>
+
+            <!-- Client Planning Call -->
+            <div class="timeline-item">
+                <div class="timeline-label">Client Planning Call</div>
+                <div class="timeline-date">Nov 14, 2025</div>
+                <div class="timeline-status completed">
+                    <i class="bi bi-check-circle-fill"></i> Completed
+                </div>
+            </div>
+
+            <!-- Fieldwork -->
+            <div class="timeline-item">
+                <div class="timeline-label">Fieldwork</div>
+                <div class="timeline-date">Nov 30, 2025</div>
+                <div class="timeline-status completed">
+                    <i class="bi bi-check-circle-fill"></i> Completed
+                </div>
+            </div>
+
+            <!-- Leadsheet Due -->
+            <div class="timeline-item">
+                <div class="timeline-label">Leadsheet Due</div>
+                <div class="timeline-date">Jan 24, 2026</div>
+                <div class="timeline-status overdue">
+                    <i class="bi bi-x-circle-fill"></i> 40d overdue
+                </div>
+            </div>
+
+            <!-- Draft Report Due -->
+            <div class="timeline-item">
+                <div class="timeline-label">Draft Report Due</div>
+                <div class="timeline-date">Feb 19, 2026</div>
+                <div class="timeline-status overdue">
+                    <i class="bi bi-x-circle-fill"></i> 14d overdue
+                </div>
+            </div>
+
+            <!-- Final Report Due -->
+            <div class="timeline-item">
+                <div class="timeline-label">Final Report Due</div>
+                <div class="timeline-date">Mar 14, 2026</div>
+                <div class="timeline-status">9d remaining</div>
+            </div>
+
+            <!-- Archive Date -->
+            <div class="timeline-item">
+                <div class="timeline-label">Archive Date</div>
+                <div class="timeline-date">Mar 31, 2026</div>
+                <div class="timeline-status">26d remaining</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MILESTONES SECTION ========== -->
+    <div style="margin-bottom: 3rem;">
+        <div class="section-header">
+            <div class="section-header-left">
+                <div class="section-icon milestones">
+                    <i class="bi bi-flag-fill"></i>
+                </div>
+                <h2 class="section-title">Milestones</h2>
+            </div>
+            <div class="milestones-header-right">
+                <span class="milestone-stat">3/6</span>
+                <span class="milestone-progress">50% Complete</span>
+                <button class="manage-btn">
+                    <i class="bi bi-gear"></i> Manage
+                </button>
+            </div>
+        </div>
+
+        <div class="milestones-grid">
+            <!-- Kickoff meeting completed -->
+            <div class="milestone-item">
+                <div class="milestone-checkbox completed">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="milestone-content">
+                    <div class="milestone-title completed">Kickoff meeting completed</div>
+                    <div class="milestone-due">Due: Oct 31, 2025</div>
+                </div>
+            </div>
+
+            <!-- Risk assessment finalized -->
+            <div class="milestone-item">
+                <div class="milestone-checkbox completed">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="milestone-content">
+                    <div class="milestone-title completed">Risk assessment finalized</div>
+                    <div class="milestone-due">Due: Nov 14, 2025</div>
+                </div>
+            </div>
+
+            <!-- Fieldwork completed -->
+            <div class="milestone-item">
+                <div class="milestone-checkbox completed">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="milestone-content">
+                    <div class="milestone-title completed">Fieldwork completed</div>
+                    <div class="milestone-due">Due: Dec 14, 2025</div>
+                </div>
+            </div>
+
+            <!-- Draft report prepared -->
+            <div class="milestone-item">
+                <div class="milestone-checkbox pending">
+                </div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Draft report prepared</div>
+                    <div class="milestone-due">Due: Feb 19, 2026</div>
+                </div>
+            </div>
+
+            <!-- Management response received -->
+            <div class="milestone-item">
+                <div class="milestone-checkbox pending">
+                </div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Management response received</div>
+                    <div class="milestone-due">Due: Feb 28, 2026</div>
+                </div>
+            </div>
+
+            <!-- Final report issued -->
+            <div class="milestone-item">
+                <div class="milestone-checkbox pending">
+                </div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Final report issued</div>
+                    <div class="milestone-due">Due: Mar 14, 2026</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Dark Mode Button -->
     <button class="dark-mode-btn" id="darkModeBtn" title="Toggle dark mode">
