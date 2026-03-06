@@ -933,6 +933,7 @@ if (!$engagement) {
 
         body.dark-mode .swal2-toast {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border-color: rgba(79, 198, 95, 0.3);
         }
 
         .swal2-toast.swal2-show {
@@ -964,15 +965,19 @@ if (!$engagement) {
             height: 28px;
             min-width: 28px;
             margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .swal2-toast .swal2-icon.swal2-success {
             border-color: var(--success-green);
-            background: rgba(79, 198, 95, 0.1);
+            background: rgba(79, 198, 95, 0.15);
         }
 
         body.dark-mode .swal2-toast .swal2-icon.swal2-success {
-            background: rgba(79, 198, 95, 0.15);
+            background: rgba(79, 198, 95, 0.2);
+            border-color: var(--success-green);
         }
 
         .swal2-toast .swal2-icon.swal2-success [class*='swal2-success-circular-line'] {
@@ -994,6 +999,7 @@ if (!$engagement) {
         .swal2-popup.swal2-toast .swal2-timer-progress-bar {
             background: var(--success-green);
             height: 3px;
+            border-radius: 12px;
         }
 
         /* ========== MILESTONES SECTION ========== */
