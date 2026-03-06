@@ -1001,6 +1001,16 @@ if (!$engagement) {
             background: #1A2332 !important;
         }
 
+        .swal2-toast .swal2-icon.swal2-success::before,
+        .swal2-toast .swal2-icon.swal2-success::after {
+            display: none !important;
+        }
+
+        .swal2-toast .swal2-icon.swal2-success .swal2-success-line-tip,
+        .swal2-toast .swal2-icon.swal2-success .swal2-success-line-long {
+            background-color: var(--success-green) !important;
+        }
+
         .swal2-popup.swal2-toast .swal2-timer-progress-bar {
             background: var(--success-green) !important;
             height: 3px;
