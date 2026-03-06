@@ -2163,7 +2163,7 @@ if (!$timeline) {
                         <select id="edit_eng_status" class="swal2-input" style="width: 100%; padding: 0.6rem;">
                             <option value="planning" ${engagementData.eng_status === 'planning' ? 'selected' : ''}>Planning</option>
                             <option value="in-progress" ${engagementData.eng_status === 'in-progress' ? 'selected' : ''}>In Progress</option>
-                            <option value="review" ${engagementData.eng_status === 'review' ? 'selected' : ''}>Review</option>
+                            <option value="in-review" ${engagementData.eng_status === 'in-review' ? 'selected' : ''}>In Review</option>
                             <option value="complete" ${engagementData.eng_status === 'complete' ? 'selected' : ''}>Complete</option>
                         </select>
                     </div>

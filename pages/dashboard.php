@@ -16,7 +16,6 @@ $inProgressCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'
 $planningCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'planning'));
 $reviewCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'in-review'));
 $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'complete'));
-$completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'complete'));
 ?>
 
 <!DOCTYPE html>
