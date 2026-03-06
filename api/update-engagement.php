@@ -52,6 +52,11 @@ try {
         }
     }
 
+    // If status is being updated to 'complete', also set the complete date
+    if (isset($data['eng_status']) && $data['eng_status'] === 'complete') {
+        $updateFields[] = "eng_complete_date = NOW()";
+    }
+
     if (empty($updateFields)) {
         echo json_encode(['success' => false, 'message' => 'No fields to update']);
         exit;

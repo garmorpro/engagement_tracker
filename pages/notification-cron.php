@@ -1,15 +1,14 @@
 <?php
 /**
  * Notification Cron Job
- * Run this script periodically (e.g., every hour) via cron job
+ * Run this script periodically (e.g., daily) via cron job
  * 
- * Cron example:
- * 0 * * * * php /path/to/notification-cron.php
+ * Cron example (run daily at 8 AM):
+ * 0 8 * * * php /path/to/notification-cron.php
  * 
- * This runs every hour and checks for:
- * - Upcoming due dates (within 3 days)
- * - Milestones to notify about
- * - Old notifications to clean up
+ * This checks for:
+ * - Upcoming key dates (engagement due dates within 7 days)
+ * - Upcoming milestones (milestone due dates within 7 days)
  */
 
 require_once '../path.php';
@@ -26,14 +25,24 @@ $logMessage = date('Y-m-d H:i:s') . ' - Starting notification cron job' . PHP_EO
 file_put_contents($logFile, $logMessage, FILE_APPEND);
 
 try {
-    // Check for upcoming due dates
-    checkUpcomingDueDates();
-    $logMessage = date('Y-m-d H:i:s') . ' - Checked upcoming due dates' . PHP_EOL;
+    // Check for upcoming key dates
+    checkUpcomingKeyDates();
+    $logMessage = date('Y-m-d H:i:s') . ' - Checked upcoming key dates' . PHP_EOL;
     file_put_contents($logFile, $logMessage, FILE_APPEND);
     
-    // Clean up old read notifications (optional - run once per day)
+    // Check for upcoming milestones
+    checkUpcomingMilestones();
+    $logMessage = date('Y-m-d H:i:s') . ' - Checked upcoming milestones' . PHP_EOL;
+    file_put_contents($logFile, $logMessage, FILE_APPEND);
+    
+    // Check for engagements ready to archive
+    checkEngagementsReadyToArchive();
+    $logMessage = date('Y-m-d H:i:s') . ' - Checked engagements ready to archive' . PHP_EOL;
+    file_put_contents($logFile, $logMessage, FILE_APPEND);
+    
+    // Clean up old read notifications once per day
     $hour = date('H');
-    if ($hour === '00') { // Run at midnight
+    if ($hour === '08') { // Run at 8 AM
         clearOldNotifications(30);
         $logMessage = date('Y-m-d H:i:s') . ' - Cleaned old notifications' . PHP_EOL;
         file_put_contents($logFile, $logMessage, FILE_APPEND);

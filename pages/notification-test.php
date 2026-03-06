@@ -1,7 +1,7 @@
 <?php
 /**
  * Notification Test Script
- * Use this to manually create notifications for testing
+ * Use this to manually create test notifications
  * 
  * Run via command line:
  * php notification-test.php
@@ -21,28 +21,30 @@ if ($result && $result->num_rows > 0) {
         $engId = $engagement['eng_idno'];
         $engName = $engagement['eng_name'];
         
-        // Create different types of notifications
+        // Create upcoming key date notification
         createNotification(
             $engId,
-            'upcoming_due_date',
-            'Upcoming Due Date',
-            $engName . ' SOC 2 audit due in 3 days'
+            'upcoming_key_date',
+            'Upcoming Key Date',
+            $engName . ' SOC 2 audit is due in 3 days'
         );
         $counter++;
         
+        // Create upcoming milestone notification
         createNotification(
             $engId,
-            'status_updated',
-            'Status Updated',
-            $engName . ' moved to In Progress'
+            'upcoming_milestone',
+            'Upcoming Milestone',
+            $engName . ' - Document Review due in 5 days'
         );
         $counter++;
         
+        // Create ready to archive notification
         createNotification(
             $engId,
-            'milestone_complete',
-            'Milestone Complete',
-            $engName . ' reached 75% completion'
+            'ready_to_archive',
+            'Ready to Archive',
+            $engName . ' has been complete for 3+ days and is ready to archive'
         );
         $counter++;
     }
