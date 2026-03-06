@@ -1153,10 +1153,40 @@ if (!$engagement) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-calendar" style="font-size: 12px;"></i> INTERNAL PLANNING CALL
                         </div>
-                        <div class="timeline-date"><?php echo htmlspecialchars($timeline['internal_planning_call_date']); ?></div>
-                        <div class="timeline-status completed">
-                            <i class="bi bi-check-circle-fill"></i> Completed
-                        </div>
+                        <?php
+$date = $timeline['internal_planning_call_date'];
+$completed = $timeline['internal_planning_call_completed_at'];
+
+$formattedDate = date("M j, Y", strtotime($date));
+
+$today = new DateTime();
+$dueDate = new DateTime($date);
+
+$diff = $today->diff($dueDate);
+$days = $diff->days;
+?>
+
+<div class="timeline-date"><?php echo htmlspecialchars($formattedDate); ?></div>
+
+<?php if (!empty($completed)) { ?>
+
+    <div class="timeline-status completed">
+        <i class="bi bi-check-circle-fill"></i> Completed
+    </div>
+
+<?php } else { ?>
+
+    <?php if ($today <= $dueDate) { ?>
+        <div class="timeline-status">
+            <?php echo $days; ?>d remaining
+        </div>
+    <?php } else { ?>
+        <div class="timeline-status overdue">
+            <i class="bi bi-x-circle-fill"></i> <?php echo $days; ?>d overdue
+        </div>
+    <?php } ?>
+
+<?php } ?>
                     </div>
 
                     <!-- URL Due -->
