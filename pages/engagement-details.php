@@ -2171,77 +2171,85 @@ if (!$timeline) {
                 <div style="margin-bottom: 2rem;">
                     <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
                     
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Audit Types (Select all that apply)</label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="audit-type-checkbox" value="SOC 1" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('SOC 1') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">SOC 1</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="audit-type-checkbox" value="SOC 2" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('SOC 2') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">SOC 2</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="audit-type-checkbox" value="PCI" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('PCI') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">PCI</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="audit-type-checkbox" value="HITRUST" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('HITRUST') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">HITRUST</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="audit-type-checkbox" value="FISMA" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('FISMA') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">FISMA</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="audit-type-checkbox" value="ISO" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('ISO') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">ISO</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div id="soc1_container" style="margin-bottom: 1rem; display: none;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC 1 - As Of Date</label>
-                        <input type="date" id="edit_eng_soc1_as_of_date" class="swal2-input" value="${engagementData.eng_as_of_date}" style="width: 100%;">
-                    </div>
-
-                    <div id="soc2_container" style="margin-bottom: 1rem; display: none;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC 2 Type</label>
-                        <select id="edit_eng_soc2_type" class="swal2-input" style="width: 100%; padding: 0.6rem; margin-bottom: 1rem;">
-                            <option value="Type 1" ${engagementData.eng_soc_type === 'Type 1' ? 'selected' : ''}>Type 1</option>
-                            <option value="Type 2" ${engagementData.eng_soc_type === 'Type 2' ? 'selected' : ''}>Type 2</option>
-                        </select>
+                    <!-- Audit Details Section -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
                         
-                        <div id="soc2_type1_period" style="display: none; margin-bottom: 1rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
-                            <input type="date" id="edit_eng_soc2_type1_as_of_date" class="swal2-input" value="${engagementData.eng_as_of_date}" style="width: 100%;">
-                        </div>
-                        
-                        <div id="soc2_type2_period" style="display: none;">
-                            <div style="margin-bottom: 0.5rem;">
-                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Start Period</label>
-                                <input type="date" id="edit_eng_soc2_start_period" class="swal2-input" value="${engagementData.eng_start_period}" style="width: 100%;">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">End Period</label>
-                                <input type="date" id="edit_eng_soc2_end_period" class="swal2-input" value="${engagementData.eng_end_period}" style="width: 100%;">
+                        <div style="margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Audit Types (Select all that apply)</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                    <input type="checkbox" class="audit-type-checkbox" value="SOC 1" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('SOC 1') ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">SOC 1</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                    <input type="checkbox" class="audit-type-checkbox" value="SOC 2" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('SOC 2') ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">SOC 2</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                    <input type="checkbox" class="audit-type-checkbox" value="PCI" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('PCI') ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">PCI</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                    <input type="checkbox" class="audit-type-checkbox" value="HITRUST" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('HITRUST') ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">HITRUST</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                    <input type="checkbox" class="audit-type-checkbox" value="FISMA" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('FISMA') ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">FISMA</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                    <input type="checkbox" class="audit-type-checkbox" value="ISO" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('ISO') ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">ISO</span>
+                                </label>
                             </div>
                         </div>
-                    </div>
 
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Scope</label>
-                        <textarea id="edit_eng_scope" class="swal2-input" style="width: 100%; min-height: 80px; resize: vertical; padding: 0.6rem;">${engagementData.eng_scope}</textarea>
-                    </div>
+                        <!-- SOC Type Selector (only show if SOC 1 or SOC 2 is selected) -->
+                        <div id="soc_type_section" style="margin-bottom: 1.5rem; display: none; padding: 1rem; background: rgba(68, 135, 252, 0.1); border-radius: 8px; border-left: 3px solid var(--primary-blue);">
+                            <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC Audit Type</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                    <input type="radio" name="soc_type" value="Type 1" ${engagementData.eng_soc_type === 'Type 1' ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">Type 1</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                    <input type="radio" name="soc_type" value="Type 2" ${engagementData.eng_soc_type === 'Type 2' ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">Type 2</span>
+                                </label>
+                            </div>
 
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500;">
-                            <input type="checkbox" id="edit_eng_repeat" ${engagementData.eng_repeat === 'Y' ? 'checked' : ''}>
-                            <span style="font-size: 13px;">Repeat Engagement</span>
-                        </label>
+                            <!-- Type 1: As Of Date -->
+                            <div id="soc_type1_dates" style="display: none;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
+                                <input type="date" id="edit_soc_as_of_date" class="swal2-input" value="${engagementData.eng_as_of_date}" style="width: 100%;">
+                            </div>
+
+                            <!-- Type 2: Start and End Dates -->
+                            <div id="soc_type2_dates" style="display: none;">
+                                <div style="margin-bottom: 0.75rem;">
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Start Period</label>
+                                    <input type="date" id="edit_soc_start_period" class="swal2-input" value="${engagementData.eng_start_period}" style="width: 100%;">
+                                </div>
+                                <div>
+                                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">End Period</label>
+                                    <input type="date" id="edit_soc_end_period" class="swal2-input" value="${engagementData.eng_end_period}" style="width: 100%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Scope</label>
+                            <textarea id="edit_eng_scope" class="swal2-input" style="width: 100%; min-height: 80px; resize: vertical; padding: 0.6rem;">${engagementData.eng_scope}</textarea>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" id="edit_eng_repeat" ${engagementData.eng_repeat === 'Y' ? 'checked' : ''}>
+                                <span style="font-size: 13px;">Repeat Engagement</span>
+                            </label>
+                        </div>
                     </div>
-                </div>
 
                 <!-- Hours & Notes Section -->
                 <div style="margin-bottom: 2rem;">
@@ -2265,33 +2273,33 @@ if (!$timeline) {
             didOpen: () => {
                 // Handle audit type checkboxes and SOC type visibility
                 const auditCheckboxes = document.querySelectorAll('.audit-type-checkbox');
-                const soc1Container = document.getElementById('soc1_container');
-                const soc2Container = document.getElementById('soc2_container');
-                const soc2TypeSelect = document.getElementById('edit_eng_soc2_type');
-                const soc2Type1Period = document.getElementById('soc2_type1_period');
-                const soc2Type2Period = document.getElementById('soc2_type2_period');
+                const socTypeSection = document.getElementById('soc_type_section');
+                const socTypeRadios = document.querySelectorAll('input[name="soc_type"]');
+                const socType1Dates = document.getElementById('soc_type1_dates');
+                const socType2Dates = document.getElementById('soc_type2_dates');
                 
                 function updateFormVisibility() {
                     const selectedTypes = Array.from(auditCheckboxes)
                         .filter(cb => cb.checked)
                         .map(cb => cb.value);
                     
-                    // Show SOC 1 container if SOC 1 is checked
-                    soc1Container.style.display = selectedTypes.includes('SOC 1') ? 'block' : 'none';
+                    // Show SOC type section only if SOC 1 or SOC 2 is checked
+                    const hasSOC = selectedTypes.includes('SOC 1') || selectedTypes.includes('SOC 2');
+                    socTypeSection.style.display = hasSOC ? 'block' : 'none';
                     
-                    // Show SOC 2 container if SOC 2 is checked
-                    soc2Container.style.display = selectedTypes.includes('SOC 2') ? 'block' : 'none';
+                    // Update date fields based on selected SOC type
+                    updateDateFields();
+                }
+                
+                function updateDateFields() {
+                    const selectedSocType = document.querySelector('input[name="soc_type"]:checked')?.value;
                     
-                    // Update SOC 2 type based on selected type
-                    if (selectedTypes.includes('SOC 2')) {
-                        const socType = soc2TypeSelect.value;
-                        if (socType === 'Type 1') {
-                            soc2Type1Period.style.display = 'block';
-                            soc2Type2Period.style.display = 'none';
-                        } else {
-                            soc2Type1Period.style.display = 'none';
-                            soc2Type2Period.style.display = 'block';
-                        }
+                    if (selectedSocType === 'Type 1') {
+                        socType1Dates.style.display = 'block';
+                        socType2Dates.style.display = 'none';
+                    } else if (selectedSocType === 'Type 2') {
+                        socType1Dates.style.display = 'none';
+                        socType2Dates.style.display = 'block';
                     }
                 }
                 
@@ -2300,8 +2308,10 @@ if (!$timeline) {
                     checkbox.addEventListener('change', updateFormVisibility);
                 });
                 
-                // Listen to SOC 2 type select changes
-                soc2TypeSelect.addEventListener('change', updateFormVisibility);
+                // Listen to SOC type radio changes
+                socTypeRadios.forEach(radio => {
+                    radio.addEventListener('change', updateDateFields);
+                });
                 
                 // Initial visibility update
                 updateFormVisibility();
@@ -2314,6 +2324,9 @@ if (!$timeline) {
                     .map(cb => cb.value)
                     .join(',');
 
+                // Get selected SOC type
+                const selectedSocType = document.querySelector('input[name="soc_type"]:checked')?.value || '';
+
                 const updatedData = {
                     engagement_id: '<?php echo $engagementId; ?>',
                     eng_name: document.getElementById('edit_eng_name').value,
@@ -2322,11 +2335,11 @@ if (!$timeline) {
                     eng_status: document.getElementById('edit_eng_status').value,
                     eng_tsc: document.getElementById('edit_eng_tsc').value,
                     eng_audit_type: selectedAuditTypes,
-                    eng_soc_type: document.getElementById('edit_eng_soc2_type')?.value || '',
+                    eng_soc_type: selectedSocType,
                     eng_scope: document.getElementById('edit_eng_scope').value,
-                    eng_as_of_date: document.getElementById('edit_eng_soc1_as_of_date')?.value || document.getElementById('edit_eng_soc2_type1_as_of_date')?.value || '',
-                    eng_start_period: document.getElementById('edit_eng_soc2_start_period')?.value || '',
-                    eng_end_period: document.getElementById('edit_eng_soc2_end_period')?.value || '',
+                    eng_as_of_date: document.getElementById('edit_soc_as_of_date')?.value || '',
+                    eng_start_period: document.getElementById('edit_soc_start_period')?.value || '',
+                    eng_end_period: document.getElementById('edit_soc_end_period')?.value || '',
                     eng_repeat: document.getElementById('edit_eng_repeat').checked ? 'Y' : 'N',
                     eng_notes: document.getElementById('edit_eng_notes').value
                 };
