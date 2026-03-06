@@ -29,7 +29,7 @@ if ($is_completed !== 'Y' && $is_completed !== 'N') {
 
 try {
     // Update the milestone in the database using positional parameters for mysqli
-    $query = "UPDATE milestones 
+    $query = "UPDATE engagement_milestones 
               SET is_completed = ? 
               WHERE engagement_idno = ? 
               AND milestone_type = ?";
