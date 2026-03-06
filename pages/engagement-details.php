@@ -720,11 +720,7 @@ $engagementData = $engagement;
         }
 
         .timeline-item:hover .timeline-checkbox-container i {
-            opacity: 1 !important;
-        }
-
-        .timeline-checkbox-container.checked i {
-            opacity: 1 !important;
+            opacity: 1;
         }
 
         .timeline-label {
