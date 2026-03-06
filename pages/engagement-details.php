@@ -2171,46 +2171,68 @@ if (!$timeline) {
                 <div style="margin-bottom: 2rem;">
                     <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
                     
-                    <div style="margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Audit Type</label>
-                        <select id="edit_eng_audit_type" class="swal2-input" style="width: 100%; padding: 0.6rem;">
-                            <option value="">Select Audit Type</option>
-                            <option value="SOC 1" ${engagementData.eng_audit_type === 'SOC 1' ? 'selected' : ''}>SOC 1</option>
-                            <option value="SOC 2" ${engagementData.eng_audit_type === 'SOC 2' ? 'selected' : ''}>SOC 2</option>
-                            <option value="PCI" ${engagementData.eng_audit_type === 'PCI' ? 'selected' : ''}>PCI</option>
-                            <option value="HITRUST" ${engagementData.eng_audit_type === 'HITRUST' ? 'selected' : ''}>HITRUST</option>
-                            <option value="FISMA" ${engagementData.eng_audit_type === 'FISMA' ? 'selected' : ''}>FISMA</option>
-                            <option value="ISO" ${engagementData.eng_audit_type === 'ISO' ? 'selected' : ''}>ISO</option>
-                        </select>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Audit Types (Select all that apply)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="SOC 1" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('SOC 1') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">SOC 1</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="SOC 2" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('SOC 2') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">SOC 2</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="PCI" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('PCI') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">PCI</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="HITRUST" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('HITRUST') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">HITRUST</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="FISMA" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('FISMA') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">FISMA</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="ISO" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('ISO') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">ISO</span>
+                            </label>
+                        </div>
                     </div>
 
-                    <div id="soc_type_container" style="margin-bottom: 1rem; display: none;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC Type</label>
-                        <select id="edit_eng_soc_type" class="swal2-input" style="width: 100%; padding: 0.6rem;">
+                    <div id="soc1_container" style="margin-bottom: 1rem; display: none;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC 1 - As Of Date</label>
+                        <input type="date" id="edit_eng_soc1_as_of_date" class="swal2-input" value="${engagementData.eng_as_of_date}" style="width: 100%;">
+                    </div>
+
+                    <div id="soc2_container" style="margin-bottom: 1rem; display: none;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC 2 Type</label>
+                        <select id="edit_eng_soc2_type" class="swal2-input" style="width: 100%; padding: 0.6rem; margin-bottom: 1rem;">
                             <option value="Type 1" ${engagementData.eng_soc_type === 'Type 1' ? 'selected' : ''}>Type 1</option>
                             <option value="Type 2" ${engagementData.eng_soc_type === 'Type 2' ? 'selected' : ''}>Type 2</option>
                         </select>
+                        
+                        <div id="soc2_type1_period" style="display: none; margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
+                            <input type="date" id="edit_eng_soc2_type1_as_of_date" class="swal2-input" value="${engagementData.eng_as_of_date}" style="width: 100%;">
+                        </div>
+                        
+                        <div id="soc2_type2_period" style="display: none;">
+                            <div style="margin-bottom: 0.5rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Start Period</label>
+                                <input type="date" id="edit_eng_soc2_start_period" class="swal2-input" value="${engagementData.eng_start_period}" style="width: 100%;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">End Period</label>
+                                <input type="date" id="edit_eng_soc2_end_period" class="swal2-input" value="${engagementData.eng_end_period}" style="width: 100%;">
+                            </div>
+                        </div>
                     </div>
 
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Scope</label>
                         <textarea id="edit_eng_scope" class="swal2-input" style="width: 100%; min-height: 80px; resize: vertical; padding: 0.6rem;">${engagementData.eng_scope}</textarea>
-                    </div>
-
-                    <div id="period_type_1" style="display: none; margin-bottom: 1rem;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
-                        <input type="date" id="edit_eng_as_of_date" class="swal2-input" value="${engagementData.eng_as_of_date}" style="width: 100%;">
-                    </div>
-
-                    <div id="period_type_2" style="display: none; margin-bottom: 1rem;">
-                        <div style="margin-bottom: 0.5rem;">
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Start Period</label>
-                            <input type="date" id="edit_eng_start_period" class="swal2-input" value="${engagementData.eng_start_period}" style="width: 100%;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">End Period</label>
-                            <input type="date" id="edit_eng_end_period" class="swal2-input" value="${engagementData.eng_end_period}" style="width: 100%;">
-                        </div>
                     </div>
 
                     <div style="margin-bottom: 1rem;">
@@ -2241,33 +2263,57 @@ if (!$timeline) {
             showCancelButton: true,
             width: '700px',
             didOpen: () => {
-                // Handle SOC Type visibility
-                const auditTypeSelect = document.getElementById('edit_eng_audit_type');
-                const socTypeContainer = document.getElementById('soc_type_container');
-                const periodType1 = document.getElementById('period_type_1');
-                const periodType2 = document.getElementById('period_type_2');
+                // Handle audit type checkboxes and SOC type visibility
+                const auditCheckboxes = document.querySelectorAll('.audit-type-checkbox');
+                const soc1Container = document.getElementById('soc1_container');
+                const soc2Container = document.getElementById('soc2_container');
+                const soc2TypeSelect = document.getElementById('edit_eng_soc2_type');
+                const soc2Type1Period = document.getElementById('soc2_type1_period');
+                const soc2Type2Period = document.getElementById('soc2_type2_period');
                 
                 function updateFormVisibility() {
-                    const auditType = auditTypeSelect.value;
-                    socTypeContainer.style.display = auditType.includes('SOC') ? 'block' : 'none';
+                    const selectedTypes = Array.from(auditCheckboxes)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
                     
-                    if (auditType === 'SOC 1') {
-                        periodType1.style.display = 'block';
-                        periodType2.style.display = 'none';
-                    } else if (auditType === 'SOC 2') {
-                        periodType1.style.display = 'none';
-                        periodType2.style.display = 'block';
-                    } else {
-                        periodType1.style.display = 'none';
-                        periodType2.style.display = 'none';
+                    // Show SOC 1 container if SOC 1 is checked
+                    soc1Container.style.display = selectedTypes.includes('SOC 1') ? 'block' : 'none';
+                    
+                    // Show SOC 2 container if SOC 2 is checked
+                    soc2Container.style.display = selectedTypes.includes('SOC 2') ? 'block' : 'none';
+                    
+                    // Update SOC 2 type based on selected type
+                    if (selectedTypes.includes('SOC 2')) {
+                        const socType = soc2TypeSelect.value;
+                        if (socType === 'Type 1') {
+                            soc2Type1Period.style.display = 'block';
+                            soc2Type2Period.style.display = 'none';
+                        } else {
+                            soc2Type1Period.style.display = 'none';
+                            soc2Type2Period.style.display = 'block';
+                        }
                     }
                 }
                 
-                auditTypeSelect.addEventListener('change', updateFormVisibility);
+                // Listen to checkbox changes
+                auditCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateFormVisibility);
+                });
+                
+                // Listen to SOC 2 type select changes
+                soc2TypeSelect.addEventListener('change', updateFormVisibility);
+                
+                // Initial visibility update
                 updateFormVisibility();
             }
         }).then((result) => {
             if (result.isConfirmed) {
+                // Collect selected audit types
+                const selectedAuditTypes = Array.from(document.querySelectorAll('.audit-type-checkbox'))
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value)
+                    .join(',');
+
                 const updatedData = {
                     engagement_id: '<?php echo $engagementId; ?>',
                     eng_name: document.getElementById('edit_eng_name').value,
@@ -2275,12 +2321,12 @@ if (!$timeline) {
                     eng_poc: document.getElementById('edit_eng_poc').value,
                     eng_status: document.getElementById('edit_eng_status').value,
                     eng_tsc: document.getElementById('edit_eng_tsc').value,
-                    eng_audit_type: document.getElementById('edit_eng_audit_type').value,
-                    eng_soc_type: document.getElementById('edit_eng_soc_type').value,
+                    eng_audit_type: selectedAuditTypes,
+                    eng_soc_type: document.getElementById('edit_eng_soc2_type')?.value || '',
                     eng_scope: document.getElementById('edit_eng_scope').value,
-                    eng_as_of_date: document.getElementById('edit_eng_as_of_date').value,
-                    eng_start_period: document.getElementById('edit_eng_start_period').value,
-                    eng_end_period: document.getElementById('edit_eng_end_period').value,
+                    eng_as_of_date: document.getElementById('edit_eng_soc1_as_of_date')?.value || document.getElementById('edit_eng_soc2_type1_as_of_date')?.value || '',
+                    eng_start_period: document.getElementById('edit_eng_soc2_start_period')?.value || '',
+                    eng_end_period: document.getElementById('edit_eng_soc2_end_period')?.value || '',
                     eng_repeat: document.getElementById('edit_eng_repeat').checked ? 'Y' : 'N',
                     eng_notes: document.getElementById('edit_eng_notes').value
                 };
