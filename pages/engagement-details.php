@@ -21,12 +21,13 @@ foreach ($allEngagements as $eng) {
     }
 }
 
-// Get engagement timeline data
 $timeline = null;
+
 $allTimelineData = getAllTimelineData($conn);
-foreach ($allTimelineData as $timeline) {
-    if ($timeline['engagement_idno'] === $engagementId) {
-        $timeline = $timeline;
+
+foreach ($allTimelineData as $row) {
+    if ($row['engagement_idno'] === $engagementId) {
+        $timeline = $row;
         break;
     }
 }
