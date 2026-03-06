@@ -1075,41 +1075,53 @@ if (!$engagement) {
             </button>
 
             <div class="team-members">
-<?php if (!empty($team)): ?>
-    <?php foreach ($team as $member): ?>
-        <?php
-            // Get initials for avatar
-            $nameParts = explode(' ', $member['emp_name']);
-            $initials = '';
-            foreach ($nameParts as $part) {
-                $initials .= strtoupper($part[0]);
-            }
+<?php
+// First, group all team members by emp_id (or emp_name if emp_id doesn't exist)
+$groupedTeam = [];
 
-            // Default gradient colors (you can customize based on role or member)
-            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default blue
-            if (isset($member['role'])) {
-                switch (strtolower($member['role'])) {
-                    case 'manager':
-                        $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
-                        break;
-                    case 'senior':
-                        $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)';
-                        break;
-                    case 'senior 2':
-                        $gradient = 'linear-gradient(135deg, #4DBFB8, #6FD9D2)';
-                        break;
-                    case 'staff 1':
-                        $gradient = 'linear-gradient(135deg, #F17313, #FFB347)';
-                        break;
-                    case 'staff':
-                        $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)';
-                        break;
-                }
-            }
+foreach ($team as $member) {
+    $empKey = $member['emp_id'] ?? $member['emp_name']; // unique key per employee
+    if (!isset($groupedTeam[$empKey])) {
+        $groupedTeam[$empKey] = [
+            'emp_name' => $member['emp_name'],
+            'role' => $member['role'],
+            'dol_tags' => [],
+        ];
+    }
+    // Add audit_type as a DOL tag
+    if (!empty($member['audit_type'])) {
+        $groupedTeam[$empKey]['dol_tags'][] = $member['audit_type'];
+    }
+}
 
-            // Division of labor tags
-            $tags = !empty($member['emp_dol']) ? explode(',', $member['emp_dol']) : [];
-        ?>
+// Now render each member
+if (!empty($groupedTeam)):
+    foreach ($groupedTeam as $member):
+        // Get initials for avatar
+        $nameParts = explode(' ', $member['emp_name']);
+        $initials = '';
+        foreach ($nameParts as $part) {
+            $initials .= strtoupper($part[0]);
+        }
+
+        // Default gradient colors based on role
+        $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default blue
+        if (isset($member['role'])) {
+            switch (strtolower($member['role'])) {
+                case 'manager':
+                    $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
+                    break;
+                case 'senior':
+                    $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)';
+                    break;
+                case 'staff':
+                    $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)';
+                    break;
+            }
+        }
+
+        $tags = $member['dol_tags'];
+?>
         <div class="team-member">
             <div class="team-member-avatar" style="background: <?php echo $gradient; ?>;"><?php echo htmlspecialchars($initials); ?></div>
             <div class="team-member-info">
@@ -1121,15 +1133,17 @@ if (!$engagement) {
                         <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</div>
                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                             <?php foreach ($tags as $tag): ?>
-                                <span class="team-member-tag"><?php echo htmlspecialchars(trim($tag)); ?></span>
+                                <span class="team-member-tag"><?php echo htmlspecialchars($tag); ?></span>
                             <?php endforeach; ?>
                         </div>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
-    <?php endforeach; ?>
-<?php else: ?>
+<?php
+    endforeach;
+else:
+?>
     <p>No team assigned yet.</p>
 <?php endif; ?>
 </div>
