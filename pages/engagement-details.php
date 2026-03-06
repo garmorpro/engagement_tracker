@@ -1079,7 +1079,7 @@ if (!$engagement) {
     <?php foreach ($team as $member): ?>
         <?php
             // Get initials for avatar
-            $nameParts = explode(' ', $member['member_name']);
+            $nameParts = explode(' ', $member['emp_name']);
             $initials = '';
             foreach ($nameParts as $part) {
                 $initials .= strtoupper($part[0]);
@@ -1108,12 +1108,12 @@ if (!$engagement) {
             }
 
             // Division of labor tags
-            $tags = !empty($member['division_of_labor']) ? explode(',', $member['division_of_labor']) : [];
+            $tags = !empty($member['emp_dol']) ? explode(',', $member['emp_dol']) : [];
         ?>
         <div class="team-member">
             <div class="team-member-avatar" style="background: <?php echo $gradient; ?>;"><?php echo htmlspecialchars($initials); ?></div>
             <div class="team-member-info">
-                <div class="team-member-name"><?php echo htmlspecialchars($member['member_name']); ?></div>
+                <div class="team-member-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
                 <div class="team-member-title"><?php echo htmlspecialchars($member['role']); ?></div>
 
                 <?php if (!empty($tags)): ?>
