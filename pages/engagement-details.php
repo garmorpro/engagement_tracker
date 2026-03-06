@@ -2105,31 +2105,6 @@ if (!$timeline) {
             }
         });
     });
-                        if (newStatus === 'Y') {
-                            icon.classList.add('bi-check-circle-fill');
-                        }
-                    }
-
-                    // Update milestone title strikethrough
-                    const title = milestoneItem.querySelector('.milestone-title');
-                    if (title) {
-                        title.classList.remove('completed');
-                        if (newStatus === 'Y') {
-                            title.classList.add('completed');
-                        }
-                    }
-
-                    // Refresh the page to update completion stats
-                    location.reload();
-                } else {
-                    alert('Error updating milestone: ' + (data.message || 'Unknown error'));
-                }
-            } catch (error) {
-                console.error('Fetch Error:', error);
-                alert('Failed to update milestone: ' + error.message);
-            }
-        });
-    });
 
     // Timeline Manage Button Handler
     document.getElementById('timelineManageBtn').addEventListener('click', function() {
