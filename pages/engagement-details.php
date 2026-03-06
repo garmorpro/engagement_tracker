@@ -895,7 +895,7 @@ if (!$engagement) {
         border: 1px dashed #ccc;
         border-radius: 0.5rem;
         text-align: center;
-        color: #666;
+        color: var(--text-secondary);
         font-size: 14px;
         font-style: italic;
         margin-top: 0.5rem;
