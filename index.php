@@ -765,13 +765,33 @@ function editAccount(userId, accountName) {
         body: JSON.stringify({user_id: userId})
     })
     .then(res => {
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
+        console.log('Response status:', res.status);
+        console.log('Response headers:', res.headers.get('content-type'));
+        return res.text(); // Get as text first
     })
-    .then(data => {
-        console.log('Edit account response:', data);
+    .then(text => {
+        console.log('Raw response text:', text);
+        
+        // Try to parse as JSON
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('JSON parse error:', e);
+            console.error('Text was:', text);
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Response',
+                text: 'Server returned invalid data. Check console for details.',
+                background: 'var(--bg-secondary)',
+                color: 'white',
+                confirmButtonColor: 'var(--primary-blue)'
+            });
+            return;
+        }
+        
+        console.log('Parsed data:', data);
+        
         if(data.success && data.account) {
             const account = data.account;
             document.getElementById('editUserId').value = account.user_id;
@@ -792,7 +812,7 @@ function editAccount(userId, accountName) {
         }
     })
     .catch((error) => {
-        console.error('Edit account error:', error);
+        console.error('Fetch error:', error);
         Swal.fire({
             icon: 'error',
             title: 'Error',
