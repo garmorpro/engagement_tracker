@@ -25,6 +25,7 @@ $archiveCount = count($engagements);
     <title>Archive - Engagement Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>">
     <style>
         :root {
@@ -716,9 +717,10 @@ $archiveCount = count($engagements);
         }
 
         .status-badge.archived {
-    background: rgba(128, 128, 128, 0.15);
-    color: #6b7280;
-}
+            background: rgba(128, 128, 128, 0.15);
+            color: #6b7280;
+        }
+
         .status-badge.planning {
             background: rgba(241, 115, 19, 0.15);
             color: var(--warning-orange);
@@ -762,6 +764,20 @@ $archiveCount = count($engagements);
         .action-icon:hover {
             background: var(--gray-100);
             color: var(--primary-blue);
+        }
+
+        /* ========== SWEETALERT2 DARK MODE ========== */
+        body.dark-mode .swal2-popup {
+            background: #1A2332 !important;
+            color: #E8EAED !important;
+        }
+
+        body.dark-mode .swal2-title {
+            color: #E8EAED !important;
+        }
+
+        body.dark-mode .swal2-html-container {
+            color: #E8EAED !important;
         }
 
         /* ========== RESPONSIVE ========== */
@@ -977,7 +993,7 @@ $archiveCount = count($engagements);
                             $colorClass = 'color-' . (($index % 5) + 1);
                             $initials = strtoupper(substr($eng['eng_name'], 0, 1) . substr(explode(' ', $eng['eng_name'])[1] ?? '', 0, 1));
                             $dueDate = $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : 'N/A';
-                            $statusClass = strtolower(str_replace('-', '', $eng['eng_status'] ?? 'planning'));
+                            $statusClass = strtolower($eng['eng_status'] ?? 'planning');
                         ?>
                         <tr>
                             <td>
@@ -996,12 +1012,15 @@ $archiveCount = count($engagements);
                             </td>
                             <td><?php echo htmlspecialchars($eng['eng_manager'] ?? 'Unassigned'); ?></td>
                             <td>
-                                <?php if (strpos($eng['eng_audit_type'], 'SOC 1') !== false): ?>
-                                    <span class="badge badge-soc1">SOC 1</span>
-                                <?php endif; ?>
-                                <?php if (strpos($eng['eng_audit_type'], 'SOC 2') !== false): ?>
-                                    <span class="badge badge-soc2">SOC 2</span>
-                                <?php endif; ?>
+                                <?php 
+                                    $auditTypes = explode(',', $eng['eng_audit_type']);
+                                    foreach ($auditTypes as $type) {
+                                        $type = trim($type);
+                                        if (!empty($type)) {
+                                            echo '<span class="badge badge-audit-type">' . htmlspecialchars($type) . '</span> ';
+                                        }
+                                    }
+                                ?>
                             </td>
                             <td>
                                 <span class="status-badge <?php echo $statusClass; ?>">
@@ -1018,7 +1037,7 @@ $archiveCount = count($engagements);
                                     <button class="action-icon" title="Edit">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="action-icon" title="Duplicate">
+                                    <button class="action-icon" title="Restore" onclick="event.stopPropagation(); restoreEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                                         <i class="bi bi-arrow-counterclockwise"></i>
                                     </button>
                                     <button class="action-icon" title="Delete">
@@ -1042,7 +1061,57 @@ $archiveCount = count($engagements);
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script>
+    // Restore engagement function
+    async function restoreEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        const result = await Swal.fire({
+            title: 'Restore Engagement?',
+            text: 'Are you sure you want to restore this engagement? It will be moved back to complete status.',
+            icon: 'question',
+            confirmButtonText: 'Restore',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#4487FC',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/restore-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Restored!',
+                        text: 'Engagement has been restored successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        background: isDarkMode ? '#1A2332' : '#FFFFFF',
+                        color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to restore engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to restore engagement', 'error');
+            }
+        }
+    }
+
     // Dark mode toggle
     const darkModeBtn = document.querySelector('.icon-btn[title="Dark mode"]');
     
