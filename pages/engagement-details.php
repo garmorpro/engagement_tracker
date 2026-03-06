@@ -1078,8 +1078,10 @@ if (!$engagement) {
 <?php if (!empty($team)): ?>
 
     <?php
-    // Count unique audit types
-    $auditTypeCounts = array_count_values(array_column($team, 'audit_type'));
+    // -----------------------------
+    // Safely count unique audit types (ignore null/empty)
+    $auditTypes = array_filter(array_column($team, 'audit_type'), fn($v) => !is_null($v) && $v !== '');
+    $auditTypeCounts = array_count_values($auditTypes);
     $hasMultipleAuditTypes = count($auditTypeCounts) > 1;
 
     // Group members by employee name and role
@@ -1095,7 +1097,7 @@ if (!$engagement) {
             ];
         }
 
-        // Only add if emp_dol is not null
+        // Only explode emp_dol if it's not empty
         $dolArray = !empty($member['emp_dol']) ? explode(',', $member['emp_dol']) : [];
         $groupedTeam[$key]['audit_types'][$member['audit_type']] = $dolArray;
     }
@@ -1108,7 +1110,7 @@ if (!$engagement) {
             $initials = '';
             foreach ($nameParts as $part) { $initials .= strtoupper($part[0]); }
 
-            // Gradient based on role
+            // Gradient colors by role
             $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
             switch (strtolower($member['role'] ?? '')) {
                 case 'manager': $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; break;
