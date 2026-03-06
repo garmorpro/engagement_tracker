@@ -886,7 +886,7 @@ if (!$engagement) {
         }
 
         hr {
-            margin-top: -250px !important;
+            margin-top: -25px !important;
             margin-left: -2rem !important;
             width: calc(100vw - 1rem) !important;
         }
