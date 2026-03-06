@@ -27,10 +27,12 @@ try {
 
     $dateFields = [
         'internal_planning_call_date',
+        'planning_memo_date',
         'irl_due_date',
         'client_planning_call_date',
         'fieldwork_date',
         'leadsheet_date',
+        'conclusion_memo_date',
         'draft_report_due_date',
         'final_report_date',
         'archive_date'

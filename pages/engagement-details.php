@@ -2509,10 +2509,12 @@ if (!$timeline) {
         // Get current timeline values from the page
         const timelineData = {
             internal_planning_call_date: '<?php echo htmlspecialchars($timeline['internal_planning_call_date'] ?? ''); ?>',
+            planning_memo_date: '<?php echo htmlspecialchars($timeline['planning_memo_date'] ?? ''); ?>',
             irl_due_date: '<?php echo htmlspecialchars($timeline['irl_due_date'] ?? ''); ?>',
             client_planning_call_date: '<?php echo htmlspecialchars($timeline['client_planning_call_date'] ?? ''); ?>',
             fieldwork_date: '<?php echo htmlspecialchars($timeline['fieldwork_date'] ?? ''); ?>',
             leadsheet_date: '<?php echo htmlspecialchars($timeline['leadsheet_date'] ?? ''); ?>',
+            conclusion_memo_date: '<?php echo htmlspecialchars($timeline['conclusion_memo_date'] ?? ''); ?>',
             draft_report_due_date: '<?php echo htmlspecialchars($timeline['draft_report_due_date'] ?? ''); ?>',
             final_report_date: '<?php echo htmlspecialchars($timeline['final_report_date'] ?? ''); ?>',
             archive_date: '<?php echo htmlspecialchars($timeline['archive_date'] ?? ''); ?>'
@@ -2525,6 +2527,10 @@ if (!$timeline) {
                     <div style="width: 100%; box-sizing: border-box; min-width: 0;">
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Internal Planning Call</label>
                         <input type="date" id="internal_planning_call_date" class="swal2-input" value="${timelineData.internal_planning_call_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Planning Memo</label>
+                        <input type="date" id="planning_memo_date" class="swal2-input" value="${timelineData.planning_memo_date}">
                     </div>
                     <div style="width: 100%; box-sizing: border-box; min-width: 0;">
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">IRL Due</label>
@@ -2541,6 +2547,10 @@ if (!$timeline) {
                     <div style="width: 100%; box-sizing: border-box; min-width: 0;">
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Leadsheet Due</label>
                         <input type="date" id="leadsheet_date" class="swal2-input" value="${timelineData.leadsheet_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Conclusion Memo</label>
+                        <input type="date" id="conclusion_memo_date" class="swal2-input" value="${timelineData.conclusion_memo_date}">
                     </div>
                     <div style="width: 100%; box-sizing: border-box; min-width: 0;">
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Draft Report Due</label>
@@ -2569,10 +2579,12 @@ if (!$timeline) {
                 const updatedData = {
                     engagement_id: '<?php echo $engagementId; ?>',
                     internal_planning_call_date: document.getElementById('internal_planning_call_date').value,
+                    planning_memo_date: document.getElementById('planning_memo_date').value,
                     irl_due_date: document.getElementById('irl_due_date').value,
                     client_planning_call_date: document.getElementById('client_planning_call_date').value,
                     fieldwork_date: document.getElementById('fieldwork_date').value,
                     leadsheet_date: document.getElementById('leadsheet_date').value,
+                    conclusion_memo_date: document.getElementById('conclusion_memo_date').value,
                     draft_report_due_date: document.getElementById('draft_report_due_date').value,
                     final_report_date: document.getElementById('final_report_date').value,
                     archive_date: document.getElementById('archive_date').value
