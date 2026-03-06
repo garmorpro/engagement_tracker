@@ -21,6 +21,7 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <title>Login - Engagement Tracker</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 :root {
     --primary-blue: #4487FC;
@@ -365,6 +366,40 @@ body {
 .user-actions button.delete:hover {
     color: var(--danger-red);
 }
+
+/* SweetAlert2 Dark Theme Customization */
+.swal2-popup {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.swal2-title {
+    color: white !important;
+}
+
+.swal2-html-container {
+    color: var(--text-secondary) !important;
+}
+
+.swal2-confirm {
+    background: var(--primary-blue) !important;
+    box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3) !important;
+}
+
+.swal2-confirm:hover {
+    background: #3671E0 !important;
+}
+
+.swal2-cancel {
+    background: var(--bg-tertiary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+.swal2-cancel:hover {
+    background: var(--border-color) !important;
+    color: white !important;
+}
 </style>
 </head>
 <body>
@@ -518,6 +553,40 @@ body {
     </div>
 </div>
 
+<!-- Edit User Modal -->
+<div class="modal-overlay" id="editUserModal">
+    <div class="modal-box" style="max-width: 500px;">
+        <button class="modal-close" onclick="closeEditUserModal()">×</button>
+        <div class="modal-header">
+            <div class="modal-header-icon">
+                <i class="bi bi-pencil-square"></i>
+            </div>
+            <h5>Edit User</h5>
+        </div>
+        
+        <form id="editForm" method="POST" action="<?= BASE_URL ?>/auth/update_account.php">
+            <input type="hidden" name="user_id" id="editUserId">
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="editAccountName" name="account_name" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="editEmail" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">4-Digit PIN</label>
+                <input type="text" class="form-control text-center pin-field" 
+                       id="editPasscode" name="passcode" maxlength="4" required>
+            </div>
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" onclick="closeEditUserModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update User</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 const pinInputs = {};
 
@@ -643,6 +712,11 @@ function closeAddUserModal() {
     document.getElementById('registerForm').reset();
 }
 
+function closeEditUserModal() {
+    document.getElementById('editUserModal').classList.remove('active');
+    document.getElementById('editForm').reset();
+}
+
 function loadAccountsList() {
     fetch('<?= BASE_URL ?>/auth/get_accounts.php')
     .then(res => res.json())
@@ -684,28 +758,104 @@ function loadAccountsList() {
 }
 
 function editAccount(userId, accountName) {
-    alert('Edit functionality for: ' + accountName);
-    // TODO: Implement edit functionality
+    // Fetch account details from server
+    fetch('<?= BASE_URL ?>/auth/get_account_details.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({user_id: userId})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            const account = data.account;
+            document.getElementById('editUserId').value = account.user_id;
+            document.getElementById('editAccountName').value = account.account_name;
+            document.getElementById('editEmail').value = account.email;
+            document.getElementById('editPasscode').value = account.passcode;
+            document.getElementById('editUserModal').classList.add('active');
+            setTimeout(() => document.getElementById('editAccountName').focus(), 100);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load user details',
+                background: 'var(--bg-secondary)',
+                color: 'white'
+            });
+        }
+    })
+    .catch(() => {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error loading user details',
+            background: 'var(--bg-secondary)',
+            color: 'white'
+        });
+    });
 }
 
 function deleteAccount(userId, accountName) {
-    if(confirm(`Are you sure you want to delete "${accountName}"? This action cannot be undone.`)) {
-        fetch('<?= BASE_URL ?>/auth/delete_account.php', {
-            method: 'POST',
-            headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({user_id: userId})
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.success) {
-                alert('Account deleted successfully');
-                loadAccountsList();
-            } else {
-                alert('Error deleting account: ' + data.message);
-            }
-        })
-        .catch(() => alert('Error deleting account'));
-    }
+    Swal.fire({
+        title: 'Delete User?',
+        text: `Are you sure you want to delete "${accountName}"? This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'var(--danger-red)',
+        cancelButtonColor: 'var(--border-color)',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        background: 'var(--bg-secondary)',
+        color: 'white',
+        customClass: {
+            popup: 'swal2-dark',
+            title: 'swal2-title-custom',
+            htmlContainer: 'swal2-html-custom'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch('<?= BASE_URL ?>/auth/delete_account.php', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({user_id: userId})
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'Account deleted successfully',
+                        background: 'var(--bg-secondary)',
+                        color: 'white',
+                        confirmButtonColor: 'var(--primary-blue)'
+                    }).then(() => {
+                        // Refresh page to close all modals
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'Error deleting account',
+                        background: 'var(--bg-secondary)',
+                        color: 'white',
+                        confirmButtonColor: 'var(--primary-blue)'
+                    });
+                }
+            })
+            .catch(() => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Error deleting account',
+                    background: 'var(--bg-secondary)',
+                    color: 'white',
+                    confirmButtonColor: 'var(--primary-blue)'
+                });
+            });
+        }
+    });
 }
 
 // Initialize
@@ -718,6 +868,7 @@ window.addEventListener('click', function(e){
     if(e.target === document.getElementById('pinModal')) closePinModal();
     if(e.target === document.getElementById('adminVerifyModal')) closeAdminVerify();
     if(e.target === document.getElementById('addUserModal')) closeAddUserModal();
+    if(e.target === document.getElementById('editUserModal')) closeEditUserModal();
     if(e.target === document.getElementById('adminDashboardModal')) closeAdminDashboard();
 });
 </script>
