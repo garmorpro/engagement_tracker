@@ -1046,8 +1046,8 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
                                     <button class="action-icon" title="Edit" onclick="event.stopPropagation(); window.location.href='engagement-details.php?id=<?php echo htmlspecialchars($eng['eng_idno']); ?>&action=edit'">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="action-icon" title="Duplicate" onclick="event.stopPropagation(); alert('Duplicate functionality coming soon')">
-                                        <i class="bi bi-files"></i>
+                                    <button class="action-icon" title="Archive" onclick="event.stopPropagation(); archiveEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
+                                        <i class="bi bi-archive"></i>
                                     </button>
                                     <button class="action-icon" title="Delete" onclick="event.stopPropagation(); alert('Delete functionality coming soon')">
                                         <i class="bi bi-trash"></i>
@@ -1070,7 +1070,51 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script>
+    // Archive engagement function
+    async function archiveEngagement(engagementId) {
+        const result = await Swal.fire({
+            title: 'Archive Engagement?',
+            text: 'Are you sure you want to archive this engagement? It will be moved to the archive and hidden from the main dashboard.',
+            icon: 'warning',
+            confirmButtonText: 'Archive',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#4487FC'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/archive-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Archived!',
+                        text: 'Engagement has been archived successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to archive engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to archive engagement', 'error');
+            }
+        }
+    }
+
     // Table row click handler
     document.querySelectorAll('.table tbody tr').forEach(row => {
         row.addEventListener('click', (e) => {
