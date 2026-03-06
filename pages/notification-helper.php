@@ -40,7 +40,7 @@ function createNotification($engagement_idno, $notif_type, $notif_title, $notif_
 /**
  * Check for upcoming key dates (engagement final due dates)
  * Notifies when engagement due date is exactly 7 days away
- * Runs daily - prevents duplicate notifications on same day
+ * Only sends if notification hasn't been sent for this engagement yet
  */
 function checkUpcomingKeyDates() {
     global $conn;
@@ -55,10 +55,9 @@ function checkUpcomingKeyDates() {
         AND eng_final_due IS NOT NULL
         AND DATE(eng_final_due) = ?
         AND eng_idno NOT IN (
-            SELECT engagement_idno 
+            SELECT DISTINCT engagement_idno 
             FROM engagement_notifications 
-            WHERE notif_type = 'upcoming_key_date' 
-            AND DATE(notif_timestamp) = CURDATE()
+            WHERE notif_type = 'upcoming_key_date'
         )
     ";
     
@@ -86,7 +85,7 @@ function checkUpcomingKeyDates() {
 /**
  * Check for upcoming milestones
  * Notifies when milestone due date is exactly 5 days away
- * Runs daily - prevents duplicate notifications on same day
+ * Only sends if notification hasn't been sent for this engagement yet
  */
 function checkUpcomingMilestones() {
     global $conn;
@@ -101,10 +100,9 @@ function checkUpcomingMilestones() {
         AND m.due_date IS NOT NULL
         AND DATE(m.due_date) = ?
         AND m.engagement_idno NOT IN (
-            SELECT engagement_idno 
+            SELECT DISTINCT engagement_idno 
             FROM engagement_notifications 
-            WHERE notif_type = 'upcoming_milestone' 
-            AND DATE(notif_timestamp) = CURDATE()
+            WHERE notif_type = 'upcoming_milestone'
         )
     ";
     
