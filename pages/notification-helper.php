@@ -40,8 +40,8 @@ function createNotification($engagement_idno, $notif_type, $notif_title, $notif_
 }
 
 /**
- * Check for upcoming key dates (engagement final due dates)
- * Notifies when engagement due date is exactly 7 days away
+ * Check for upcoming key dates (engagement archive dates)
+ * Notifies when engagement archive date is exactly 7 days away
  * Only sends if notification hasn't been sent for this engagement yet
  */
 function checkUpcomingKeyDates() {
@@ -50,12 +50,12 @@ function checkUpcomingKeyDates() {
     $dueDate = date('Y-m-d', strtotime('+7 days')); // 7 days from now
     
     $query = "
-        SELECT eng_idno, eng_name, eng_final_due 
+        SELECT eng_idno, eng_name, eng_archive 
         FROM engagements 
         WHERE eng_status != 'archived' 
         AND eng_status != 'complete'
-        AND eng_final_due IS NOT NULL
-        AND DATE(eng_final_due) = ?
+        AND eng_archive IS NOT NULL
+        AND DATE(eng_archive) = ?
         AND eng_idno NOT IN (
             SELECT DISTINCT engagement_idno 
             FROM engagement_notifications 

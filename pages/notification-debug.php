@@ -62,14 +62,14 @@ if (!$hasCompleteDate) {
 }
 
 // Check engagements with key dates
-echo "=== ENGAGEMENTS WITH KEY DATES ===\n";
-$query = "SELECT eng_idno, eng_name, eng_final_due, eng_status FROM engagements WHERE eng_final_due IS NOT NULL AND eng_status != 'archived' AND eng_status != 'complete' ORDER BY eng_final_due";
+echo "=== ENGAGEMENTS WITH KEY DATES (eng_archive) ===\n";
+$query = "SELECT eng_idno, eng_name, eng_archive, eng_status FROM engagements WHERE eng_archive IS NOT NULL AND eng_status != 'archived' AND eng_status != 'complete' ORDER BY eng_archive";
 $result = $conn->query($query);
 $count = $result->num_rows;
-echo "Found $count active engagements with due dates:\n";
+echo "Found $count active engagements with archive dates:\n";
 while ($row = $result->fetch_assoc()) {
-    $daysUntil = round((strtotime($row['eng_final_due']) - time()) / 86400);
-    echo "  ID: {$row['eng_idno']}, Name: {$row['eng_name']}, Due: {$row['eng_final_due']} (${daysUntil} days away)\n";
+    $daysUntil = round((strtotime($row['eng_archive']) - time()) / 86400);
+    echo "  ID: {$row['eng_idno']}, Name: {$row['eng_name']}, Archive: {$row['eng_archive']} (${daysUntil} days away)\n";
 }
 
 // Check what 7 days from now is
@@ -80,12 +80,12 @@ echo "7 days from now: " . $sevenDaysOut . "\n\n";
 
 // Check engagements that should trigger notifications
 $query = "
-    SELECT eng_idno, eng_name, eng_final_due, eng_status 
+    SELECT eng_idno, eng_name, eng_archive, eng_status 
     FROM engagements 
     WHERE eng_status != 'archived' 
     AND eng_status != 'complete'
-    AND eng_final_due IS NOT NULL
-    AND DATE(eng_final_due) = ?
+    AND eng_archive IS NOT NULL
+    AND DATE(eng_archive) = ?
 ";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('s', $sevenDaysOut);
@@ -93,12 +93,12 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    echo "⚠ No engagements found with due date EXACTLY 7 days from now ($sevenDaysOut)\n";
-    echo "This is normal if no engagement due date matches exactly.\n";
+    echo "⚠ No engagements found with archive date EXACTLY 7 days from now ($sevenDaysOut)\n";
+    echo "This is normal if no engagement archive date matches exactly.\n";
 } else {
-    echo "✓ Engagements found with due date 7 days from now ($sevenDaysOut):\n";
+    echo "✓ Engagements found with archive date 7 days from now ($sevenDaysOut):\n";
     while ($row = $result->fetch_assoc()) {
-        echo "  - {$row['eng_idno']}: {$row['eng_name']} ({$row['eng_final_due']})\n";
+        echo "  - {$row['eng_idno']}: {$row['eng_name']} ({$row['eng_archive']})\n";
     }
 }
 $stmt->close();
