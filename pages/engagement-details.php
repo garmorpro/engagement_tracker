@@ -38,6 +38,7 @@ function getTimelineByEngagement($conn, $engagementId) {
 $timeline = getTimelineByEngagement($conn, $engagementId);
 
 echo $timeline['engagement_idno'];
+echo $engagementId;
 
 
 if (!$engagement) {
