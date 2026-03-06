@@ -21,24 +21,35 @@ foreach ($allEngagements as $eng) {
     }
 }
 
-function getTimelineByEngagement($conn, $engagementId) {
-    $stmt = $conn->prepare("
-        SELECT *
-        FROM engagement_timeline
-        WHERE engagement_idno = ?
-        LIMIT 1
-    ");
-
-    $stmt->bind_param("i", $engagementId);
-    $stmt->execute();
-
-    return $stmt->get_result()->fetch_assoc();
+// Fetch all timelines
+function getAllTimelineData($conn) {
+    $result = $conn->query("SELECT * FROM engagement_timeline");
+    return $result->fetch_all(MYSQLI_ASSOC);
 }
 
-$timeline = getTimelineByEngagement($conn, $engagementId);
+// Current engagement you are viewing
+$currentEngagementId = $engagementId; // assume this is set somewhere
 
-echo $timeline['engagement_idno'];
-echo $engagementId;
+// Initialize
+$timeline = null;
+
+// Get all timelines
+$allTimelineData = getAllTimelineData($conn);
+
+// Find the one for the current engagement
+foreach ($allTimelineData as $row) {
+    if ($row['engagement_idno'] == $currentEngagementId) {
+        $timeline = $row;
+        break;
+    }
+}
+
+// Now $timeline is either null (no timeline exists) or the timeline for this engagement
+if ($timeline) {
+    echo "Timeline found for engagement ID: " . htmlspecialchars($timeline['engagement_idno']);
+} else {
+    echo "No timeline exists for engagement ID: " . htmlspecialchars($currentEngagementId);
+}
 
 
 if (!$engagement) {
