@@ -19,9 +19,8 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
 
 // Get unread notifications
 $notificationQuery = "SELECT * FROM engagement_notifications WHERE is_read = 'N' ORDER BY notif_timestamp DESC LIMIT 10";
-$notificationResult = $conn->query($notificationQuery);
-$notifications = $notificationResult ? $notificationResult->fetch_all(MYSQLI_ASSOC) : [];
-<?php
+$unreadNotificationCount = count($notifications);
+
 // Helper function for time ago display
 function getTimeAgo($datetime) {
     $now = new DateTime();
