@@ -1238,7 +1238,7 @@ if (!$engagement) {
 
         <!-- Action Buttons -->
         <div class="top-actions">
-            <button class="btn-edit">
+            <button class="btn-edit" id="editEngagementBtn">
                 <i class="bi bi-pencil"></i>
                 Edit
             </button>
@@ -2102,6 +2102,183 @@ if (!$timeline) {
             } catch (error) {
                 console.error('Error updating milestone:', error);
                 alert('Error: ' + error.message);
+            }
+        });
+    });
+
+    // Edit Engagement Button Handler
+    document.getElementById('editEngagementBtn').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Edit Engagement',
+            html: `
+                <div style="text-align: left; max-height: 600px; overflow-y: auto; padding: 1rem;">
+                    <!-- Basic Information Section -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Basic Information</h3>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Engagement Name</label>
+                            <input type="text" id="edit_eng_name" class="swal2-input" value="${'<?php echo htmlspecialchars($engagementData['eng_name'] ?? ''); ?>'}" style="width: 100%;">
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Location</label>
+                            <input type="text" id="edit_eng_location" class="swal2-input" value="${'<?php echo htmlspecialchars($engagementData['eng_location'] ?? ''); ?>'}" style="width: 100%;">
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Point of Contact</label>
+                            <input type="text" id="edit_eng_poc" class="swal2-input" value="${'<?php echo htmlspecialchars($engagementData['eng_poc'] ?? ''); ?>'}" style="width: 100%;">
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Status</label>
+                            <select id="edit_eng_status" class="swal2-input" style="width: 100%; padding: 0.6rem;">
+                                <option value="IN PROGRESS" ${'<?php echo $engagementData['eng_status'] === 'IN PROGRESS' ? 'selected' : ''; ?>'}>In Progress</option>
+                                <option value="COMPLETED" ${'<?php echo $engagementData['eng_status'] === 'COMPLETED' ? 'selected' : ''; ?>'}>Completed</option>
+                                <option value="ON HOLD" ${'<?php echo $engagementData['eng_status'] === 'ON HOLD' ? 'selected' : ''; ?>'}>On Hold</option>
+                                <option value="CANCELLED" ${'<?php echo $engagementData['eng_status'] === 'CANCELLED' ? 'selected' : ''; ?>'}>Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Trusted Service Criteria</label>
+                            <input type="text" id="edit_eng_tsc" class="swal2-input" value="${'<?php echo htmlspecialchars($engagementData['eng_tsc'] ?? ''); ?>'}" style="width: 100%;">
+                        </div>
+                    </div>
+
+                    <!-- Audit Details Section -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Audit Type</label>
+                            <select id="edit_eng_audit_type" class="swal2-input" style="width: 100%; padding: 0.6rem;" onchange="handleAuditTypeChange()">
+                                <option value="">Select Audit Type</option>
+                                <option value="SOC 1" ${'<?php echo $engagementData['eng_audit_type'] === 'SOC 1' ? 'selected' : ''; ?>'}>SOC 1</option>
+                                <option value="SOC 2" ${'<?php echo $engagementData['eng_audit_type'] === 'SOC 2' ? 'selected' : ''; ?>'}>SOC 2</option>
+                                <option value="PCI" ${'<?php echo $engagementData['eng_audit_type'] === 'PCI' ? 'selected' : ''; ?>'}>PCI</option>
+                                <option value="HITRUST" ${'<?php echo $engagementData['eng_audit_type'] === 'HITRUST' ? 'selected' : ''; ?>'}>HITRUST</option>
+                                <option value="FISMA" ${'<?php echo $engagementData['eng_audit_type'] === 'FISMA' ? 'selected' : ''; ?>'}>FISMA</option>
+                                <option value="ISO" ${'<?php echo $engagementData['eng_audit_type'] === 'ISO' ? 'selected' : ''; ?>'}>ISO</option>
+                            </select>
+                        </div>
+
+                        <div id="soc_type_container" style="margin-bottom: 1rem; display: none;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC Type</label>
+                            <select id="edit_eng_soc_type" class="swal2-input" style="width: 100%; padding: 0.6rem;">
+                                <option value="Type 1" ${'<?php echo $engagementData['eng_soc_type'] === 'Type 1' ? 'selected' : ''; ?>'}>Type 1</option>
+                                <option value="Type 2" ${'<?php echo $engagementData['eng_soc_type'] === 'Type 2' ? 'selected' : ''; ?>'}>Type 2</option>
+                            </select>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Scope</label>
+                            <textarea id="edit_eng_scope" class="swal2-input" style="width: 100%; min-height: 80px; resize: vertical; padding: 0.6rem;">${'<?php echo htmlspecialchars($engagementData['eng_scope'] ?? ''); ?>'}</textarea>
+                        </div>
+
+                        <div id="period_type_1" style="display: none; margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
+                            <input type="date" id="edit_eng_as_of_date" class="swal2-input" value="${'<?php echo htmlspecialchars($engagementData['eng_as_of_date'] ?? ''); ?>'}" style="width: 100%;">
+                        </div>
+
+                        <div id="period_type_2" style="display: none; margin-bottom: 1rem;">
+                            <div style="margin-bottom: 0.5rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Start Period</label>
+                                <input type="date" id="edit_eng_start_period" class="swal2-input" value="${'<?php echo htmlspecialchars($engagementData['eng_start_period'] ?? ''); ?>'}" style="width: 100%;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">End Period</label>
+                                <input type="date" id="edit_eng_end_period" class="swal2-input" value="${'<?php echo htmlspecialchars($engagementData['eng_end_period'] ?? ''); ?>'}" style="width: 100%;">
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" id="edit_eng_repeat" ${'<?php echo $engagementData['eng_repeat'] === 'Y' ? 'checked' : ''; ?>'}>
+                                <span style="font-size: 13px;">Repeat Engagement</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Hours & Notes Section -->
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Hours & Notes</h3>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Notes</label>
+                            <textarea id="edit_eng_notes" class="swal2-input" style="width: 100%; min-height: 100px; resize: vertical; padding: 0.6rem;">${'<?php echo htmlspecialchars($engagementData['eng_notes'] ?? ''); ?>'}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `,
+            confirmButtonText: 'Save Changes',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            width: '700px',
+            didOpen: () => {
+                // Handle SOC Type visibility
+                const auditTypeSelect = document.getElementById('edit_eng_audit_type');
+                const socTypeContainer = document.getElementById('soc_type_container');
+                const periodType1 = document.getElementById('period_type_1');
+                const periodType2 = document.getElementById('period_type_2');
+                
+                function updateFormVisibility() {
+                    const auditType = auditTypeSelect.value;
+                    socTypeContainer.style.display = auditType.includes('SOC') ? 'block' : 'none';
+                    
+                    if (auditType === 'SOC 1') {
+                        periodType1.style.display = 'block';
+                        periodType2.style.display = 'none';
+                    } else if (auditType === 'SOC 2') {
+                        periodType1.style.display = 'none';
+                        periodType2.style.display = 'block';
+                    } else {
+                        periodType1.style.display = 'none';
+                        periodType2.style.display = 'none';
+                    }
+                }
+                
+                auditTypeSelect.addEventListener('change', updateFormVisibility);
+                updateFormVisibility();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const updatedData = {
+                    engagement_id: '<?php echo $engagementId; ?>',
+                    eng_name: document.getElementById('edit_eng_name').value,
+                    eng_location: document.getElementById('edit_eng_location').value,
+                    eng_poc: document.getElementById('edit_eng_poc').value,
+                    eng_status: document.getElementById('edit_eng_status').value,
+                    eng_tsc: document.getElementById('edit_eng_tsc').value,
+                    eng_audit_type: document.getElementById('edit_eng_audit_type').value,
+                    eng_soc_type: document.getElementById('edit_eng_soc_type').value,
+                    eng_scope: document.getElementById('edit_eng_scope').value,
+                    eng_as_of_date: document.getElementById('edit_eng_as_of_date').value,
+                    eng_start_period: document.getElementById('edit_eng_start_period').value,
+                    eng_end_period: document.getElementById('edit_eng_end_period').value,
+                    eng_repeat: document.getElementById('edit_eng_repeat').checked ? 'Y' : 'N',
+                    eng_notes: document.getElementById('edit_eng_notes').value
+                };
+                
+                fetch('../api/update-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        sessionStorage.setItem('showMilestoneToast', 'Engagement updated successfully');
+                        location.reload();
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update engagement', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Failed to update engagement', 'error');
+                });
             }
         });
     });
