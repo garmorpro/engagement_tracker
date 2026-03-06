@@ -123,11 +123,11 @@ function getAllEngagements(mysqli $conn): array
            AND LOWER(mgr.role) = 'manager'
 
         LEFT JOIN engagement_milestones ms
-            ON ms.eng_id = e.eng_id
+            ON ms.engagement_idno = e.eng_idno
            AND ms.milestone_type LIKE 'final%'
 
-        GROUP BY e.eng_id
-        ORDER BY e.eng_id DESC
+        GROUP BY e.eng_idno
+        ORDER BY e.eng_idno DESC
     ";
 
     $result = $conn->query($sql);
