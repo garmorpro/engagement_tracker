@@ -119,7 +119,7 @@ function getAllEngagements(mysqli $conn): array
         FROM engagements e
 
         LEFT JOIN engagement_team mgr
-            ON mgr.eng_id = e.eng_id
+            ON mgr.engagement_idno = e.eng_idno
            AND LOWER(mgr.role) = 'manager'
 
         LEFT JOIN engagement_milestones ms
