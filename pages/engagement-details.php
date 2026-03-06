@@ -1521,8 +1521,8 @@ if (!$timeline) {
                         ?>
                         <?php foreach ($milestones as $milestone): ?>
                             <?php
-                                $isCompleted = !empty($milestone['milestone_completed_at']);
-                                $dueDate = date("M j, Y", strtotime($milestone['milestone_due_date']));
+                                $isCompleted = !empty($milestone['is_completed']);
+                                $dueDate = date("M j, Y", strtotime($milestone['due_date']));
                             ?>
                             <div class="milestone-item">
                                 <div class="milestone-checkbox <?php echo $isCompleted ? 'completed' : 'pending'; ?>">
