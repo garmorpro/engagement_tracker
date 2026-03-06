@@ -79,6 +79,7 @@ if (!$engagement) {
     <title><?php echo htmlspecialchars($engagement['eng_name']); ?> - Engagement Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>">
     <style>
         :root {
@@ -1466,7 +1467,7 @@ if (!$engagement) {
                         </div>
                         <h2 class="section-title">Timeline & Key Dates</h2>
                     </div>
-                    <button class="manage-btn" style="margin: 0; padding: 0.5rem 1rem;">
+                    <button class="manage-btn" id="timelineManageBtn" style="margin: 0; padding: 0.5rem 1rem;">
                         <i class="bi bi-gear"></i> Manage
                     </button>
                 </div>
@@ -1749,6 +1750,7 @@ if (!$timeline) {
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
     // Scroll detection for header shadow
     const pageHeader = document.getElementById('pageHeader');
@@ -1877,6 +1879,111 @@ if (!$timeline) {
             } catch (error) {
                 console.error('Fetch Error:', error);
                 alert('Failed to update milestone: ' + error.message);
+            }
+        });
+    });
+
+    // Timeline Manage Button Handler
+    document.getElementById('timelineManageBtn').addEventListener('click', function() {
+        // Get current timeline values from the page
+        const timelineData = {
+            internal_planning_call_date: '<?php echo htmlspecialchars($timeline['internal_planning_call_date'] ?? ''); ?>',
+            irl_due_date: '<?php echo htmlspecialchars($timeline['irl_due_date'] ?? ''); ?>',
+            client_planning_call_date: '<?php echo htmlspecialchars($timeline['client_planning_call_date'] ?? ''); ?>',
+            fieldwork_date: '<?php echo htmlspecialchars($timeline['fieldwork_date'] ?? ''); ?>',
+            leadsheet_date: '<?php echo htmlspecialchars($timeline['leadsheet_date'] ?? ''); ?>',
+            draft_report_due_date: '<?php echo htmlspecialchars($timeline['draft_report_due_date'] ?? ''); ?>',
+            final_report_date: '<?php echo htmlspecialchars($timeline['final_report_date'] ?? ''); ?>',
+            archive_date: '<?php echo htmlspecialchars($timeline['archive_date'] ?? ''); ?>'
+        };
+
+        Swal.fire({
+            title: 'Edit Timeline & Key Dates',
+            html: `
+                <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Internal Planning Call</label>
+                        <input type="date" id="internal_planning_call_date" class="swal2-input" value="${timelineData.internal_planning_call_date}" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">IRL Due</label>
+                        <input type="date" id="irl_due_date" class="swal2-input" value="${timelineData.irl_due_date}" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Client Planning Call</label>
+                        <input type="date" id="client_planning_call_date" class="swal2-input" value="${timelineData.client_planning_call_date}" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Fieldwork</label>
+                        <input type="date" id="fieldwork_date" class="swal2-input" value="${timelineData.fieldwork_date}" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Leadsheet Due</label>
+                        <input type="date" id="leadsheet_date" class="swal2-input" value="${timelineData.leadsheet_date}" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Draft Report Due</label>
+                        <input type="date" id="draft_report_due_date" class="swal2-input" value="${timelineData.draft_report_due_date}" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Final Report Due</label>
+                        <input type="date" id="final_report_date" class="swal2-input" value="${timelineData.final_report_date}" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Archive Date</label>
+                        <input type="date" id="archive_date" class="swal2-input" value="${timelineData.archive_date}" style="width: 100%;">
+                    </div>
+                </div>
+            `,
+            confirmButtonText: 'Save Changes',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            didOpen: () => {
+                // Optional: Focus on first input
+                document.getElementById('internal_planning_call_date').focus();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Collect all values
+                const updatedData = {
+                    engagement_id: '<?php echo $engagementId; ?>',
+                    internal_planning_call_date: document.getElementById('internal_planning_call_date').value,
+                    irl_due_date: document.getElementById('irl_due_date').value,
+                    client_planning_call_date: document.getElementById('client_planning_call_date').value,
+                    fieldwork_date: document.getElementById('fieldwork_date').value,
+                    leadsheet_date: document.getElementById('leadsheet_date').value,
+                    draft_report_due_date: document.getElementById('draft_report_due_date').value,
+                    final_report_date: document.getElementById('final_report_date').value,
+                    archive_date: document.getElementById('archive_date').value
+                };
+
+                // Send to API
+                fetch('../api/update-timeline.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Success!',
+                            text: 'Timeline updated successfully',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Failed to update timeline', 'error');
+                });
             }
         });
     });
