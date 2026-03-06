@@ -1613,7 +1613,7 @@ if (!$timeline) {
             e.stopPropagation();
             
             const milestoneItem = this.closest('.milestone-item');
-            const milestoneTitle = milestoneItem?.querySelector('.milestone-title')?.textContent?.trim();
+            const milestoneTitle = milestoneItem.querySelector('.milestone-title').textContent.trim();
             
             if (!milestoneTitle) return;
 
@@ -1622,13 +1622,13 @@ if (!$timeline) {
             const newStatus = isCurrentlyCompleted ? 'N' : 'Y';
 
             try {
-                const response = await fetch('../api/update-milestone.php', {
+                const response = await fetch('./update-milestone.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        engagement_id: '<?php echo htmlspecialchars($engagementId); ?>',
+                        engagement_id: '<?php echo $engagementId; ?>',
                         milestone_type: milestoneTitle,
                         is_completed: newStatus
                     })
@@ -1652,7 +1652,7 @@ if (!$timeline) {
                     }
 
                     // Update milestone title strikethrough
-                    const title = milestoneItem?.querySelector('.milestone-title');
+                    const title = milestoneItem.querySelector('.milestone-title');
                     if (title) {
                         if (newStatus === 'Y') {
                             title.classList.add('completed');
