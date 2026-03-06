@@ -54,7 +54,7 @@ try {
         exit;
     }
 
-    $query = "UPDATE engagements SET " . implode(', ', $updateFields) . " WHERE engagement_idno = ?";
+    $query = "UPDATE engagements SET " . implode(', ', $updateFields) . " WHERE eng_idno = ?";
     $params[] = $engagement_id;
     $types .= 's';
 
