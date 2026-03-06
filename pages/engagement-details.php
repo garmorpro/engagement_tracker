@@ -900,6 +900,12 @@ if (!$engagement) {
         font-style: italic;
         margin-top: 0.5rem;
         }
+
+        @keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
     </style>
 </head>
 <body>
@@ -1198,14 +1204,6 @@ if (!$engagement) {
     <?php endif; ?>
     </div>
 </div>
-
-<style>
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
-}
-</style>
 
         <!-- ========== RIGHT COLUMN (Timeline & Milestones Stacked) ========== -->
         <div style="display: grid; grid-template-rows: auto auto; gap: 2rem;">
