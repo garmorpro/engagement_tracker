@@ -891,7 +891,7 @@ if (!$engagement) {
         }
         .no-team-members {
             padding: 1rem;
-        background-color: #f9f9f9;
+        background-color: var(--primary-color);
         border: 1px dashed #ccc;
         border-radius: 0.5rem;
         text-align: center;
