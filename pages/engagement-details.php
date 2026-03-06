@@ -1763,6 +1763,8 @@ if (!$timeline) {
     $timeline = [
         'internal_planning_call_date' => null,
         'internal_planning_call_completed_at' => null,
+        'planning_memo_date' => null,
+        'planning_memo_completed_at' => null,
         'irl_due_date' => null,
         'irl_completed_at' => null,
         'client_planning_call_date' => null,
@@ -1771,6 +1773,8 @@ if (!$timeline) {
         'fieldwork_completed_at' => null,
         'leadsheet_date' => null,
         'leadsheet_completed_at' => null,
+        'conclusion_memo_date' => null,
+        'conclusion_memo_completed_at' => null,
         'draft_report_due_date' => null,
         'draft_report_completed_at' => null,
         'final_report_date' => null,
@@ -1793,6 +1797,22 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['internal_planning_call_completed_at']) ? 'checked' : ''; ?>" data-field-date="internal_planning_call_date" data-field-completed="internal_planning_call_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
+                        </div>
+                    </div>
+
+                    <!-- Planning Memo -->
+                    <div class="timeline-item" data-timeline-field="planning_memo" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-file-text" style="font-size: 12px;"></i> PLANNING MEMO
+                        </div>
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['planning_memo_date'],
+                            $timeline['planning_memo_completed_at']
+                        );
+                        ?>
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['planning_memo_completed_at']) ? 'checked' : ''; ?>" data-field-date="planning_memo_date" data-field-completed="planning_memo_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
@@ -1857,6 +1877,22 @@ if (!$timeline) {
                         );
                         ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['leadsheet_completed_at']) ? 'checked' : ''; ?>" data-field-date="leadsheet_date" data-field-completed="leadsheet_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
+                            <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
+                        </div>
+                    </div>
+
+                    <!-- Conclusion Memo -->
+                    <div class="timeline-item" data-timeline-field="conclusion_memo" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
+                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-file-text" style="font-size: 12px;"></i> CONCLUSION MEMO
+                        </div>
+                        <?php
+                        renderTimelineStatus(
+                            $timeline['conclusion_memo_date'],
+                            $timeline['conclusion_memo_completed_at']
+                        );
+                        ?>
+                        <div class="timeline-checkbox-container <?php echo !empty($timeline['conclusion_memo_completed_at']) ? 'checked' : ''; ?>" data-field-date="conclusion_memo_date" data-field-completed="conclusion_memo_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
