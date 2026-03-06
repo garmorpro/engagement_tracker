@@ -61,16 +61,26 @@ function getTimelineTitle($columnName) {
 
 /**
  * Check for upcoming key dates from engagement_timeline
- * Notifies when any timeline date is exactly 7 days away AND the corresponding *_completed_at is NULL
+ * Notifies when the date is exactly 7 days away (meaning 7 days before the event)
  * Only sends if notification hasn't been sent for this engagement yet
  */
 function checkUpcomingKeyDates() {
     global $conn;
     
-    $dueDate = date('Y-m-d', strtotime('+7 days')); // 7 days from now
+    // Get all active engagements with timeline
+    $query = "SELECT DISTINCT t.engagement_idno, e.eng_name 
+              FROM engagement_timeline t
+              JOIN engagements e ON t.engagement_idno = e.eng_idno
+              WHERE e.eng_status NOT IN ('archived', 'complete')
+              AND t.engagement_idno NOT IN (
+                  SELECT DISTINCT engagement_idno 
+                  FROM engagement_notifications 
+                  WHERE notif_type = 'upcoming_key_date'
+              )";
     
-    // Timeline columns paired with their completed_at counterparts
-    $dateCompletedPairs = [
+    $result = $conn->query($query);
+    
+    $dateFields = [
         'internal_planning_call_date' => 'internal_planning_call_completed_at',
         'planning_memo_date' => 'planning_memo_completed_at',
         'irl_due_date' => 'irl_completed_at',
@@ -83,19 +93,18 @@ function checkUpcomingKeyDates() {
         'archive_date' => 'archive_completed_at'
     ];
     
-    // Get all engagements
-    $query = "SELECT DISTINCT engagement_idno, e.eng_name 
-              FROM engagement_timeline t
-              JOIN engagements e ON t.engagement_idno = e.eng_idno
-              WHERE e.eng_status != 'archived' 
-              AND e.eng_status != 'complete'
-              AND t.engagement_idno NOT IN (
-                  SELECT DISTINCT engagement_idno 
-                  FROM engagement_notifications 
-                  WHERE notif_type = 'upcoming_key_date'
-              )";
-    
-    $result = $conn->query($query);
+    $titleMap = [
+        'internal_planning_call_date' => 'Internal Planning Call',
+        'planning_memo_date' => 'Planning Memo',
+        'irl_due_date' => 'IRL Due Date',
+        'client_planning_call_date' => 'Client Planning Call',
+        'fieldwork_date' => 'Fieldwork',
+        'leadsheet_date' => 'Leadsheet',
+        'conclusion_memo_date' => 'Conclusion Memo',
+        'draft_report_due_date' => 'Draft Report Due',
+        'final_report_date' => 'Final Report',
+        'archive_date' => 'Archive'
+    ];
     
     if ($result) {
         while ($row = $result->fetch_assoc()) {
@@ -114,23 +123,28 @@ function checkUpcomingKeyDates() {
             if (!$timeline) continue;
             
             // Check each date/completed pair
-            foreach ($dateCompletedPairs as $dateCol => $completedCol) {
+            foreach ($dateFields as $dateCol => $completedCol) {
                 $dateValue = $timeline[$dateCol];
                 $completedValue = $timeline[$completedCol];
                 
-                // Only notify if: date matches 7 days out AND completed_at is NULL
-                if ($dateValue && $completedValue === null && date('Y-m-d', strtotime($dateValue)) === $dueDate) {
-                    $title = 'Upcoming Key Date';
-                    $dateTitle = getTimelineTitle($dateCol);
-                    $message = $eng_name . ' - ' . $dateTitle . ' is due in 7 days';
+                // Only notify if: date exists, is not completed, and is 7 days away
+                if ($dateValue && !$completedValue) {
+                    $daysUntilDate = round((strtotime($dateValue) - time()) / 86400);
                     
-                    createNotification(
-                        $engagement_idno,
-                        'upcoming_key_date',
-                        $title,
-                        $message
-                    );
-                    break; // Only send one notification per engagement per check
+                    // Notify when date is 7 days away (7 days before the event)
+                    if ($daysUntilDate === 7) {
+                        $title = 'Upcoming Key Date';
+                        $dateTitle = $titleMap[$dateCol];
+                        $message = $eng_name . ' - ' . $dateTitle . ' is due in 7 days';
+                        
+                        createNotification(
+                            $engagement_idno,
+                            'upcoming_key_date',
+                            $title,
+                            $message
+                        );
+                        break; // Only send one notification per engagement per check
+                    }
                 }
             }
         }
@@ -139,13 +153,11 @@ function checkUpcomingKeyDates() {
 
 /**
  * Check for upcoming milestones
- * Notifies when milestone due date is exactly 5 days away
+ * Notifies when milestone due date is exactly 5 days away (5 days before the milestone)
  * Only sends if notification hasn't been sent for this engagement yet
  */
 function checkUpcomingMilestones() {
     global $conn;
-    
-    $dueDate = date('Y-m-d', strtotime('+5 days')); // 5 days from now
     
     $query = "
         SELECT m.ms_id, m.engagement_idno, m.milestone_type, m.due_date, e.eng_name
@@ -153,7 +165,6 @@ function checkUpcomingMilestones() {
         JOIN engagements e ON m.engagement_idno = e.eng_idno
         WHERE m.is_completed = 'N'
         AND m.due_date IS NOT NULL
-        AND DATE(m.due_date) = ?
         AND m.engagement_idno NOT IN (
             SELECT DISTINCT engagement_idno 
             FROM engagement_notifications 
@@ -161,28 +172,29 @@ function checkUpcomingMilestones() {
         )
     ";
     
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('s', $dueDate);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $result = $conn->query($query);
     
     if ($result) {
         while ($row = $result->fetch_assoc()) {
-            // Convert milestone_type from snake_case to Title Case
-            $milestoneTitle = implode(' ', array_map('ucfirst', explode('_', strtolower($row['milestone_type']))));
+            $daysUntilDate = round((strtotime($row['due_date']) - time()) / 86400);
             
-            $title = 'Upcoming Milestone';
-            $message = $row['eng_name'] . ' - ' . $milestoneTitle . ' due in 5 days';
-            
-            createNotification(
-                $row['engagement_idno'],
-                'upcoming_milestone',
-                $title,
-                $message
-            );
+            // Notify when date is 5 days away (5 days before the milestone)
+            if ($daysUntilDate === 5) {
+                // Convert milestone_type from snake_case to Title Case
+                $milestoneTitle = implode(' ', array_map('ucfirst', explode('_', strtolower($row['milestone_type']))));
+                
+                $title = 'Upcoming Milestone';
+                $message = $row['eng_name'] . ' - ' . $milestoneTitle . ' due in 5 days';
+                
+                createNotification(
+                    $row['engagement_idno'],
+                    'upcoming_milestone',
+                    $title,
+                    $message
+                );
+            }
         }
     }
-    $stmt->close();
 }
 
 /**
