@@ -806,6 +806,104 @@ if (!$engagement) {
             line-height: 1.6;
         }
 
+        /* ========== SWEETALERT2 STYLING ========== */
+        .swal2-container {
+            z-index: 2000;
+        }
+
+        .swal2-popup {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark-mode .swal2-popup {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .swal2-title {
+            color: var(--text-primary);
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .swal2-html-container {
+            color: var(--text-primary);
+        }
+
+        .swal2-input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 8px;
+            padding: 0.75rem !important;
+            font-size: 14px !important;
+            transition: all 0.2s;
+        }
+
+        .swal2-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+            outline: none;
+        }
+
+        .swal2-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .swal2-actions {
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .swal2-confirm {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .swal2-confirm:hover {
+            background: #3671E0;
+            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3);
+        }
+
+        .swal2-confirm:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.2);
+        }
+
+        .swal2-cancel {
+            background: var(--border-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .swal2-cancel:hover {
+            background: rgba(68, 135, 252, 0.05);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .swal2-cancel:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+        }
+
         /* ========== MILESTONES SECTION ========== */
         .milestones-header-right {
             display: flex;
@@ -1900,37 +1998,37 @@ if (!$timeline) {
         Swal.fire({
             title: 'Edit Timeline & Key Dates',
             html: `
-                <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Internal Planning Call</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Internal Planning Call</label>
                         <input type="date" id="internal_planning_call_date" class="swal2-input" value="${timelineData.internal_planning_call_date}" style="width: 100%;">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">IRL Due</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">IRL Due</label>
                         <input type="date" id="irl_due_date" class="swal2-input" value="${timelineData.irl_due_date}" style="width: 100%;">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Client Planning Call</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Client Planning Call</label>
                         <input type="date" id="client_planning_call_date" class="swal2-input" value="${timelineData.client_planning_call_date}" style="width: 100%;">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Fieldwork</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Fieldwork</label>
                         <input type="date" id="fieldwork_date" class="swal2-input" value="${timelineData.fieldwork_date}" style="width: 100%;">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Leadsheet Due</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Leadsheet Due</label>
                         <input type="date" id="leadsheet_date" class="swal2-input" value="${timelineData.leadsheet_date}" style="width: 100%;">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Draft Report Due</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Draft Report Due</label>
                         <input type="date" id="draft_report_due_date" class="swal2-input" value="${timelineData.draft_report_due_date}" style="width: 100%;">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Final Report Due</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Final Report Due</label>
                         <input type="date" id="final_report_date" class="swal2-input" value="${timelineData.final_report_date}" style="width: 100%;">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: #6A7382;">Archive Date</label>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Archive Date</label>
                         <input type="date" id="archive_date" class="swal2-input" value="${timelineData.archive_date}" style="width: 100%;">
                     </div>
                 </div>
