@@ -1926,7 +1926,14 @@ if (!$timeline) {
                                 </div>
                                 <div class="milestone-content">
                                     <div class="milestone-title <?php echo $isCompleted ? 'completed' : ''; ?>">
-                                        <?php echo htmlspecialchars($milestone['milestone_type']); ?>
+                                        <?php 
+                                        // Convert snake_case to Title Case
+                                        $milestoneTitle = $milestone['milestone_type'];
+                                        $milestoneTitle = implode(' ', array_map(function($word) {
+                                            return ucfirst(strtolower($word));
+                                        }, explode('_', $milestoneTitle)));
+                                        echo htmlspecialchars($milestoneTitle);
+                                        ?>
                                     </div>
                                     <div class="milestone-due">Due: <?php echo htmlspecialchars($dueDate); ?></div>
                                 </div>
