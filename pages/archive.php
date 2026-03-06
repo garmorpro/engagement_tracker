@@ -715,6 +715,10 @@ $archiveCount = count($engagements);
             color: var(--success-green);
         }
 
+        .status-badge.archived {
+    background: rgba(128, 128, 128, 0.15);
+    color: #6b7280;
+}
         .status-badge.planning {
             background: rgba(241, 115, 19, 0.15);
             color: var(--warning-orange);

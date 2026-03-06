@@ -736,6 +736,7 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
             background: rgba(77, 191, 184, 0.15);
             color: var(--teal);
         }
+        
 
         .action-icons {
             display: flex;
