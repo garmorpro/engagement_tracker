@@ -704,6 +704,11 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
             color: var(--primary-blue);
         }
 
+        .badge-audit-type {
+            background: rgba(68, 135, 252, 0.15);
+            color: var(--primary-blue);
+        }
+
         .status-badge {
             display: inline-block;
             padding: 0.4rem 0.75rem;
@@ -736,7 +741,6 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
             background: rgba(77, 191, 184, 0.15);
             color: var(--teal);
         }
-        
 
         .action-icons {
             display: flex;
@@ -1013,12 +1017,15 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
                             </td>
                             <td><?php echo htmlspecialchars($eng['eng_manager'] ?? 'Unassigned'); ?></td>
                             <td>
-                                <?php if (strpos($eng['eng_audit_type'], 'SOC 1') !== false): ?>
-                                    <span class="badge badge-soc1">SOC 1</span>
-                                <?php endif; ?>
-                                <?php if (strpos($eng['eng_audit_type'], 'SOC 2') !== false): ?>
-                                    <span class="badge badge-soc2">SOC 2</span>
-                                <?php endif; ?>
+                                <?php 
+                                    $auditTypes = explode(',', $eng['eng_audit_type']);
+                                    foreach ($auditTypes as $type) {
+                                        $type = trim($type);
+                                        if (!empty($type)) {
+                                            echo '<span class="badge badge-audit-type">' . htmlspecialchars($type) . '</span> ';
+                                        }
+                                    }
+                                ?>
                             </td>
                             <td>
                                 <span class="status-badge <?php echo $statusClass; ?>">
