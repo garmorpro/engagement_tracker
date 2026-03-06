@@ -764,9 +764,15 @@ function editAccount(userId, accountName) {
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({user_id: userId})
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+    })
     .then(data => {
-        if(data.success) {
+        console.log('Edit account response:', data);
+        if(data.success && data.account) {
             const account = data.account;
             document.getElementById('editUserId').value = account.user_id;
             document.getElementById('editAccountName').value = account.account_name;
@@ -778,19 +784,22 @@ function editAccount(userId, accountName) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Failed to load user details',
+                text: data.message || 'Failed to load user details',
                 background: 'var(--bg-secondary)',
-                color: 'white'
+                color: 'white',
+                confirmButtonColor: 'var(--primary-blue)'
             });
         }
     })
-    .catch(() => {
+    .catch((error) => {
+        console.error('Edit account error:', error);
         Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: 'Error loading user details',
+            text: 'Error loading user details: ' + error.message,
             background: 'var(--bg-secondary)',
-            color: 'white'
+            color: 'white',
+            confirmButtonColor: 'var(--primary-blue)'
         });
     });
 }
