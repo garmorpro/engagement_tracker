@@ -1028,7 +1028,7 @@ if (!$engagement) {
                     </div>
                     <div class="engagement-meta-tag">
                         <i class="bi bi-person-check"></i>
-                        POC: Tom Wilson
+                        POC: <?php echo htmlspecialchars($engagement['eng_poc'] ?? 'Unassigned'); ?>
                     </div>
                 </div>
             </div>
