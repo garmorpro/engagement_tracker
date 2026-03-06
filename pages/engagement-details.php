@@ -52,6 +52,19 @@ foreach ($allTeamData as $row) {
 }
 
 
+// MILESTONES
+$milestones = []; // start as empty array
+
+$allMilestonesData = getAllMilestones($conn);
+
+// Collect all milestones for the current engagement
+foreach ($allMilestonesData as $row) {
+    if ($row['engagement_idno'] == $currentEngagementId) {
+        $milestones[] = $row;
+    }
+}
+
+
 if (!$engagement) {
     header('Location: dashboard.php');
     exit;
@@ -1472,74 +1485,65 @@ if (!$timeline) {
                         <button class="manage-btn" style="margin: 0; padding: 0.5rem 1rem;">
                             <i class="bi bi-gear"></i> Manage
                         </button>
-                        <span class="milestone-stat">3/6</span>
-                        <span class="milestone-progress">50% Complete</span>
+                        <?php
+                        if (!empty($milestones)) {
+                            $completedCount = 0;
+                            foreach ($milestones as $milestone) {
+                                if (!empty($milestone['milestone_completed_at'])) {
+                                    $completedCount++;
+                                }
+                            }
+                            $totalCount = count($milestones);
+                            $percentComplete = round(($completedCount / $totalCount) * 100);
+                        } else {
+                            $completedCount = 0;
+                            $totalCount = 0;
+                            $percentComplete = 0;
+                        }
+                        ?>
+                        <span class="milestone-stat"><?php echo htmlspecialchars($completedCount); ?>/<?php echo htmlspecialchars($totalCount); ?></span>
+                        <span class="milestone-progress"><?php echo htmlspecialchars($percentComplete); ?>% Complete</span>
                     </div>
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
-                    <!-- Kickoff meeting completed -->
-                    <div class="milestone-item">
-                        <div class="milestone-checkbox completed">
-                            <i class="bi bi-check-circle-fill"></i>
+                    <?php if (!empty($milestones)): ?>
+                        <?php 
+                        // Calculate completed milestones
+                        $completedCount = 0;
+                        foreach ($milestones as $milestone) {
+                            if (!empty($milestone['milestone_completed_at'])) {
+                                $completedCount++;
+                            }
+                        }
+                        $totalCount = count($milestones);
+                        $percentComplete = $totalCount > 0 ? round(($completedCount / $totalCount) * 100) : 0;
+                        ?>
+                        <?php foreach ($milestones as $milestone): ?>
+                            <?php
+                                $isCompleted = !empty($milestone['milestone_completed_at']);
+                                $dueDate = date("M j, Y", strtotime($milestone['milestone_due_date']));
+                            ?>
+                            <div class="milestone-item">
+                                <div class="milestone-checkbox <?php echo $isCompleted ? 'completed' : 'pending'; ?>">
+                                    <?php if ($isCompleted): ?>
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="milestone-content">
+                                    <div class="milestone-title <?php echo $isCompleted ? 'completed' : ''; ?>">
+                                        <?php echo htmlspecialchars($milestone['milestone_name']); ?>
+                                    </div>
+                                    <div class="milestone-due">Due: <?php echo htmlspecialchars($dueDate); ?></div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <div style="grid-column: 1 / -1; padding: 2rem; text-align: center; color: var(--text-secondary);">
+                            <i class="bi bi-flag" style="font-size: 32px; margin-bottom: 1rem; opacity: 0.5;"></i>
+                            <p>No milestones created yet.</p>
                         </div>
-                        <div class="milestone-content">
-                            <div class="milestone-title completed">Kickoff meeting completed</div>
-                            <div class="milestone-due">Due: Oct 31, 2025</div>
-                        </div>
-                    </div>
-
-                    <!-- Risk assessment finalized -->
-                    <div class="milestone-item">
-                        <div class="milestone-checkbox completed">
-                            <i class="bi bi-check-circle-fill"></i>
-                        </div>
-                        <div class="milestone-content">
-                            <div class="milestone-title completed">Risk assessment finalized</div>
-                            <div class="milestone-due">Due: Nov 14, 2025</div>
-                        </div>
-                    </div>
-
-                    <!-- Fieldwork completed -->
-                    <div class="milestone-item">
-                        <div class="milestone-checkbox completed">
-                            <i class="bi bi-check-circle-fill"></i>
-                        </div>
-                        <div class="milestone-content">
-                            <div class="milestone-title completed">Fieldwork completed</div>
-                            <div class="milestone-due">Due: Dec 14, 2025</div>
-                        </div>
-                    </div>
-
-                    <!-- Draft report prepared -->
-                    <div class="milestone-item">
-                        <div class="milestone-checkbox pending">
-                        </div>
-                        <div class="milestone-content">
-                            <div class="milestone-title">Draft report prepared</div>
-                            <div class="milestone-due">Due: Feb 19, 2026</div>
-                        </div>
-                    </div>
-
-                    <!-- Management response received -->
-                    <div class="milestone-item">
-                        <div class="milestone-checkbox pending">
-                        </div>
-                        <div class="milestone-content">
-                            <div class="milestone-title">Management response received</div>
-                            <div class="milestone-due">Due: Feb 28, 2026</div>
-                        </div>
-                    </div>
-
-                    <!-- Final report issued -->
-                    <div class="milestone-item">
-                        <div class="milestone-checkbox pending">
-                        </div>
-                        <div class="milestone-content">
-                            <div class="milestone-title">Final report issued</div>
-                            <div class="milestone-due">Due: Mar 14, 2026</div>
-                        </div>
-                    </div>
+                    <?php endif; ?>
                 </div>
             </div>
 
