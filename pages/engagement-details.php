@@ -1165,44 +1165,35 @@ if (!$engagement) {
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
 
                 <?php
-function renderTimelineStatus($date, $completed) {
+// Get timeline for current engagement (or null if none)
+$timeline = getTimelineByEngagement($conn, $engagementId);
 
-    if (!$date) {
-        echo '<div class="timeline-date">—</div>';
-        echo '<div class="timeline-status">Not scheduled</div>';
-        return;
-    }
+// Render timeline items
+$steps = [
+    ['title' => 'Internal Planning Call', 'icon' => 'bi-calendar', 'date_field' => 'internal_planning_call_date', 'completed_field' => 'internal_planning_call_completed_at'],
+    ['title' => 'IRL Due', 'icon' => 'bi-info-circle', 'date_field' => 'irl_due_date', 'completed_field' => 'irl_completed_at'],
+    ['title' => 'Client Planning Call', 'icon' => 'bi-calendar', 'date_field' => 'client_planning_call_date', 'completed_field' => 'client_planning_call_completed_at'],
+    ['title' => 'Fieldwork', 'icon' => 'bi-bar-chart', 'date_field' => 'fieldwork_date', 'completed_field' => 'fieldwork_completed_at'],
+    ['title' => 'Leadsheet Due', 'icon' => 'bi-info-circle', 'date_field' => 'leadsheet_date', 'completed_field' => 'leadsheet_completed_at'],
+    ['title' => 'Draft Report Due', 'icon' => 'bi-file-text', 'date_field' => 'draft_report_due_date', 'completed_field' => 'draft_report_completed_at'],
+    ['title' => 'Final Report Due', 'icon' => 'bi-file-earmark', 'date_field' => 'final_report_date', 'completed_field' => 'final_report_completed_at'],
+    ['title' => 'Archive Date', 'icon' => 'bi-archive', 'date_field' => 'archive_date', 'completed_field' => 'archive_completed_at'],
+];
 
-    $formattedDate = date("M j, Y", strtotime($date));
+// Loop through each step
+foreach ($steps as $step) {
+    echo '<div class="timeline-item">';
+    echo '<div class="timeline-title" style="font-size:10px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem; font-weight:600; display:flex; align-items:center; gap:0.4rem;">
+            <i class="bi ' . htmlspecialchars($step['icon']) . '" style="font-size:12px;"></i> ' . htmlspecialchars($step['title']) . '
+          </div>';
 
-    $today = new DateTime();
-    $dueDate = new DateTime($date);
+    // If timeline exists, use the real dates; otherwise null
+    $date = $timeline[$step['date_field']] ?? null;
+    $completed = $timeline[$step['completed_field']] ?? null;
 
-    $diff = $today->diff($dueDate);
-    $days = $diff->days;
+    renderTimelineStatus($date, $completed);
 
-    echo '<div class="timeline-date">'.htmlspecialchars($formattedDate).'</div>';
-
-    if (!empty($completed)) {
-
-        echo '<div class="timeline-status completed">
-                <i class="bi bi-check-circle-fill"></i> Completed
-              </div>';
-
-    } else {
-
-        if ($today <= $dueDate) {
-
-            echo '<div class="timeline-status">'.$days.'d remaining</div>';
-
-        } else {
-
-            echo '<div class="timeline-status overdue">
-                    <i class="bi bi-x-circle-fill"></i> '.$days.'d overdue
-                  </div>';
-
-        }
-    }
+    echo '</div>';
 }
 ?>
                     <!-- Internal Planning -->
