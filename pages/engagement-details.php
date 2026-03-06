@@ -1617,9 +1617,11 @@ if (!$timeline) {
             
             if (!milestoneTitle) return;
 
-            // Get current state (if 'completed' class exists, it's currently completed)
-            const isCurrentlyCompleted = this.classList.contains('completed');
-            const newStatus = isCurrentlyCompleted ? 'N' : 'Y';
+            // Determine current state based on the 'completed' class
+            // If it has 'completed' class, it's currently Y, so toggle to N
+            // If it has 'pending' class, it's currently N, so toggle to Y
+            const hasCompletedClass = this.classList.contains('completed');
+            const newStatus = hasCompletedClass ? 'N' : 'Y';
 
             try {
                 const response = await fetch('update-milestone.php', {
@@ -1637,27 +1639,31 @@ if (!$timeline) {
                 const data = await response.json();
 
                 if (data.success) {
-                    // Toggle the visual state
-                    this.classList.toggle('completed');
-                    this.classList.toggle('pending');
+                    // Remove both classes first
+                    this.classList.remove('completed', 'pending');
                     
-                    // Toggle the icon
+                    // Add the appropriate class based on new status
+                    if (newStatus === 'Y') {
+                        this.classList.add('completed');
+                    } else {
+                        this.classList.add('pending');
+                    }
+                    
+                    // Update the icon
                     const icon = this.querySelector('i');
                     if (icon) {
+                        icon.classList.remove('bi-check-circle-fill');
                         if (newStatus === 'Y') {
                             icon.classList.add('bi-check-circle-fill');
-                        } else {
-                            icon.classList.remove('bi-check-circle-fill');
                         }
                     }
 
                     // Update milestone title strikethrough
                     const title = milestoneItem.querySelector('.milestone-title');
                     if (title) {
+                        title.classList.remove('completed');
                         if (newStatus === 'Y') {
                             title.classList.add('completed');
-                        } else {
-                            title.classList.remove('completed');
                         }
                     }
 
