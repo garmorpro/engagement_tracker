@@ -126,8 +126,8 @@ function getAllEngagements(mysqli $conn): array
             ON ms.engagement_idno = e.eng_idno
            AND ms.milestone_type LIKE 'final%'
 
-        GROUP BY e.eng_idno
-        ORDER BY e.eng_idno DESC
+        GROUP BY e.eng_id
+        ORDER BY e.eng_id DESC
     ";
 
     $result = $conn->query($sql);
