@@ -470,13 +470,61 @@ if (!$engagement) {
             background: rgba(68, 135, 252, 0.05);
         }
 
-        /* ========== SECTION HEADERS ========== */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* ========== SECTION STYLING ========== */
+        .section-wrapper {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        /* ========== TEAM SECTION ========== */
+        .team-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .team-section .section-header {
             margin-bottom: 1.5rem;
-            margin-top: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .team-section .manage-btn {
+            width: 100%;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        /* ========== TIMELINE SECTION ========== */
+        .timeline-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .timeline-section .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* ========== MILESTONES SECTION ========== */
+        .milestones-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .milestones-section .section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .section-header-left {
@@ -981,8 +1029,8 @@ if (!$engagement) {
     <div style="display: grid; grid-template-columns: 380px 1fr; gap: 2rem; margin-bottom: 3rem; margin-top: 2rem;">
 
         <!-- ========== TEAM SECTION (LEFT - FULL HEIGHT) ========== -->
-        <div>
-            <div class="section-header" style="margin-bottom: 1.5rem;">
+        <div class="team-section">
+            <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                 <div class="section-header-left">
                     <div class="section-icon team">
                         <i class="bi bi-people-fill"></i>
@@ -990,7 +1038,7 @@ if (!$engagement) {
                     <h2 class="section-title">Team</h2>
                 </div>
             </div>
-            <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; justify-content: center;">
+            <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; margin-top: 1.5rem; justify-content: center;">
                 <i class="bi bi-gear"></i> Manage DOL
             </button>
 
@@ -1075,20 +1123,20 @@ if (!$engagement) {
         <div style="display: grid; grid-template-rows: auto auto; gap: 2rem;">
 
             <!-- ========== TIMELINE & KEY DATES SECTION (TOP RIGHT) ========== -->
-            <div>
-                <div class="section-header" style="margin-bottom: 1.5rem;">
+            <div class="timeline-section">
+                <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                     <div class="section-header-left">
                         <div class="section-icon timeline">
                             <i class="bi bi-calendar2"></i>
                         </div>
                         <h2 class="section-title">Timeline & Key Dates</h2>
                     </div>
-                    <button class="manage-btn">
+                    <button class="manage-btn" style="margin: 0; padding: 0.5rem 1rem;">
                         <i class="bi bi-gear"></i> Manage
                     </button>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
                     <!-- Internal Planning -->
                     <div class="timeline-item" style="grid-column: 1;">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
@@ -1174,16 +1222,16 @@ if (!$engagement) {
             </div>
 
             <!-- ========== MILESTONES SECTION (BOTTOM RIGHT) ========== -->
-            <div>
-                <div class="section-header" style="margin-bottom: 1.5rem;">
+            <div class="milestones-section">
+                <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                     <div class="section-header-left">
                         <div class="section-icon milestones">
                             <i class="bi bi-flag-fill"></i>
                         </div>
                         <h2 class="section-title">Milestones</h2>
                     </div>
-                    <div class="milestones-header-right" style="gap: 1rem;">
-                        <button class="manage-btn">
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <button class="manage-btn" style="margin: 0; padding: 0.5rem 1rem;">
                             <i class="bi bi-gear"></i> Manage
                         </button>
                         <span class="milestone-stat">3/6</span>
@@ -1191,7 +1239,7 @@ if (!$engagement) {
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.5rem;">
                     <!-- Kickoff meeting completed -->
                     <div class="milestone-item">
                         <div class="milestone-checkbox completed">
