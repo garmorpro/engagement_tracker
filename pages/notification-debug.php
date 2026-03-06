@@ -1,151 +1,233 @@
 <?php
 /**
- * Debug Script for Notification System
- * Updated to check engagement_timeline and engagement_milestones
+ * Comprehensive Debug Script for Notification System
+ * Shows exactly what dates we have and what should trigger notifications
  */
 
 $basePath = dirname(dirname(__FILE__));
 require_once $basePath . '/path.php';
-require_once $basePath . '/includes/functions.php';
 
-echo "=== NOTIFICATION DEBUG ===\n\n";
+echo "=== COMPREHENSIVE NOTIFICATION DEBUG ===\n\n";
 
-// Check if table exists
-$tableCheckResult = $conn->query("SHOW TABLES LIKE 'engagement_notifications'");
-if (!$tableCheckResult || $tableCheckResult->num_rows === 0) {
-    echo "❌ ERROR: engagement_notifications table does not exist!\n";
-    exit(1);
+// Check tables exist
+echo "=== TABLE CHECK ===\n";
+$tables = ['engagement_notifications', 'engagement_timeline', 'engagement_milestones', 'engagements'];
+foreach ($tables as $table) {
+    $result = $conn->query("SHOW TABLES LIKE '$table'");
+    $status = ($result && $result->num_rows > 0) ? '✓' : '❌';
+    echo "$status $table\n";
 }
-echo "✓ engagement_notifications table exists\n";
+echo "\n";
 
-// Check if eng_complete_date column exists
-$query = "DESCRIBE engagements";
-$result = $conn->query($query);
-$hasCompleteDate = false;
-while ($row = $result->fetch_assoc()) {
-    if ($row['Field'] === 'eng_complete_date') {
-        $hasCompleteDate = true;
-        break;
-    }
-}
-if (!$hasCompleteDate) {
-    echo "⚠ WARNING: eng_complete_date column missing (needed for archive notifications)\n";
-}
-echo "✓ engagements table exists\n\n";
-
-// Check timeline table
-echo "=== ENGAGEMENT_TIMELINE KEY DATES ===\n";
-$timelineColumns = [
-    'internal_planning_call_date',
-    'planning_memo_date',
-    'irl_due_date',
-    'client_planning_call_date',
-    'fieldwork_date',
-    'leadsheet_date',
-    'conclusion_memo_date',
-    'draft_report_due_date',
-    'final_report_date',
-    'archive_date'
-];
-
-$query = "SELECT engagement_idno FROM engagement_timeline";
-$result = $conn->query($query);
-$engagementCount = $result->num_rows;
-echo "Found $engagementCount engagements with timeline data\n\n";
-
-// Get all active engagements with timeline dates
+// Get all engagement timeline data
+echo "=== ALL ENGAGEMENT TIMELINE DATA ===\n";
 $query = "
-    SELECT t.engagement_idno, e.eng_name, e.eng_status,
-           t.internal_planning_call_date,
-           t.planning_memo_date,
-           t.irl_due_date,
-           t.client_planning_call_date,
-           t.fieldwork_date,
-           t.leadsheet_date,
-           t.conclusion_memo_date,
-           t.draft_report_due_date,
-           t.final_report_date,
-           t.archive_date
+    SELECT 
+        t.engagement_idno,
+        e.eng_name,
+        e.eng_status,
+        t.internal_planning_call_date,
+        t.internal_planning_call_completed_at,
+        t.planning_memo_date,
+        t.planning_memo_completed_at,
+        t.irl_due_date,
+        t.irl_completed_at,
+        t.client_planning_call_date,
+        t.client_planning_call_completed_at,
+        t.fieldwork_date,
+        t.fieldwork_completed_at,
+        t.leadsheet_date,
+        t.leadsheet_completed_at,
+        t.conclusion_memo_date,
+        t.conclusion_memo_completed_at,
+        t.draft_report_due_date,
+        t.draft_report_completed_at,
+        t.final_report_date,
+        t.final_report_completed_at,
+        t.archive_date,
+        t.archive_completed_at
     FROM engagement_timeline t
     JOIN engagements e ON t.engagement_idno = e.eng_idno
-    WHERE e.eng_status != 'archived' AND e.eng_status != 'complete'
 ";
 
 $result = $conn->query($query);
+
+$timelineData = [];
 while ($row = $result->fetch_assoc()) {
-    echo "Engagement: {$row['engagement_idno']} - {$row['eng_name']}\n";
-    foreach ($timelineColumns as $col) {
-        if ($row[$col]) {
-            $daysUntil = round((strtotime($row[$col]) - time()) / 86400);
-            echo "  - $col: {$row[$col]} (${daysUntil} days away)\n";
-        }
-    }
-    echo "\n";
+    $timelineData[] = $row;
 }
 
-// Check what 7 days from now is
+if (empty($timelineData)) {
+    echo "No timeline data found\n";
+} else {
+    foreach ($timelineData as $timeline) {
+        echo "\n📋 Engagement: {$timeline['engagement_idno']} - {$timeline['eng_name']}\n";
+        echo "   Status: {$timeline['eng_status']}\n";
+        echo "   Key Dates:\n";
+        
+        $dateFields = [
+            'internal_planning_call_date' => 'internal_planning_call_completed_at',
+            'planning_memo_date' => 'planning_memo_completed_at',
+            'irl_due_date' => 'irl_completed_at',
+            'client_planning_call_date' => 'client_planning_call_completed_at',
+            'fieldwork_date' => 'fieldwork_completed_at',
+            'leadsheet_date' => 'leadsheet_completed_at',
+            'conclusion_memo_date' => 'conclusion_memo_completed_at',
+            'draft_report_due_date' => 'draft_report_completed_at',
+            'final_report_date' => 'final_report_completed_at',
+            'archive_date' => 'archive_completed_at'
+        ];
+        
+        foreach ($dateFields as $dateCol => $completedCol) {
+            $dateValue = $timeline[$dateCol];
+            $completedValue = $timeline[$completedCol];
+            
+            if ($dateValue) {
+                $daysAway = round((strtotime($dateValue) - time()) / 86400);
+                $completed = $completedValue ? '✓ COMPLETED' : '⏳ PENDING';
+                echo "      - $dateCol: {$dateValue} ($daysAway days away) [$completed]\n";
+                if ($completedValue) {
+                    echo "        Completed at: $completedValue\n";
+                }
+            }
+        }
+    }
+}
+
+// Get all milestones
+echo "\n\n=== ALL ENGAGEMENT MILESTONES ===\n";
+$query = "
+    SELECT 
+        m.ms_id,
+        m.engagement_idno,
+        e.eng_name,
+        m.milestone_type,
+        m.due_date,
+        m.is_completed
+    FROM engagement_milestones m
+    JOIN engagements e ON m.engagement_idno = e.eng_idno
+    ORDER BY m.engagement_idno, m.due_date
+";
+
+$result = $conn->query($query);
+
+if ($result->num_rows === 0) {
+    echo "No milestones found\n";
+} else {
+    $currentEng = '';
+    while ($row = $result->fetch_assoc()) {
+        if ($currentEng !== $row['engagement_idno']) {
+            $currentEng = $row['engagement_idno'];
+            echo "\n📋 Engagement: {$row['engagement_idno']} - {$row['eng_name']}\n";
+        }
+        
+        if ($row['due_date']) {
+            $daysAway = round((strtotime($row['due_date']) - time()) / 86400);
+            $completed = $row['is_completed'] === 'Y' ? '✓ COMPLETED' : '⏳ PENDING';
+            echo "   - {$row['milestone_type']}: {$row['due_date']} ($daysAway days away) [$completed]\n";
+        } else {
+            $completed = $row['is_completed'] === 'Y' ? '✓ COMPLETED' : '⏳ PENDING';
+            echo "   - {$row['milestone_type']}: (no due date) [$completed]\n";
+        }
+    }
+}
+
+// Now show what SHOULD trigger notifications
+echo "\n\n=== WHAT SHOULD TRIGGER NOTIFICATIONS ===\n";
+
 $sevenDaysOut = date('Y-m-d', strtotime('+7 days'));
 $fiveDaysOut = date('Y-m-d', strtotime('+5 days'));
 
-echo "=== TIMELINE DATES MATCHING 7 DAYS FROM NOW ($sevenDaysOut) ===\n";
-$dateColumns = implode(", ", $timelineColumns);
+echo "\nToday: " . date('Y-m-d H:i:s') . "\n";
+echo "7 days from now: $sevenDaysOut\n";
+echo "5 days from now: $fiveDaysOut\n";
+
+echo "\n📌 KEY DATES that should trigger (pending + 7 days out):\n";
 $query = "
-    SELECT t.engagement_idno, e.eng_name
+    SELECT 
+        t.engagement_idno,
+        e.eng_name
     FROM engagement_timeline t
     JOIN engagements e ON t.engagement_idno = e.eng_idno
-    WHERE e.eng_status != 'archived' AND e.eng_status != 'complete'
+    WHERE e.eng_status NOT IN ('archived', 'complete')
 ";
+
 $result = $conn->query($query);
-$found = false;
+$foundKeyDates = false;
+
 while ($row = $result->fetch_assoc()) {
     $timelineResult = $conn->query("SELECT * FROM engagement_timeline WHERE engagement_idno = '{$row['engagement_idno']}'");
     $timeline = $timelineResult->fetch_assoc();
     
-    foreach ($timelineColumns as $col) {
-        if ($timeline[$col] && date('Y-m-d', strtotime($timeline[$col])) === $sevenDaysOut) {
-            echo "✓ {$row['engagement_idno']}: {$row['eng_name']} - $col matches!\n";
-            $found = true;
+    $dateFields = [
+        'internal_planning_call_date' => 'internal_planning_call_completed_at',
+        'planning_memo_date' => 'planning_memo_completed_at',
+        'irl_due_date' => 'irl_completed_at',
+        'client_planning_call_date' => 'client_planning_call_completed_at',
+        'fieldwork_date' => 'fieldwork_completed_at',
+        'leadsheet_date' => 'leadsheet_completed_at',
+        'conclusion_memo_date' => 'conclusion_memo_completed_at',
+        'draft_report_due_date' => 'draft_report_completed_at',
+        'final_report_date' => 'final_report_completed_at',
+        'archive_date' => 'archive_completed_at'
+    ];
+    
+    foreach ($dateFields as $dateCol => $completedCol) {
+        $dateValue = $timeline[$dateCol];
+        $completedValue = $timeline[$completedCol];
+        
+        if ($dateValue && !$completedValue && date('Y-m-d', strtotime($dateValue)) === $sevenDaysOut) {
+            echo "   ✓ {$row['engagement_idno']}: {$row['eng_name']} - $dateCol\n";
+            $foundKeyDates = true;
         }
     }
 }
-if (!$found) {
-    echo "⚠ No timeline dates found exactly 7 days from now\n";
+
+if (!$foundKeyDates) {
+    echo "   ⚠ None found\n";
 }
 
-echo "\n=== MILESTONE DATES MATCHING 5 DAYS FROM NOW ($fiveDaysOut) ===\n";
+echo "\n📌 MILESTONES that should trigger (pending + 5 days out):\n";
 $query = "
-    SELECT m.engagement_idno, e.eng_name, m.milestone_type, m.due_date
+    SELECT 
+        m.engagement_idno,
+        e.eng_name,
+        m.milestone_type,
+        m.due_date
     FROM engagement_milestones m
     JOIN engagements e ON m.engagement_idno = e.eng_idno
     WHERE m.is_completed = 'N'
     AND m.due_date IS NOT NULL
     AND DATE(m.due_date) = ?
 ";
+
 $stmt = $conn->prepare($query);
 $stmt->bind_param('s', $fiveDaysOut);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
-    echo "⚠ No milestones found due exactly 5 days from now\n";
+    echo "   ⚠ None found\n";
 } else {
-    echo "✓ Milestones found due 5 days from now:\n";
     while ($row = $result->fetch_assoc()) {
-        echo "  - {$row['engagement_idno']}: {$row['eng_name']} - {$row['milestone_type']} ({$row['due_date']})\n";
+        echo "   ✓ {$row['engagement_idno']}: {$row['eng_name']} - {$row['milestone_type']}\n";
     }
 }
 $stmt->close();
 
-// Check existing notifications
-echo "\n=== EXISTING NOTIFICATIONS ===\n";
-$query = "SELECT notif_id, engagement_idno, notif_type, notif_title FROM engagement_notifications ORDER BY notif_timestamp DESC LIMIT 10";
+// Show existing notifications
+echo "\n\n=== EXISTING NOTIFICATIONS ===\n";
+$query = "SELECT COUNT(*) as count FROM engagement_notifications";
 $result = $conn->query($query);
-if ($result->num_rows === 0) {
-    echo "⚠ No notifications found\n";
-} else {
-    echo "Found {$result->num_rows} notifications:\n";
+$row = $result->fetch_assoc();
+echo "Total notifications: {$row['count']}\n";
+
+if ($row['count'] > 0) {
+    $query = "SELECT engagement_idno, notif_type, notif_title, notif_timestamp FROM engagement_notifications ORDER BY notif_timestamp DESC LIMIT 10";
+    $result = $conn->query($query);
+    echo "\nMost recent:\n";
     while ($row = $result->fetch_assoc()) {
-        echo "  - {$row['engagement_idno']}: {$row['notif_type']} - {$row['notif_title']}\n";
+        echo "   - {$row['engagement_idno']}: {$row['notif_type']} - {$row['notif_title']}\n";
     }
 }
 
