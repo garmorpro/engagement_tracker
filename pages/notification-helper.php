@@ -61,8 +61,8 @@ function getTimelineTitle($columnName) {
 
 /**
  * Check for upcoming key dates from engagement_timeline
- * Notifies when the date is exactly 7 days away (meaning 7 days before the event)
- * Only sends if notification hasn't been sent for this engagement yet
+ * Notifies when date is 1-7 days away AND hasn't been notified yet
+ * Only sends once per engagement
  */
 function checkUpcomingKeyDates() {
     global $conn;
@@ -127,15 +127,15 @@ function checkUpcomingKeyDates() {
                 $dateValue = $timeline[$dateCol];
                 $completedValue = $timeline[$completedCol];
                 
-                // Only notify if: date exists, is not completed, and is 7 days away
+                // Only notify if: date exists, is not completed, and is 1-7 days away
                 if ($dateValue && !$completedValue) {
                     $daysUntilDate = round((strtotime($dateValue) - time()) / 86400);
                     
-                    // Notify when date is 7 days away (7 days before the event)
-                    if ($daysUntilDate === 7) {
+                    // Notify when date is 1-7 days away
+                    if ($daysUntilDate >= 1 && $daysUntilDate <= 7) {
                         $title = 'Upcoming Key Date';
                         $dateTitle = $titleMap[$dateCol];
-                        $message = $eng_name . ' - ' . $dateTitle . ' is due in 7 days';
+                        $message = $eng_name . ' - ' . $dateTitle . ' is due in ' . $daysUntilDate . ' days';
                         
                         createNotification(
                             $engagement_idno,
@@ -153,8 +153,8 @@ function checkUpcomingKeyDates() {
 
 /**
  * Check for upcoming milestones
- * Notifies when milestone due date is exactly 5 days away (5 days before the milestone)
- * Only sends if notification hasn't been sent for this engagement yet
+ * Notifies when milestone due date is 1-5 days away AND hasn't been notified yet
+ * Only sends once per engagement
  */
 function checkUpcomingMilestones() {
     global $conn;
@@ -178,13 +178,13 @@ function checkUpcomingMilestones() {
         while ($row = $result->fetch_assoc()) {
             $daysUntilDate = round((strtotime($row['due_date']) - time()) / 86400);
             
-            // Notify when date is 5 days away (5 days before the milestone)
-            if ($daysUntilDate === 5) {
+            // Notify when date is 1-5 days away
+            if ($daysUntilDate >= 1 && $daysUntilDate <= 5) {
                 // Convert milestone_type from snake_case to Title Case
                 $milestoneTitle = implode(' ', array_map('ucfirst', explode('_', strtolower($row['milestone_type']))));
                 
                 $title = 'Upcoming Milestone';
-                $message = $row['eng_name'] . ' - ' . $milestoneTitle . ' due in 5 days';
+                $message = $row['eng_name'] . ' - ' . $milestoneTitle . ' due in ' . $daysUntilDate . ' days';
                 
                 createNotification(
                     $row['engagement_idno'],
