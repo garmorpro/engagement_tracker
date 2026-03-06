@@ -1512,7 +1512,7 @@ if (!$timeline) {
                         // Calculate completed milestones
                         $completedCount = 0;
                         foreach ($milestones as $milestone) {
-                            if (!empty($milestone['milestone_completed_at'])) {
+                            if (!empty($milestone['is_completed'])) {
                                 $completedCount++;
                             }
                         }
