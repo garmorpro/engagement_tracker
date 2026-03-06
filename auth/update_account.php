@@ -1,64 +1,48 @@
 <?php
-require_once '../includes/functions.php';
-require_once '../path.php';
-
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+// Read JSON input
+$json_input = file_get_contents('php://input');
+$data = json_decode($json_input, true);
+
+if (!$data || !isset($data['user_id']) || !isset($data['name']) || !isset($data['email']) || !isset($data['passcode'])) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-    exit;
+    die(json_encode(['success' => false, 'message' => 'Missing required fields']));
 }
 
-// Read the raw input to detect if it's JSON
-$raw_input = file_get_contents('php://input');
-$data = [];
-
-// If we have raw input, try to parse as JSON (API request)
-if (!empty($raw_input)) {
-    $data = json_decode($raw_input, true) ?? [];
-    $isJsonRequest = !empty($data); // Successfully parsed JSON
-} else {
-    // Fall back to POST data (form submission)
-    $data = $_POST;
-    $isJsonRequest = false;
-}
-
-// AUTHORIZATION CHECK:
-// - Allow JSON requests (API calls from admin dashboard) - NO session needed
-// - Require session for form POST requests - session needed
-if (!$isJsonRequest && !isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
-}
-
-$userId = intval($data['user_id'] ?? 0);
-$name = trim($data['name'] ?? '');
-$email = trim($data['email'] ?? '');
-$passcode = trim($data['passcode'] ?? '');
+$userId = intval($data['user_id']);
+$name = trim($data['name']);
+$email = trim($data['email']);
+$passcode = trim($data['passcode']);
 
 // Validation
 if (!$userId || !$name || !$email || !$passcode) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
-    exit;
+    die(json_encode(['success' => false, 'message' => 'Invalid input values']));
 }
 
 if (strlen($passcode) !== 4 || !ctype_digit($passcode)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'PIN must be exactly 4 digits']);
-    exit;
+    die(json_encode(['success' => false, 'message' => 'PIN must be exactly 4 digits']));
 }
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid email address']);
-    exit;
+    die(json_encode(['success' => false, 'message' => 'Invalid email address']));
 }
 
+// Include your database connection
+require_once '../includes/functions.php';
+require_once '../path.php';
+require_once '../includes/init.php';
+
 try {
-    // Use prepared statement to prevent SQL injection
+    // Check if $conn exists
+    if (!isset($conn) || !$conn) {
+        http_response_code(500);
+        die(json_encode(['success' => false, 'message' => 'Database connection not available']));
+    }
+    
     $query = "
         UPDATE `service_accounts`
         SET `name` = ?,
@@ -71,23 +55,23 @@ try {
     
     if (!$stmt) {
         http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
-        exit;
+        die(json_encode(['success' => false, 'message' => 'Prepare error: ' . $conn->error]));
     }
     
     $stmt->bind_param('sssi', $name, $email, $passcode, $userId);
     
-    if ($stmt->execute()) {
-        http_response_code(200);
-        echo json_encode(['success' => true, 'message' => 'Account updated successfully']);
-    } else {
+    if (!$stmt->execute()) {
         http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Failed to update account: ' . $stmt->error]);
+        die(json_encode(['success' => false, 'message' => 'Execute error: ' . $stmt->error]));
     }
     
+    http_response_code(200);
+    echo json_encode(['success' => true, 'message' => 'Account updated successfully']);
+    
     $stmt->close();
+    
 } catch (Exception $e) {
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $e->getMessage()]);
+    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
 }
 ?>

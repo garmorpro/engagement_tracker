@@ -1,63 +1,47 @@
 <?php
-require_once '../includes/functions.php';
-require_once '../path.php';
-
 header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+// Read JSON input
+$json_input = file_get_contents('php://input');
+$data = json_decode($json_input, true);
+
+if (!$data || !isset($data['user_id'])) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-    exit;
+    die(json_encode(['success' => false, 'message' => 'Missing user_id']));
 }
 
-// Read the raw input to detect if it's JSON
-$raw_input = file_get_contents('php://input');
-$data = [];
+$userId = intval($data['user_id']);
 
-// If we have raw input, try to parse as JSON (API request)
-if (!empty($raw_input)) {
-    $data = json_decode($raw_input, true) ?? [];
-    $isJsonRequest = !empty($data); // Successfully parsed JSON
-} else {
-    // Fall back to POST data (form submission)
-    $data = $_POST;
-    $isJsonRequest = false;
-}
-
-// AUTHORIZATION CHECK:
-// - Allow JSON requests (API calls from admin dashboard) - NO session needed
-// - Require session for form POST requests - session needed
-if (!$isJsonRequest && !isset($_SESSION['user_id'])) {
-    http_response_code(401);
-    echo json_encode(['success' => false, 'message' => 'Unauthorized']);
-    exit;
-}
-
-$userId = intval($data['user_id'] ?? 0);
-
-if (!$userId) {
+if ($userId <= 0) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Missing or invalid user_id']);
-    exit;
+    die(json_encode(['success' => false, 'message' => 'Invalid user_id']));
 }
+
+// Include your database connection
+require_once '../includes/functions.php';
+require_once '../path.php';
+require_once '../includes/init.php';
 
 try {
-    // Use prepared statement
+    // Check if $conn exists
+    if (!isset($conn) || !$conn) {
+        http_response_code(500);
+        die(json_encode(['success' => false, 'message' => 'Database connection not available']));
+    }
+    
     $query = "SELECT `user_id`, `name`, `email`, `passcode` FROM `service_accounts` WHERE `user_id` = ?";
     $stmt = $conn->prepare($query);
     
     if (!$stmt) {
         http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
-        exit;
+        die(json_encode(['success' => false, 'message' => 'Prepare error: ' . $conn->error]));
     }
     
     $stmt->bind_param('i', $userId);
     
     if (!$stmt->execute()) {
         http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Query error: ' . $stmt->error]);
-        exit;
+        die(json_encode(['success' => false, 'message' => 'Execute error: ' . $stmt->error]));
     }
     
     $result = $stmt->get_result();
@@ -81,6 +65,7 @@ try {
     }
     
     $stmt->close();
+    
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
