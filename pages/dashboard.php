@@ -8,7 +8,6 @@ $allEngagements = getAllEngagements($conn);
 // Filter to only show active engagements
 $engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
 
-$archivedCount = getArchivedEngagementCount($conn);
 
 // Calculate status counts
 $totalCount = count($engagements);
