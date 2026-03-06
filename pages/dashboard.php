@@ -16,6 +16,28 @@ $inProgressCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'
 $planningCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'planning'));
 $reviewCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'in-review'));
 $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'complete'));
+
+// Get unread notifications
+$notificationQuery = "SELECT * FROM engagement_notifications WHERE is_read = 'N' ORDER BY notif_timestamp DESC LIMIT 10";
+$notificationResult = $conn->query($notificationQuery);
+$notifications = $notificationResult ? $notificationResult->fetch_all(MYSQLI_ASSOC) : [];
+<?php
+// Helper function for time ago display
+function getTimeAgo($datetime) {
+    $now = new DateTime();
+    $created = new DateTime($datetime);
+    $diff = $now->diff($created);
+    
+    if ($diff->days > 0) {
+        return $diff->days . ' day' . ($diff->days > 1 ? 's' : '') . ' ago';
+    } elseif ($diff->h > 0) {
+        return $diff->h . ' hour' . ($diff->h > 1 ? 's' : '') . ' ago';
+    } elseif ($diff->i > 0) {
+        return $diff->i . ' minute' . ($diff->i > 1 ? 's' : '') . ' ago';
+    } else {
+        return 'Just now';
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -208,6 +230,128 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
 
         .icon-btn:hover {
             color: var(--text-primary);
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: -100px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            min-width: 380px;
+            margin-top: 0.75rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s;
+            z-index: 1000;
+            padding: 0;
+            overflow: hidden;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .notification-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .notification-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+        }
+
+        .notification-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .notification-item:hover {
+            background-color: var(--gray-100);
+        }
+
+        .notification-item.unread {
+            background-color: rgba(68, 135, 252, 0.05);
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.upcoming {
+            background: rgba(241, 115, 19, 0.1);
+            color: var(--warning-orange);
+        }
+
+        .notification-icon.status {
+            background: rgba(79, 198, 95, 0.1);
+            color: var(--success-green);
+        }
+
+        .notification-icon.team {
+            background: rgba(68, 135, 252, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .notification-icon.milestone {
+            background: rgba(160, 77, 253, 0.1);
+            color: var(--info-purple);
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-message {
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            color: var(--text-secondary);
+            font-size: 11px;
+            margin-top: 0.5rem;
+        }
+
+        .notification-empty {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
         }
 
         .notification-badge {
@@ -864,10 +1008,57 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
                 <button class="icon-btn" title="Dark mode">
                     <i class="bi bi-moon"></i>
                 </button>
-                <button class="icon-btn" title="Notifications">
-                    <i class="bi bi-bell"></i>
-                    <div class="notification-badge">2</div>
-                </button>
+                <div style="position: relative;">
+                    <button class="icon-btn" title="Notifications" onclick="event.stopPropagation(); document.getElementById('notificationDropdown')?.classList.toggle('active')">
+                        <i class="bi bi-bell"></i>
+                        <?php if ($unreadNotificationCount > 0): ?>
+                        <div class="notification-badge"><?php echo $unreadNotificationCount; ?></div>
+                        <?php endif; ?>
+                    </button>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                            <button class="icon-btn" style="font-size: 14px;" onclick="document.getElementById('notificationDropdown').classList.remove('active')">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        <?php if (!empty($notifications)): ?>
+                            <?php foreach ($notifications as $notif): ?>
+                                <?php
+                                    $iconClass = 'upcoming';
+                                    $icon = 'bi-calendar-event';
+                                    if ($notif['notif_type'] === 'status_updated') {
+                                        $iconClass = 'status';
+                                        $icon = 'bi-arrow-repeat';
+                                    } elseif ($notif['notif_type'] === 'team_assignment') {
+                                        $iconClass = 'team';
+                                        $icon = 'bi-people';
+                                    } elseif ($notif['notif_type'] === 'milestone_complete') {
+                                        $iconClass = 'milestone';
+                                        $icon = 'bi-check-circle';
+                                    }
+                                    
+                                    $timeAgo = getTimeAgo($notif['notif_timestamp']);
+                                ?>
+                                <div class="notification-item <?php echo $notif['is_read'] === 'N' ? 'unread' : ''; ?>" onclick="markNotificationAsRead(<?php echo $notif['notif_id']; ?>)">
+                                    <div class="notification-icon <?php echo $iconClass; ?>">
+                                        <i class="bi <?php echo $icon; ?>"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title"><?php echo htmlspecialchars($notif['notif_title']); ?></div>
+                                        <div class="notification-message"><?php echo htmlspecialchars($notif['notif_message']); ?></div>
+                                        <div class="notification-time"><?php echo $timeAgo; ?></div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="notification-empty">
+                                <i class="bi bi-bell-slash" style="font-size: 32px; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                                No notifications
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
                 <button class="icon-btn" title="Settings">
                     <i class="bi bi-gear"></i>
                 </button>
@@ -1153,6 +1344,37 @@ $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] 
             }
         }
     }
+
+    // Mark notification as read
+    async function markNotificationAsRead(notifId) {
+        try {
+            const response = await fetch('../api/mark-notification-read.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ notif_id: notifId })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                // Reload to update unread count
+                location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Close notification dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationBtn = document.querySelector('.icon-btn[title="Notifications"]');
+        
+        if (notificationDropdown && 
+            !notificationDropdown.contains(e.target) && 
+            !notificationBtn.contains(e.target)) {
+            notificationDropdown.classList.remove('active');
+        }
+    });
 
     // Table row click handler
     document.querySelectorAll('.table tbody tr').forEach(row => {
