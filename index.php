@@ -566,6 +566,7 @@ body {
         
         <form id="editForm" method="POST" action="<?= BASE_URL ?>/auth/update_account.php">
             <input type="hidden" name="user_id" id="editUserId">
+            <?php var_dump($_SESSION); ?>
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
                 <input type="text" class="form-control" id="editAccountName" name="name" required>
