@@ -39,7 +39,7 @@ try {
     
     
     // Query database
-    $query = "SELECT `user_id`, `account_name`, `email`, `passcode` FROM `service_accounts` WHERE `user_id` = ?";
+    $query = "SELECT `user_id`, `name`,`account_name`, `email`, `passcode` FROM `service_accounts` WHERE `user_id` = ?";
     $stmt = $conn->prepare($query);
     
     if (!$stmt) {
@@ -70,6 +70,7 @@ try {
             'success' => true,
             'account' => [
                 'user_id' => intval($account['user_id']),
+                'name' => $account['name'] ?: '',
                 'account_name' => $account['account_name'] ?: '',
                 'email' => $account['email'] ?: '',
                 'passcode' => $account['passcode'] ?: ''

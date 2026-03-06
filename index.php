@@ -5,10 +5,10 @@ require_once 'includes/init.php';
 
 // Fetch active service accounts
 $result = $conn->query("
-    SELECT `user_id`, `account_name`, `passcode`, `role`
+    SELECT *
     FROM `service_accounts`
     WHERE `status` = 'active'
-    ORDER BY `account_name`
+    ORDER BY `name`
 ");
 $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 ?>
@@ -429,15 +429,15 @@ body {
                 <?php if ($account['role'] === 'super_admin') continue; ?>
                 <div class="account-item"
                      data-user-id="<?= $account['user_id'] ?>"
-                     data-account-name="<?= htmlspecialchars($account['account_name']) ?>"
+                     data-account-name="<?= htmlspecialchars($account['name']) ?>"
                      data-role="<?= $account['role'] ?>"
                      onclick="openPinModal(this)">
                     <div class="account-icon user">
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="account-info">
-                        <div class="account-name"><?= htmlspecialchars($account['account_name']) ?></div>
-                        <div class="account-email"><?= htmlspecialchars(strtolower(str_replace(' ', '.', $account['account_name'])) . '@company.com') ?></div>
+                        <div class="account-name"><?= htmlspecialchars($account['name']) ?></div>
+                        <div class="account-email"><?= htmlspecialchars($account['email']) ?></div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -489,7 +489,7 @@ body {
         <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
         <input type="text" class="form-control text-center fs-4 pin-field" 
                id="adminVerifyPinInput" required autofocus>
-        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p>
+        <!-- <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">Demo Super Admin PIN: <strong style="color: var(--teal);">000000</strong></p> -->
     </div>
 </div>
 
@@ -534,7 +534,7 @@ body {
         <form id="registerForm" method="POST" action="<?= BASE_URL ?>/auth/register.php">
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" name="account_name" required>
+                <input type="text" class="form-control" name="name" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Email Address</label>
@@ -568,7 +568,7 @@ body {
             <input type="hidden" name="user_id" id="editUserId">
             <div class="mb-3">
                 <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="editAccountName" name="account_name" required>
+                <input type="text" class="form-control" id="editAccountName" name="name" required>
             </div>
             <div class="mb-3">
                 <label class="form-label">Email Address</label>
@@ -706,7 +706,7 @@ function closeAdminDashboard() {
 
 function openAddUserModal() {
     document.getElementById('addUserModal').classList.add('active');
-    document.querySelector('#registerForm input[name="account_name"]').focus();
+    document.querySelector('#registerForm input[name="name"]').focus();
 }
 
 function closeAddUserModal() {
@@ -742,14 +742,14 @@ function loadAccountsList() {
                         <i class="bi bi-person-fill"></i>
                     </div>
                     <div class="dashboard-user-info">
-                        <div class="dashboard-user-name">${account.account_name}</div>
+                        <div class="dashboard-user-name">${account.name}</div>
                         <div class="dashboard-user-email">${account.email}</div>
                     </div>
                     <div class="user-actions">
-                        <button type="button" title="Edit" onclick="editAccount(${account.user_id}, '${account.account_name}')">
+                        <button type="button" title="Edit" onclick="editAccount(${account.user_id}, '${account.name}')">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button type="button" class="delete" title="Delete" onclick="deleteAccount(${account.user_id}, '${account.account_name}')">
+                        <button type="button" class="delete" title="Delete" onclick="deleteAccount(${account.user_id}, '${account.name}')">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
@@ -813,7 +813,7 @@ function editAccount(userId, accountName) {
         if(data.success && data.account) {
             const account = data.account;
             document.getElementById('editUserId').value = account.user_id;
-            document.getElementById('editAccountName').value = account.account_name;
+            document.getElementById('editAccountName').value = account.name;
             document.getElementById('editEmail').value = account.email;
             document.getElementById('editPasscode').value = account.passcode;
             document.getElementById('editUserModal').classList.add('active');
