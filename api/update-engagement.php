@@ -42,9 +42,12 @@ try {
     ];
 
     foreach ($fieldMap as $key => $column) {
-        if (isset($data[$key]) && $data[$key] !== '') {
+        if (isset($data[$key])) {
             $updateFields[] = "$column = ?";
-            $params[] = $data[$key];
+            // Allow null values for all fields except eng_name
+            // Convert empty strings to null for database storage
+            $value = $data[$key] === '' ? null : $data[$key];
+            $params[] = $value;
             $types .= 's';
         }
     }
