@@ -23,7 +23,7 @@ $email = trim($_POST['email'] ?? '');
 $passcode = trim($_POST['passcode'] ?? '');
 
 // Validation
-if (!$userId || !$accountName || !$email || !$passcode) {
+if (!$userId || !$name || !$email || !$passcode) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
     exit;
