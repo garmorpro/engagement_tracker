@@ -2209,6 +2209,10 @@ if (!$timeline) {
                                     <input type="checkbox" class="audit-type-checkbox" value="ISO" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('ISO') ? 'checked' : ''}>
                                     <span style="font-size: 13px;">ISO</span>
                                 </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                    <input type="checkbox" class="audit-type-checkbox" value="HIPAA" ${engagementData.eng_audit_type && engagementData.eng_audit_type.includes('HIPAA') ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">HIPAA</span>
+                                </label>
                             </div>
                         </div>
 
