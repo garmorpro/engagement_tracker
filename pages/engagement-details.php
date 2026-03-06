@@ -2189,34 +2189,38 @@ if (!$timeline) {
         // Build HTML for milestone list
         let milestonesHTML = '<div style="text-align: left; max-height: 400px; overflow-y: auto;">';
         
+        milestonesHTML += `
+            <button id="addMilestoneBtn" style="width: 100%; background: var(--primary-blue); color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 14px;">
+                <i class="bi bi-plus-circle" style="font-size: 16px;"></i> Add New Milestone
+            </button>
+        `;
+        
         if (milestones.length > 0) {
-            milestonesHTML += '<div style="margin-bottom: 1.5rem;">';
+            milestonesHTML += '<div style="display: flex; flex-direction: column; gap: 0.75rem;">';
             milestones.forEach((milestone, index) => {
                 milestonesHTML += `
-                    <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem; padding: 1rem; background: var(--bg-primary); border-radius: 8px; align-items: center;">
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 0.25rem;">${milestone.milestone_type}</div>
+                    <div style="display: flex; gap: 1rem; padding: 1rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 10px; align-items: center; transition: all 0.2s;">
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 0.4rem; word-break: break-word;">${milestone.milestone_type}</div>
                             <div style="font-size: 12px; color: var(--text-secondary);">Due: ${milestone.due_date || 'No due date'}</div>
                         </div>
-                        <button class="edit-milestone-btn" data-index="${index}" style="background: var(--primary-blue); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">
-                            Edit
-                        </button>
-                        <button class="delete-milestone-btn" data-index="${index}" style="background: #C90012; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;">
-                            Delete
-                        </button>
+                        <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
+                            <button class="edit-milestone-btn" data-index="${index}" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s;">
+                                <i class="bi bi-pencil" style="margin-right: 0.3rem;"></i>Edit
+                            </button>
+                            <button class="delete-milestone-btn" data-index="${index}" style="background: #C90012; color: white; border: none; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s;">
+                                <i class="bi bi-trash" style="margin-right: 0.3rem;"></i>Delete
+                            </button>
+                        </div>
                     </div>
                 `;
             });
             milestonesHTML += '</div>';
         } else {
-            milestonesHTML += '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No milestones yet. Add one to get started!</p>';
+            milestonesHTML += '<div style="text-align: center; padding: 2rem; color: var(--text-secondary); background: var(--bg-primary); border-radius: 10px; border: 1px dashed var(--border-color);"><i class="bi bi-inbox" style="font-size: 32px; display: block; margin-bottom: 0.5rem;"></i>No milestones yet. Click "Add New Milestone" to get started!</div>';
         }
         
-        milestonesHTML += `
-            <button id="addMilestoneBtn" style="width: 100%; background: var(--primary-blue); color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 1rem;">
-                <i class="bi bi-plus-circle" style="margin-right: 0.5rem;"></i> Add New Milestone
-            </button>
-        </div>`;
+        milestonesHTML += '</div>';
         
         Swal.fire({
             title: 'Manage Milestones',
