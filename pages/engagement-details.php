@@ -1148,46 +1148,61 @@ if (!$engagement) {
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+
+                <?php
+function renderTimelineStatus($date, $completed) {
+
+    if (!$date) {
+        echo '<div class="timeline-date">—</div>';
+        echo '<div class="timeline-status">Not scheduled</div>';
+        return;
+    }
+
+    $formattedDate = date("M j, Y", strtotime($date));
+
+    $today = new DateTime();
+    $dueDate = new DateTime($date);
+
+    $diff = $today->diff($dueDate);
+    $days = $diff->days;
+
+    echo '<div class="timeline-date">'.htmlspecialchars($formattedDate).'</div>';
+
+    if (!empty($completed)) {
+
+        echo '<div class="timeline-status completed">
+                <i class="bi bi-check-circle-fill"></i> Completed
+              </div>';
+
+    } else {
+
+        if ($today <= $dueDate) {
+
+            echo '<div class="timeline-status">'.$days.'d remaining</div>';
+
+        } else {
+
+            echo '<div class="timeline-status overdue">
+                    <i class="bi bi-x-circle-fill"></i> '.$days.'d overdue
+                  </div>';
+
+        }
+    }
+}
+?>
                     <!-- Internal Planning -->
                     <div class="timeline-item">
-                        <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-                            <i class="bi bi-calendar" style="font-size: 12px;"></i> INTERNAL PLANNING CALL
-                        </div>
-                        <?php
-$date = $timeline['internal_planning_call_date'];
-$completed = $timeline['internal_planning_call_completed_at'];
-
-$formattedDate = date("M j, Y", strtotime($date));
-
-$today = new DateTime();
-$dueDate = new DateTime($date);
-
-$diff = $today->diff($dueDate);
-$days = $diff->days;
-?>
-
-<div class="timeline-date"><?php echo htmlspecialchars($formattedDate); ?></div>
-
-<?php if (!empty($completed)) { ?>
-
-    <div class="timeline-status completed">
-        <i class="bi bi-check-circle-fill"></i> Completed
+    <div class="timeline-title">
+        <i class="bi bi-calendar"></i> INTERNAL PLANNING CALL
     </div>
 
-<?php } else { ?>
-
-    <?php if ($today <= $dueDate) { ?>
-        <div class="timeline-status">
-            <?php echo $days; ?>d remaining
-        </div>
-    <?php } else { ?>
-        <div class="timeline-status overdue">
-            <i class="bi bi-x-circle-fill"></i> <?php echo $days; ?>d overdue
-        </div>
-    <?php } ?>
-
-<?php } ?>
-                    </div>
+    <?php
+    renderTimelineStatus(
+        $timeline['internal_planning_call_date'],
+        $timeline['internal_planning_call_completed_at']
+    );
+    ?>
+</div>
 
                     <!-- URL Due -->
                     <div class="timeline-item">
