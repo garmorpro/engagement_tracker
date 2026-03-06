@@ -2,8 +2,11 @@
 require_once '../path.php';
 require_once '../includes/functions.php';
 
-// Get engagements data
-$engagements = getAllActiveEngagements($conn);
+// Get all engagements data
+$allEngagements = getAllEngagements($conn);
+
+// Filter to only show active engagements
+$engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
 
 $archivedCount = getArchivedEngagementCount($conn);
 

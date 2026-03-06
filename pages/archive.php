@@ -6,7 +6,7 @@ require_once '../includes/functions.php';
 $allEngagements = getAllEngagements($conn);
 
 // Filter to only show archived engagements
-$engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
+$engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] === 'archived');
 
 // Calculate status counts from ALL engagements (not just archived)
 $totalCount = count($allEngagements);
