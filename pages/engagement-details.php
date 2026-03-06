@@ -2205,39 +2205,45 @@ if (!$timeline) {
         // Build HTML for milestone list
         let milestonesHTML = `
             <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
-                <button id="addMilestoneBtn" style="width: 100%; background: linear-gradient(135deg, var(--primary-blue), #3671E0); color: white; border: none; padding: 0.9rem; border-radius: 10px; cursor: pointer; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; font-size: 14px; box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3); transition: all 0.2s;">
-                    <i class="bi bi-plus-circle" style="font-size: 16px;"></i> Add New Milestone
+                <button id="addMilestoneBtn" style="width: 100%; background: linear-gradient(135deg, var(--primary-blue), #3671E0); color: white; border: none; padding: 1rem; border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; font-size: 14px; box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3); transition: all 0.2s; font-size: 15px;">
+                    <i class="bi bi-plus-circle" style="font-size: 18px;"></i> Add New Milestone
                 </button>
                 
-                <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; padding-right: 0.5rem;">
+                <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.9rem; padding-right: 0.5rem;">
         `;
         
         if (milestones.length > 0) {
             milestones.forEach((milestone, index) => {
                 const isCompleted = milestone.is_completed === 'Y';
+                // Convert snake_case to Title Case
+                const milestoneTitle = milestone.milestone_type
+                    .split('_')
+                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                    .join(' ');
+                
                 milestonesHTML += `
-                    <div style="display: flex; gap: 1rem; padding: 1rem; background: ${isCompleted ? 'rgba(79, 198, 95, 0.1)' : 'var(--bg-primary)'}; border: 1px solid ${isCompleted ? 'rgba(79, 198, 95, 0.3)' : 'var(--border-color)'}; border-radius: 10px; align-items: center; transition: all 0.2s; cursor: default; hover: {box-shadow: 0 2px 8px rgba(0,0,0,0.1);}">
+                    <div style="display: flex; gap: 1rem; padding: 1.1rem; background: ${isCompleted ? 'rgba(79, 198, 95, 0.08)' : 'var(--bg-primary)'}; border: 1.5px solid ${isCompleted ? 'rgba(79, 198, 95, 0.25)' : 'var(--border-color)'}; border-radius: 12px; align-items: center; transition: all 0.2s; cursor: default; box-shadow: ${isCompleted ? 'inset 0 0 0 1px rgba(79, 198, 95, 0.1)' : 'none'};">
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: 600; font-size: 14px; margin-bottom: 0.4rem; word-break: break-word; ${isCompleted ? 'color: var(--success-green); text-decoration: line-through;' : ''}">${milestone.milestone_type}</div>
-                            <div style="font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
-                                <i class="bi bi-calendar-event" style="font-size: 11px;"></i>
-                                ${milestone.due_date || 'No due date'}
-                                ${isCompleted ? '<i class="bi bi-check-circle-fill" style="color: var(--success-green); margin-left: 0.5rem;"></i>' : ''}
+                            <div style="font-weight: 600; font-size: 15px; margin-bottom: 0.5rem; word-break: break-word; color: ${isCompleted ? 'rgba(79, 198, 95, 0.8)' : 'var(--text-primary)'}; ${isCompleted ? 'text-decoration: line-through;' : ''}">${milestoneTitle}</div>
+                            <div style="font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="bi bi-calendar3" style="font-size: 12px;"></i>
+                                <span>${milestone.due_date || 'No due date'}</span>
+                                ${isCompleted ? '<span style="margin-left: auto; color: var(--success-green); font-weight: 600; display: flex; align-items: center; gap: 0.3rem;"><i class="bi bi-check-circle-fill" style="font-size: 14px;"></i>Completed</span>' : ''}
                             </div>
                         </div>
                         <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
-                            <button class="edit-milestone-btn" data-index="${index}" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.3rem;" title="Edit milestone">
-                                <i class="bi bi-pencil" style="font-size: 13px;"></i>Edit
+                            <button class="edit-milestone-btn" data-index="${index}" style="background: var(--primary-blue); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;" title="Edit milestone">
+                                <i class="bi bi-pencil-square" style="font-size: 14px;"></i>Edit
                             </button>
-                            <button class="delete-milestone-btn" data-index="${index}" style="background: #C90012; color: white; border: none; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.3rem;" title="Delete milestone">
-                                <i class="bi bi-trash" style="font-size: 13px;"></i>Delete
+                            <button class="delete-milestone-btn" data-index="${index}" style="background: #C90012; color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;" title="Delete milestone">
+                                <i class="bi bi-trash3" style="font-size: 14px;"></i>Delete
                             </button>
                         </div>
                     </div>
                 `;
             });
         } else {
-            milestonesHTML += '<div style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary);"><div><i class="bi bi-inbox" style="font-size: 40px; display: block; margin-bottom: 0.75rem; opacity: 0.5;"></i><div style="font-size: 14px; font-weight: 500;">No milestones yet</div><div style="font-size: 12px; margin-top: 0.5rem;">Click "Add New Milestone" to get started!</div></div></div>';
+            milestonesHTML += '<div style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary);"><div><i class="bi bi-calendar-check" style="font-size: 48px; display: block; margin-bottom: 1rem; opacity: 0.4;"></i><div style="font-size: 15px; font-weight: 600;">No milestones yet</div><div style="font-size: 13px; margin-top: 0.5rem; line-height: 1.5;">Start tracking your progress by<br/>adding your first milestone</div></div></div>';
         }
         
         milestonesHTML += `
