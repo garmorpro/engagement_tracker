@@ -1074,11 +1074,14 @@ if (!$engagement) {
                 <i class="bi bi-gear"></i> Manage DOL
             </button>
 
-            <div class="team-members" style="display: flex; flex-direction: column; gap: 1rem;">
-
+            <div class="team-members">
 <?php if (!empty($team)): ?>
 
     <?php
+    // Count unique audit types
+    $auditTypeCounts = array_count_values(array_column($team, 'audit_type'));
+    $hasMultipleAuditTypes = count($auditTypeCounts) > 1;
+
     // Group members by employee name and role
     $groupedTeam = [];
 
@@ -1092,22 +1095,21 @@ if (!$engagement) {
             ];
         }
 
-        // Group DOLs by audit type
-        $groupedTeam[$key]['audit_types'][$member['audit_type']] = explode(',', $member['emp_dol']);
+        // Only add if emp_dol is not null
+        $dolArray = !empty($member['emp_dol']) ? explode(',', $member['emp_dol']) : [];
+        $groupedTeam[$key]['audit_types'][$member['audit_type']] = $dolArray;
     }
     ?>
 
     <?php foreach ($groupedTeam as $member): ?>
         <?php
-            // Get initials for avatar
+            // Get initials
             $nameParts = explode(' ', $member['emp_name']);
             $initials = '';
-            foreach ($nameParts as $part) {
-                $initials .= strtoupper($part[0]);
-            }
+            foreach ($nameParts as $part) { $initials .= strtoupper($part[0]); }
 
-            // Gradient colors based on role
-            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default blue
+            // Gradient based on role
+            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
             switch (strtolower($member['role'] ?? '')) {
                 case 'manager': $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; break;
                 case 'senior': $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)'; break;
@@ -1124,16 +1126,20 @@ if (!$engagement) {
 
                 <?php if (!empty($member['audit_types'])): ?>
                     <?php foreach ($member['audit_types'] as $auditType => $tags): ?>
-                        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem; overflow-wrap: break-word; word-wrap: break-word;">
-                            <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
-                                Division of Labor for <?php echo htmlspecialchars($auditType); ?>
+                        <?php if (!empty($tags)): ?>
+                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem; overflow-wrap: break-word; word-wrap: break-word;">
+                                <?php if ($hasMultipleAuditTypes): ?>
+                                    <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        Division of Labor for <?php echo htmlspecialchars($auditType); ?>
+                                    </div>
+                                <?php endif; ?>
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                    <?php foreach ($tags as $tag): ?>
+                                        <span class="team-member-tag" style="white-space: normal; overflow-wrap: break-word;"><?php echo htmlspecialchars(trim($tag)); ?></span>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
-                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                <?php foreach ($tags as $tag): ?>
-                                    <span class="team-member-tag" style="white-space: normal; overflow-wrap: break-word;"><?php echo htmlspecialchars(trim($tag)); ?></span>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
