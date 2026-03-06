@@ -1165,36 +1165,40 @@ if (!$engagement) {
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
 
                 <?php
-// Get timeline for current engagement (or null if none)
+// Get the timeline for the current engagement
 $timeline = getTimelineByEngagement($conn, $engagementId);
 
-// Render timeline items
-$steps = [
-    ['title' => 'Internal Planning Call', 'icon' => 'bi-calendar', 'date_field' => 'internal_planning_call_date', 'completed_field' => 'internal_planning_call_completed_at'],
-    ['title' => 'IRL Due', 'icon' => 'bi-info-circle', 'date_field' => 'irl_due_date', 'completed_field' => 'irl_completed_at'],
-    ['title' => 'Client Planning Call', 'icon' => 'bi-calendar', 'date_field' => 'client_planning_call_date', 'completed_field' => 'client_planning_call_completed_at'],
-    ['title' => 'Fieldwork', 'icon' => 'bi-bar-chart', 'date_field' => 'fieldwork_date', 'completed_field' => 'fieldwork_completed_at'],
-    ['title' => 'Leadsheet Due', 'icon' => 'bi-info-circle', 'date_field' => 'leadsheet_date', 'completed_field' => 'leadsheet_completed_at'],
-    ['title' => 'Draft Report Due', 'icon' => 'bi-file-text', 'date_field' => 'draft_report_due_date', 'completed_field' => 'draft_report_completed_at'],
-    ['title' => 'Final Report Due', 'icon' => 'bi-file-earmark', 'date_field' => 'final_report_date', 'completed_field' => 'final_report_completed_at'],
-    ['title' => 'Archive Date', 'icon' => 'bi-archive', 'date_field' => 'archive_date', 'completed_field' => 'archive_completed_at'],
-];
-
-// Loop through each step
-foreach ($steps as $step) {
-    echo '<div class="timeline-item">';
-    echo '<div class="timeline-title" style="font-size:10px; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem; font-weight:600; display:flex; align-items:center; gap:0.4rem;">
-            <i class="bi ' . htmlspecialchars($step['icon']) . '" style="font-size:12px;"></i> ' . htmlspecialchars($step['title']) . '
-          </div>';
-
-    // If timeline exists, use the real dates; otherwise null
-    $date = $timeline[$step['date_field']] ?? null;
-    $completed = $timeline[$step['completed_field']] ?? null;
-
-    renderTimelineStatus($date, $completed);
-
-    echo '</div>';
+// If no timeline exists, create a "dummy" timeline with all dates/completions null
+if (!$timeline) {
+    $timeline = [
+        'internal_planning_call_date' => null,
+        'internal_planning_call_completed_at' => null,
+        'irl_due_date' => null,
+        'irl_completed_at' => null,
+        'client_planning_call_date' => null,
+        'client_planning_call_completed_at' => null,
+        'fieldwork_date' => null,
+        'fieldwork_completed_at' => null,
+        'leadsheet_date' => null,
+        'leadsheet_completed_at' => null,
+        'draft_report_due_date' => null,
+        'draft_report_completed_at' => null,
+        'final_report_date' => null,
+        'final_report_completed_at' => null,
+        'archive_date' => null,
+        'archive_completed_at' => null
+    ];
 }
+
+// Now render all the timeline items
+renderTimelineStatus($timeline['internal_planning_call_date'], $timeline['internal_planning_call_completed_at']);
+renderTimelineStatus($timeline['irl_due_date'], $timeline['irl_completed_at']);
+renderTimelineStatus($timeline['client_planning_call_date'], $timeline['client_planning_call_completed_at']);
+renderTimelineStatus($timeline['fieldwork_date'], $timeline['fieldwork_completed_at']);
+renderTimelineStatus($timeline['leadsheet_date'], $timeline['leadsheet_completed_at']);
+renderTimelineStatus($timeline['draft_report_due_date'], $timeline['draft_report_completed_at']);
+renderTimelineStatus($timeline['final_report_date'], $timeline['final_report_completed_at']);
+renderTimelineStatus($timeline['archive_date'], $timeline['archive_completed_at']);
 ?>
                     <!-- Internal Planning -->
                     <!-- <div class="timeline-item">
