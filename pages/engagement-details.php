@@ -1512,7 +1512,7 @@ if (!$timeline) {
                         // Calculate completed milestones
                         $completedCount = 0;
                         foreach ($milestones as $milestone) {
-                            if (!empty($milestone['is_completed'])) {
+                            if (!empty($milestone['milestone_completed_at'])) {
                                 $completedCount++;
                             }
                         }
@@ -1521,8 +1521,15 @@ if (!$timeline) {
                         ?>
                         <?php foreach ($milestones as $milestone): ?>
                             <?php
-                                $isCompleted = !empty($milestone['is_completed']);
-                                $dueDate = date("M j, Y", strtotime($milestone['due_date']));
+                                $isCompleted = !empty($milestone['milestone_completed_at']);
+                                
+                                // Safely handle the date - check for null, empty, or invalid dates
+                                $dueDateRaw = $milestone['milestone_due_date'] ?? null;
+                                if ($dueDateRaw && $dueDateRaw !== '0000-00-00' && $dueDateRaw !== '0000-00-00 00:00:00') {
+                                    $dueDate = date("M j, Y", strtotime($dueDateRaw));
+                                } else {
+                                    $dueDate = 'No due date';
+                                }
                             ?>
                             <div class="milestone-item">
                                 <div class="milestone-checkbox <?php echo $isCompleted ? 'completed' : 'pending'; ?>">
@@ -1532,7 +1539,7 @@ if (!$timeline) {
                                 </div>
                                 <div class="milestone-content">
                                     <div class="milestone-title <?php echo $isCompleted ? 'completed' : ''; ?>">
-                                        <?php echo htmlspecialchars($milestone['milestone_type']); ?>
+                                        <?php echo htmlspecialchars($milestone['milestone_name']); ?>
                                     </div>
                                     <div class="milestone-due">Due: <?php echo htmlspecialchars($dueDate); ?></div>
                                 </div>
