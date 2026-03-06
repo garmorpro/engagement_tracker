@@ -750,29 +750,30 @@ if (!$engagement) {
 
         .milestones-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.25rem;
+            grid-template-columns: 1fr;
+            gap: 1rem;
         }
 
         .milestone-item {
             background: var(--gray-100);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.25rem;
+            padding: 1.5rem;
             display: flex;
-            align-items: center;
-            gap: 1rem;
+            align-items: flex-start;
+            gap: 1.25rem;
         }
 
         .milestone-checkbox {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             flex-shrink: 0;
+            margin-top: 0.1rem;
         }
 
         .milestone-checkbox.completed {
@@ -781,9 +782,9 @@ if (!$engagement) {
         }
 
         .milestone-checkbox.pending {
-            background: rgba(220, 220, 220, 0.3);
+            background: var(--border-color);
             color: var(--text-secondary);
-            border: 2px solid var(--border-color);
+            border: none;
         }
 
         .milestone-content {
@@ -791,12 +792,13 @@ if (!$engagement) {
         }
 
         .milestone-title {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-primary);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            line-height: 1.4;
         }
 
         .milestone-title.completed {
@@ -807,6 +809,7 @@ if (!$engagement) {
         .milestone-due {
             font-size: 12px;
             color: var(--text-secondary);
+            font-weight: 500;
         }
 
         /* ========== DARK MODE BUTTON ========== */
@@ -1474,7 +1477,7 @@ if (!$timeline) {
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 1.5rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
                     <!-- Kickoff meeting completed -->
                     <div class="milestone-item">
                         <div class="milestone-checkbox completed">
