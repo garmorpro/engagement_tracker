@@ -1605,6 +1605,73 @@ if (!$timeline) {
         localStorage.setItem('darkMode', isDark);
         updateDarkModeIcon(isDark);
     });
+
+    // Milestone checkbox functionality
+    document.querySelectorAll('.milestone-checkbox').forEach((checkbox, index) => {
+        checkbox.style.cursor = 'pointer';
+        checkbox.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            
+            const milestoneItem = this.closest('.milestone-item');
+            const milestoneTitle = milestoneItem?.querySelector('.milestone-title')?.textContent?.trim();
+            
+            if (!milestoneTitle) return;
+
+            // Get current state (if 'completed' class exists, it's currently completed)
+            const isCurrentlyCompleted = this.classList.contains('completed');
+            const newStatus = isCurrentlyCompleted ? 'N' : 'Y';
+
+            try {
+                const response = await fetch('../api/update-milestone.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        engagement_id: '<?php echo htmlspecialchars($engagementId); ?>',
+                        milestone_type: milestoneTitle,
+                        is_completed: newStatus
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Toggle the visual state
+                    this.classList.toggle('completed');
+                    this.classList.toggle('pending');
+                    
+                    // Toggle the icon
+                    const icon = this.querySelector('i');
+                    if (icon) {
+                        if (newStatus === 'Y') {
+                            icon.classList.add('bi-check-circle-fill');
+                        } else {
+                            icon.classList.remove('bi-check-circle-fill');
+                        }
+                    }
+
+                    // Update milestone title strikethrough
+                    const title = milestoneItem?.querySelector('.milestone-title');
+                    if (title) {
+                        if (newStatus === 'Y') {
+                            title.classList.add('completed');
+                        } else {
+                            title.classList.remove('completed');
+                        }
+                    }
+
+                    // Refresh the page to update completion stats
+                    location.reload();
+                } else {
+                    alert('Error updating milestone: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to update milestone');
+            }
+        });
+    });
 </script>
 
 </body>
