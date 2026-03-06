@@ -517,15 +517,15 @@ body {
 
 
 
-.timeline::before {
+/* .timeline::before {
   content: "";
   position: absolute;
-  left: 21px;           /* centers line behind 44px icon */
+  left: 21px;           
   top: 0;
   bottom: 0;
   width: 2px;
   background-color: rgb(229,231,235);
-}
+} */
 
 
 
