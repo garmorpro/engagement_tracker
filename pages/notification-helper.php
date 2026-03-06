@@ -40,46 +40,6 @@ function createNotification($engagement_idno, $notif_type, $notif_title, $notif_
 }
 
 /**
- * Get all timeline date columns that have values
- * Returns array of [column_name => date_value] for non-null dates
- */
-function getTimelineKeyDates($engagement_idno) {
-    global $conn;
-    
-    $timelineColumns = [
-        'internal_planning_call_date',
-        'planning_memo_date',
-        'irl_due_date',
-        'client_planning_call_date',
-        'fieldwork_date',
-        'leadsheet_date',
-        'conclusion_memo_date',
-        'draft_report_due_date',
-        'final_report_date',
-        'archive_date'
-    ];
-    
-    $query = "SELECT " . implode(", ", $timelineColumns) . " FROM engagement_timeline WHERE engagement_idno = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->bind_param('s', $engagement_idno);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $stmt->close();
-    
-    $keyDates = [];
-    if ($row) {
-        foreach ($timelineColumns as $column) {
-            if ($row[$column] !== null) {
-                $keyDates[$column] = $row[$column];
-            }
-        }
-    }
-    
-    return $keyDates;
-}
-
-/**
  * Convert timeline column name to readable title
  */
 function getTimelineTitle($columnName) {
@@ -101,13 +61,27 @@ function getTimelineTitle($columnName) {
 
 /**
  * Check for upcoming key dates from engagement_timeline
- * Notifies when any timeline date is exactly 7 days away
+ * Notifies when any timeline date is exactly 7 days away AND the corresponding *_completed_at is NULL
  * Only sends if notification hasn't been sent for this engagement yet
  */
 function checkUpcomingKeyDates() {
     global $conn;
     
     $dueDate = date('Y-m-d', strtotime('+7 days')); // 7 days from now
+    
+    // Timeline columns paired with their completed_at counterparts
+    $dateCompletedPairs = [
+        'internal_planning_call_date' => 'internal_planning_call_completed_at',
+        'planning_memo_date' => 'planning_memo_completed_at',
+        'irl_due_date' => 'irl_completed_at',
+        'client_planning_call_date' => 'client_planning_call_completed_at',
+        'fieldwork_date' => 'fieldwork_completed_at',
+        'leadsheet_date' => 'leadsheet_completed_at',
+        'conclusion_memo_date' => 'conclusion_memo_completed_at',
+        'draft_report_due_date' => 'draft_report_completed_at',
+        'final_report_date' => 'final_report_completed_at',
+        'archive_date' => 'archive_completed_at'
+    ];
     
     // Get all engagements
     $query = "SELECT DISTINCT engagement_idno, e.eng_name 
@@ -128,14 +102,26 @@ function checkUpcomingKeyDates() {
             $engagement_idno = $row['engagement_idno'];
             $eng_name = $row['eng_name'];
             
-            // Get all key dates for this engagement
-            $keyDates = getTimelineKeyDates($engagement_idno);
+            // Get timeline for this engagement
+            $timelineQuery = "SELECT * FROM engagement_timeline WHERE engagement_idno = ?";
+            $stmt = $conn->prepare($timelineQuery);
+            $stmt->bind_param('s', $engagement_idno);
+            $stmt->execute();
+            $timelineResult = $stmt->get_result();
+            $timeline = $timelineResult->fetch_assoc();
+            $stmt->close();
             
-            // Check if any key date matches 7 days from now
-            foreach ($keyDates as $columnName => $dateValue) {
-                if (date('Y-m-d', strtotime($dateValue)) === $dueDate) {
+            if (!$timeline) continue;
+            
+            // Check each date/completed pair
+            foreach ($dateCompletedPairs as $dateCol => $completedCol) {
+                $dateValue = $timeline[$dateCol];
+                $completedValue = $timeline[$completedCol];
+                
+                // Only notify if: date matches 7 days out AND completed_at is NULL
+                if ($dateValue && $completedValue === null && date('Y-m-d', strtotime($dateValue)) === $dueDate) {
                     $title = 'Upcoming Key Date';
-                    $dateTitle = getTimelineTitle($columnName);
+                    $dateTitle = getTimelineTitle($dateCol);
                     $message = $eng_name . ' - ' . $dateTitle . ' is due in 7 days';
                     
                     createNotification(
