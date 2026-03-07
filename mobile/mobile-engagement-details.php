@@ -42,7 +42,7 @@ $timeline = $result->fetch_assoc();
 $stmt->close();
 
 // Fetch team members
-$query = "SELECT * FROM engagement_team WHERE engagement_idno = ? ORDER BY team_member_name ASC";
+$query = "SELECT * FROM engagement_team WHERE engagement_idno = ? ORDER BY emp_name ASC";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('s', $eng_idno);
 $stmt->execute();
@@ -512,12 +512,17 @@ $timelineFields = [
                 <?php foreach ($team as $member): ?>
                     <div class="team-member">
                         <div class="team-avatar">
-                            <?php echo strtoupper(substr($member['team_member_name'], 0, 1)); ?>
+                            <?php echo strtoupper(substr($member['emp_name'], 0, 1)); ?>
                         </div>
                         <div class="team-info">
-                            <div class="team-name"><?php echo htmlspecialchars($member['team_member_name']); ?></div>
+                            <div class="team-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
                             <div class="team-role">
-                                <?php echo htmlspecialchars($member['team_role']); ?>
+                                <?php echo htmlspecialchars($member['role']); ?>
+                                <?php if (!empty($member['emp_dol'])): ?>
+                                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 0.3rem;">
+                                        <i class="bi bi-calendar"></i> DOL: <?php echo date('M d, Y', strtotime($member['emp_dol'])); ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
