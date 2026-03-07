@@ -1872,7 +1872,7 @@ function getTimeAgo($datetime) {
                 };
 
                 // Send to API
-                fetch('./api/create-engagement.php', {
+                fetch('../api/create-engagement.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
