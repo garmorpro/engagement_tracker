@@ -1066,6 +1066,50 @@ function getTimeAgo($datetime) {
         /* ========== SWEETALERT2 DARK MODE ========== */
         /* (Already included above in the complete swal2 styling section) */
 
+        /* ========== TOAST NOTIFICATIONS ========== */
+        .custom-toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success-green);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        .custom-toast.success {
+            background: var(--success-green);
+        }
+
+        .custom-toast.hide {
+            animation: slideOutDown 0.3s ease-out forwards;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutDown {
+            from {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+        }
+
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
             .header-nav {
@@ -1918,6 +1962,24 @@ function getTimeAgo($datetime) {
             }
         });
     });
+
+    // Toast notification function
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'custom-toast success';
+        toast.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <i class="bi bi-check-circle-fill" style="font-size: 20px; color: var(--success-green);"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('hide');
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    }
 </script>
 
 </body>
