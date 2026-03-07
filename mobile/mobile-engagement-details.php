@@ -47,8 +47,24 @@ $stmt = $conn->prepare($query);
 $stmt->bind_param('s', $eng_idno);
 $stmt->execute();
 $result = $stmt->get_result();
-$team = $result->fetch_all(MYSQLI_ASSOC);
+$teamRaw = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
+
+// Group team members by emp_name to avoid duplicates
+$team = [];
+foreach ($teamRaw as $member) {
+    $empName = $member['emp_name'];
+    if (!isset($team[$empName])) {
+        $team[$empName] = [
+            'emp_name' => $member['emp_name'],
+            'role' => $member['role'],
+            'dols' => []
+        ];
+    }
+    if (!empty($member['emp_dol'])) {
+        $team[$empName]['dols'][] = $member['emp_dol'];
+    }
+}
 
 // Dark mode
 $isDarkMode = isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true';
@@ -518,12 +534,16 @@ $timelineFields = [
                             <div class="team-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
                             <div class="team-role">
                                 <?php echo htmlspecialchars($member['role']); ?>
-                                <?php if (!empty($member['emp_dol'])): ?>
-                                    <div style="font-size: 11px; color: var(--text-secondary); margin-top: 0.3rem;">
-                                        <i class="bi bi-calendar"></i> DOL: <?php echo date('M d, Y', strtotime($member['emp_dol'])); ?>
-                                    </div>
-                                <?php endif; ?>
                             </div>
+                            <?php if (!empty($member['dols'])): ?>
+                                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.3rem;">
+                                    <?php foreach ($member['dols'] as $dol): ?>
+                                        <div>
+                                            <i class="bi bi-calendar"></i> DOL: <?php echo date('M d, Y', strtotime($dol)); ?>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
