@@ -686,34 +686,7 @@ function getTimeAgo($datetime) {
             background: rgba(68, 135, 252, 0.08) !important;
         }
 
-        .view-toggle {
-            display: flex;
-            gap: 0.25rem;
-            background: var(--gray-100);
-            padding: 0.25rem;
-            border-radius: 8px;
-        }
-
-        .view-btn {
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .view-btn.active {
-            background: var(--bg-secondary);
-            color: var(--primary-blue);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
+        /* View toggle removed */
 
         .action-buttons {
             display: flex;
@@ -1442,14 +1415,6 @@ function getTimeAgo($datetime) {
         </div>
 
         <div class="action-buttons">
-            <div class="view-toggle">
-                <button class="view-btn active" title="List view">
-                    <i class="bi bi-list-ul"></i>
-                </button>
-                <button class="view-btn" title="Grid view">
-                    <i class="bi bi-grid-3x3-gap"></i>
-                </button>
-            </div>
             <button class="btn-new-engagement">
                 <i class="bi bi-plus"></i> New Engagement
             </button>
@@ -1759,14 +1724,7 @@ function getTimeAgo($datetime) {
         });
     });
 
-    // View toggle
-    document.querySelectorAll('.view-btn').forEach((btn, idx) => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            // TODO: Implement view switching logic
-        });
-    });
+    // View toggle removed
 
     // Action buttons
     document.querySelector('.btn-new-engagement')?.addEventListener('click', () => {
