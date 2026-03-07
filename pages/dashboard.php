@@ -1498,12 +1498,16 @@ function getTimeAgo($datetime) {
                             <td><?php echo htmlspecialchars($eng['eng_manager'] ?? 'Unassigned'); ?></td>
                             <td>
                                 <?php 
-                                    $auditTypes = explode(',', $eng['eng_audit_type']);
-                                    foreach ($auditTypes as $type) {
-                                        $type = trim($type);
-                                        if (!empty($type)) {
-                                            echo '<span class="badge badge-audit-type">' . htmlspecialchars($type) . '</span> ';
+                                    if (!empty($eng['eng_audit_type'])) {
+                                        $auditTypes = explode(',', $eng['eng_audit_type']);
+                                        foreach ($auditTypes as $type) {
+                                            $type = trim($type);
+                                            if (!empty($type)) {
+                                                echo '<span class="badge badge-audit-type">' . htmlspecialchars($type) . '</span> ';
+                                            }
                                         }
+                                    } else {
+                                        echo '<span style="color: var(--text-secondary); font-size: 13px;">No audit type</span>';
                                     }
                                 ?>
                             </td>
