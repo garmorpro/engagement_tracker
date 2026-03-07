@@ -558,6 +558,12 @@ function getTimeAgo($datetime) {
             box-shadow: 0 4px 12px rgba(68, 135, 252, 0.08);
         }
 
+        .status-card.active {
+            background: rgba(68, 135, 252, 0.08);
+            border-color: var(--primary-blue);
+            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.15);
+        }
+
         .status-card-icon {
             width: 48px;
             height: 48px;
@@ -1329,7 +1335,7 @@ function getTimeAgo($datetime) {
 
     <!-- STATUS CARDS -->
     <div class="status-cards">
-        <div class="status-card">
+        <div class="status-card" data-filter="all" style="cursor: pointer;">
             <div class="status-card-icon total">
                 <i class="bi bi-briefcase"></i>
             </div>
@@ -1339,7 +1345,7 @@ function getTimeAgo($datetime) {
             </div>
         </div>
 
-        <div class="status-card">
+        <div class="status-card" data-filter="in-progress" style="cursor: pointer;">
             <div class="status-card-icon in-progress">
                 <i class="bi bi-play-circle"></i>
             </div>
@@ -1349,7 +1355,7 @@ function getTimeAgo($datetime) {
             </div>
         </div>
 
-        <div class="status-card">
+        <div class="status-card" data-filter="planning" style="cursor: pointer;">
             <div class="status-card-icon planning">
                 <i class="bi bi-clipboard-check"></i>
             </div>
@@ -1359,7 +1365,7 @@ function getTimeAgo($datetime) {
             </div>
         </div>
 
-        <div class="status-card">
+        <div class="status-card" data-filter="in-review" style="cursor: pointer;">
             <div class="status-card-icon review">
                 <i class="bi bi-search"></i>
             </div>
@@ -1369,7 +1375,7 @@ function getTimeAgo($datetime) {
             </div>
         </div>
 
-        <div class="status-card">
+        <div class="status-card" data-filter="complete" style="cursor: pointer;">
             <div class="status-card-icon complete">
                 <i class="bi bi-check-circle"></i>
             </div>
@@ -1420,7 +1426,7 @@ function getTimeAgo($datetime) {
                             $dueDate = $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : 'N/A';
                             $statusClass = strtolower($eng['eng_status'] ?? 'planning');
                         ?>
-                        <tr style="cursor: pointer;" onclick="window.location.href='engagement-details.php?id=<?php echo htmlspecialchars($eng['eng_idno']); ?>'">
+                        <tr style="cursor: pointer;" class="engagement-row" data-status="<?php echo htmlspecialchars($eng['eng_status']); ?>" onclick="window.location.href='engagement-details.php?id=<?php echo htmlspecialchars($eng['eng_idno']); ?>'">
                             <td>
                                 <div class="engagement-id"><?php echo htmlspecialchars($eng['eng_idno']); ?></div>
                             </td>
@@ -1700,6 +1706,33 @@ function getTimeAgo($datetime) {
     });
 
     // View toggle removed
+
+    // Status card filters
+    document.querySelectorAll('.status-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Remove active class from all cards
+            document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked card
+            card.classList.add('active');
+            
+            // Get the filter value
+            const filterValue = card.getAttribute('data-filter');
+            
+            // Filter table rows
+            const rows = document.querySelectorAll('.engagement-row');
+            rows.forEach(row => {
+                if (filterValue === 'all') {
+                    row.style.display = '';
+                } else {
+                    const rowStatus = row.getAttribute('data-status');
+                    row.style.display = rowStatus === filterValue ? '' : 'none';
+                }
+            });
+        });
+    });
 
     // Action buttons
     document.querySelector('.btn-new-engagement')?.addEventListener('click', () => {
