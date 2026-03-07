@@ -1523,13 +1523,10 @@ function getTimeAgo($datetime) {
                             <td><?php echo htmlspecialchars($dueDate); ?></td>
                             <td>
                                 <div class="action-icons">
-                                    <button class="action-icon" title="Edit" onclick="event.stopPropagation(); window.location.href='engagement-details.php?id=<?php echo htmlspecialchars($eng['eng_idno']); ?>&action=edit'">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
                                     <button class="action-icon" title="Archive" onclick="event.stopPropagation(); archiveEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                                         <i class="bi bi-archive"></i>
                                     </button>
-                                    <button class="action-icon" title="Delete" onclick="event.stopPropagation(); alert('Delete functionality coming soon')">
+                                    <button class="action-icon" title="Delete" onclick="event.stopPropagation(); deleteEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
@@ -1605,6 +1602,51 @@ function getTimeAgo($datetime) {
             } catch (error) {
                 console.error('Error:', error);
                 Swal.fire('Error', 'Failed to archive engagement', 'error');
+            }
+        }
+    }
+
+    // Delete engagement function
+    async function deleteEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        const result = await Swal.fire({
+            title: 'Delete Engagement?',
+            text: 'This action cannot be undone. The engagement and all related data will be permanently deleted.',
+            icon: 'warning',
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#C90012',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A',
+            confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
+            cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/delete-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Engagement deleted successfully');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to delete engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to delete engagement', 'error');
             }
         }
     }
