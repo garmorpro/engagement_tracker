@@ -42,7 +42,7 @@ $timeline = $result->fetch_assoc();
 $stmt->close();
 
 // Fetch team members
-$query = "SELECT * FROM engagement_team WHERE engagement_idno = ? ORDER BY team_lead DESC, team_member_name ASC";
+$query = "SELECT * FROM engagement_team WHERE engagement_idno = ? ORDER BY team_member_name ASC";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('s', $eng_idno);
 $stmt->execute();
@@ -518,9 +518,6 @@ $timelineFields = [
                             <div class="team-name"><?php echo htmlspecialchars($member['team_member_name']); ?></div>
                             <div class="team-role">
                                 <?php echo htmlspecialchars($member['team_role']); ?>
-                                <?php if ($member['team_lead'] === 'Y'): ?>
-                                    <span class="team-lead-badge">LEAD</span>
-                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
