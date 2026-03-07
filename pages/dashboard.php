@@ -630,7 +630,7 @@ function getTimeAgo($datetime) {
 
         .search-input-wrapper {
             position: relative;
-            width: 280px;
+            width: 400px;
         }
 
         .search-input {
@@ -662,29 +662,7 @@ function getTimeAgo($datetime) {
             color: var(--text-secondary);
         }
 
-        .filter-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            background: var(--bg-secondary) !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary) !important;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .filter-btn i {
-            color: var(--text-primary) !important;
-        }
-
-        .filter-btn:hover {
-            border-color: var(--primary-blue) !important;
-            background: rgba(68, 135, 252, 0.08) !important;
-        }
+        /* Filter button removed */
 
         /* View toggle removed */
 
@@ -1409,9 +1387,6 @@ function getTimeAgo($datetime) {
                 <i class="bi bi-search search-icon"></i>
                 <input type="text" class="search-input" placeholder="Search...">
             </div>
-            <button class="filter-btn">
-                <i class="bi bi-funnel"></i> Filters
-            </button>
         </div>
 
         <div class="action-buttons">
