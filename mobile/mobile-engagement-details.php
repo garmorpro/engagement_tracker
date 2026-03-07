@@ -41,8 +41,31 @@ $result = $stmt->get_result();
 $timeline = $result->fetch_assoc();
 $stmt->close();
 
+// Fetch team members
+$query = "SELECT * FROM engagement_team WHERE engagement_idno = ? ORDER BY team_lead DESC, team_member_name ASC";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('s', $eng_idno);
+$stmt->execute();
+$result = $stmt->get_result();
+$team = $result->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+
 // Dark mode
 $isDarkMode = isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true';
+
+// Timeline key dates
+$timelineFields = [
+    'internal_planning_call_date' => 'Internal Planning Call',
+    'planning_memo_date' => 'Planning Memo',
+    'irl_due_date' => 'IRL Due',
+    'client_planning_call_date' => 'Client Planning Call',
+    'fieldwork_date' => 'Fieldwork',
+    'leadsheet_date' => 'Leadsheet Due',
+    'conclusion_memo_date' => 'Conclusion Memo',
+    'draft_report_due_date' => 'Draft Report Due',
+    'final_report_date' => 'Final Report',
+    'archive_date' => 'Archive Date'
+];
 ?>
 
 <!DOCTYPE html>
@@ -135,20 +158,37 @@ $isDarkMode = isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true';
             margin-bottom: 1rem;
         }
 
-        .section-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             margin-bottom: 1rem;
             padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--border-color);
         }
 
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(68, 135, 252, 0.15);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 16px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
         .info-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             padding: 0.75rem 0;
             border-bottom: 1px solid var(--border-color);
             font-size: 14px;
@@ -211,6 +251,95 @@ $isDarkMode = isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true';
             margin-bottom: 0.3rem;
         }
 
+        /* ========== TEAM MEMBERS ========== */
+        .team-member {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .team-avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .team-info {
+            flex: 1;
+        }
+
+        .team-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .team-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 0.2rem;
+        }
+
+        .team-lead-badge {
+            font-size: 10px;
+            background: rgba(241, 115, 19, 0.2);
+            color: var(--warning-orange);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        /* ========== TIMELINE GRID ========== */
+        .timeline-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .timeline-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        .timeline-item-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-item-date {
+            font-size: 13px;
+            color: var(--text-secondary);
+            word-break: break-word;
+        }
+
+        .timeline-item.completed {
+            border-color: var(--success-green);
+            background: rgba(79, 198, 95, 0.05);
+        }
+
+        .timeline-item.completed .timeline-item-date {
+            color: var(--success-green);
+            font-weight: 600;
+        }
+
         /* ========== MILESTONE ========== */
         .milestone-item {
             background: var(--bg-tertiary);
@@ -221,14 +350,6 @@ $isDarkMode = isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true';
             display: flex;
             align-items: flex-start;
             gap: 0.75rem;
-        }
-
-        .milestone-checkbox {
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-            margin-top: 0.2rem;
-            cursor: pointer;
         }
 
         .milestone-content {
@@ -307,7 +428,12 @@ $isDarkMode = isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true';
     <div class="mobile-content">
         <!-- BASIC INFO -->
         <div class="section">
-            <div class="section-title">Basic Information</div>
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="bi bi-briefcase"></i>
+                </div>
+                <div class="section-title">Basic Information</div>
+            </div>
             <div class="info-row">
                 <span class="info-label">ID</span>
                 <span class="info-value"><?php echo htmlspecialchars($engagement['eng_idno']); ?></span>
@@ -343,7 +469,12 @@ $isDarkMode = isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true';
         <!-- AUDIT DETAILS -->
         <?php if (!empty($engagement['eng_audit_type']) || !empty($engagement['eng_soc_type'])): ?>
             <div class="section">
-                <div class="section-title">Audit Details</div>
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <div class="section-title">Audit Details</div>
+                </div>
                 <?php if (!empty($engagement['eng_audit_type'])): ?>
                     <div class="info-row">
                         <span class="info-label">Audit Types</span>
@@ -369,13 +500,79 @@ $isDarkMode = isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true';
             </div>
         <?php endif; ?>
 
+        <!-- TEAM MEMBERS -->
+        <?php if (!empty($team)): ?>
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="section-title">Team Members</div>
+                </div>
+                <?php foreach ($team as $member): ?>
+                    <div class="team-member">
+                        <div class="team-avatar">
+                            <?php echo strtoupper(substr($member['team_member_name'], 0, 1)); ?>
+                        </div>
+                        <div class="team-info">
+                            <div class="team-name"><?php echo htmlspecialchars($member['team_member_name']); ?></div>
+                            <div class="team-role">
+                                <?php echo htmlspecialchars($member['team_role']); ?>
+                                <?php if ($member['team_lead'] === 'Y'): ?>
+                                    <span class="team-lead-badge">LEAD</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <!-- KEY DATES -->
+        <?php if (!empty($timeline)): ?>
+            <div class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-calendar-event"></i>
+                    </div>
+                    <div class="section-title">Key Dates</div>
+                </div>
+                <div class="timeline-grid">
+                    <?php foreach ($timelineFields as $dbField => $displayName): ?>
+                        <?php 
+                            $fieldValue = $timeline[$dbField] ?? null;
+                            $completedField = str_replace('_date', '_completed_at', $dbField);
+                            $isCompleted = !empty($timeline[$completedField]);
+                        ?>
+                        <div class="timeline-item <?php echo $isCompleted ? 'completed' : ''; ?>">
+                            <div class="timeline-item-name"><?php echo $displayName; ?></div>
+                            <div class="timeline-item-date">
+                                <?php 
+                                    if (!empty($fieldValue)) {
+                                        echo date('M d, Y', strtotime($fieldValue));
+                                    } else {
+                                        echo 'Not set';
+                                    }
+                                ?>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+
         <!-- MILESTONES -->
         <?php if (!empty($milestones)): ?>
             <div class="section">
-                <div class="section-title">Milestones</div>
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-target"></i>
+                    </div>
+                    <div class="section-title">Milestones</div>
+                </div>
                 <?php foreach ($milestones as $milestone): ?>
                     <div class="milestone-item <?php echo $milestone['is_completed'] === 'Y' ? 'completed' : ''; ?>">
-                        <div style="width: 20px; flex-shrink: 0;">
+                        <div style="flex-shrink: 0;">
                             <i class="bi bi-check-circle<?php echo $milestone['is_completed'] === 'Y' ? '-fill' : ''; ?>" style="color: var(--success-green); font-size: 18px;"></i>
                         </div>
                         <div class="milestone-content">
@@ -393,35 +590,17 @@ $isDarkMode = isset($_COOKIE['darkMode']) && $_COOKIE['darkMode'] === 'true';
         <!-- NOTES -->
         <?php if (!empty($engagement['eng_notes'])): ?>
             <div class="section">
-                <div class="section-title">Notes</div>
+                <div class="section-header">
+                    <div class="section-icon">
+                        <i class="bi bi-chat-left-text"></i>
+                    </div>
+                    <div class="section-title">Notes</div>
+                </div>
                 <p style="font-size: 14px; line-height: 1.6; color: var(--text-primary); white-space: pre-wrap;">
                     <?php echo htmlspecialchars($engagement['eng_notes']); ?>
                 </p>
             </div>
         <?php endif; ?>
-
-        <!-- DATES -->
-        <div class="section">
-            <div class="section-title">Important Dates</div>
-            <?php if (!empty($engagement['eng_start_period'])): ?>
-                <div class="info-row">
-                    <span class="info-label">Start Period</span>
-                    <span class="info-value"><?php echo date('M d, Y', strtotime($engagement['eng_start_period'])); ?></span>
-                </div>
-            <?php endif; ?>
-            <?php if (!empty($engagement['eng_end_period'])): ?>
-                <div class="info-row">
-                    <span class="info-label">End Period</span>
-                    <span class="info-value"><?php echo date('M d, Y', strtotime($engagement['eng_end_period'])); ?></span>
-                </div>
-            <?php endif; ?>
-            <?php if (!empty($engagement['eng_complete_date'])): ?>
-                <div class="info-row">
-                    <span class="info-label">Complete Date</span>
-                    <span class="info-value"><?php echo date('M d, Y', strtotime($engagement['eng_complete_date'])); ?></span>
-                </div>
-            <?php endif; ?>
-        </div>
 
         <div class="bottom-padding"></div>
     </div>
