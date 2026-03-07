@@ -30,6 +30,18 @@ if (!$eng_name) {
 }
 
 try {
+    // Convert empty strings to NULL
+    $eng_location = $eng_location ?: null;
+    $eng_poc = $eng_poc ?: null;
+    $eng_repeat = $eng_repeat ?: null;
+    $eng_audit_type = $eng_audit_type ?: null;
+    $eng_soc_type = $eng_soc_type ?: null;
+    $eng_scope = $eng_scope ?: null;
+    $eng_tsc = $eng_tsc ?: null;
+    $eng_start_period = $eng_start_period ?: null;
+    $eng_end_period = $eng_end_period ?: null;
+    $eng_as_of_date = $eng_as_of_date ?: null;
+    
     // Start transaction
     $conn->begin_transaction();
 
@@ -41,6 +53,11 @@ try {
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($query);
+    
+    if (!$stmt) {
+        throw new Exception('Prepare failed: ' . $conn->error);
+    }
+    
     $stmt->bind_param(
         'ssssssssssss',
         $eng_name, $eng_location, $eng_poc, $eng_repeat, $eng_audit_type,
@@ -50,35 +67,59 @@ try {
 
     if (!$stmt->execute()) {
         $conn->rollback();
-        echo json_encode(['success' => false, 'message' => 'Failed to create engagement: ' . $stmt->error]);
-        $stmt->close();
-        exit;
+        throw new Exception('Failed to insert engagement: ' . $stmt->error);
     }
 
-    // Get the generated eng_idno (if auto-increment ID)
+    // Get the generated eng_id (auto-increment primary key)
     $engagement_id = $conn->insert_id;
     $stmt->close();
 
-    // Get the actual eng_idno from the database (in case it's a custom format)
+    if (!$engagement_id) {
+        $conn->rollback();
+        throw new Exception('Failed to get engagement ID');
+    }
+
+    // Get the actual eng_idno from the database (the formatted ID)
     $selectQuery = "SELECT eng_idno FROM engagements WHERE eng_id = ?";
     $stmt = $conn->prepare($selectQuery);
+    
+    if (!$stmt) {
+        $conn->rollback();
+        throw new Exception('Prepare failed on select: ' . $conn->error);
+    }
+    
     $stmt->bind_param('i', $engagement_id);
-    $stmt->execute();
+    
+    if (!$stmt->execute()) {
+        $conn->rollback();
+        throw new Exception('Failed to select engagement: ' . $stmt->error);
+    }
+    
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
-    $eng_idno = $row['eng_idno'];
     $stmt->close();
+    
+    if (!$row) {
+        $conn->rollback();
+        throw new Exception('Engagement not found after insert');
+    }
+    
+    $eng_idno = $row['eng_idno'];
 
     // Automatically create timeline row for this engagement
     $timelineQuery = "INSERT INTO engagement_timeline (engagement_idno) VALUES (?)";
     $stmt = $conn->prepare($timelineQuery);
+    
+    if (!$stmt) {
+        $conn->rollback();
+        throw new Exception('Prepare failed on timeline: ' . $conn->error);
+    }
+    
     $stmt->bind_param('s', $eng_idno);
 
     if (!$stmt->execute()) {
         $conn->rollback();
-        echo json_encode(['success' => false, 'message' => 'Failed to create timeline: ' . $stmt->error]);
-        $stmt->close();
-        exit;
+        throw new Exception('Failed to create timeline: ' . $stmt->error);
     }
     $stmt->close();
 
@@ -92,7 +133,9 @@ try {
     ]);
 
 } catch (Exception $e) {
-    $conn->rollback();
+    if ($conn->connect_errno === 0) {
+        $conn->rollback();
+    }
     echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
 }
 ?>
