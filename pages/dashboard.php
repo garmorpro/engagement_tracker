@@ -921,18 +921,72 @@ function getTimeAgo($datetime) {
             color: var(--primary-blue);
         }
 
-        /* ========== SWEETALERT2 DARK MODE ========== */
+        /* ========== SWEETALERT2 STYLING ========== */
+        .swal2-container {
+            z-index: 2000;
+        }
+
+        .swal2-popup {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            max-width: 550px;
+            width: calc(100vw - 2rem);
+            overflow-x: hidden;
+        }
+
         body.dark-mode .swal2-popup {
             background: #1A2332 !important;
             color: #E8EAED !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .swal2-title {
+            color: var(--text-primary);
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+            padding: 0;
         }
 
         body.dark-mode .swal2-title {
             color: #E8EAED !important;
         }
 
+        .swal2-html-container {
+            color: var(--text-primary);
+            padding: 0;
+            margin: 0;
+        }
+
         body.dark-mode .swal2-html-container {
             color: #E8EAED !important;
+        }
+
+        .swal2-input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 6px;
+            padding: 0.5rem 0.6rem !important;
+            font-size: 13px !important;
+            transition: all 0.2s;
+            width: 100% !important;
+            box-sizing: border-box;
+            margin: 0 !important;
+        }
+
+        .swal2-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+            outline: none;
+        }
+
+        .swal2-input::placeholder {
+            color: var(--text-secondary);
         }
 
         body.dark-mode .swal2-input,
@@ -940,6 +994,64 @@ function getTimeAgo($datetime) {
             background: #2D3847 !important;
             border: 1px solid #2D3847 !important;
             color: #E8EAED !important;
+        }
+
+        .swal2-actions {
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin-left: 0;
+            margin-right: 0;
+            margin-bottom: 0;
+        }
+
+        .swal2-confirm,
+        .swal2-cancel {
+            flex: 1;
+            max-width: 200px;
+            margin: 0 !important;
+            padding: 0.7rem 1.5rem !important;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+            min-width: 0;
+            height: auto;
+        }
+
+        .swal2-confirm {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+        }
+
+        .swal2-confirm:hover {
+            background: #3671E0;
+            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3);
+        }
+
+        .swal2-confirm:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.2);
+        }
+
+        .swal2-cancel {
+            background: var(--border-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .swal2-cancel:hover {
+            background: rgba(68, 135, 252, 0.05);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .swal2-cancel:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
         }
 
         body.dark-mode .swal-dark-btn {
@@ -950,6 +1062,9 @@ function getTimeAgo($datetime) {
             background: #2D3847 !important;
             color: #E8EAED !important;
         }
+
+        /* ========== SWEETALERT2 DARK MODE ========== */
+        /* (Already included above in the complete swal2 styling section) */
 
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
