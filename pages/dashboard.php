@@ -1543,8 +1543,244 @@ function getTimeAgo($datetime) {
 
     // Action buttons
     document.querySelector('.btn-new-engagement')?.addEventListener('click', () => {
-        // TODO: Open new engagement modal
-        alert('Open new engagement modal');
+        // New engagement form data
+        const htmlContent = `
+            <div style="text-align: left; max-height: 600px; overflow-y: auto; padding: 1rem;">
+                <!-- Basic Information Section -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Basic Information</h3>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Engagement Name <span style="color: #C90012;">*</span></label>
+                        <input type="text" id="new_eng_name" class="swal2-input" placeholder="Enter engagement name" style="width: 100%;">
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Location</label>
+                        <input type="text" id="new_eng_location" class="swal2-input" placeholder="Enter location" style="width: 100%;">
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Point of Contact</label>
+                        <input type="text" id="new_eng_poc" class="swal2-input" placeholder="Enter point of contact" style="width: 100%;">
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Status</label>
+                        <select id="new_eng_status" class="swal2-input" style="width: 100%; padding: 0.6rem;">
+                            <option value="planning" selected>Planning</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="in-review">In Review</option>
+                            <option value="complete">Complete</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Trusted Service Criteria</label>
+                        <input type="text" id="new_eng_tsc" class="swal2-input" placeholder="Enter TSC" style="width: 100%;">
+                    </div>
+                </div>
+
+                <!-- Audit Details Section -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Audit Types (Select all that apply)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="SOC 1">
+                                <span style="font-size: 13px;">SOC 1</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="SOC 2">
+                                <span style="font-size: 13px;">SOC 2</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="PCI">
+                                <span style="font-size: 13px;">PCI</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="HITRUST">
+                                <span style="font-size: 13px;">HITRUST</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="FISMA">
+                                <span style="font-size: 13px;">FISMA</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="ISO">
+                                <span style="font-size: 13px;">ISO</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="HIPAA">
+                                <span style="font-size: 13px;">HIPAA</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- SOC Type Selector -->
+                    <div id="new_soc_type_section" style="margin-bottom: 1.5rem; display: none; padding: 1rem; background: rgba(68, 135, 252, 0.1); border-radius: 8px; border-left: 3px solid var(--primary-blue);">
+                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC Type</label>
+                        <div style="display: flex; gap: 1.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="radio" name="new_soc_type" value="Type 1">
+                                <span style="font-size: 13px;">Type 1</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="radio" name="new_soc_type" value="Type 2">
+                                <span style="font-size: 13px;">Type 2</span>
+                            </label>
+                        </div>
+
+                        <!-- Type 1: As Of Date -->
+                        <div id="new_soc_type1_dates" style="display: none; margin-top: 1rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
+                            <input type="date" id="new_soc_as_of_date" class="swal2-input" style="width: 100%;">
+                        </div>
+
+                        <!-- Type 2: Start and End Dates -->
+                        <div id="new_soc_type2_dates" style="display: none; margin-top: 1rem;">
+                            <div style="margin-bottom: 0.75rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Start Period</label>
+                                <input type="date" id="new_soc_start_period" class="swal2-input" style="width: 100%;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">End Period</label>
+                                <input type="date" id="new_soc_end_period" class="swal2-input" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Scope</label>
+                        <textarea id="new_eng_scope" class="swal2-input" style="width: 100%; min-height: 80px; resize: vertical; padding: 0.6rem;" placeholder="Enter scope"></textarea>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500;">
+                            <input type="checkbox" id="new_eng_repeat">
+                            <span style="font-size: 13px;">Repeat Engagement</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Hours & Notes Section -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Hours & Notes</h3>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Notes</label>
+                        <textarea id="new_eng_notes" class="swal2-input" style="width: 100%; min-height: 100px; resize: vertical; padding: 0.6rem;" placeholder="Enter notes"></textarea>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        Swal.fire({
+            title: 'Create New Engagement',
+            html: htmlContent,
+            confirmButtonText: 'Create Engagement',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            width: '700px',
+            didOpen: () => {
+                // Handle audit type checkboxes and SOC type visibility
+                const auditCheckboxes = document.querySelectorAll('.new-audit-type-checkbox');
+                const socTypeSection = document.getElementById('new_soc_type_section');
+                const socTypeRadios = document.querySelectorAll('input[name="new_soc_type"]');
+                const socType1Dates = document.getElementById('new_soc_type1_dates');
+                const socType2Dates = document.getElementById('new_soc_type2_dates');
+                
+                function updateFormVisibility() {
+                    const selectedTypes = Array.from(auditCheckboxes)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+                    
+                    const hasSOC = selectedTypes.includes('SOC 1') || selectedTypes.includes('SOC 2');
+                    socTypeSection.style.display = hasSOC ? 'block' : 'none';
+                    updateDateFields();
+                }
+                
+                function updateDateFields() {
+                    const selectedSocType = document.querySelector('input[name="new_soc_type"]:checked')?.value;
+                    
+                    if (selectedSocType === 'Type 1') {
+                        socType1Dates.style.display = 'block';
+                        socType2Dates.style.display = 'none';
+                    } else if (selectedSocType === 'Type 2') {
+                        socType1Dates.style.display = 'none';
+                        socType2Dates.style.display = 'block';
+                    }
+                }
+                
+                auditCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateFormVisibility);
+                });
+                
+                socTypeRadios.forEach(radio => {
+                    radio.addEventListener('change', updateDateFields);
+                });
+
+                // Focus on engagement name
+                document.getElementById('new_eng_name').focus();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Get engagement name first
+                const engName = document.getElementById('new_eng_name').value?.trim();
+                if (!engName) {
+                    Swal.fire('Error', 'Engagement Name is required', 'error');
+                    return;
+                }
+
+                // Get selected audit types
+                const selectedAuditTypes = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked'))
+                    .map(cb => cb.value)
+                    .join(', ');
+
+                // Collect all form data
+                const newEngagementData = {
+                    eng_name: engName,
+                    eng_location: document.getElementById('new_eng_location').value || null,
+                    eng_poc: document.getElementById('new_eng_poc').value || null,
+                    eng_status: document.getElementById('new_eng_status').value || 'planning',
+                    eng_tsc: document.getElementById('new_eng_tsc').value || null,
+                    eng_audit_type: selectedAuditTypes || null,
+                    eng_soc_type: document.querySelector('input[name="new_soc_type"]:checked')?.value || null,
+                    eng_scope: document.getElementById('new_eng_scope').value || null,
+                    eng_as_of_date: document.getElementById('new_soc_as_of_date').value || null,
+                    eng_start_period: document.getElementById('new_soc_start_period').value || null,
+                    eng_end_period: document.getElementById('new_soc_end_period').value || null,
+                    eng_repeat: document.getElementById('new_eng_repeat').checked ? 'Y' : 'N',
+                    eng_notes: document.getElementById('new_eng_notes').value || null
+                };
+
+                // Send to API
+                fetch('./api/create-engagement.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newEngagementData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showToast('Engagement created successfully');
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to create engagement', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Failed to create engagement', 'error');
+                });
+            }
+        });
     });
 </script>
 
