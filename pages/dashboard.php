@@ -1070,42 +1070,53 @@ function getTimeAgo($datetime) {
         .custom-toast {
             position: fixed;
             bottom: 2rem;
-            right: 2rem;
-            background: var(--success-green);
-            color: white;
+            left: 2rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
             padding: 1rem 1.5rem;
             border-radius: 8px;
+            border-left: 4px solid var(--success-green);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             z-index: 9999;
             animation: slideInUp 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
         .custom-toast.success {
-            background: var(--success-green);
+            background: var(--bg-secondary);
+            border-left-color: var(--success-green);
         }
 
         .custom-toast.hide {
             animation: slideOutDown 0.3s ease-out forwards;
         }
 
+        .custom-toast i {
+            font-size: 20px;
+            color: var(--success-green);
+            flex-shrink: 0;
+        }
+
         @keyframes slideInUp {
             from {
-                transform: translateY(100px);
+                transform: translateX(-400px);
                 opacity: 0;
             }
             to {
-                transform: translateY(0);
+                transform: translateX(0);
                 opacity: 1;
             }
         }
 
         @keyframes slideOutDown {
             from {
-                transform: translateY(0);
+                transform: translateX(0);
                 opacity: 1;
             }
             to {
-                transform: translateY(100px);
+                transform: translateX(-400px);
                 opacity: 0;
             }
         }
@@ -1537,6 +1548,12 @@ function getTimeAgo($datetime) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script>
+    // Check if we should show the engagement created toast
+    if (sessionStorage.getItem('showEngagementCreatedToast')) {
+        sessionStorage.removeItem('showEngagementCreatedToast');
+        showToast('Engagement created successfully');
+    }
+
     // Archive engagement function
     async function archiveEngagement(engagementId) {
         const isDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -1934,10 +1951,9 @@ function getTimeAgo($datetime) {
                         const data = JSON.parse(text);
                         console.log('Parsed data:', data);
                         if (data.success) {
-                            showToast('Engagement created successfully');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
+                            // Reload page first, then show toast on next page load
+                            sessionStorage.setItem('showEngagementCreatedToast', 'true');
+                            location.reload();
                         } else {
                             Swal.fire('Error', data.message || 'Failed to create engagement', 'error');
                         }
@@ -1946,10 +1962,8 @@ function getTimeAgo($datetime) {
                         console.error('Response was:', text);
                         // Check if the response contains success indication despite parse error
                         if (text.includes('"success":true')) {
-                            showToast('Engagement created successfully');
-                            setTimeout(() => {
-                                location.reload();
-                            }, 1000);
+                            sessionStorage.setItem('showEngagementCreatedToast', 'true');
+                            location.reload();
                         } else {
                             Swal.fire('Error', 'Invalid response from server: ' + text.substring(0, 200), 'error');
                         }
@@ -1968,10 +1982,8 @@ function getTimeAgo($datetime) {
         const toast = document.createElement('div');
         toast.className = 'custom-toast success';
         toast.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <i class="bi bi-check-circle-fill" style="font-size: 20px; color: var(--success-green);"></i>
-                <span>${message}</span>
-            </div>
+            <i class="bi bi-check-circle-fill"></i>
+            <span>${message}</span>
         `;
         document.body.appendChild(toast);
         
