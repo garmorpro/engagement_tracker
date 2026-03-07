@@ -1712,24 +1712,26 @@ function getTimeAgo($datetime) {
         card.addEventListener('click', (e) => {
             e.stopPropagation();
             
+            // Get the filter value
+            const filterValue = card.getAttribute('data-filter');
+            
+            // If Total is clicked, refresh the page
+            if (filterValue === 'all') {
+                location.reload();
+                return;
+            }
+            
             // Remove active class from all cards
             document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
             
             // Add active class to clicked card
             card.classList.add('active');
             
-            // Get the filter value
-            const filterValue = card.getAttribute('data-filter');
-            
             // Filter table rows
             const rows = document.querySelectorAll('.engagement-row');
             rows.forEach(row => {
-                if (filterValue === 'all') {
-                    row.style.display = '';
-                } else {
-                    const rowStatus = row.getAttribute('data-status');
-                    row.style.display = rowStatus === filterValue ? '' : 'none';
-                }
+                const rowStatus = row.getAttribute('data-status');
+                row.style.display = rowStatus === filterValue ? '' : 'none';
             });
         });
     });
