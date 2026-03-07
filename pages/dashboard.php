@@ -1879,20 +1879,33 @@ function getTimeAgo($datetime) {
                     },
                     body: JSON.stringify(newEngagementData)
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        showToast('Engagement created successfully');
-                        setTimeout(() => {
-                            location.reload();
-                        }, 1000);
-                    } else {
-                        Swal.fire('Error', data.message || 'Failed to create engagement', 'error');
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response ok:', response.ok);
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Raw response:', text);
+                    try {
+                        const data = JSON.parse(text);
+                        console.log('Parsed data:', data);
+                        if (data.success) {
+                            showToast('Engagement created successfully');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            Swal.fire('Error', data.message || 'Failed to create engagement', 'error');
+                        }
+                    } catch (parseError) {
+                        console.error('JSON parse error:', parseError);
+                        console.error('Response was:', text);
+                        Swal.fire('Error', 'Invalid response from server: ' + text.substring(0, 200), 'error');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire('Error', 'Failed to create engagement', 'error');
+                    console.error('Fetch error:', error);
+                    Swal.fire('Error', 'Failed to create engagement: ' + error.message, 'error');
                 });
             }
         });
