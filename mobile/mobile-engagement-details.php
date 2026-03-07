@@ -50,7 +50,7 @@ $result = $stmt->get_result();
 $teamRaw = $result->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 
-// Group team members by emp_name to avoid duplicates
+// Group team members by emp_name and organize DOLs by audit_type
 $team = [];
 foreach ($teamRaw as $member) {
     $empName = $member['emp_name'];
@@ -58,11 +58,15 @@ foreach ($teamRaw as $member) {
         $team[$empName] = [
             'emp_name' => $member['emp_name'],
             'role' => $member['role'],
-            'dols' => []
+            'dolsByType' => []
         ];
     }
     if (!empty($member['emp_dol'])) {
-        $team[$empName]['dols'][] = $member['emp_dol'];
+        $auditType = $member['audit_type'] ?? 'Other';
+        if (!isset($team[$empName]['dolsByType'][$auditType])) {
+            $team[$empName]['dolsByType'][$auditType] = [];
+        }
+        $team[$empName]['dolsByType'][$auditType][] = $member['emp_dol'];
     }
 }
 
@@ -528,18 +532,27 @@ $timelineFields = [
                 <?php foreach ($team as $member): ?>
                     <div class="team-member">
                         <div class="team-avatar">
-                            <?php echo strtoupper(substr($member['emp_name'], 0, 1)); ?>
+                            <?php echo strtoupper(substr($member['emp_name'], 0, 1) . substr(explode(' ', $member['emp_name'])[1] ?? '', 0, 1)); ?>
                         </div>
                         <div class="team-info">
                             <div class="team-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
                             <div class="team-role">
                                 <?php echo htmlspecialchars($member['role']); ?>
                             </div>
-                            <?php if (!empty($member['dols'])): ?>
-                                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.3rem;">
-                                    <?php foreach ($member['dols'] as $dol): ?>
+                            <?php if (!empty($member['dolsByType'])): ?>
+                                <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                                    <?php foreach ($member['dolsByType'] as $auditType => $dols): ?>
                                         <div>
-                                            <i class="bi bi-calendar"></i> DOL: <?php echo date('M d, Y', strtotime($dol)); ?>
+                                            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 600; margin-bottom: 0.3rem;">
+                                                <?php echo htmlspecialchars($auditType); ?> DOL
+                                            </div>
+                                            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                                <?php foreach ($dols as $dol): ?>
+                                                    <span style="background: rgba(68, 135, 252, 0.2); color: var(--primary-blue); padding: 0.4rem 0.6rem; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                                                        <?php echo htmlspecialchars($dol); ?>
+                                                    </span>
+                                                <?php endforeach; ?>
+                                            </div>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>
