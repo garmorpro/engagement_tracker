@@ -1555,6 +1555,12 @@ function getTimeAgo($datetime) {
         showToast('Engagement created successfully');
     }
 
+    // Check if we should show the engagement deleted toast
+    if (sessionStorage.getItem('showDeletedToast')) {
+        sessionStorage.removeItem('showDeletedToast');
+        showToast('Engagement deleted successfully');
+    }
+
     // Archive engagement function
     async function archiveEngagement(engagementId) {
         const isDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -1637,10 +1643,9 @@ function getTimeAgo($datetime) {
                 const data = await response.json();
 
                 if (data.success) {
-                    showToast('Engagement deleted successfully');
-                    setTimeout(() => {
-                        location.reload();
-                    }, 1500);
+                    // Set flag to show toast after reload
+                    sessionStorage.setItem('showDeletedToast', 'true');
+                    location.reload();
                 } else {
                     Swal.fire('Error', data.message || 'Failed to delete engagement', 'error');
                 }
