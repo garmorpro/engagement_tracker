@@ -63,7 +63,7 @@ try {
     $engLastCommunication = null;
     
     $stmt->bind_param(
-        'sssssssssssss',
+        'ssssssssssssss',
         $eng_name, $eng_poc, $eng_location, $eng_repeat, $eng_audit_type,
         $eng_soc_type, $eng_scope, $eng_tsc, $eng_start_period, $eng_end_period,
         $eng_as_of_date, $engLastCommunication, $eng_notes, $eng_status
