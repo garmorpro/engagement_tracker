@@ -1345,16 +1345,6 @@ function getTimeAgo($datetime) {
             </div>
         </div>
 
-        <div class="status-card" data-filter="in-progress" style="cursor: pointer;">
-            <div class="status-card-icon in-progress">
-                <i class="bi bi-play-circle"></i>
-            </div>
-            <div class="status-card-content">
-                <div class="status-card-label">In Progress</div>
-                <div class="status-card-value"><?php echo $inProgressCount; ?></div>
-            </div>
-        </div>
-
         <div class="status-card" data-filter="planning" style="cursor: pointer;">
             <div class="status-card-icon planning">
                 <i class="bi bi-clipboard-check"></i>
@@ -1362,6 +1352,16 @@ function getTimeAgo($datetime) {
             <div class="status-card-content">
                 <div class="status-card-label">Planning</div>
                 <div class="status-card-value"><?php echo $planningCount; ?></div>
+            </div>
+        </div>
+
+        <div class="status-card" data-filter="in-progress" style="cursor: pointer;">
+            <div class="status-card-icon in-progress">
+                <i class="bi bi-play-circle"></i>
+            </div>
+            <div class="status-card-content">
+                <div class="status-card-label">In Progress</div>
+                <div class="status-card-value"><?php echo $inProgressCount; ?></div>
             </div>
         </div>
 
