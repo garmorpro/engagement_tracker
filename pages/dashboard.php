@@ -1900,7 +1900,15 @@ function getTimeAgo($datetime) {
                     } catch (parseError) {
                         console.error('JSON parse error:', parseError);
                         console.error('Response was:', text);
-                        Swal.fire('Error', 'Invalid response from server: ' + text.substring(0, 200), 'error');
+                        // Check if the response contains success indication despite parse error
+                        if (text.includes('"success":true')) {
+                            showToast('Engagement created successfully');
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
+                        } else {
+                            Swal.fire('Error', 'Invalid response from server: ' + text.substring(0, 200), 'error');
+                        }
                     }
                 })
                 .catch(error => {

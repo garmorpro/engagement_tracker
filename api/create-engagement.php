@@ -1,8 +1,12 @@
 <?php
+// Clean any output buffer to ensure clean JSON response
+ob_clean();
+
 require_once '../path.php';
 require_once '../includes/functions.php';
 
 header('Content-Type: application/json');
+header('Cache-Control: no-cache, no-store, must-revalidate');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
