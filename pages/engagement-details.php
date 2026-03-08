@@ -3103,13 +3103,13 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 // Split the DOL value by comma and create pills for each
                 const duties = dolValue.split(',').map(d => d.trim()).filter(d => d);
                 const pillsHTML = duties.map(duty => 
-                    `<span style="display: inline-block; background: var(--primary-blue); color: white; padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 11px; font-weight: 600; margin-right: 0.4rem; margin-bottom: 0.25rem;">${duty}</span>`
+                    `<span style="display: inline-block; background: var(--primary-blue); color: white; padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 11px; font-weight: 600; margin-left: 0.4rem;">${duty}</span>`
                 ).join('');
                 
                 dolSections.push(`
-                    <div style="margin-bottom: 0.5rem;">
-                        <div style="font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.35rem; letter-spacing: 0.4px;">${auditType}</div>
-                        <div style="display: flex; flex-wrap: wrap;">${pillsHTML}</div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
+                        <span style="font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px; min-width: 60px;">${auditType}</span>
+                        <div style="display: flex; gap: 0.3rem;">${pillsHTML}</div>
                     </div>
                 `);
             }
