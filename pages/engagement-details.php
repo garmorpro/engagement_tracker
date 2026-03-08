@@ -2865,7 +2865,7 @@ if (!$timeline) {
 
 
 <script>
-// Team Management Modal Handler - REDESIGNED UI
+// Team Management Modal Handler - MODERN REDESIGN
 // Replace the existing team management code with this
 
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
@@ -2902,9 +2902,9 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     <div>
                         <h4 style="font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Add Team Member</h4>
                         <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                            <input type="text" id="add_emp_name" class="swal2-input" placeholder="Name" style="width: 100%; font-size: 12px; padding: 0.6rem;">
-                            <select id="add_emp_role" class="swal2-input" style="width: 100%; font-size: 12px; padding: 0.6rem;">
-                                <option value="">Role</option>
+                            <input type="text" id="add_emp_name" class="swal2-input" placeholder="Name" style="width: 100%; font-size: 12px; padding: 0.6rem; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-primary);">
+                            <select id="add_emp_role" class="swal2-input" style="width: 100%; font-size: 12px; padding: 0.6rem; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-primary);">
+                                <option value="">Select Role</option>
                                 <option value="manager">Manager</option>
                                 <option value="senior">Senior</option>
                                 <option value="staff">Staff</option>
@@ -2919,17 +2919,17 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     <div>
                         <h4 style="font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Team Overview</h4>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                            <div style="padding: 0.75rem; background: rgba(68, 135, 252, 0.1); border-left: 2px solid var(--primary-blue); border-radius: 6px;">
-                                <div style="font-size: 10px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; margin-bottom: 0.4rem;">Managers</div>
-                                <div style="font-size: 22px; font-weight: 700; color: var(--primary-blue);" id="manager-count">0</div>
+                            <div style="padding: 1rem; background: rgba(68, 135, 252, 0.1); border-left: 3px solid var(--primary-blue); border-radius: 8px;">
+                                <div style="font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Managers</div>
+                                <div style="font-size: 24px; font-weight: 700; color: var(--primary-blue);" id="manager-count">0</div>
                             </div>
-                            <div style="padding: 0.75rem; background: rgba(160, 77, 253, 0.1); border-left: 2px solid #A04DFD; border-radius: 6px;">
-                                <div style="font-size: 10px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; margin-bottom: 0.4rem;">Seniors</div>
-                                <div style="font-size: 22px; font-weight: 700; color: #A04DFD;" id="senior-count">0</div>
+                            <div style="padding: 1rem; background: rgba(160, 77, 253, 0.1); border-left: 3px solid #A04DFD; border-radius: 8px;">
+                                <div style="font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Seniors</div>
+                                <div style="font-size: 24px; font-weight: 700; color: #A04DFD;" id="senior-count">0</div>
                             </div>
-                            <div style="padding: 0.75rem; background: rgba(79, 198, 95, 0.1); border-left: 2px solid #4FC65F; border-radius: 6px; grid-column: 1 / -1;">
-                                <div style="font-size: 10px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; margin-bottom: 0.4rem;">Staff</div>
-                                <div style="font-size: 22px; font-weight: 700; color: #4FC65F;" id="staff-count">0</div>
+                            <div style="padding: 1rem; background: rgba(79, 198, 95, 0.1); border-left: 3px solid #4FC65F; border-radius: 8px; grid-column: 1 / -1;">
+                                <div style="font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Staff</div>
+                                <div style="font-size: 24px; font-weight: 700; color: #4FC65F;" id="staff-count">0</div>
                             </div>
                         </div>
                     </div>
@@ -2950,7 +2950,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         html: teamHTML,
         showConfirmButton: false,
         cancelButtonText: 'Close',
-        width: '720px',
+        width: '750px',
         heightAuto: false,
         customClass: {
             popup: 'milestone-modal-popup'
@@ -3008,24 +3008,27 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             const memberId = member.emp_id;
 
             teamListElement.innerHTML += `
-                <div class="team-member-card" data-emp-id="${memberId}" style="position: relative; padding: 1rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 10px; transition: all 0.2s ease;">
-                    <!-- Member Info Row -->
-                    <div style="display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 0.75rem;">
-                        <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 13px;">
+                <div class="team-member-card" data-emp-id="${memberId}" style="padding: 1.25rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; transition: all 0.2s ease;">
+                    <!-- Top Row: Avatar + Info + Actions -->
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                        <!-- Avatar -->
+                        <div style="width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 14px;">
                             ${initials}
                         </div>
+                        
+                        <!-- Name & Role -->
                         <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 0.2rem;">${member.emp_name}</div>
+                            <div style="font-weight: 600; font-size: 15px; color: var(--text-primary); margin-bottom: 0.2rem;">${member.emp_name}</div>
                             <div style="font-size: 12px; color: var(--text-secondary); text-transform: capitalize;">${member.role}</div>
                         </div>
                         
-                        <!-- Action Buttons (Hover) -->
-                        <div style="display: flex; gap: 0.5rem; opacity: 0; transition: opacity 0.2s ease;" class="member-actions">
-                            <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
-                                <i class="bi bi-pencil" style="font-size: 14px;"></i>
+                        <!-- Action Buttons -->
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 12px; font-weight: 600;">
+                                <i class="bi bi-pencil" style="font-size: 14px;"></i> Edit
                             </button>
-                            <button class="delete-team-btn" data-emp-id="${memberId}" style="background: #C90012; color: white; border: none; padding: 0.5rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
-                                <i class="bi bi-trash3" style="font-size: 14px;"></i>
+                            <button class="delete-team-btn" data-emp-id="${memberId}" style="background: #C90012; color: white; border: none; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 12px; font-weight: 600;">
+                                <i class="bi bi-trash3" style="font-size: 14px;"></i> Delete
                             </button>
                         </div>
                     </div>
@@ -3033,23 +3036,21 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     <!-- DOL Pills -->
                     ${member.role !== 'manager' ? getDOLByAuditType(member) : ''}
 
-                    <!-- Hover Effect -->
                     <style>
                         .team-member-card:hover {
                             background: var(--bg-secondary);
                             border-color: var(--primary-blue);
                             box-shadow: 0 4px 12px rgba(68, 135, 252, 0.15);
                         }
-                        .team-member-card:hover .member-actions {
-                            opacity: 1;
-                        }
                         .edit-team-btn:hover {
-                            background: #2560d9 !important;
-                            transform: scale(1.05);
+                            background: #2560d9;
+                            transform: translateY(-1px);
+                            box-shadow: 0 2px 8px rgba(68, 135, 252, 0.3);
                         }
                         .delete-team-btn:hover {
-                            background: #a60010 !important;
-                            transform: scale(1.05);
+                            background: #a60010;
+                            transform: translateY(-1px);
+                            box-shadow: 0 2px 8px rgba(201, 0, 18, 0.3);
                         }
                     </style>
                 </div>
@@ -3103,22 +3104,22 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 // Split the DOL value by comma and create pills for each
                 const duties = dolValue.split(',').map(d => d.trim()).filter(d => d);
                 const pillsHTML = duties.map(duty => 
-                    `<span style="display: inline-block; background: var(--primary-blue); color: white; padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 11px; font-weight: 600; margin-left: 0.4rem;">${duty}</span>`
+                    `<span style="display: inline-block; background: var(--primary-blue); color: white; padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 11px; font-weight: 600; margin-left: 0.4rem;">${duty}</span>`
                 ).join('');
                 
                 dolSections.push(`
-                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
-                        <span style="font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px; min-width: 60px;">${auditType}</span>
-                        <div style="display: flex; gap: 0.3rem;">${pillsHTML}</div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                        <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px; min-width: 70px;">${auditType}</span>
+                        <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">${pillsHTML}</div>
                     </div>
                 `);
             }
         });
         
         if (dolSections.length > 0) {
-            return `<div style="margin-top: 0.5rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">${dolSections.join('')}</div>`;
+            return `<div style="margin-top: 0.75rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">${dolSections.join('')}</div>`;
         } else {
-            return '<div style="font-size: 11px; color: var(--danger-red); font-weight: 600; margin-top: 0.5rem;">No DOL assigned</div>';
+            return '<div style="font-size: 11px; color: var(--danger-red); font-weight: 600; margin-top: 0.75rem;">No DOL assigned</div>';
         }
     }
 
