@@ -2865,7 +2865,7 @@ if (!$timeline) {
 
 
 <script>
-  // Team Management Modal Handler - DATABASE COLUMN VERSION
+  // Team Management Modal Handler - DATABASE COLUMN VERSION WITH AUDIT TYPE DISPLAY
 // Replace the existing team management code with this
 
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
@@ -3007,7 +3007,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     <div style="flex: 1; min-width: 0;">
                         <div style="font-weight: 600; font-size: 15px; margin-bottom: 0.25rem; color: var(--text-primary);">${member.emp_name}</div>
                         <div style="font-size: 13px; color: var(--text-secondary); text-transform: capitalize; margin-bottom: 0.5rem;">${member.role}</div>
-                        ${member.role !== 'manager' ? getDOLSummary(member) : ''}
+                        ${member.role !== 'manager' ? getDOLByAuditType(member) : ''}
                     </div>
                     <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
                         <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;">
@@ -3057,18 +3057,20 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         updateRoleCounts();
     }
 
-    function getDOLSummary(member) {
-        const dolParts = [];
+    function getDOLByAuditType(member) {
+        const dolLines = [];
+        
         relevantAuditTypes.forEach(auditType => {
             const fieldName = supportedAuditTypes[auditType];
             const dolValue = member[fieldName];
+            
             if (dolValue) {
-                dolParts.push(dolValue);
+                dolLines.push(`<div style="font-size: 12px; color: var(--text-secondary);"><strong>${auditType}:</strong> ${dolValue}</div>`);
             }
         });
         
-        if (dolParts.length > 0) {
-            return `<div style="font-size: 12px; color: var(--text-secondary);"><strong>DOL:</strong> ${dolParts.join(' • ')}</div>`;
+        if (dolLines.length > 0) {
+            return dolLines.join('');
         } else {
             return '<div style="font-size: 12px; color: var(--danger-red); font-weight: 600;">No DOL assigned</div>';
         }
@@ -3123,7 +3125,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             dolSections += `
                 <div style="margin-bottom: 1rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">DOL - ${auditType}</label>
-                    <input type="text" class="audit-dol-input" data-field-name="${fieldName}" placeholder="e.g., Planning, Fieldwork, Code Review" value="${currentDol}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px;">
+                    <input type="text" class="audit-dol-input" data-field-name="${fieldName}" placeholder="e.g., CC1, CC2, CC3" value="${currentDol}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px;">
                 </div>
             `;
         });
@@ -3189,7 +3191,8 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     });
                 } else {
                     // Clear all DOL fields for managers
-                    supportedAuditTypes.forEach((fieldName) => {
+                    relevantAuditTypes.forEach(auditType => {
+                        const fieldName = supportedAuditTypes[auditType];
                         updateData[fieldName] = '';
                     });
                 }
