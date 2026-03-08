@@ -2865,7 +2865,7 @@ if (!$timeline) {
 
 
 <script>
-// Team Management Modal Handler - MODERN REDESIGN
+// Team Management Modal Handler - MINIMALIST CLEAN DESIGN
 // Replace the existing team management code with this
 
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
@@ -2919,15 +2919,15 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     <div>
                         <h4 style="font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Team Overview</h4>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
-                            <div style="padding: 1rem; background: rgba(68, 135, 252, 0.1); border-left: 3px solid var(--primary-blue); border-radius: 8px;">
+                            <div style="padding: 1rem; background: rgba(68, 135, 252, 0.08); border-left: 3px solid var(--primary-blue); border-radius: 8px;">
                                 <div style="font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Managers</div>
                                 <div style="font-size: 24px; font-weight: 700; color: var(--primary-blue);" id="manager-count">0</div>
                             </div>
-                            <div style="padding: 1rem; background: rgba(160, 77, 253, 0.1); border-left: 3px solid #A04DFD; border-radius: 8px;">
+                            <div style="padding: 1rem; background: rgba(160, 77, 253, 0.08); border-left: 3px solid #A04DFD; border-radius: 8px;">
                                 <div style="font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Seniors</div>
                                 <div style="font-size: 24px; font-weight: 700; color: #A04DFD;" id="senior-count">0</div>
                             </div>
-                            <div style="padding: 1rem; background: rgba(79, 198, 95, 0.1); border-left: 3px solid #4FC65F; border-radius: 8px; grid-column: 1 / -1;">
+                            <div style="padding: 1rem; background: rgba(79, 198, 95, 0.08); border-left: 3px solid #4FC65F; border-radius: 8px; grid-column: 1 / -1;">
                                 <div style="font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 0.5px;">Staff</div>
                                 <div style="font-size: 24px; font-weight: 700; color: #4FC65F;" id="staff-count">0</div>
                             </div>
@@ -3008,27 +3008,27 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             const memberId = member.emp_id;
 
             teamListElement.innerHTML += `
-                <div class="team-member-card" data-emp-id="${memberId}" style="padding: 1.25rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 12px; transition: all 0.2s ease;">
+                <div class="team-member-card" data-emp-id="${memberId}" style="padding: 1.25rem; background: transparent; border: none; transition: all 0.2s ease;">
                     <!-- Top Row: Avatar + Info + Actions -->
-                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-color);">
                         <!-- Avatar -->
-                        <div style="width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 14px;">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 13px;">
                             ${initials}
                         </div>
                         
                         <!-- Name & Role -->
                         <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 15px; color: var(--text-primary); margin-bottom: 0.2rem;">${member.emp_name}</div>
+                            <div style="font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 0.15rem;">${member.emp_name}</div>
                             <div style="font-size: 12px; color: var(--text-secondary); text-transform: capitalize;">${member.role}</div>
                         </div>
                         
                         <!-- Action Buttons -->
                         <div style="display: flex; gap: 0.5rem;">
-                            <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 12px; font-weight: 600;">
-                                <i class="bi bi-pencil" style="font-size: 14px;"></i> Edit
+                            <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem 0.7rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.3rem; font-size: 12px; font-weight: 600;">
+                                <i class="bi bi-pencil" style="font-size: 13px;"></i> Edit
                             </button>
-                            <button class="delete-team-btn" data-emp-id="${memberId}" style="background: #C90012; color: white; border: none; padding: 0.6rem 0.75rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; font-size: 12px; font-weight: 600;">
-                                <i class="bi bi-trash3" style="font-size: 14px;"></i> Delete
+                            <button class="delete-team-btn" data-emp-id="${memberId}" style="background: #C90012; color: white; border: none; padding: 0.5rem 0.7rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.3rem; font-size: 12px; font-weight: 600;">
+                                <i class="bi bi-trash3" style="font-size: 13px;"></i> Delete
                             </button>
                         </div>
                     </div>
@@ -3038,9 +3038,10 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
 
                     <style>
                         .team-member-card:hover {
-                            background: var(--bg-secondary);
-                            border-color: var(--primary-blue);
-                            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.15);
+                            background: var(--bg-primary);
+                            padding: 1.25rem;
+                            border-radius: 12px;
+                            border: 1px solid var(--border-color);
                         }
                         .edit-team-btn:hover {
                             background: #2560d9;
@@ -3117,9 +3118,9 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         });
         
         if (dolSections.length > 0) {
-            return `<div style="margin-top: 0.75rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">${dolSections.join('')}</div>`;
+            return `<div style="padding-top: 0.75rem;">${dolSections.join('')}</div>`;
         } else {
-            return '<div style="font-size: 11px; color: var(--danger-red); font-weight: 600; margin-top: 0.75rem;">No DOL assigned</div>';
+            return '<div style="font-size: 11px; color: var(--danger-red); font-weight: 600; padding-top: 0.75rem;">No DOL assigned</div>';
         }
     }
 
