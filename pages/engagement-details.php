@@ -948,8 +948,8 @@ $engagementData = $engagement;
     height: 600px !important;
     display: flex !important;
     flex-direction: column !important;
-    width: 1400px !important;
-    max-width: 1400px !important;
+    width: 800px !important;
+    max-width: 800px !important;
 }
 
 .milestone-modal-popup .swal2-html-container {
