@@ -2865,7 +2865,7 @@ if (!$timeline) {
 
 
 <script>
-  // Team Management Modal Handler - DATABASE COLUMN VERSION WITH AUDIT TYPE DISPLAY
+// Team Management Modal Handler - DATABASE COLUMN VERSION WITH AUDIT TYPE DISPLAY
 // Replace the existing team management code with this
 
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
@@ -3058,19 +3058,30 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
     }
 
     function getDOLByAuditType(member) {
-        const dolLines = [];
+        const dolSections = [];
         
         relevantAuditTypes.forEach(auditType => {
             const fieldName = supportedAuditTypes[auditType];
             const dolValue = member[fieldName];
             
             if (dolValue) {
-                dolLines.push(`<div style="font-size: 12px; color: var(--text-secondary);"><strong>${auditType}:</strong> ${dolValue}</div>`);
+                // Split the DOL value by comma and create pills for each
+                const duties = dolValue.split(',').map(d => d.trim()).filter(d => d);
+                const pillsHTML = duties.map(duty => 
+                    `<span style="display: inline-block; background: var(--primary-blue); color: white; padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 11px; font-weight: 600; margin-right: 0.5rem; margin-bottom: 0.25rem;">${duty}</span>`
+                ).join('');
+                
+                dolSections.push(`
+                    <div style="margin-bottom: 0.75rem;">
+                        <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 0.4rem; letter-spacing: 0.5px;">${auditType}</div>
+                        <div style="display: flex; flex-wrap: wrap;">${pillsHTML}</div>
+                    </div>
+                `);
             }
         });
         
-        if (dolLines.length > 0) {
-            return dolLines.join('');
+        if (dolSections.length > 0) {
+            return dolSections.join('');
         } else {
             return '<div style="font-size: 12px; color: var(--danger-red); font-weight: 600;">No DOL assigned</div>';
         }
