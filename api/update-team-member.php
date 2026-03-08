@@ -47,8 +47,8 @@ try {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
     
-    // 7 s for DOL fields + name + role = 9 total s's
-    $stmt->bind_param('sssssssii', 
+    // All parameters are strings (s)
+    $stmt->bind_param('sssssssss', 
         $empName, 
         $role, 
         $empSoc1Dol, 
