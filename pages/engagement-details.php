@@ -2949,7 +2949,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         html: teamHTML,
         showConfirmButton: false,
         cancelButtonText: 'Close',
-        width: '1200px',
+        width: '1400px',
         heightAuto: false,
         customClass: {
             popup: 'milestone-modal-popup'
