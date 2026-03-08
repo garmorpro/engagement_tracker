@@ -14,7 +14,6 @@ if (!$input) {
 $engagementIdno = $input['engagement_idno'] ?? null;
 $empName = $input['emp_name'] ?? null;
 $role = $input['role'] ?? null;
-$empDol = $input['emp_dol'] ?? null;
 
 if (!$engagementIdno || !$empName || !$role) {
     http_response_code(400);
@@ -23,17 +22,17 @@ if (!$engagementIdno || !$empName || !$role) {
 }
 
 try {
-    // Insert the new team member
-    $query = "INSERT INTO engagement_team (engagement_idno, emp_name, role, emp_dol, audit_type) 
-              VALUES (?, ?, ?, ?, ?)";
+    // Insert the new team member with all DOL columns as empty
+    $query = "INSERT INTO engagement_team 
+              (engagement_idno, emp_name, role, emp_soc1_dol, emp_soc2_dol, emp_hipaa_dol, emp_hitrust_dol, emp_fisma_dol) 
+              VALUES (?, ?, ?, '', '', '', '', '')";
     $stmt = $conn->prepare($query);
     
     if (!$stmt) {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
     
-    $auditType = 'General';
-    $stmt->bind_param('sssss', $engagementIdno, $empName, $role, $empDol, $auditType);
+    $stmt->bind_param('sss', $engagementIdno, $empName, $role);
     
     if ($stmt->execute()) {
         $empId = $conn->insert_id;
@@ -43,8 +42,11 @@ try {
             'engagement_idno' => $engagementIdno,
             'emp_name' => $empName,
             'role' => $role,
-            'emp_dol' => $empDol,
-            'audit_type' => $auditType
+            'emp_soc1_dol' => '',
+            'emp_soc2_dol' => '',
+            'emp_hipaa_dol' => '',
+            'emp_hitrust_dol' => '',
+            'emp_fisma_dol' => ''
         ];
         
         echo json_encode([

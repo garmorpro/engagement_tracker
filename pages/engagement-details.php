@@ -2865,14 +2865,31 @@ if (!$timeline) {
 
 
 <script>
-  // Team Management Modal Handler - COMPLETE FIX
+  // Team Management Modal Handler - DATABASE COLUMN VERSION
 // Replace the existing team management code with this
 
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
     let currentTeam = <?php echo json_encode($team); ?>;
     const engagementId = '<?php echo $engagementId; ?>';
-    const auditTypes = ['SOC 1', 'SOC 2', 'HIPAA', 'HITRUST', 'FISMA'];
     
+    // Get the engagement's audit types
+    const engagementAuditTypes = '<?php echo htmlspecialchars($engagement['eng_audit_type'] ?? '', ENT_QUOTES); ?>';
+    const auditTypesArray = engagementAuditTypes.split(',').map(t => t.trim()).filter(t => t);
+    
+    // Only show these specific audit types
+    const supportedAuditTypes = {
+        'SOC 1': 'emp_soc1_dol',
+        'SOC 2': 'emp_soc2_dol',
+        'HIPAA': 'emp_hipaa_dol',
+        'HITRUST': 'emp_hitrust_dol',
+        'FISMA': 'emp_fisma_dol'
+    };
+    
+    // Filter to only the audit types this engagement has
+    const relevantAuditTypes = auditTypesArray.filter(type => supportedAuditTypes.hasOwnProperty(type));
+    
+    console.log('Engagement audit types:', auditTypesArray);
+    console.log('Relevant audit types to show:', relevantAuditTypes);
     console.log('currentTeam:', currentTeam);
     
     // Build HTML for team management modal
@@ -2969,7 +2986,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             return;
         }
 
-        // Render each team member directly (no grouping)
+        // Render each team member directly
         currentTeam.forEach((member, idx) => {
             const roleColor = {
                 'manager': '#4487FC',
@@ -2990,7 +3007,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     <div style="flex: 1; min-width: 0;">
                         <div style="font-weight: 600; font-size: 15px; margin-bottom: 0.25rem; color: var(--text-primary);">${member.emp_name}</div>
                         <div style="font-size: 13px; color: var(--text-secondary); text-transform: capitalize; margin-bottom: 0.5rem;">${member.role}</div>
-                        ${member.role !== 'manager' && member.emp_dol ? `<div style="font-size: 12px; color: var(--text-secondary);"><strong>DOL:</strong> ${member.emp_dol}</div>` : member.role === 'manager' ? '' : '<div style="font-size: 12px; color: var(--danger-red); font-weight: 600;">No DOL assigned</div>'}
+                        ${member.role !== 'manager' ? getDOLSummary(member) : ''}
                     </div>
                     <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
                         <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;">
@@ -3040,6 +3057,23 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         updateRoleCounts();
     }
 
+    function getDOLSummary(member) {
+        const dolParts = [];
+        relevantAuditTypes.forEach(auditType => {
+            const fieldName = supportedAuditTypes[auditType];
+            const dolValue = member[fieldName];
+            if (dolValue) {
+                dolParts.push(dolValue);
+            }
+        });
+        
+        if (dolParts.length > 0) {
+            return `<div style="font-size: 12px; color: var(--text-secondary);"><strong>DOL:</strong> ${dolParts.join(' • ')}</div>`;
+        } else {
+            return '<div style="font-size: 12px; color: var(--danger-red); font-weight: 600;">No DOL assigned</div>';
+        }
+    }
+
     function updateRoleCounts() {
         const managerCount = document.getElementById('manager-count');
         const seniorCount = document.getElementById('senior-count');
@@ -3054,8 +3088,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         const newMember = {
             engagement_idno: engagementId,
             emp_name: empName,
-            role: empRole,
-            emp_dol: ''
+            role: empRole
         };
 
         fetch('../api/add-team-member.php', {
@@ -3081,26 +3114,16 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
     }
 
     function editTeamMember(member) {
-        // Build DOL sections for each audit type
+        // Build DOL sections only for relevant audit types
         let dolSections = '';
-        const auditTypes = ['SOC 1', 'SOC 2', 'HIPAA', 'HITRUST', 'FISMA'];
         
-        // Parse existing DOL if it exists (format: "SOC 1:Planning,Fieldwork|SOC 2:Code Review")
-        const dolMap = new Map();
-        if (member.emp_dol && member.emp_dol.includes(':')) {
-            const dolPairs = member.emp_dol.split('|');
-            dolPairs.forEach(pair => {
-                const [type, tasks] = pair.split(':');
-                dolMap.set(type.trim(), tasks.trim());
-            });
-        }
-        
-        auditTypes.forEach(auditType => {
-            const currentDol = dolMap.get(auditType) || '';
+        relevantAuditTypes.forEach(auditType => {
+            const fieldName = supportedAuditTypes[auditType];
+            const currentDol = member[fieldName] || '';
             dolSections += `
                 <div style="margin-bottom: 1rem;">
                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">DOL - ${auditType}</label>
-                    <input type="text" class="audit-dol-input" data-audit-type="${auditType}" class="swal2-input" placeholder="e.g., Planning, Fieldwork, Code Review" value="${currentDol}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px;">
+                    <input type="text" class="audit-dol-input" data-field-name="${fieldName}" placeholder="e.g., Planning, Fieldwork, Code Review" value="${currentDol}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px;">
                 </div>
             `;
         });
@@ -3149,34 +3172,34 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 const newRole = document.getElementById('edit_emp_role').value;
                 
                 // Collect DOL from all audit type inputs
-                let combinedDol = '';
-                if (newRole !== 'manager') {
-                    const dolInputs = document.querySelectorAll('.audit-dol-input');
-                    const dolArray = [];
-                    dolInputs.forEach(input => {
-                        const auditType = input.getAttribute('data-audit-type');
-                        const tasks = input.value.trim();
-                        if (tasks) {
-                            dolArray.push(`${auditType}:${tasks}`);
-                        }
-                    });
-                    combinedDol = dolArray.join('|');
-                }
-
-                const updatedMember = {
+                const updateData = {
                     engagement_idno: engagementId,
                     emp_id: member.emp_id,
                     emp_name: document.getElementById('edit_emp_name').value,
-                    role: newRole,
-                    emp_dol: combinedDol
+                    role: newRole
                 };
 
-                console.log('Sending update:', updatedMember);
+                // Add DOL fields
+                if (newRole !== 'manager') {
+                    const dolInputs = document.querySelectorAll('.audit-dol-input');
+                    dolInputs.forEach(input => {
+                        const fieldName = input.getAttribute('data-field-name');
+                        const value = input.value.trim();
+                        updateData[fieldName] = value;
+                    });
+                } else {
+                    // Clear all DOL fields for managers
+                    supportedAuditTypes.forEach((fieldName) => {
+                        updateData[fieldName] = '';
+                    });
+                }
+
+                console.log('Sending update:', updateData);
 
                 fetch('../api/update-team-member.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedMember)
+                    body: JSON.stringify(updateData)
                 })
                 .then(response => response.json())
                 .then(data => {
