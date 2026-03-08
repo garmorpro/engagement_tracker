@@ -11,21 +11,26 @@ if (!$input) {
     exit;
 }
 
-$engagementId = $input['engagement_id'] ?? null;
-$teamId = $input['team_id'] ?? null;
+$engagementIdno = $input['engagement_idno'] ?? null;
+$empId = $input['emp_id'] ?? null;
 
-if (!$engagementId || !$teamId) {
+if (!$engagementIdno || !$empId) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+    echo json_encode(['success' => false, 'message' => 'Missing required fields: engagement_idno, emp_id']);
     exit;
 }
 
 try {
     // Delete the team member
     $query = "DELETE FROM engagement_team 
-              WHERE team_id = ? AND engagement_idno = ?";
+              WHERE emp_id = ? AND engagement_idno = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('ss', $teamId, $engagementId);
+    
+    if (!$stmt) {
+        throw new Exception('Prepare failed: ' . $conn->error);
+    }
+    
+    $stmt->bind_param('ss', $empId, $engagementIdno);
     
     if ($stmt->execute()) {
         echo json_encode([

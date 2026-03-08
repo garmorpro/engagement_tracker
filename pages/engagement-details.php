@@ -2865,12 +2865,14 @@ if (!$timeline) {
 
 
 <script>
-  // Team Management Modal Handler - UPDATED VERSION
+  // Team Management Modal Handler - FIXED VERSION
 // Replace the existing team management code with this
 
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
     const currentTeam = <?php echo json_encode($team); ?>;
     const engagementId = '<?php echo $engagementId; ?>';
+    
+    console.log('currentTeam:', currentTeam); // Debug log
     
     // Build HTML for team management modal
     let teamHTML = `
@@ -2963,23 +2965,8 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             return;
         }
 
-        // Group team members by name to avoid duplicates
-        const groupedMembers = {};
-        currentTeam.forEach(member => {
-            const key = member.emp_name;
-            if (!groupedMembers[key]) {
-                groupedMembers[key] = {
-                    emp_name: member.emp_name,
-                    role: member.role,
-                    emp_dol: member.emp_dol,
-                    team_id: member.team_id || member.id,
-                    audit_type: member.audit_type,
-                    engagement_idno: member.engagement_idno
-                };
-            }
-        });
-
-        Object.values(groupedMembers).forEach((member, idx) => {
+        // Render each team member directly (no grouping to avoid ID issues)
+        currentTeam.forEach((member, idx) => {
             const roleColor = {
                 'manager': '#4487FC',
                 'senior': '#A04DFD',
@@ -2989,8 +2976,11 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             const nameParts = member.emp_name.split(' ');
             const initials = nameParts.map(p => p[0].toUpperCase()).join('');
 
+            // Use emp_id as the unique identifier
+            const memberId = member.emp_id;
+
             teamList.innerHTML += `
-                <div style="display: flex; gap: 1rem; padding: 1.1rem; background: var(--bg-primary); border: 1.5px solid var(--border-color); border-radius: 12px; align-items: center; transition: all 0.2s; ${idx === 0 ? 'margin-top: 0.5rem;' : ''}">
+                <div class="team-member-card" data-emp-id="${memberId}" style="display: flex; gap: 1rem; padding: 1.1rem; background: var(--bg-primary); border: 1.5px solid var(--border-color); border-radius: 12px; align-items: center; transition: all 0.2s; ${idx === 0 ? 'margin-top: 0.5rem;' : ''}">
                     <div style="width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 14px;">
                         ${initials}
                     </div>
@@ -3000,10 +2990,10 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                         ${member.role !== 'manager' && member.emp_dol ? `<div style="font-size: 12px; color: var(--text-secondary);"><strong>DOL:</strong> ${member.emp_dol}</div>` : member.role === 'manager' ? '' : '<div style="font-size: 12px; color: var(--danger-red); font-weight: 600;">No DOL assigned</div>'}
                     </div>
                     <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
-                        <button class="edit-team-btn" data-team-id="${member.team_id}" style="background: var(--primary-blue); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;">
+                        <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-pencil-square" style="font-size: 14px;"></i>Edit
                         </button>
-                        <button class="delete-team-btn" data-team-id="${member.team_id}" style="background: #C90012; color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;">
+                        <button class="delete-team-btn" data-emp-id="${memberId}" style="background: #C90012; color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-trash3" style="font-size: 14px;"></i>Delete
                         </button>
                     </div>
@@ -3016,10 +3006,14 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const teamId = this.getAttribute('data-team-id');
-                const member = currentTeam.find(m => String(m.team_id || m.id) === String(teamId));
+                const empId = this.getAttribute('data-emp-id');
+                console.log('Edit clicked for emp_id:', empId);
+                const member = currentTeam.find(m => String(m.emp_id) === String(empId));
+                console.log('Found member:', member);
                 if (member) {
                     editTeamMember(member);
+                } else {
+                    Swal.fire('Error', 'Member not found', 'error');
                 }
             });
         });
@@ -3028,10 +3022,14 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const teamId = this.getAttribute('data-team-id');
-                const member = currentTeam.find(m => String(m.team_id || m.id) === String(teamId));
+                const empId = this.getAttribute('data-emp-id');
+                console.log('Delete clicked for emp_id:', empId);
+                const member = currentTeam.find(m => String(m.emp_id) === String(empId));
+                console.log('Found member:', member);
                 if (member) {
                     deleteTeamMember(member);
+                } else {
+                    Swal.fire('Error', 'Member not found', 'error');
                 }
             });
         });
@@ -3051,7 +3049,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
 
     function addTeamMember(empName, empRole, empDol) {
         const newMember = {
-            engagement_id: engagementId,
+            engagement_idno: engagementId,
             emp_name: empName,
             role: empRole,
             emp_dol: empRole === 'manager' ? '' : empDol
@@ -3125,12 +3123,14 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             if (result.isConfirmed) {
                 const newRole = document.getElementById('edit_emp_role').value;
                 const updatedMember = {
-                    engagement_id: engagementId,
-                    team_id: member.team_id || member.id,
+                    engagement_idno: engagementId,
+                    emp_id: member.emp_id,
                     emp_name: document.getElementById('edit_emp_name').value,
                     role: newRole,
                     emp_dol: newRole === 'manager' ? '' : document.getElementById('edit_emp_dol').value
                 };
+
+                console.log('Sending update:', updatedMember);
 
                 fetch('../api/update-team-member.php', {
                     method: 'POST',
@@ -3139,8 +3139,9 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Update response:', data);
                     if (data.success) {
-                        const idx = currentTeam.findIndex(m => String(m.team_id || m.id) === String(member.team_id || member.id));
+                        const idx = currentTeam.findIndex(m => String(m.emp_id) === String(member.emp_id));
                         if (idx !== -1) {
                             currentTeam[idx] = {
                                 ...currentTeam[idx],
@@ -3172,9 +3173,11 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         }).then((result) => {
             if (result.isConfirmed) {
                 const deleteData = {
-                    engagement_id: engagementId,
-                    team_id: member.team_id || member.id
+                    engagement_idno: engagementId,
+                    emp_id: member.emp_id
                 };
+
+                console.log('Sending delete:', deleteData);
 
                 fetch('../api/delete-team-member.php', {
                     method: 'POST',
@@ -3183,8 +3186,9 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Delete response:', data);
                     if (data.success) {
-                        currentTeam = currentTeam.filter(m => String(m.team_id || m.id) !== String(member.team_id || member.id));
+                        currentTeam = currentTeam.filter(m => String(m.emp_id) !== String(member.emp_id));
                         renderTeamList();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to delete team member', 'error');

@@ -11,30 +11,35 @@ if (!$input) {
     exit;
 }
 
-$engagementId = $input['engagement_id'] ?? null;
-$teamId = $input['team_id'] ?? null;
+$engagementIdno = $input['engagement_idno'] ?? null;
+$empId = $input['emp_id'] ?? null;
 $empName = $input['emp_name'] ?? null;
 $role = $input['role'] ?? null;
 $empDol = $input['emp_dol'] ?? null;
 
-if (!$engagementId || !$teamId || !$empName || !$role) {
+if (!$engagementIdno || !$empId || !$empName || !$role) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+    echo json_encode(['success' => false, 'message' => 'Missing required fields: engagement_idno, emp_id, emp_name, role']);
     exit;
 }
 
 try {
     // Update the team member
     $query = "UPDATE engagement_team 
-              SET emp_name = ?, role = ?, emp_dol = ? 
-              WHERE team_id = ? AND engagement_idno = ?";
+              SET emp_name = ?, role = ?, emp_dol = ?, emp_updated = NOW()
+              WHERE emp_id = ? AND engagement_idno = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('sssss', $empName, $role, $empDol, $teamId, $engagementId);
+    
+    if (!$stmt) {
+        throw new Exception('Prepare failed: ' . $conn->error);
+    }
+    
+    $stmt->bind_param('sssss', $empName, $role, $empDol, $empId, $engagementIdno);
     
     if ($stmt->execute()) {
         $member = [
-            'team_id' => $teamId,
-            'engagement_idno' => $engagementId,
+            'emp_id' => $empId,
+            'engagement_idno' => $engagementIdno,
             'emp_name' => $empName,
             'role' => $role,
             'emp_dol' => $empDol

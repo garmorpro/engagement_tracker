@@ -11,33 +11,40 @@ if (!$input) {
     exit;
 }
 
-$engagementId = $input['engagement_id'] ?? null;
+$engagementIdno = $input['engagement_idno'] ?? null;
 $empName = $input['emp_name'] ?? null;
 $role = $input['role'] ?? null;
 $empDol = $input['emp_dol'] ?? null;
 
-if (!$engagementId || !$empName || !$role) {
+if (!$engagementIdno || !$empName || !$role) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+    echo json_encode(['success' => false, 'message' => 'Missing required fields: engagement_idno, emp_name, role']);
     exit;
 }
 
 try {
     // Insert the new team member
-    $query = "INSERT INTO engagement_team (engagement_idno, emp_name, role, emp_dol) 
-              VALUES (?, ?, ?, ?)";
+    $query = "INSERT INTO engagement_team (engagement_idno, emp_name, role, emp_dol, audit_type) 
+              VALUES (?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param('ssss', $engagementId, $empName, $role, $empDol);
+    
+    if (!$stmt) {
+        throw new Exception('Prepare failed: ' . $conn->error);
+    }
+    
+    $auditType = 'General';
+    $stmt->bind_param('sssss', $engagementIdno, $empName, $role, $empDol, $auditType);
     
     if ($stmt->execute()) {
-        $teamId = $conn->insert_id;
+        $empId = $conn->insert_id;
         
         $member = [
-            'team_id' => $teamId,
-            'engagement_idno' => $engagementId,
+            'emp_id' => $empId,
+            'engagement_idno' => $engagementIdno,
             'emp_name' => $empName,
             'role' => $role,
-            'emp_dol' => $empDol
+            'emp_dol' => $empDol,
+            'audit_type' => $auditType
         ];
         
         echo json_encode([
