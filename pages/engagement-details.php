@@ -2865,7 +2865,7 @@ if (!$timeline) {
 
 
 <script>
-// Team Management Modal Handler - SIDE PANEL REDESIGN
+// Team Management Modal Handler - SIDE PANEL REDESIGN (FIXED)
 // Replace the existing team management code with this
 
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
@@ -2896,7 +2896,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
     let teamHTML = `
         <div style="display: flex; gap: 1.5rem; height: 100%; min-height: 500px;">
             <!-- LEFT SIDE: Team List -->
-            <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+            <div style="flex: 1.3; display: flex; flex-direction: column; overflow: hidden; min-width: 300px;">
                 <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Team Members</h3>
                 <div id="team-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; padding-right: 0.5rem;">
                     <!-- Team members will be populated here -->
@@ -2904,7 +2904,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             </div>
 
             <!-- RIGHT SIDE: Add Member + Stats Panel -->
-            <div style="width: 280px; display: flex; flex-direction: column; gap: 1.5rem; padding-left: 1.5rem; border-left: 1px solid var(--border-color);">
+            <div style="width: 320px; display: flex; flex-direction: column; gap: 1.5rem; padding-left: 1.5rem; border-left: 1px solid var(--border-color); flex-shrink: 0;">
                 <!-- Add Team Member Form -->
                 <div>
                     <h4 style="font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Add Member</h4>
@@ -2949,7 +2949,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         html: teamHTML,
         showConfirmButton: false,
         cancelButtonText: 'Close',
-        width: '900px',
+        width: '1000px',
         heightAuto: false,
         customClass: {
             popup: 'milestone-modal-popup'
@@ -3011,18 +3011,18 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     <!-- Top Row: Avatar + Info + Buttons -->
                     <div style="display: flex; align-items: flex-start; gap: 1rem;">
                         <!-- Avatar -->
-                        <div style="width: 40px; height: 40px; border-radius: 8px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 13px;">
+                        <div style="width: 44px; height: 44px; border-radius: 8px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 14px;">
                             ${initials}
                         </div>
                         
                         <!-- Name & Role -->
-                        <div style="flex: 1;">
-                            <div style="font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 0.15rem;">${member.emp_name}</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 0.15rem; word-break: break-word; line-height: 1.3;">${member.emp_name}</div>
                             <div style="font-size: 11px; color: var(--text-secondary); text-transform: capitalize;">${member.role}</div>
                         </div>
 
                         <!-- Buttons -->
-                        <div style="display: flex; gap: 0.4rem;">
+                        <div style="display: flex; gap: 0.4rem; flex-shrink: 0;">
                             <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
                                 <i class="bi bi-pencil" style="font-size: 13px;"></i>
                             </button>
