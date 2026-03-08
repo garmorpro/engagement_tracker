@@ -942,20 +942,24 @@ $engagementData = $engagement;
         }
 
         /* Milestone Modal Styling */
-        .milestone-modal-popup {
-            max-height: 600px !important;
-            height: 600px !important;
-            display: flex !important;
-            flex-direction: column !important;
-        }
+        /* Milestone Modal Styling */
+.milestone-modal-popup {
+    max-height: 600px !important;
+    height: 600px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: 1400px !important;
+    max-width: 1400px !important;
+}
 
-        .milestone-modal-popup .swal2-html-container {
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            overflow: hidden !important;
-            padding: 0 !important;
-        }
+.milestone-modal-popup .swal2-html-container {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
 
         /* ========== CUSTOM TOAST STYLING ========== */
         .custom-toast {
