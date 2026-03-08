@@ -2865,14 +2865,15 @@ if (!$timeline) {
 
 
 <script>
-  // Team Management Modal Handler - FIXED VERSION
+  // Team Management Modal Handler - COMPLETE FIX
 // Replace the existing team management code with this
 
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
-    const currentTeam = <?php echo json_encode($team); ?>;
+    let currentTeam = <?php echo json_encode($team); ?>;
     const engagementId = '<?php echo $engagementId; ?>';
+    const auditTypes = ['SOC 1', 'SOC 2', 'HIPAA', 'HITRUST', 'FISMA'];
     
-    console.log('currentTeam:', currentTeam); // Debug log
+    console.log('currentTeam:', currentTeam);
     
     // Build HTML for team management modal
     let teamHTML = `
@@ -2888,7 +2889,6 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                             <option value="senior">Senior</option>
                             <option value="staff">Staff</option>
                         </select>
-                        <input type="text" id="add_emp_dol" class="swal2-input" placeholder="DOL (comma separated)" style="width: 100%; font-size: 12px;">
                         <button id="addTeamMemberBtn" style="background: linear-gradient(135deg, var(--primary-blue), #3671E0); color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
                             <i class="bi bi-plus-circle" style="font-size: 16px;"></i> Add Member
                         </button>
@@ -2936,24 +2936,28 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             document.getElementById('addTeamMemberBtn').addEventListener('click', () => {
                 const empName = document.getElementById('add_emp_name').value.trim();
                 const empRole = document.getElementById('add_emp_role').value;
-                const empDol = document.getElementById('add_emp_dol').value.trim();
                 
                 if (!empName || !empRole) {
                     Swal.showValidationMessage('Please fill in name and role');
                     return;
                 }
                 
-                addTeamMember(empName, empRole, empDol);
+                addTeamMember(empName, empRole);
             });
         }
     });
 
     function renderTeamList() {
-        const teamList = document.getElementById('team-list');
-        teamList.innerHTML = '';
+        const teamListElement = document.getElementById('team-list');
+        if (!teamListElement) {
+            console.error('team-list element not found');
+            return;
+        }
+        
+        teamListElement.innerHTML = '';
 
         if (currentTeam.length === 0) {
-            teamList.innerHTML = `
+            teamListElement.innerHTML = `
                 <div style="display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary); padding: 2rem; flex: 1;">
                     <div>
                         <i class="bi bi-people" style="font-size: 48px; display: block; margin-bottom: 1rem; opacity: 0.4;"></i>
@@ -2965,7 +2969,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             return;
         }
 
-        // Render each team member directly (no grouping to avoid ID issues)
+        // Render each team member directly (no grouping)
         currentTeam.forEach((member, idx) => {
             const roleColor = {
                 'manager': '#4487FC',
@@ -2976,10 +2980,9 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             const nameParts = member.emp_name.split(' ');
             const initials = nameParts.map(p => p[0].toUpperCase()).join('');
 
-            // Use emp_id as the unique identifier
             const memberId = member.emp_id;
 
-            teamList.innerHTML += `
+            teamListElement.innerHTML += `
                 <div class="team-member-card" data-emp-id="${memberId}" style="display: flex; gap: 1rem; padding: 1.1rem; background: var(--bg-primary); border: 1.5px solid var(--border-color); border-radius: 12px; align-items: center; transition: all 0.2s; ${idx === 0 ? 'margin-top: 0.5rem;' : ''}">
                     <div style="width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 14px;">
                         ${initials}
@@ -3038,21 +3041,21 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
     }
 
     function updateRoleCounts() {
-        const managers = currentTeam.filter(m => m.role === 'manager').length;
-        const seniors = currentTeam.filter(m => m.role === 'senior').length;
-        const staff = currentTeam.filter(m => m.role === 'staff').length;
+        const managerCount = document.getElementById('manager-count');
+        const seniorCount = document.getElementById('senior-count');
+        const staffCount = document.getElementById('staff-count');
         
-        document.getElementById('manager-count').textContent = managers;
-        document.getElementById('senior-count').textContent = seniors;
-        document.getElementById('staff-count').textContent = staff;
+        if (managerCount) managerCount.textContent = currentTeam.filter(m => m.role === 'manager').length;
+        if (seniorCount) seniorCount.textContent = currentTeam.filter(m => m.role === 'senior').length;
+        if (staffCount) staffCount.textContent = currentTeam.filter(m => m.role === 'staff').length;
     }
 
-    function addTeamMember(empName, empRole, empDol) {
+    function addTeamMember(empName, empRole) {
         const newMember = {
             engagement_idno: engagementId,
             emp_name: empName,
             role: empRole,
-            emp_dol: empRole === 'manager' ? '' : empDol
+            emp_dol: ''
         };
 
         fetch('../api/add-team-member.php', {
@@ -3066,7 +3069,6 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 currentTeam.push(data.member);
                 document.getElementById('add_emp_name').value = '';
                 document.getElementById('add_emp_role').value = '';
-                document.getElementById('add_emp_dol').value = '';
                 renderTeamList();
             } else {
                 Swal.showValidationMessage('Error: ' + (data.message || 'Failed to add team member'));
@@ -3079,6 +3081,30 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
     }
 
     function editTeamMember(member) {
+        // Build DOL sections for each audit type
+        let dolSections = '';
+        const auditTypes = ['SOC 1', 'SOC 2', 'HIPAA', 'HITRUST', 'FISMA'];
+        
+        // Parse existing DOL if it exists (format: "SOC 1:Planning,Fieldwork|SOC 2:Code Review")
+        const dolMap = new Map();
+        if (member.emp_dol && member.emp_dol.includes(':')) {
+            const dolPairs = member.emp_dol.split('|');
+            dolPairs.forEach(pair => {
+                const [type, tasks] = pair.split(':');
+                dolMap.set(type.trim(), tasks.trim());
+            });
+        }
+        
+        auditTypes.forEach(auditType => {
+            const currentDol = dolMap.get(auditType) || '';
+            dolSections += `
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">DOL - ${auditType}</label>
+                    <input type="text" class="audit-dol-input" data-audit-type="${auditType}" class="swal2-input" placeholder="e.g., Planning, Fieldwork, Code Review" value="${currentDol}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px;">
+                </div>
+            `;
+        });
+
         Swal.fire({
             title: 'Edit Team Member',
             html: `
@@ -3096,8 +3122,8 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                         </select>
                     </div>
                     <div id="dol_section" style="display: ${member.role === 'manager' ? 'none' : 'block'};">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">DOL (comma separated)</label>
-                        <input type="text" id="edit_emp_dol" class="swal2-input" value="${member.role === 'manager' ? '' : (member.emp_dol || '')}" style="width: 100%;">
+                        <h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Duties and Responsibilities by Audit Type</h4>
+                        ${dolSections}
                     </div>
                 </div>
             `,
@@ -3113,7 +3139,6 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     const dolSection = document.getElementById('dol_section');
                     if (this.value === 'manager') {
                         dolSection.style.display = 'none';
-                        document.getElementById('edit_emp_dol').value = '';
                     } else {
                         dolSection.style.display = 'block';
                     }
@@ -3122,12 +3147,28 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         }).then((result) => {
             if (result.isConfirmed) {
                 const newRole = document.getElementById('edit_emp_role').value;
+                
+                // Collect DOL from all audit type inputs
+                let combinedDol = '';
+                if (newRole !== 'manager') {
+                    const dolInputs = document.querySelectorAll('.audit-dol-input');
+                    const dolArray = [];
+                    dolInputs.forEach(input => {
+                        const auditType = input.getAttribute('data-audit-type');
+                        const tasks = input.value.trim();
+                        if (tasks) {
+                            dolArray.push(`${auditType}:${tasks}`);
+                        }
+                    });
+                    combinedDol = dolArray.join('|');
+                }
+
                 const updatedMember = {
                     engagement_idno: engagementId,
                     emp_id: member.emp_id,
                     emp_name: document.getElementById('edit_emp_name').value,
                     role: newRole,
-                    emp_dol: newRole === 'manager' ? '' : document.getElementById('edit_emp_dol').value
+                    emp_dol: combinedDol
                 };
 
                 console.log('Sending update:', updatedMember);
