@@ -1446,44 +1446,49 @@ $engagementData = $engagement;
         <div class="left-column">
             <div class="team-section" style="position: relative;">
                 <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                    <div class="section-header-left">
-                        <div class="section-icon team">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-                        <h2 class="section-title">Team</h2>
-                    </div>
+    <div class="section-header-left">
+        <div class="section-icon team">
+            <i class="bi bi-people-fill"></i>
+        </div>
+        <h2 class="section-title">Team</h2>
+    </div>
 
-                    <?php
-                    // Check if there is any DOL assigned
-                    $hasDOL = false;
-                    if (!empty($team)) {
-                        foreach ($team as $member) {
-                            if (!empty($member['emp_dol'])) {
-                                $hasDOL = true;
-                                break;
-                            }
-                        }
-                    }
-                    ?>
+    <?php
+    // Check if there is any DOL assigned
+    $hasDOL = false;
+    if (!empty($team)) {
+        foreach ($team as $member) {
+            if (!empty($member['emp_dol'])) {
+                $hasDOL = true;
+                break;
+            }
+        }
+    }
+    ?>
 
-                    <?php if (!$hasDOL): ?>
-                        <div style="
-                            background-color: #ff4d4f;
-                            color: white;
-                            font-weight: 600;
-                            padding: 0.25rem 0.6rem;
-                            border-radius: 0.5rem;
-                            font-size: 12px;
-                            animation: pulse 1.5s infinite;
-                        ">
-                            No DOL Set
-                        </div>
-                    <?php endif; ?>
-                </div>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <?php if (!$hasDOL): ?>
+            <div style="
+                background-color: #ff4d4f;
+                color: white;
+                font-weight: 600;
+                padding: 0.25rem 0.6rem;
+                border-radius: 0.5rem;
+                font-size: 12px;
+                animation: pulse 1.5s infinite;
+            ">
+                No DOL Set
+            </div>
+        <?php endif; ?>
+        <button id="manageTeamIconBtn" class="btn-icon" style="margin: 0; padding: 0.5rem;" title="Manage team members">
+            <i class="bi bi-gear"></i>
+        </button>
+    </div>
+</div>
 
-                <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; margin-top: 1.5rem; justify-content: center;">
+                <!-- <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; margin-top: 1.5rem; justify-content: center;">
                     <i class="bi bi-gear"></i> Manage DOL
-                </button>
+                </button> -->
 
                 <div class="team-members">
                 <?php if (!empty($team)): ?>
@@ -2856,6 +2861,308 @@ if (!$timeline) {
             setTimeout(() => toast.remove(), 300);
         }, 5000);
     }
+</script>
+
+
+<script>
+    // Team Management Modal Handler
+// Add this code before the closing script tag in your engagement_detail.php file
+
+document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
+    const currentTeam = <?php echo json_encode($team); ?>;
+    const engagementId = '<?php echo $engagementId; ?>';
+    
+    // Build HTML for team management modal
+    let teamHTML = `
+        <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
+            <div style="margin-bottom: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">Add Team Member</h4>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <input type="text" id="add_emp_name" class="swal2-input" placeholder="Employee Name" style="width: 100%; font-size: 12px;">
+                        <select id="add_emp_role" class="swal2-input" style="width: 100%; font-size: 12px; padding: 0.5rem;">
+                            <option value="">Select Role</option>
+                            <option value="manager">Manager</option>
+                            <option value="senior">Senior</option>
+                            <option value="staff">Staff</option>
+                        </select>
+                        <input type="text" id="add_emp_dol" class="swal2-input" placeholder="DOL (comma separated)" style="width: 100%; font-size: 12px;">
+                        <button id="addTeamMemberBtn" style="background: linear-gradient(135deg, var(--primary-blue), #3671E0); color: white; border: none; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                            <i class="bi bi-plus-circle" style="font-size: 16px;"></i> Add Member
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">Member Count by Role</h4>
+                    <div style="display: grid; gap: 0.5rem;">
+                        <div style="padding: 0.75rem; background: var(--gray-100); border-radius: 8px; border-left: 3px solid var(--primary-blue);">
+                            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">Managers</div>
+                            <div style="font-size: 20px; font-weight: 700; color: var(--primary-blue);" id="manager-count">0</div>
+                        </div>
+                        <div style="padding: 0.75rem; background: var(--gray-100); border-radius: 8px; border-left: 3px solid #A04DFD;">
+                            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">Seniors</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #A04DFD;" id="senior-count">0</div>
+                        </div>
+                        <div style="padding: 0.75rem; background: var(--gray-100); border-radius: 8px; border-left: 3px solid #4FC65F;">
+                            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">Staff</div>
+                            <div style="font-size: 20px; font-weight: 700; color: #4FC65F;" id="staff-count">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Current Team</h4>
+            <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; padding-right: 0.5rem;" id="team-list">
+                <!-- Team members will be populated here -->
+            </div>
+        </div>
+    `;
+
+    Swal.fire({
+        title: 'Manage Team Members',
+        html: teamHTML,
+        showConfirmButton: false,
+        cancelButtonText: 'Close',
+        width: '700px',
+        heightAuto: false,
+        customClass: {
+            popup: 'milestone-modal-popup'
+        },
+        didOpen: () => {
+            renderTeamList();
+            
+            document.getElementById('addTeamMemberBtn').addEventListener('click', () => {
+                const empName = document.getElementById('add_emp_name').value.trim();
+                const empRole = document.getElementById('add_emp_role').value;
+                const empDol = document.getElementById('add_emp_dol').value.trim();
+                
+                if (!empName || !empRole) {
+                    Swal.showValidationMessage('Please fill in name and role');
+                    return;
+                }
+                
+                addTeamMember(empName, empRole, empDol);
+            });
+        }
+    });
+
+    function renderTeamList() {
+        const teamList = document.getElementById('team-list');
+        teamList.innerHTML = '';
+
+        if (currentTeam.length === 0) {
+            teamList.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary); padding: 2rem; flex: 1;">
+                    <div>
+                        <i class="bi bi-people" style="font-size: 48px; display: block; margin-bottom: 1rem; opacity: 0.4;"></i>
+                        <div style="font-size: 15px; font-weight: 600;">No team members yet</div>
+                    </div>
+                </div>
+            `;
+            updateRoleCounts();
+            return;
+        }
+
+        // Group team members by name to avoid duplicates
+        const groupedMembers = {};
+        currentTeam.forEach(member => {
+            const key = member.emp_name;
+            if (!groupedMembers[key]) {
+                groupedMembers[key] = {
+                    emp_name: member.emp_name,
+                    role: member.role,
+                    emp_dol: member.emp_dol,
+                    team_id: member.team_id || member.id
+                };
+            }
+        });
+
+        Object.values(groupedMembers).forEach((member) => {
+            const roleColor = {
+                'manager': '#4487FC',
+                'senior': '#A04DFD',
+                'staff': '#4FC65F'
+            }[member.role] || '#4487FC';
+
+            const nameParts = member.emp_name.split(' ');
+            const initials = nameParts.map(p => p[0].toUpperCase()).join('');
+
+            teamList.innerHTML += `
+                <div style="display: flex; gap: 1rem; padding: 1.1rem; background: var(--bg-primary); border: 1.5px solid var(--border-color); border-radius: 12px; align-items: center; transition: all 0.2s;">
+                    <div style="width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 14px;">
+                        ${initials}
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 600; font-size: 15px; margin-bottom: 0.25rem; color: var(--text-primary);">${member.emp_name}</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); text-transform: capitalize; margin-bottom: 0.5rem;">${member.role}</div>
+                        ${member.emp_dol ? `<div style="font-size: 12px; color: var(--text-secondary);"><strong>DOL:</strong> ${member.emp_dol}</div>` : '<div style="font-size: 12px; color: var(--danger-red); font-weight: 600;">No DOL assigned</div>'}
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-shrink: 0;">
+                        <button class="edit-team-btn" data-team-id="${member.team_id}" style="background: var(--primary-blue); color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-pencil-square" style="font-size: 14px;"></i>Edit
+                        </button>
+                        <button class="delete-team-btn" data-team-id="${member.team_id}" style="background: #C90012; color: white; border: none; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; display: flex; align-items: center; gap: 0.4rem;">
+                            <i class="bi bi-trash3" style="font-size: 14px;"></i>Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Add event listeners
+        document.querySelectorAll('.edit-team-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const teamId = btn.dataset.teamId;
+                const member = currentTeam.find(m => (m.team_id || m.id) == teamId);
+                if (member) editTeamMember(member);
+            });
+        });
+
+        document.querySelectorAll('.delete-team-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const teamId = btn.dataset.teamId;
+                const member = currentTeam.find(m => (m.team_id || m.id) == teamId);
+                if (member) deleteTeamMember(member);
+            });
+        });
+
+        updateRoleCounts();
+    }
+
+    function updateRoleCounts() {
+        const managers = currentTeam.filter(m => m.role === 'manager').length;
+        const seniors = currentTeam.filter(m => m.role === 'senior').length;
+        const staff = currentTeam.filter(m => m.role === 'staff').length;
+        
+        document.getElementById('manager-count').textContent = managers;
+        document.getElementById('senior-count').textContent = seniors;
+        document.getElementById('staff-count').textContent = staff;
+    }
+
+    function addTeamMember(empName, empRole, empDol) {
+        const newMember = {
+            engagement_id: engagementId,
+            emp_name: empName,
+            role: empRole,
+            emp_dol: empDol
+        };
+
+        fetch('../api/add-team-member.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newMember)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                currentTeam.push(data.member);
+                document.getElementById('add_emp_name').value = '';
+                document.getElementById('add_emp_role').value = '';
+                document.getElementById('add_emp_dol').value = '';
+                renderTeamList();
+            } else {
+                Swal.showValidationMessage('Error: ' + (data.message || 'Failed to add team member'));
+            }
+        })
+        .catch(error => {
+            Swal.showValidationMessage('Error: ' + error.message);
+        });
+    }
+
+    function editTeamMember(member) {
+        Swal.fire({
+            title: 'Edit Team Member',
+            html: `
+                <div style="text-align: left; display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Employee Name</label>
+                        <input type="text" id="edit_emp_name" class="swal2-input" value="${member.emp_name}" style="width: 100%;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Role</label>
+                        <select id="edit_emp_role" class="swal2-input" style="width: 100%; padding: 0.6rem;">
+                            <option value="manager" ${member.role === 'manager' ? 'selected' : ''}>Manager</option>
+                            <option value="senior" ${member.role === 'senior' ? 'selected' : ''}>Senior</option>
+                            <option value="staff" ${member.role === 'staff' ? 'selected' : ''}>Staff</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">DOL (comma separated)</label>
+                        <input type="text" id="edit_emp_dol" class="swal2-input" value="${member.emp_dol || ''}" style="width: 100%;">
+                    </div>
+                </div>
+            `,
+            confirmButtonText: 'Save Changes',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            didOpen: () => {
+                document.getElementById('edit_emp_name').focus();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const updatedMember = {
+                    engagement_id: engagementId,
+                    team_id: member.team_id || member.id,
+                    emp_name: document.getElementById('edit_emp_name').value,
+                    role: document.getElementById('edit_emp_role').value,
+                    emp_dol: document.getElementById('edit_emp_dol').value
+                };
+
+                fetch('../api/update-team-member.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedMember)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const idx = currentTeam.findIndex(m => (m.team_id || m.id) == (member.team_id || member.id));
+                        if (idx !== -1) {
+                            currentTeam[idx] = data.member;
+                        }
+                        renderTeamList();
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update team member', 'error');
+                    }
+                });
+            }
+        });
+    }
+
+    function deleteTeamMember(member) {
+        Swal.fire({
+            title: 'Remove Team Member?',
+            text: `Are you sure you want to remove "${member.emp_name}" from the team? This action cannot be undone.`,
+            icon: 'warning',
+            confirmButtonText: 'Remove',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#C90012'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const deleteData = {
+                    engagement_id: engagementId,
+                    team_id: member.team_id || member.id
+                };
+
+                fetch('../api/delete-team-member.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(deleteData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        currentTeam = currentTeam.filter(m => (m.team_id || m.id) != (member.team_id || member.id));
+                        renderTeamList();
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to delete team member', 'error');
+                    }
+                });
+            }
+        });
+    }
+});
 </script>
 
 </body>
