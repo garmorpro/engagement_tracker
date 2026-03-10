@@ -3009,7 +3009,10 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 
                 addTeamMember(empName, empRole);
             });
-        }
+        },
+        willClose: () => {
+        location.reload();
+    }
     });
 
     function renderTeamList() {
