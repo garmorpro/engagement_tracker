@@ -58,7 +58,7 @@ function getTimeAgo($datetime) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Archive - Engagement Pro</title>
+    <title>Archive - Engagement Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
@@ -1132,9 +1132,9 @@ function getTimeAgo($datetime) {
             </a>
 
             <div class="header-nav">
-                <a href="dashboard.php" class="nav-item active">Dashboard</a>
+                <a href="dashboard.php" class="nav-item">Dashboard</a>
                 <a href="analytics.php" class="nav-item">Analytics</a>
-                <a href="archive.php" class="nav-item">Archive <span class="badge"><?php echo $archivedCount; ?></span></a>
+                <a href="archive.php" class="nav-item active">Archive <span class="badge"><?php echo $archivedCount; ?></span></a>
             </div>
         </div>
 
@@ -1447,7 +1447,7 @@ foreach ($allTimelineData as $row) {
                             // $dueDate = $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : 'N/A';
                             $statusClass = strtolower($eng['eng_status'] ?? 'planning');
                         ?>
-                        <tr style="cursor: pointer;" class="engagement-row" data-status="<?php echo htmlspecialchars($eng['eng_status']); ?>" onclick="window.location.href='engagement-details.php?id=<?php echo htmlspecialchars($eng['eng_idno']); ?>'">
+                        <tr style="cursor: pointer;" class="engagement-row" data-status="<?php echo htmlspecialchars($eng['eng_status']); ?>" onclick="window.location.href='archived-engagement-details.php?id=<?php echo htmlspecialchars($eng['eng_idno']); ?>'">
                             <td>
                                 <div class="engagement-id"><?php echo htmlspecialchars($eng['eng_idno']); ?></div>
                             </td>
