@@ -1461,14 +1461,16 @@ $engagementData = $engagement;
     <?php
     // Check if there is any DOL assigned
     $hasDOL = false;
-    if (!empty($team)) {
-        foreach ($team as $member) {
-            if (!empty($member['emp_dol'])) {
-                $hasDOL = true;
-                break;
-            }
+if (!empty($team)) {
+    foreach ($team as $member) {
+        if (!empty($member['emp_soc1_dol']) || !empty($member['emp_soc2_dol']) || 
+            !empty($member['emp_hipaa_dol']) || !empty($member['emp_hitrust_dol']) || 
+            !empty($member['emp_fisma_dol'])) {
+            $hasDOL = true;
+            break;
         }
     }
+}
     ?>
 
     <div style="display: flex; align-items: center; gap: 0.75rem;">
