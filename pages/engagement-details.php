@@ -1364,10 +1364,10 @@ $engagementData = $engagement;
                 <i class="bi bi-pencil"></i>
                 Edit
             </button>
-            <button class="btn-icon">
+            <button class="btn-icon" title="Archive" onclick="event.stopPropagation(); archiveEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                 <i class="bi bi-archive"></i>
             </button>
-            <button class="btn-icon">
+            <button class="btn-icon" title="Delete" onclick="event.stopPropagation(); deleteEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                 <i class="bi bi-trash"></i>
             </button>
         </div>
@@ -2090,6 +2090,59 @@ $engagementData = $engagement;
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
+
+    // Check if we should show the engagement deleted toast
+    if (sessionStorage.getItem('showDeletedToast')) {
+        sessionStorage.removeItem('showDeletedToast');
+        showToast('Engagement deleted successfully');
+    }
+
+
+    // Delete engagement function
+    async function deleteEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        const result = await Swal.fire({
+            title: 'Delete Engagement?',
+            text: 'This action cannot be undone. The engagement and all related data will be permanently deleted.',
+            icon: 'warning',
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#C90012',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A',
+            confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
+            cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/delete-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Set flag to show toast after reload
+                    sessionStorage.setItem('showDeletedToast', 'true');
+                    window.location.href = "archive.php";
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to delete engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to delete engagement', 'error');
+            }
+        }
+    }
+
+
     // Scroll detection for header shadow
     const pageHeader = document.getElementById('pageHeader');
     window.addEventListener('scroll', () => {
@@ -2112,6 +2165,58 @@ $engagementData = $engagement;
             } else {
                 icon.classList.remove('bi-sun');
                 icon.classList.add('bi-moon');
+            }
+        }
+    }
+
+
+    // Archive engagement function
+    async function archiveEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        const result = await Swal.fire({
+            title: 'Archive Engagement?',
+            text: 'Are you sure you want to archive this engagement? It will be moved to the archive and hidden from the main dashboard.',
+            icon: 'warning',
+            confirmButtonText: 'Archive',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#4487FC',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A',
+            confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
+            cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/archive-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Archived!',
+                        text: 'Engagement has been archived successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        background: isDarkMode ? '#1A2332' : '#FFFFFF',
+                        color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+                    }).then(() => {
+                        window.location.href = "archive.php";
+                    });
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to archive engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to archive engagement', 'error');
             }
         }
     }
