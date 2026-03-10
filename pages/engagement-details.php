@@ -1378,10 +1378,10 @@ $engagementData = $engagement;
                         <i class="bi <?php echo $statusIcon; ?>"></i>
                         <?php echo strtoupper($statusText); ?>
                     </span>
-                    <span class="engagement-badge badge-priority">
+                    <!-- <span class="engagement-badge badge-priority">
                         <i class="bi bi-exclamation-circle"></i>
                         High Priority
-                    </span>
+                    </span> -->
                     <?php if ($engagement['eng_repeat'] === 'Y'): ?>
                     <span class="engagement-badge badge-repeat">
                         <i class="bi bi-arrow-repeat"></i>
