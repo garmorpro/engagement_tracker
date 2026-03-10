@@ -757,29 +757,28 @@ $engagementData = $engagement;
         }
 
         .details-grid {
-            display: grid;
-            gap: 1.5rem;
-        }
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem 2rem;
+}
 
-        .detail-item {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+.detail-item {
+    display: flex;
+    flex-direction: column;
+}
 
-        .detail-label {
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 600;
-        }
+.detail-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
 
-        .detail-value {
-            font-size: 14px;
-            color: var(--text-primary);
-            font-weight: 500;
-        }
+.detail-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
 
         .detail-value.badge {
             display: inline-flex;
