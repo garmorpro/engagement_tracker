@@ -771,7 +771,7 @@ $engagementData = $engagement;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: .05em;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     margin-bottom: 0.25rem;
 }
 
