@@ -756,10 +756,15 @@ $engagementData = $engagement;
             color: #FF9800;
         }
 
-        .details-grid {
+       .details-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
+}
+
+/* Scope takes full row */
+.detail-item.scope {
+    grid-column: 1 / -1;
 }
 
 .detail-item {
@@ -1412,7 +1417,7 @@ $engagementData = $engagement;
 
             <div class="details-grid" style="margin-top: 1.5rem;">
                 <!-- Scope -->
-                <div class="detail-item">
+                <div class="detail-item scope">
                     <div class="detail-label">Scope</div>
                     <div class="detail-value"><?php echo htmlspecialchars($engagement['eng_scope'] ?? 'N/A'); ?></div>
                 </div>
