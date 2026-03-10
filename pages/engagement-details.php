@@ -765,6 +765,8 @@ $engagementData = $engagement;
 .detail-item {
     display: flex;
     flex-direction: column;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .detail-label {
