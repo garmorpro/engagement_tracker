@@ -310,33 +310,6 @@ $engagementData = $engagement;
         }
 
         .sidebar-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .sidebar-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .sidebar-section-title {
-            font-size: 10px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        /* ========== SIDEBAR ========== */
-        .engagement-sidebar {
-            background: transparent;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.25rem;
-            width: 280px;
-            height: fit-content;
-        }
-
-        .sidebar-section {
             margin-bottom: 1.75rem;
         }
 
@@ -943,24 +916,23 @@ $engagementData = $engagement;
         }
 
         /* Milestone Modal Styling */
-        /* Milestone Modal Styling */
-.milestone-modal-popup {
-    max-height: 600px !important;
-    height: 600px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    width: 800px !important;
-    max-width: 800px !important;
-}
+        .milestone-modal-popup {
+            max-height: 600px !important;
+            height: 600px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            width: 800px !important;
+            max-width: 800px !important;
+        }
 
-.milestone-modal-popup .swal2-html-container {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-    width: 100% !important;
-}
+        .milestone-modal-popup .swal2-html-container {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
 
         /* ========== CUSTOM TOAST STYLING ========== */
         .custom-toast {
@@ -997,39 +969,19 @@ $engagementData = $engagement;
         }
 
         @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-120%);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(-120%); }
+            to   { opacity: 1; transform: translateX(0); }
         }
 
         @keyframes slideOutLeft {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(-120%);
-            }
+            from { opacity: 1; transform: translateX(0); }
+            to   { opacity: 0; transform: translateX(-120%); }
         }
 
         @keyframes scalePopIn {
-            0% {
-                transform: scale(0.3);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0%   { transform: scale(0.3); opacity: 0; }
+            50%  { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         /* ========== MILESTONES SECTION ========== */
@@ -1146,25 +1098,33 @@ $engagementData = $engagement;
             color: var(--primary-blue);
         }
 
-        /* ========== TWO COLUMN LAYOUT FIX ========== */
+        /* ========== TOP ROW: Details & Notes ========== */
+        .top-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ========== TWO COLUMN LAYOUT ========== */
         .two-column-wrapper {
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 320px 1fr;
             gap: 2rem;
             margin-bottom: 3rem;
-            margin-top: 2rem;
             align-items: start;
         }
 
         .left-column {
             display: grid;
-            grid-template-rows: auto auto auto;
+            grid-template-rows: auto;
             gap: 2rem;
         }
 
         .right-column {
             display: grid;
-            grid-template-rows: auto auto auto auto;
+            grid-template-rows: auto auto;
             gap: 2rem;
         }
 
@@ -1173,15 +1133,16 @@ $engagementData = $engagement;
             .timeline-grid {
                 grid-template-columns: 1fr;
             }
-
             .milestones-grid {
                 grid-template-columns: 1fr;
             }
         }
 
         @media (max-width: 1200px) {
-            /* Change 3-column to 2-column layout */
             .two-column-wrapper {
+                grid-template-columns: 1fr !important;
+            }
+            .top-row {
                 grid-template-columns: 1fr !important;
             }
         }
@@ -1190,36 +1151,31 @@ $engagementData = $engagement;
             .main-container {
                 padding: 1.5rem;
             }
-
             .engagement-title {
                 font-size: 24px;
             }
-
             .engagement-info-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
-
             .engagement-meta {
                 flex-direction: column;
             }
-
             .top-actions {
                 width: 100%;
                 order: -1;
             }
-
             .btn-edit {
                 flex: 1;
             }
-
-            /* Stack sections vertically on mobile */
             .two-column-wrapper {
                 grid-template-columns: 1fr !important;
             }
-
+            .top-row {
+                grid-template-columns: 1fr !important;
+            }
             .right-column {
-                grid-template-rows: auto auto auto auto;
+                grid-template-rows: auto auto;
             }
         }
 
@@ -1243,8 +1199,8 @@ $engagementData = $engagement;
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
+            0%   { transform: scale(1); opacity: 1; }
+            50%  { transform: scale(1.05); opacity: 0.8; }
             100% { transform: scale(1); opacity: 1; }
         }
     </style>
@@ -1289,11 +1245,11 @@ $engagementData = $engagement;
                         $statusText = str_replace('-', ' ', $engagement['eng_status']);
                         $statusIcon = match($engagement['eng_status']) {
                             'in-progress' => 'bi-play-circle-fill',
-                            'planning' => 'bi-clipboard-check',
-                            'in-review' => 'bi-search',
-                            'complete' => 'bi-check-circle-fill',
-                            'archived' => 'bi-archive',
-                            default => 'bi-circle'
+                            'planning'    => 'bi-clipboard-check',
+                            'in-review'   => 'bi-search',
+                            'complete'    => 'bi-check-circle-fill',
+                            'archived'    => 'bi-archive',
+                            default       => 'bi-circle'
                         };
                     ?>
                     <span class="engagement-badge badge-status">
@@ -1352,8 +1308,8 @@ $engagementData = $engagement;
                             <div class="engagement-info-value">
                                 <?php
                                 $start = $engagement['eng_start_period'] ?? null;
-                                $end = $engagement['eng_end_period'] ?? null;
-                                $asOf = $engagement['eng_as_of_date'] ?? null;
+                                $end   = $engagement['eng_end_period'] ?? null;
+                                $asOf  = $engagement['eng_as_of_date'] ?? null;
 
                                 if ($start && $end) {
                                     echo date("M j, Y", strtotime($start)) . " - " . date("M j, Y", strtotime($end));
@@ -1405,11 +1361,9 @@ $engagementData = $engagement;
 
             <!-- Right Side: Sidebar -->
             <div class="engagement-right">
-                <!-- Sidebar -->
                 <div class="engagement-sidebar">
                     <!-- Critical Date Section -->
                     <div class="sidebar-section">
-                        <!-- Icon and Overdue Badge Row -->
                         <div class="critical-date-wrapper">
                             <div class="critical-date-icon-wrapper">
                                 <div class="critical-date-icon">
@@ -1418,8 +1372,6 @@ $engagementData = $engagement;
                             </div>
                             <span class="overdue-badge pulse">Overdue</span>
                         </div>
-
-                        <!-- Main Content Box -->
                         <div class="critical-date">
                             <div class="critical-date-inner">
                                 <div class="critical-date-label">Next Critical Date</div>
@@ -1444,95 +1396,172 @@ $engagementData = $engagement;
 
     <hr>
 
+    <!-- ========== TOP ROW: Details & Notes ========== -->
+    <div class="top-row">
+
+        <!-- ========== DETAILS SECTION ========== -->
+        <div class="details-section">
+            <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <div class="section-header-left">
+                    <div class="section-icon details">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h2 class="section-title">Details</h2>
+                </div>
+            </div>
+
+            <div class="details-grid" style="margin-top: 1.5rem;">
+                <!-- Scope -->
+                <div class="detail-item">
+                    <div class="detail-label">Scope</div>
+                    <div class="detail-value"><?php echo htmlspecialchars($engagement['eng_scope'] ?? 'N/A'); ?></div>
+                </div>
+
+                <!-- Created -->
+                <div class="detail-item">
+                    <div class="detail-label">Created</div>
+                    <div class="detail-value">
+                        <?php 
+                        $created = $engagement['eng_created'] ?? null;
+                        echo ($created && $created !== '0000-00-00') 
+                            ? date("M d, Y", strtotime($created))
+                            : 'N/A';
+                        ?>
+                    </div>
+                </div>
+
+                <!-- Last Updated -->
+                <div class="detail-item">
+                    <div class="detail-label">Last Updated</div>
+                    <div class="detail-value">
+                        <?php 
+                        $updated = $engagement['eng_updated'] ?? null;
+                        echo ($updated && $updated !== '0000-00-00') 
+                            ? date("M d, Y", strtotime($updated))
+                            : 'N/A';
+                        ?>
+                    </div>
+                </div>
+
+                <!-- Archive Date -->
+                <div class="detail-item">
+                    <div class="detail-label">Archive Date</div>
+                    <div class="detail-value">
+                        <?php 
+                        $archiveDate = $engagement['eng_archive'] ?? null;
+                        echo ($archiveDate && $archiveDate !== '0000-00-00') 
+                            ? date("M d, Y", strtotime($archiveDate))
+                            : 'N/A';
+                        ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== NOTES SECTION ========== -->
+        <div class="notes-section">
+            <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                <div class="section-header-left">
+                    <div class="section-icon notes">
+                        <i class="bi bi-sticky"></i>
+                    </div>
+                    <h2 class="section-title">Notes</h2>
+                </div>
+            </div>
+
+            <div class="notes-content" style="margin-top: 1.5rem;">
+                <?php 
+                $notes = $engagement['eng_notes'] ?? '';
+                if (!empty($notes)) {
+                    echo htmlspecialchars($notes);
+                } else {
+                    echo '<span style="color: var(--text-secondary); font-style: italic;">No notes added yet.</span>';
+                }
+                ?>
+            </div>
+        </div>
+
+    </div><!-- /.top-row -->
+
     <!-- ========== TWO COLUMN LAYOUT ========== -->
     <div class="two-column-wrapper">
 
-        <!-- ========== TEAM SECTION (LEFT COLUMN) ========== -->
+        <!-- ========== LEFT COLUMN: Team only ========== -->
         <div class="left-column">
             <div class="team-section" style="position: relative;">
                 <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-    <div class="section-header-left">
-        <div class="section-icon team">
-            <i class="bi bi-people-fill"></i>
-        </div>
-        <h2 class="section-title">Team</h2>
-    </div>
+                    <div class="section-header-left">
+                        <div class="section-icon team">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <h2 class="section-title">Team</h2>
+                    </div>
 
-    <?php
-    // Check if there is any DOL assigned
-    $hasDOL = false;
-if (!empty($team)) {
-    foreach ($team as $member) {
-        if (!empty($member['emp_soc1_dol']) || !empty($member['emp_soc2_dol']) || 
-            !empty($member['emp_hipaa_dol']) || !empty($member['emp_hitrust_dol']) || 
-            !empty($member['emp_fisma_dol'])) {
-            $hasDOL = true;
-            break;
-        }
-    }
-}
-    ?>
+                    <?php
+                    // Check if there is any DOL assigned
+                    $hasDOL = false;
+                    if (!empty($team)) {
+                        foreach ($team as $member) {
+                            if (!empty($member['emp_soc1_dol']) || !empty($member['emp_soc2_dol']) || 
+                                !empty($member['emp_hipaa_dol']) || !empty($member['emp_hitrust_dol']) || 
+                                !empty($member['emp_fisma_dol'])) {
+                                $hasDOL = true;
+                                break;
+                            }
+                        }
+                    }
+                    ?>
 
-    <div style="display: flex; align-items: center; gap: 0.75rem;">
-        <?php if (!$hasDOL): ?>
-            <div style="
-                background-color: #ff4d4f;
-                color: white;
-                font-weight: 600;
-                padding: 0.25rem 0.6rem;
-                border-radius: 0.5rem;
-                font-size: 12px;
-                animation: pulse 1.5s infinite;
-            ">
-                No DOL Set
-            </div>
-        <?php endif; ?>
-        <button id="manageTeamIconBtn" class="btn-icon" style="margin: 0; padding: 0.5rem;" title="Manage team members">
-            <i class="bi bi-gear"></i>
-        </button>
-    </div>
-</div>
-
-                <!-- <button class="manage-btn" style="width: 100%; margin-bottom: 1.5rem; margin-top: 1.5rem; justify-content: center;">
-                    <i class="bi bi-gear"></i> Manage DOL
-                </button> -->
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <?php if (!$hasDOL): ?>
+                            <div style="
+                                background-color: #ff4d4f;
+                                color: white;
+                                font-weight: 600;
+                                padding: 0.25rem 0.6rem;
+                                border-radius: 0.5rem;
+                                font-size: 12px;
+                                animation: pulse 1.5s infinite;
+                            ">
+                                No DOL Set
+                            </div>
+                        <?php endif; ?>
+                        <button id="manageTeamIconBtn" class="btn-icon" style="margin: 0; padding: 0.5rem;" title="Manage team members">
+                            <i class="bi bi-gear"></i>
+                        </button>
+                    </div>
+                </div>
 
                 <div class="team-members">
                 <?php if (!empty($team)): ?>
 
                     <?php
-                    // -----------------------------
-                    // Safely count unique audit types (ignore null/empty)
-                    $auditTypes = array_filter(array_column($team, 'audit_type'), fn($v) => !is_null($v) && $v !== '');
-
                     // Group members by employee name and role
-$groupedTeam = [];
-foreach ($team as $member) {
-    $key = $member['emp_name'] . '|' . $member['role'];
-    if (!isset($groupedTeam[$key])) {
-        $dolMap = [];
-        $dolFields = [
-            'SOC 1' => 'emp_soc1_dol',
-            'SOC 2' => 'emp_soc2_dol',
-            'HIPAA' => 'emp_hipaa_dol',
-            'HITRUST' => 'emp_hitrust_dol',
-            'FISMA' => 'emp_fisma_dol',
-        ];
-        foreach ($dolFields as $auditType => $field) {
-            if (!empty($member[$field])) {
-                $dolMap[$auditType] = array_map('trim', explode(',', $member[$field]));
-            }
-        }
+                    $groupedTeam = [];
+                    foreach ($team as $member) {
+                        $key = $member['emp_name'] . '|' . $member['role'];
+                        if (!isset($groupedTeam[$key])) {
+                            $dolMap = [];
+                            $dolFields = [
+                                'SOC 1'   => 'emp_soc1_dol',
+                                'SOC 2'   => 'emp_soc2_dol',
+                                'HIPAA'   => 'emp_hipaa_dol',
+                                'HITRUST' => 'emp_hitrust_dol',
+                                'FISMA'   => 'emp_fisma_dol',
+                            ];
+                            foreach ($dolFields as $auditType => $field) {
+                                if (!empty($member[$field])) {
+                                    $dolMap[$auditType] = array_map('trim', explode(',', $member[$field]));
+                                }
+                            }
+                            $groupedTeam[$key] = [
+                                'emp_name'    => $member['emp_name'],
+                                'role'        => $member['role'],
+                                'audit_types' => $dolMap
+                            ];
+                        }
+                    }
 
-        $groupedTeam[$key] = [
-            'emp_name' => $member['emp_name'],
-            'role'     => $member['role'],
-            'audit_types' => $dolMap
-        ];
-    }
-}
-
-                    // -----------------------------
                     // Sort grouped team by role priority
                     $roleOrder = ['manager' => 1, 'senior' => 2, 'staff' => 3];
                     uasort($groupedTeam, function($a, $b) use ($roleOrder) {
@@ -1546,15 +1575,15 @@ foreach ($team as $member) {
                         <?php
                             // Get initials
                             $nameParts = explode(' ', $member['emp_name']);
-                            $initials = '';
+                            $initials  = '';
                             foreach ($nameParts as $part) { $initials .= strtoupper($part[0]); }
 
                             // Gradient colors by role
-                            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; // default
+                            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
                             switch (strtolower($member['role'] ?? '')) {
                                 case 'manager': $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; break;
-                                case 'senior': $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)'; break;
-                                case 'staff': $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)'; break;
+                                case 'senior':  $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)'; break;
+                                case 'staff':   $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)'; break;
                             }
                         ?>
                         <div class="team-member" style="display: flex; gap: 0.75rem; align-items: flex-start;">
@@ -1564,40 +1593,38 @@ foreach ($team as $member) {
                                 <div class="team-member-title"><?php echo htmlspecialchars(ucfirst($member['role'])); ?></div>
 
                                 <?php
-$dolOrder = ['SOC 1', 'SOC 2', 'HIPAA', 'HITRUST', 'FISMA'];
-$hasDolData = false;
-foreach ($dolOrder as $auditType) {
-    if (isset($member['audit_types'][$auditType]) && !empty($member['audit_types'][$auditType])) {
-        $hasDolData = true;
-        break;
-    }
-}
-?>
+                                $dolOrder   = ['SOC 1', 'SOC 2', 'HIPAA', 'HITRUST', 'FISMA'];
+                                $hasDolData = false;
+                                foreach ($dolOrder as $auditType) {
+                                    if (isset($member['audit_types'][$auditType]) && !empty($member['audit_types'][$auditType])) {
+                                        $hasDolData = true;
+                                        break;
+                                    }
+                                }
+                                ?>
 
-<?php if ($hasDolData && strtolower($member['role']) !== 'manager'): ?>
-    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
-            <i class="bi bi-briefcase" style="font-size: 11px; color: var(--text-secondary);"></i>
-            <span style="font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</span>
-        </div>
-        <?php foreach ($dolOrder as $auditType): ?>
-            <?php if (isset($member['audit_types'][$auditType]) && !empty($member['audit_types'][$auditType])): ?>
-                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                    <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); min-width: 55px;"><?php echo htmlspecialchars($auditType); ?></span>
-                    <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
-                        <?php foreach ($member['audit_types'][$auditType] as $tag): ?>
-                            <?php if (!empty(trim($tag))): ?>
-                                <span style="background: rgba(68, 135, 252, 0.15); color: var(--primary-blue); border: 1px solid rgba(68, 135, 252, 0.3); padding: 0.2rem 0.55rem; border-radius: 5px; font-size: 11px; font-weight: 700;"><?php echo htmlspecialchars(trim($tag)); ?></span>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            <?php endif; ?>
-        <?php endforeach; ?>
-    </div>
-<?php endif; ?>
-
-
+                                <?php if ($hasDolData && strtolower($member['role']) !== 'manager'): ?>
+                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+                                            <i class="bi bi-briefcase" style="font-size: 11px; color: var(--text-secondary);"></i>
+                                            <span style="font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</span>
+                                        </div>
+                                        <?php foreach ($dolOrder as $auditType): ?>
+                                            <?php if (isset($member['audit_types'][$auditType]) && !empty($member['audit_types'][$auditType])): ?>
+                                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                                                    <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); min-width: 55px;"><?php echo htmlspecialchars($auditType); ?></span>
+                                                    <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                                                        <?php foreach ($member['audit_types'][$auditType] as $tag): ?>
+                                                            <?php if (!empty(trim($tag))): ?>
+                                                                <span style="background: rgba(68, 135, 252, 0.15); color: var(--primary-blue); border: 1px solid rgba(68, 135, 252, 0.3); padding: 0.2rem 0.55rem; border-radius: 5px; font-size: 11px; font-weight: 700;"><?php echo htmlspecialchars(trim($tag)); ?></span>
+                                                            <?php endif; ?>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
 
                             </div>
                         </div>
@@ -1611,95 +1638,12 @@ foreach ($dolOrder as $auditType) {
                 <?php endif; ?>
                 </div>
             </div>
+        </div><!-- /.left-column -->
 
-            <!-- ========== DETAILS SECTION ========== -->
-            <div class="details-section">
-                <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                    <div class="section-header-left">
-                        <div class="section-icon details">
-                            <i class="bi bi-shield-check"></i>
-                        </div>
-                        <h2 class="section-title">Details</h2>
-                    </div>
-                </div>
-
-                <div class="details-grid" style="margin-top: 1.5rem;">
-                    <!-- Scope -->
-                    <div class="detail-item">
-                        <div class="detail-label">Scope</div>
-                        <div class="detail-value"><?php echo htmlspecialchars($engagement['eng_scope'] ?? 'N/A'); ?></div>
-                    </div>
-
-
-                    <!-- Created -->
-                    <div class="detail-item">
-                        <div class="detail-label">Created</div>
-                        <div class="detail-value">
-                            <?php 
-                            $created = $engagement['eng_created'] ?? null;
-                            echo ($created && $created !== '0000-00-00') 
-                                ? date("M d, Y", strtotime($created))
-                                : 'N/A';
-                            ?>
-                        </div>
-                    </div>
-
-                    <!-- Last Updated -->
-                    <div class="detail-item">
-                        <div class="detail-label">Last Updated</div>
-                        <div class="detail-value">
-                            <?php 
-                            $updated = $engagement['eng_updated'] ?? null;
-                            echo ($updated && $updated !== '0000-00-00') 
-                                ? date("M d, Y", strtotime($updated))
-                                : 'N/A';
-                            ?>
-                        </div>
-                    </div>
-
-                    <!-- Archive Date -->
-                    <div class="detail-item">
-                        <div class="detail-label">Archive Date</div>
-                        <div class="detail-value">
-                            <?php 
-                            $archiveDate = $engagement['eng_archive'] ?? null;
-                            echo ($archiveDate && $archiveDate !== '0000-00-00') 
-                                ? date("M d, Y", strtotime($archiveDate))
-                                : 'N/A';
-                            ?>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ========== NOTES SECTION ========== -->
-            <div class="notes-section">
-                <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-                    <div class="section-header-left">
-                        <div class="section-icon notes">
-                            <i class="bi bi-sticky"></i>
-                        </div>
-                        <h2 class="section-title">Notes</h2>
-                    </div>
-                </div>
-
-                <div class="notes-content" style="margin-top: 1.5rem;">
-                    <?php 
-                    $notes = $engagement['eng_notes'] ?? '';
-                    if (!empty($notes)) {
-                        echo htmlspecialchars($notes);
-                    } else {
-                        echo '<span style="color: var(--text-secondary); font-style: italic;">No notes added yet.</span>';
-                    }
-                    ?>
-                </div>
-            </div>
-        </div>
-
-        <!-- ========== RIGHT COLUMN (Timeline & Milestones Stacked) ========== -->
+        <!-- ========== RIGHT COLUMN: Timeline & Milestones stacked ========== -->
         <div class="right-column">
 
-            <!-- ========== TIMELINE & KEY DATES SECTION (TOP RIGHT) ========== -->
+            <!-- ========== TIMELINE & KEY DATES SECTION ========== -->
             <div class="timeline-section">
                 <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                     <div class="section-header-left">
@@ -1716,97 +1660,79 @@ foreach ($dolOrder as $auditType) {
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
 
                 <?php
-// Your existing renderTimelineStatus function stays exactly the same
-function renderTimelineStatus($date, $completed) {
+                function renderTimelineStatus($date, $completed) {
+                    if (!$date) {
+                        echo '<div class="timeline-date">—</div>';
+                        echo '<div class="timeline-status">Not scheduled</div>';
+                        return;
+                    }
 
-    if (!$date) {
-        echo '<div class="timeline-date">—</div>';
-        echo '<div class="timeline-status">Not scheduled</div>';
-        return;
-    }
+                    $formattedDate = date("M j, Y", strtotime($date));
+                    $today   = new DateTime();
+                    $dueDate = new DateTime($date);
+                    $diff    = $today->diff($dueDate);
+                    $days    = $diff->days;
 
-    $formattedDate = date("M j, Y", strtotime($date));
+                    echo '<div class="timeline-date">'.htmlspecialchars($formattedDate).'</div>';
 
-    $today = new DateTime();
-    $dueDate = new DateTime($date);
+                    if (!empty($completed)) {
+                        echo '<div class="timeline-status completed">
+                                <i class="bi bi-check-circle-fill"></i> Completed
+                              </div>';
+                    } else {
+                        if ($today <= $dueDate) {
+                            echo '<div class="timeline-status">'.$days.'d remaining</div>';
+                        } else {
+                            echo '<div class="timeline-status overdue">
+                                    <i class="bi bi-x-circle-fill"></i> '.$days.'d overdue
+                                  </div>';
+                        }
+                    }
+                }
 
-    $diff = $today->diff($dueDate);
-    $days = $diff->days;
+                $currentEngagementId = $engagementId;
+                $timeline = null;
+                $allTimelineData = getAllTimelineData($conn);
 
-    echo '<div class="timeline-date">'.htmlspecialchars($formattedDate).'</div>';
+                foreach ($allTimelineData as $row) {
+                    if ($row['engagement_idno'] == $currentEngagementId) {
+                        $timeline = $row;
+                        break;
+                    }
+                }
 
-    if (!empty($completed)) {
+                if (!$timeline) {
+                    $timeline = [
+                        'internal_planning_call_date'         => null,
+                        'internal_planning_call_completed_at' => null,
+                        'planning_memo_date'                   => null,
+                        'planning_memo_completed_at'           => null,
+                        'irl_due_date'                         => null,
+                        'irl_completed_at'                     => null,
+                        'client_planning_call_date'            => null,
+                        'client_planning_call_completed_at'    => null,
+                        'fieldwork_date'                       => null,
+                        'fieldwork_completed_at'               => null,
+                        'leadsheet_date'                       => null,
+                        'leadsheet_completed_at'               => null,
+                        'conclusion_memo_date'                 => null,
+                        'conclusion_memo_completed_at'         => null,
+                        'draft_report_due_date'                => null,
+                        'draft_report_completed_at'            => null,
+                        'final_report_date'                    => null,
+                        'final_report_completed_at'            => null,
+                        'archive_date'                         => null,
+                        'archive_completed_at'                 => null
+                    ];
+                }
+                ?>
 
-        echo '<div class="timeline-status completed">
-                <i class="bi bi-check-circle-fill"></i> Completed
-              </div>';
-
-    } else {
-
-        if ($today <= $dueDate) {
-
-            echo '<div class="timeline-status">'.$days.'d remaining</div>';
-
-        } else {
-
-            echo '<div class="timeline-status overdue">
-                    <i class="bi bi-x-circle-fill"></i> '.$days.'d overdue
-                  </div>';
-
-        }
-    }
-}
-
-$currentEngagementId = $engagementId;
-
-$timeline = null;
-
-$allTimelineData = getAllTimelineData($conn);
-
-foreach ($allTimelineData as $row) {
-    if ($row['engagement_idno'] == $currentEngagementId) {
-        $timeline = $row;
-        break;
-    }
-}
-
-if (!$timeline) {
-    $timeline = [
-        'internal_planning_call_date' => null,
-        'internal_planning_call_completed_at' => null,
-        'planning_memo_date' => null,
-        'planning_memo_completed_at' => null,
-        'irl_due_date' => null,
-        'irl_completed_at' => null,
-        'client_planning_call_date' => null,
-        'client_planning_call_completed_at' => null,
-        'fieldwork_date' => null,
-        'fieldwork_completed_at' => null,
-        'leadsheet_date' => null,
-        'leadsheet_completed_at' => null,
-        'conclusion_memo_date' => null,
-        'conclusion_memo_completed_at' => null,
-        'draft_report_due_date' => null,
-        'draft_report_completed_at' => null,
-        'final_report_date' => null,
-        'final_report_completed_at' => null,
-        'archive_date' => null,
-        'archive_completed_at' => null
-    ];
-}
-
-?>
-
+                    <!-- Internal Planning Call -->
                     <div class="timeline-item" data-timeline-field="internal_planning_call" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> INTERNAL PLANNING CALL
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['internal_planning_call_date'],
-                            $timeline['internal_planning_call_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['internal_planning_call_date'], $timeline['internal_planning_call_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['internal_planning_call_completed_at']) ? 'checked' : ''; ?>" data-field-date="internal_planning_call_date" data-field-completed="internal_planning_call_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
@@ -1817,28 +1743,18 @@ if (!$timeline) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-text" style="font-size: 12px;"></i> PLANNING MEMO
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['planning_memo_date'],
-                            $timeline['planning_memo_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['planning_memo_date'], $timeline['planning_memo_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['planning_memo_completed_at']) ? 'checked' : ''; ?>" data-field-date="planning_memo_date" data-field-completed="planning_memo_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
 
-                    <!-- URL Due -->
+                    <!-- IRL Due -->
                     <div class="timeline-item" data-timeline-field="irl_due" data-engagement-id="<?php echo htmlspecialchars($engagementId); ?>">
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> IRL DUE
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['irl_due_date'],
-                            $timeline['irl_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['irl_due_date'], $timeline['irl_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['irl_completed_at']) ? 'checked' : ''; ?>" data-field-date="irl_due_date" data-field-completed="irl_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
@@ -1849,12 +1765,7 @@ if (!$timeline) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-calendar" style="font-size: 12px;"></i> CLIENT PLANNING CALL
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['client_planning_call_date'],
-                            $timeline['client_planning_call_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['client_planning_call_date'], $timeline['client_planning_call_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['client_planning_call_completed_at']) ? 'checked' : ''; ?>" data-field-date="client_planning_call_date" data-field-completed="client_planning_call_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
@@ -1865,12 +1776,7 @@ if (!$timeline) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-bar-chart" style="font-size: 12px;"></i> FIELDWORK
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['fieldwork_date'],
-                            $timeline['fieldwork_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['fieldwork_date'], $timeline['fieldwork_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['fieldwork_completed_at']) ? 'checked' : ''; ?>" data-field-date="fieldwork_date" data-field-completed="fieldwork_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
@@ -1881,12 +1787,7 @@ if (!$timeline) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-info-circle" style="font-size: 12px;"></i> LEADSHEET DUE
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['leadsheet_date'],
-                            $timeline['leadsheet_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['leadsheet_date'], $timeline['leadsheet_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['leadsheet_completed_at']) ? 'checked' : ''; ?>" data-field-date="leadsheet_date" data-field-completed="leadsheet_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
@@ -1897,12 +1798,7 @@ if (!$timeline) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-text" style="font-size: 12px;"></i> CONCLUSION MEMO
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['conclusion_memo_date'],
-                            $timeline['conclusion_memo_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['conclusion_memo_date'], $timeline['conclusion_memo_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['conclusion_memo_completed_at']) ? 'checked' : ''; ?>" data-field-date="conclusion_memo_date" data-field-completed="conclusion_memo_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
@@ -1913,12 +1809,7 @@ if (!$timeline) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-text" style="font-size: 12px;"></i> DRAFT REPORT DUE
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['draft_report_due_date'],
-                            $timeline['draft_report_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['draft_report_due_date'], $timeline['draft_report_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['draft_report_completed_at']) ? 'checked' : ''; ?>" data-field-date="draft_report_due_date" data-field-completed="draft_report_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
@@ -1929,12 +1820,7 @@ if (!$timeline) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-file-earmark" style="font-size: 12px;"></i> FINAL REPORT DUE
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['final_report_date'],
-                            $timeline['final_report_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['final_report_date'], $timeline['final_report_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['final_report_completed_at']) ? 'checked' : ''; ?>" data-field-date="final_report_date" data-field-completed="final_report_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
@@ -1945,20 +1831,16 @@ if (!$timeline) {
                         <div style="font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
                             <i class="bi bi-archive" style="font-size: 12px;"></i> ARCHIVE DATE
                         </div>
-                        <?php
-                        renderTimelineStatus(
-                            $timeline['archive_date'],
-                            $timeline['archive_completed_at']
-                        );
-                        ?>
+                        <?php renderTimelineStatus($timeline['archive_date'], $timeline['archive_completed_at']); ?>
                         <div class="timeline-checkbox-container <?php echo !empty($timeline['archive_completed_at']) ? 'checked' : ''; ?>" data-field-date="archive_date" data-field-completed="archive_completed_at" style="position: absolute; bottom: 1rem; right: 1rem; cursor: pointer;">
                             <i class="bi bi-check-circle-fill" style="font-size: 24px; color: var(--success-green);"></i>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- ========== MILESTONES SECTION (BOTTOM RIGHT) ========== -->
+                </div>
+            </div><!-- /.timeline-section -->
+
+            <!-- ========== MILESTONES SECTION ========== -->
             <div class="milestones-section">
                 <div class="section-header" style="margin-bottom: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
                     <div class="section-header-left">
@@ -1975,15 +1857,13 @@ if (!$timeline) {
                         if (!empty($milestones)) {
                             $completedCount = 0;
                             foreach ($milestones as $milestone) {
-                                if ($milestone['is_completed'] === 'Y') {
-                                    $completedCount++;
-                                }
+                                if ($milestone['is_completed'] === 'Y') { $completedCount++; }
                             }
-                            $totalCount = count($milestones);
+                            $totalCount      = count($milestones);
                             $percentComplete = round(($completedCount / $totalCount) * 100);
                         } else {
-                            $completedCount = 0;
-                            $totalCount = 0;
+                            $completedCount  = 0;
+                            $totalCount      = 0;
                             $percentComplete = 0;
                         }
                         ?>
@@ -1994,23 +1874,18 @@ if (!$timeline) {
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
                     <?php if (!empty($milestones)): ?>
-                        <?php 
-                        // Calculate completed milestones
+                        <?php
                         $completedCount = 0;
                         foreach ($milestones as $milestone) {
-                            if (!empty($milestone['milestone_completed_at'])) {
-                                $completedCount++;
-                            }
+                            if (!empty($milestone['milestone_completed_at'])) { $completedCount++; }
                         }
-                        $totalCount = count($milestones);
+                        $totalCount      = count($milestones);
                         $percentComplete = $totalCount > 0 ? round(($completedCount / $totalCount) * 100) : 0;
                         ?>
                         <?php foreach ($milestones as $milestone): ?>
                             <?php
                                 $isCompleted = ($milestone['is_completed'] === 'Y');
-                                
-                                // Safely handle the date - check for null, empty, or invalid dates
-                                $dueDateRaw = $milestone['due_date'] ?? null;
+                                $dueDateRaw  = $milestone['due_date'] ?? null;
                                 if ($dueDateRaw && $dueDateRaw !== '0000-00-00' && $dueDateRaw !== '0000-00-00 00:00:00') {
                                     $dueDate = date("M j, Y", strtotime($dueDateRaw));
                                 } else {
@@ -2026,7 +1901,6 @@ if (!$timeline) {
                                 <div class="milestone-content">
                                     <div class="milestone-title <?php echo $isCompleted ? 'completed' : ''; ?>">
                                         <?php 
-                                        // Convert snake_case to Title Case
                                         $milestoneTitle = $milestone['milestone_type'];
                                         $milestoneTitle = implode(' ', array_map(function($word) {
                                             return ucfirst(strtolower($word));
@@ -2045,11 +1919,11 @@ if (!$timeline) {
                         </div>
                     <?php endif; ?>
                 </div>
-            </div>
+            </div><!-- /.milestones-section -->
 
-        </div>
+        </div><!-- /.right-column -->
 
-    </div>
+    </div><!-- /.two-column-wrapper -->
 
     <!-- Dark Mode Button -->
     <button class="dark-mode-btn" id="darkModeBtn" title="Toggle dark mode">
@@ -2062,7 +1936,6 @@ if (!$timeline) {
 <script>
     // Scroll detection for header shadow
     const pageHeader = document.getElementById('pageHeader');
-    
     window.addEventListener('scroll', () => {
         if (window.scrollY > 0) {
             pageHeader.classList.add('scrolled');
@@ -2107,9 +1980,9 @@ if (!$timeline) {
     }
 
     if (sessionStorage.getItem('reopenTeamModal')) {
-    sessionStorage.removeItem('reopenTeamModal');
-    document.getElementById('manageTeamIconBtn').click();
-}
+        sessionStorage.removeItem('reopenTeamModal');
+        document.getElementById('manageTeamIconBtn').click();
+    }
 
     darkModeBtn?.addEventListener('click', () => {
         const isDark = document.body.classList.toggle('dark-mode');
@@ -2123,21 +1996,17 @@ if (!$timeline) {
         checkbox.addEventListener('click', async function(e) {
             e.stopPropagation();
             
-            const milestoneItem = this.closest('.milestone-item');
-            const milestoneId = milestoneItem.getAttribute('data-milestone-id');
-            
+            const milestoneItem  = this.closest('.milestone-item');
+            const milestoneId    = milestoneItem.getAttribute('data-milestone-id');
             if (!milestoneId) return;
 
-            // Determine current state based on the 'completed' class
             const hasCompletedClass = this.classList.contains('completed');
-            const newStatus = hasCompletedClass ? 'N' : 'Y';
+            const newStatus         = hasCompletedClass ? 'N' : 'Y';
 
             try {
                 const response = await fetch('../api/update-milestone.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         engagement_id: '<?php echo $engagementId; ?>',
                         milestone_id: milestoneId,
@@ -2145,53 +2014,40 @@ if (!$timeline) {
                     })
                 });
 
-                // First check if response is ok
                 if (!response.ok) {
                     console.error('HTTP Error:', response.status, response.statusText);
                     alert('HTTP Error: ' + response.status);
                     return;
                 }
 
-                // Get the response text first
                 const responseText = await response.text();
-                console.log('Raw response:', responseText);
-
-                // Try to parse as JSON
                 let data;
                 try {
                     data = JSON.parse(responseText);
                 } catch (parseError) {
                     console.error('JSON Parse Error:', parseError);
-                    console.error('Response was:', responseText);
                     alert('Invalid response from server: ' + responseText.substring(0, 100));
                     return;
                 }
 
                 if (data.success) {
-                    // Remove both classes first
                     this.classList.remove('completed', 'pending');
-                    
-                    // Add the appropriate class based on new status
                     if (newStatus === 'Y') {
                         this.classList.add('completed');
                     } else {
                         this.classList.add('pending');
                     }
                     
-                    // Update the icon
                     const icon = this.querySelector('i');
                     if (icon) {
                         icon.classList.remove('bi-check-circle-fill');
-                        if (newStatus === 'Y') {
-                            icon.classList.add('bi-check-circle-fill');
-                        }
+                        if (newStatus === 'Y') { icon.classList.add('bi-check-circle-fill'); }
                     } else if (newStatus === 'Y') {
                         const newIcon = document.createElement('i');
                         newIcon.className = 'bi bi-check-circle-fill';
                         this.appendChild(newIcon);
                     }
                     
-                    // Update the milestone title styling
                     const milestoneTitle = milestoneItem.querySelector('.milestone-title');
                     if (milestoneTitle) {
                         if (newStatus === 'Y') {
@@ -2216,26 +2072,23 @@ if (!$timeline) {
         container.addEventListener('click', async function(e) {
             e.stopPropagation();
             
-            const timelineItem = this.closest('.timeline-item');
-            const engagementId = timelineItem.getAttribute('data-engagement-id');
-            const dateField = this.getAttribute('data-field-date');
-            const completedField = this.getAttribute('data-field-completed');
-            
+            const timelineItem     = this.closest('.timeline-item');
+            const engagementId     = timelineItem.getAttribute('data-engagement-id');
+            const dateField        = this.getAttribute('data-field-date');
+            const completedField   = this.getAttribute('data-field-completed');
             if (!engagementId || !dateField || !completedField) return;
 
-            const isChecked = this.classList.contains('checked');
-            const completedDateTime = !isChecked ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null;
+            const isChecked           = this.classList.contains('checked');
+            const completedDateTime   = !isChecked ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null;
 
             try {
                 const response = await fetch('../api/update-timeline-checkbox.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        engagement_id: engagementId,
-                        date_field: dateField,
-                        completed_field: completedField,
+                        engagement_id:      engagementId,
+                        date_field:         dateField,
+                        completed_field:    completedField,
                         completed_datetime: completedDateTime
                     })
                 });
@@ -2247,9 +2100,7 @@ if (!$timeline) {
                 }
 
                 const data = await response.json();
-
                 if (data.success) {
-                    // Reload the page to refresh data
                     location.reload();
                 } else {
                     alert('Error: ' + (data.message || 'Failed to update timeline'));
@@ -2263,21 +2114,20 @@ if (!$timeline) {
 
     // Edit Engagement Button Handler
     document.getElementById('editEngagementBtn').addEventListener('click', function() {
-        // Get engagement data from PHP variables
         const engagementData = {
-            eng_name: '<?php echo htmlspecialchars($engagementData['eng_name'] ?? '', ENT_QUOTES); ?>',
-            eng_location: '<?php echo htmlspecialchars($engagementData['eng_location'] ?? '', ENT_QUOTES); ?>',
-            eng_poc: '<?php echo htmlspecialchars($engagementData['eng_poc'] ?? '', ENT_QUOTES); ?>',
-            eng_status: '<?php echo htmlspecialchars($engagementData['eng_status'] ?? '', ENT_QUOTES); ?>',
-            eng_tsc: '<?php echo htmlspecialchars($engagementData['eng_tsc'] ?? '', ENT_QUOTES); ?>',
-            eng_audit_type: '<?php echo htmlspecialchars($engagementData['eng_audit_type'] ?? '', ENT_QUOTES); ?>',
-            eng_soc_type: '<?php echo htmlspecialchars($engagementData['eng_soc_type'] ?? '', ENT_QUOTES); ?>',
-            eng_scope: '<?php echo htmlspecialchars($engagementData['eng_scope'] ?? '', ENT_QUOTES); ?>',
-            eng_as_of_date: '<?php echo htmlspecialchars($engagementData['eng_as_of_date'] ?? '', ENT_QUOTES); ?>',
+            eng_name:         '<?php echo htmlspecialchars($engagementData['eng_name'] ?? '', ENT_QUOTES); ?>',
+            eng_location:     '<?php echo htmlspecialchars($engagementData['eng_location'] ?? '', ENT_QUOTES); ?>',
+            eng_poc:          '<?php echo htmlspecialchars($engagementData['eng_poc'] ?? '', ENT_QUOTES); ?>',
+            eng_status:       '<?php echo htmlspecialchars($engagementData['eng_status'] ?? '', ENT_QUOTES); ?>',
+            eng_tsc:          '<?php echo htmlspecialchars($engagementData['eng_tsc'] ?? '', ENT_QUOTES); ?>',
+            eng_audit_type:   '<?php echo htmlspecialchars($engagementData['eng_audit_type'] ?? '', ENT_QUOTES); ?>',
+            eng_soc_type:     '<?php echo htmlspecialchars($engagementData['eng_soc_type'] ?? '', ENT_QUOTES); ?>',
+            eng_scope:        '<?php echo htmlspecialchars($engagementData['eng_scope'] ?? '', ENT_QUOTES); ?>',
+            eng_as_of_date:   '<?php echo htmlspecialchars($engagementData['eng_as_of_date'] ?? '', ENT_QUOTES); ?>',
             eng_start_period: '<?php echo htmlspecialchars($engagementData['eng_start_period'] ?? '', ENT_QUOTES); ?>',
-            eng_end_period: '<?php echo htmlspecialchars($engagementData['eng_end_period'] ?? '', ENT_QUOTES); ?>',
-            eng_repeat: '<?php echo htmlspecialchars($engagementData['eng_repeat'] ?? '', ENT_QUOTES); ?>',
-            eng_notes: '<?php echo htmlspecialchars($engagementData['eng_notes'] ?? '', ENT_QUOTES); ?>'
+            eng_end_period:   '<?php echo htmlspecialchars($engagementData['eng_end_period'] ?? '', ENT_QUOTES); ?>',
+            eng_repeat:       '<?php echo htmlspecialchars($engagementData['eng_repeat'] ?? '', ENT_QUOTES); ?>',
+            eng_notes:        '<?php echo htmlspecialchars($engagementData['eng_notes'] ?? '', ENT_QUOTES); ?>'
         };
 
         const htmlContent = `
@@ -2304,10 +2154,10 @@ if (!$timeline) {
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Status</label>
                         <select id="edit_eng_status" class="swal2-input" style="width: 100%; padding: 0.6rem;">
-                            <option value="planning" ${engagementData.eng_status === 'planning' ? 'selected' : ''}>Planning</option>
+                            <option value="planning"    ${engagementData.eng_status === 'planning'    ? 'selected' : ''}>Planning</option>
                             <option value="in-progress" ${engagementData.eng_status === 'in-progress' ? 'selected' : ''}>In Progress</option>
-                            <option value="in-review" ${engagementData.eng_status === 'in-review' ? 'selected' : ''}>In Review</option>
-                            <option value="complete" ${engagementData.eng_status === 'complete' ? 'selected' : ''}>Complete</option>
+                            <option value="in-review"   ${engagementData.eng_status === 'in-review'   ? 'selected' : ''}>In Review</option>
+                            <option value="complete"    ${engagementData.eng_status === 'complete'    ? 'selected' : ''}>Complete</option>
                         </select>
                     </div>
 
@@ -2321,7 +2171,6 @@ if (!$timeline) {
                 <div style="margin-bottom: 2rem;">
                     <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
                     
-                    <!-- Audit Details Section -->
                     <div style="margin-bottom: 2rem;">
                         <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
                         
@@ -2359,7 +2208,6 @@ if (!$timeline) {
                             </div>
                         </div>
 
-                        <!-- SOC Type Selector (only show if SOC 1 or SOC 2 is selected) -->
                         <div id="soc_type_section" style="margin-bottom: 1.5rem; display: none; padding: 1rem; background: rgba(68, 135, 252, 0.1); border-radius: 8px; border-left: 3px solid var(--primary-blue);">
                             <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC Audit Type</label>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
@@ -2373,13 +2221,11 @@ if (!$timeline) {
                                 </label>
                             </div>
 
-                            <!-- Type 1: As Of Date -->
                             <div id="soc_type1_dates" style="display: none;">
                                 <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
                                 <input type="date" id="edit_soc_as_of_date" class="swal2-input" value="${engagementData.eng_as_of_date}" style="width: 100%;">
                             </div>
 
-                            <!-- Type 2: Start and End Dates -->
                             <div id="soc_type2_dates" style="display: none;">
                                 <div style="margin-bottom: 0.75rem;">
                                     <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Start Period</label>
@@ -2425,29 +2271,21 @@ if (!$timeline) {
             showCancelButton: true,
             width: '700px',
             didOpen: () => {
-                // Handle audit type checkboxes and SOC type visibility
                 const auditCheckboxes = document.querySelectorAll('.audit-type-checkbox');
-                const socTypeSection = document.getElementById('soc_type_section');
-                const socTypeRadios = document.querySelectorAll('input[name="soc_type"]');
-                const socType1Dates = document.getElementById('soc_type1_dates');
-                const socType2Dates = document.getElementById('soc_type2_dates');
+                const socTypeSection  = document.getElementById('soc_type_section');
+                const socTypeRadios   = document.querySelectorAll('input[name="soc_type"]');
+                const socType1Dates   = document.getElementById('soc_type1_dates');
+                const socType2Dates   = document.getElementById('soc_type2_dates');
                 
                 function updateFormVisibility() {
-                    const selectedTypes = Array.from(auditCheckboxes)
-                        .filter(cb => cb.checked)
-                        .map(cb => cb.value);
-                    
-                    // Show SOC type section only if SOC 1 or SOC 2 is checked
+                    const selectedTypes = Array.from(auditCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
                     const hasSOC = selectedTypes.includes('SOC 1') || selectedTypes.includes('SOC 2');
                     socTypeSection.style.display = hasSOC ? 'block' : 'none';
-                    
-                    // Update date fields based on selected SOC type
                     updateDateFields();
                 }
                 
                 function updateDateFields() {
                     const selectedSocType = document.querySelector('input[name="soc_type"]:checked')?.value;
-                    
                     if (selectedSocType === 'Type 1') {
                         socType1Dates.style.display = 'block';
                         socType2Dates.style.display = 'none';
@@ -2457,45 +2295,35 @@ if (!$timeline) {
                     }
                 }
                 
-                // Listen to checkbox changes
                 auditCheckboxes.forEach(checkbox => {
                     checkbox.addEventListener('change', updateFormVisibility);
                 });
-                
-                // Listen to SOC type radio changes
                 socTypeRadios.forEach(radio => {
                     radio.addEventListener('change', updateDateFields);
                 });
-                
-                // Initial visibility update
                 updateFormVisibility();
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                // Collect selected audit types
                 const selectedAuditTypes = Array.from(document.querySelectorAll('.audit-type-checkbox'))
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value)
-                    .join(',');
-
-                // Get selected SOC type
+                    .filter(cb => cb.checked).map(cb => cb.value).join(',');
                 const selectedSocType = document.querySelector('input[name="soc_type"]:checked')?.value || '';
 
                 const updatedData = {
-                    engagement_id: '<?php echo $engagementId; ?>',
-                    eng_name: document.getElementById('edit_eng_name').value,
-                    eng_location: document.getElementById('edit_eng_location').value,
-                    eng_poc: document.getElementById('edit_eng_poc').value,
-                    eng_status: document.getElementById('edit_eng_status').value,
-                    eng_tsc: document.getElementById('edit_eng_tsc').value,
-                    eng_audit_type: selectedAuditTypes,
-                    eng_soc_type: selectedSocType,
-                    eng_scope: document.getElementById('edit_eng_scope').value,
-                    eng_as_of_date: document.getElementById('edit_soc_as_of_date')?.value || '',
+                    engagement_id:    '<?php echo $engagementId; ?>',
+                    eng_name:         document.getElementById('edit_eng_name').value,
+                    eng_location:     document.getElementById('edit_eng_location').value,
+                    eng_poc:          document.getElementById('edit_eng_poc').value,
+                    eng_status:       document.getElementById('edit_eng_status').value,
+                    eng_tsc:          document.getElementById('edit_eng_tsc').value,
+                    eng_audit_type:   selectedAuditTypes,
+                    eng_soc_type:     selectedSocType,
+                    eng_scope:        document.getElementById('edit_eng_scope').value,
+                    eng_as_of_date:   document.getElementById('edit_soc_as_of_date')?.value || '',
                     eng_start_period: document.getElementById('edit_soc_start_period')?.value || '',
-                    eng_end_period: document.getElementById('edit_soc_end_period')?.value || '',
-                    eng_repeat: document.getElementById('edit_eng_repeat').checked ? 'Y' : 'N',
-                    eng_notes: document.getElementById('edit_eng_notes').value
+                    eng_end_period:   document.getElementById('edit_soc_end_period')?.value || '',
+                    eng_repeat:       document.getElementById('edit_eng_repeat').checked ? 'Y' : 'N',
+                    eng_notes:        document.getElementById('edit_eng_notes').value
                 };
                 
                 fetch('../api/update-engagement.php', {
@@ -2522,18 +2350,17 @@ if (!$timeline) {
 
     // Timeline Manage Button Handler
     document.getElementById('timelineManageBtn').addEventListener('click', function() {
-        // Get current timeline values from the page
         const timelineData = {
             internal_planning_call_date: '<?php echo htmlspecialchars($timeline['internal_planning_call_date'] ?? ''); ?>',
-            planning_memo_date: '<?php echo htmlspecialchars($timeline['planning_memo_date'] ?? ''); ?>',
-            irl_due_date: '<?php echo htmlspecialchars($timeline['irl_due_date'] ?? ''); ?>',
-            client_planning_call_date: '<?php echo htmlspecialchars($timeline['client_planning_call_date'] ?? ''); ?>',
-            fieldwork_date: '<?php echo htmlspecialchars($timeline['fieldwork_date'] ?? ''); ?>',
-            leadsheet_date: '<?php echo htmlspecialchars($timeline['leadsheet_date'] ?? ''); ?>',
-            conclusion_memo_date: '<?php echo htmlspecialchars($timeline['conclusion_memo_date'] ?? ''); ?>',
-            draft_report_due_date: '<?php echo htmlspecialchars($timeline['draft_report_due_date'] ?? ''); ?>',
-            final_report_date: '<?php echo htmlspecialchars($timeline['final_report_date'] ?? ''); ?>',
-            archive_date: '<?php echo htmlspecialchars($timeline['archive_date'] ?? ''); ?>'
+            planning_memo_date:          '<?php echo htmlspecialchars($timeline['planning_memo_date'] ?? ''); ?>',
+            irl_due_date:                '<?php echo htmlspecialchars($timeline['irl_due_date'] ?? ''); ?>',
+            client_planning_call_date:   '<?php echo htmlspecialchars($timeline['client_planning_call_date'] ?? ''); ?>',
+            fieldwork_date:              '<?php echo htmlspecialchars($timeline['fieldwork_date'] ?? ''); ?>',
+            leadsheet_date:              '<?php echo htmlspecialchars($timeline['leadsheet_date'] ?? ''); ?>',
+            conclusion_memo_date:        '<?php echo htmlspecialchars($timeline['conclusion_memo_date'] ?? ''); ?>',
+            draft_report_due_date:       '<?php echo htmlspecialchars($timeline['draft_report_due_date'] ?? ''); ?>',
+            final_report_date:           '<?php echo htmlspecialchars($timeline['final_report_date'] ?? ''); ?>',
+            archive_date:                '<?php echo htmlspecialchars($timeline['archive_date'] ?? ''); ?>'
         };
 
         Swal.fire({
@@ -2586,38 +2413,32 @@ if (!$timeline) {
             cancelButtonText: 'Cancel',
             showCancelButton: true,
             didOpen: () => {
-                // Optional: Focus on first input
                 document.getElementById('internal_planning_call_date').focus();
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                // Collect all values
                 const updatedData = {
-                    engagement_id: '<?php echo $engagementId; ?>',
+                    engagement_id:               '<?php echo $engagementId; ?>',
                     internal_planning_call_date: document.getElementById('internal_planning_call_date').value,
-                    planning_memo_date: document.getElementById('planning_memo_date').value,
-                    irl_due_date: document.getElementById('irl_due_date').value,
-                    client_planning_call_date: document.getElementById('client_planning_call_date').value,
-                    fieldwork_date: document.getElementById('fieldwork_date').value,
-                    leadsheet_date: document.getElementById('leadsheet_date').value,
-                    conclusion_memo_date: document.getElementById('conclusion_memo_date').value,
-                    draft_report_due_date: document.getElementById('draft_report_due_date').value,
-                    final_report_date: document.getElementById('final_report_date').value,
-                    archive_date: document.getElementById('archive_date').value
+                    planning_memo_date:          document.getElementById('planning_memo_date').value,
+                    irl_due_date:                document.getElementById('irl_due_date').value,
+                    client_planning_call_date:   document.getElementById('client_planning_call_date').value,
+                    fieldwork_date:              document.getElementById('fieldwork_date').value,
+                    leadsheet_date:              document.getElementById('leadsheet_date').value,
+                    conclusion_memo_date:        document.getElementById('conclusion_memo_date').value,
+                    draft_report_due_date:       document.getElementById('draft_report_due_date').value,
+                    final_report_date:           document.getElementById('final_report_date').value,
+                    archive_date:                document.getElementById('archive_date').value
                 };
 
-                // Send to API
                 fetch('../api/update-timeline.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedData)
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Set flag to show toast after reload
                         sessionStorage.setItem('showTimelineToast', 'true');
                         location.reload();
                     } else {
@@ -2634,10 +2455,8 @@ if (!$timeline) {
 
     // Milestones Manage Button Handler
     document.getElementById('milestonesManageBtn').addEventListener('click', function() {
-        // Get current milestones
         const milestones = <?php echo json_encode($milestones); ?>;
         
-        // Build HTML for milestone list
         let milestonesHTML = `
             <div style="display: flex; flex-direction: column; height: 100%; gap: 0;">
                 <button id="addMilestoneBtn" style="width: 100%; background: linear-gradient(135deg, var(--primary-blue), #3671E0); color: white; border: none; padding: 1rem; border-radius: 12px; cursor: pointer; font-weight: 600; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; font-size: 14px; box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3); transition: all 0.2s; font-size: 15px;">
@@ -2650,7 +2469,6 @@ if (!$timeline) {
         if (milestones.length > 0) {
             milestones.forEach((milestone, index) => {
                 const isCompleted = milestone.is_completed === 'Y';
-                // Convert snake_case to Title Case
                 const milestoneTitle = milestone.milestone_type
                     .split('_')
                     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -2683,10 +2501,7 @@ if (!$timeline) {
             milestonesHTML += '<div style="flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary);"><div><i class="bi bi-calendar-check" style="font-size: 48px; display: block; margin-bottom: 1rem; opacity: 0.4;"></i><div style="font-size: 15px; font-weight: 600;">No milestones yet</div><div style="font-size: 13px; margin-top: 0.5rem; line-height: 1.5;">Start tracking your progress by<br/>adding your first milestone</div></div></div>';
         }
         
-        milestonesHTML += `
-                </div>
-            </div>
-        `;
+        milestonesHTML += `</div></div>`;
         
         Swal.fire({
             title: 'Manage Milestones',
@@ -2695,14 +2510,11 @@ if (!$timeline) {
             cancelButtonText: 'Close',
             width: '600px',
             heightAuto: false,
-            customClass: {
-                popup: 'milestone-modal-popup'
-            },
+            customClass: { popup: 'milestone-modal-popup' },
             didOpen: () => {
-                // Add event listeners for edit and delete buttons
                 document.querySelectorAll('.edit-milestone-btn').forEach(btn => {
                     btn.addEventListener('click', function() {
-                        const index = this.dataset.index;
+                        const index     = this.dataset.index;
                         const milestone = milestones[index];
                         editMilestone(milestone, index);
                     });
@@ -2722,7 +2534,6 @@ if (!$timeline) {
         });
     });
 
-    // Edit milestone function
     function editMilestone(milestone, index) {
         Swal.fire({
             title: 'Edit Milestone',
@@ -2741,17 +2552,15 @@ if (!$timeline) {
             confirmButtonText: 'Save Changes',
             cancelButtonText: 'Cancel',
             showCancelButton: true,
-            didOpen: () => {
-                document.getElementById('edit_milestone_name').focus();
-            }
+            didOpen: () => { document.getElementById('edit_milestone_name').focus(); }
         }).then((result) => {
             if (result.isConfirmed) {
                 const updatedMilestone = {
-                    engagement_id: '<?php echo $engagementId; ?>',
-                    milestone_id: milestone.ms_id,
+                    engagement_id:      '<?php echo $engagementId; ?>',
+                    milestone_id:       milestone.ms_id,
                     old_milestone_type: milestone.milestone_type,
-                    milestone_type: document.getElementById('edit_milestone_name').value,
-                    due_date: document.getElementById('edit_due_date').value
+                    milestone_type:     document.getElementById('edit_milestone_name').value,
+                    due_date:           document.getElementById('edit_due_date').value
                 };
                 
                 fetch('../api/update-milestone-details.php', {
@@ -2772,7 +2581,6 @@ if (!$timeline) {
         });
     }
 
-    // Add new milestone function
     function addNewMilestone() {
         Swal.fire({
             title: 'Add New Milestone',
@@ -2791,15 +2599,13 @@ if (!$timeline) {
             confirmButtonText: 'Add Milestone',
             cancelButtonText: 'Cancel',
             showCancelButton: true,
-            didOpen: () => {
-                document.getElementById('new_milestone_name').focus();
-            }
+            didOpen: () => { document.getElementById('new_milestone_name').focus(); }
         }).then((result) => {
             if (result.isConfirmed) {
                 const newMilestone = {
-                    engagement_id: '<?php echo $engagementId; ?>',
+                    engagement_id:  '<?php echo $engagementId; ?>',
                     milestone_type: document.getElementById('new_milestone_name').value,
-                    due_date: document.getElementById('new_due_date').value
+                    due_date:       document.getElementById('new_due_date').value
                 };
                 
                 fetch('../api/add-milestone.php', {
@@ -2820,7 +2626,6 @@ if (!$timeline) {
         });
     }
 
-    // Delete milestone function
     function deleteMilestone(milestone) {
         Swal.fire({
             title: 'Delete Milestone?',
@@ -2834,7 +2639,7 @@ if (!$timeline) {
             if (result.isConfirmed) {
                 const deleteData = {
                     engagement_id: '<?php echo $engagementId; ?>',
-                    milestone_id: milestone.ms_id
+                    milestone_id:  milestone.ms_id
                 };
                 
                 fetch('../api/delete-milestone.php', {
@@ -2855,7 +2660,6 @@ if (!$timeline) {
         });
     }
 
-    // Helper function to show toast
     function showToast(message) {
         const toast = document.createElement('div');
         toast.className = 'custom-toast success';
@@ -2876,47 +2680,35 @@ if (!$timeline) {
 
 
 <script>
-// Team Management Modal Handler - SIDE PANEL REDESIGN (FIXED)
-// Replace the existing team management code with this
-
+// Team Management Modal Handler
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
     let currentTeam = <?php echo json_encode($team); ?>;
     const engagementId = '<?php echo $engagementId; ?>';
     
-    // Get the engagement's audit types
     const engagementAuditTypes = '<?php echo htmlspecialchars($engagement['eng_audit_type'] ?? '', ENT_QUOTES); ?>';
     const auditTypesArray = engagementAuditTypes.split(',').map(t => t.trim()).filter(t => t);
     
-    // Only show these specific audit types
     const supportedAuditTypes = {
-        'SOC 1': 'emp_soc1_dol',
-        'SOC 2': 'emp_soc2_dol',
-        'HIPAA': 'emp_hipaa_dol',
+        'SOC 1':   'emp_soc1_dol',
+        'SOC 2':   'emp_soc2_dol',
+        'HIPAA':   'emp_hipaa_dol',
         'HITRUST': 'emp_hitrust_dol',
-        'FISMA': 'emp_fisma_dol'
+        'FISMA':   'emp_fisma_dol'
     };
     
-    // Filter to only the audit types this engagement has
     const relevantAuditTypes = auditTypesArray.filter(type => supportedAuditTypes.hasOwnProperty(type));
     
-    console.log('Engagement audit types:', auditTypesArray);
-    console.log('Relevant audit types to show:', relevantAuditTypes);
-    console.log('currentTeam:', currentTeam);
-    
-    // Build HTML for team management modal
     let teamHTML = `
         <div style="display: flex; gap: 1.5rem; height: 100%; min-height: 500px;">
             <!-- LEFT SIDE: Team List -->
             <div style="flex: 1.3; display: flex; flex-direction: column; overflow: hidden; min-width: 300px;">
                 <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Team Members</h3>
                 <div id="team-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; padding-right: 0.5rem;">
-                    <!-- Team members will be populated here -->
                 </div>
             </div>
 
             <!-- RIGHT SIDE: Add Member + Stats Panel -->
             <div style="width: 320px; display: flex; flex-direction: column; gap: 1.5rem; padding-left: 1.5rem; border-left: 1px solid var(--border-color); flex-shrink: 0;">
-                <!-- Add Team Member Form -->
                 <div>
                     <h4 style="font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Add Member</h4>
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -2933,7 +2725,6 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     </div>
                 </div>
 
-                <!-- Team Overview Stats -->
                 <div>
                     <h4 style="font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Overview</h4>
                     <div style="display: flex; flex-direction: column; gap: 0.75rem;">
@@ -2962,9 +2753,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         cancelButtonText: 'Close',
         width: '1400px',
         heightAuto: false,
-        customClass: {
-            popup: 'milestone-modal-popup'
-        },
+        customClass: { popup: 'milestone-modal-popup' },
         didOpen: () => {
             renderTeamList();
             
@@ -2976,21 +2765,17 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     Swal.showValidationMessage('Please fill in name and role');
                     return;
                 }
-                
                 addTeamMember(empName, empRole);
             });
         },
         willClose: () => {
-        location.reload();
-    }
+            location.reload();
+        }
     });
 
     function renderTeamList() {
         const teamListElement = document.getElementById('team-list');
-        if (!teamListElement) {
-            console.error('team-list element not found');
-            return;
-        }
+        if (!teamListElement) return;
         
         teamListElement.innerHTML = '';
 
@@ -3007,35 +2792,27 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             return;
         }
 
-        // Render each team member as a card
         currentTeam.forEach((member, idx) => {
             const roleColor = {
                 'manager': '#4487FC',
-                'senior': '#A04DFD',
-                'staff': '#4FC65F'
+                'senior':  '#A04DFD',
+                'staff':   '#4FC65F'
             }[member.role] || '#4487FC';
 
             const nameParts = member.emp_name.split(' ');
-            const initials = nameParts.map(p => p[0].toUpperCase()).join('');
-
-            const memberId = member.emp_id;
+            const initials  = nameParts.map(p => p[0].toUpperCase()).join('');
+            const memberId  = member.emp_id;
 
             teamListElement.innerHTML += `
                 <div class="team-member-card" data-emp-id="${memberId}" style="padding: 1rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 10px; transition: all 0.2s ease;">
-                    <!-- Top Row: Avatar + Info + Buttons -->
                     <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                        <!-- Avatar -->
                         <div style="width: 44px; height: 44px; border-radius: 8px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 14px;">
                             ${initials}
                         </div>
-                        
-                        <!-- Name & Role -->
                         <div style="flex: 1; min-width: 0;">
                             <div style="font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 0.15rem; word-break: break-word; line-height: 1.3;">${member.emp_name}</div>
                             <div style="font-size: 11px; color: var(--text-secondary); text-transform: capitalize;">${member.role}</div>
                         </div>
-
-                        <!-- Buttons -->
                         <div style="display: flex; gap: 0.4rem; flex-shrink: 0;">
                             <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
                                 <i class="bi bi-pencil" style="font-size: 13px;"></i>
@@ -3045,41 +2822,24 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                             </button>
                         </div>
                     </div>
-
-                    <!-- DOL Pills (if not manager) -->
                     ${member.role !== 'manager' ? getDOLByAuditType(member) : ''}
-
                     <style>
-                        .team-member-card:hover {
-                            background: var(--bg-secondary);
-                            border-color: var(--primary-blue);
-                            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.1);
-                        }
-                        .edit-team-btn:hover {
-                            background: #2560d9;
-                            transform: translateY(-1px);
-                        }
-                        .delete-team-btn:hover {
-                            background: #a60010;
-                            transform: translateY(-1px);
-                        }
+                        .team-member-card:hover { background: var(--bg-secondary); border-color: var(--primary-blue); box-shadow: 0 4px 12px rgba(68, 135, 252, 0.1); }
+                        .edit-team-btn:hover   { background: #2560d9; transform: translateY(-1px); }
+                        .delete-team-btn:hover { background: #a60010; transform: translateY(-1px); }
                     </style>
                 </div>
             `;
         });
 
-        // Add event listeners to newly created buttons
         document.querySelectorAll('.edit-team-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const empId = this.getAttribute('data-emp-id');
+                const empId  = this.getAttribute('data-emp-id');
                 const member = currentTeam.find(m => String(m.emp_id) === String(empId));
-                if (member) {
-                    editTeamMember(member);
-                } else {
-                    Swal.fire('Error', 'Member not found', 'error');
-                }
+                if (member) { editTeamMember(member); }
+                else { Swal.fire('Error', 'Member not found', 'error'); }
             });
         });
 
@@ -3087,13 +2847,10 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const empId = this.getAttribute('data-emp-id');
+                const empId  = this.getAttribute('data-emp-id');
                 const member = currentTeam.find(m => String(m.emp_id) === String(empId));
-                if (member) {
-                    deleteTeamMember(member);
-                } else {
-                    Swal.fire('Error', 'Member not found', 'error');
-                }
+                if (member) { deleteTeamMember(member); }
+                else { Swal.fire('Error', 'Member not found', 'error'); }
             });
         });
 
@@ -3105,10 +2862,10 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         
         relevantAuditTypes.forEach(auditType => {
             const fieldName = supportedAuditTypes[auditType];
-            const dolValue = member[fieldName];
+            const dolValue  = member[fieldName];
             
             if (dolValue) {
-                const duties = dolValue.split(',').map(d => d.trim()).filter(d => d);
+                const duties   = dolValue.split(',').map(d => d.trim()).filter(d => d);
                 const pillsHTML = duties.map(duty => 
                     `<span style="display: inline-block; background: var(--primary-blue); color: white; padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 10px; font-weight: 600; margin-left: 0.4rem;">${duty}</span>`
                 ).join('');
@@ -3131,19 +2888,19 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
 
     function updateRoleCounts() {
         const managerCount = document.getElementById('manager-count');
-        const seniorCount = document.getElementById('senior-count');
-        const staffCount = document.getElementById('staff-count');
+        const seniorCount  = document.getElementById('senior-count');
+        const staffCount   = document.getElementById('staff-count');
         
         if (managerCount) managerCount.textContent = currentTeam.filter(m => m.role === 'manager').length;
-        if (seniorCount) seniorCount.textContent = currentTeam.filter(m => m.role === 'senior').length;
-        if (staffCount) staffCount.textContent = currentTeam.filter(m => m.role === 'staff').length;
+        if (seniorCount)  seniorCount.textContent  = currentTeam.filter(m => m.role === 'senior').length;
+        if (staffCount)   staffCount.textContent   = currentTeam.filter(m => m.role === 'staff').length;
     }
 
     function addTeamMember(empName, empRole) {
         const newMember = {
             engagement_idno: engagementId,
-            emp_name: empName,
-            role: empRole
+            emp_name:        empName,
+            role:            empRole
         };
 
         fetch('../api/add-team-member.php', {
@@ -3172,7 +2929,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         let dolSections = '';
         
         relevantAuditTypes.forEach(auditType => {
-            const fieldName = supportedAuditTypes[auditType];
+            const fieldName  = supportedAuditTypes[auditType];
             const currentDol = member[fieldName] || '';
             dolSections += `
                 <div style="margin-bottom: 1rem;">
@@ -3194,8 +2951,8 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Role</label>
                         <select id="edit_emp_role" class="swal2-input" style="width: 100%; padding: 0.6rem;">
                             <option value="manager" ${member.role === 'manager' ? 'selected' : ''}>Manager</option>
-                            <option value="senior" ${member.role === 'senior' ? 'selected' : ''}>Senior</option>
-                            <option value="staff" ${member.role === 'staff' ? 'selected' : ''}>Staff</option>
+                            <option value="senior"  ${member.role === 'senior'  ? 'selected' : ''}>Senior</option>
+                            <option value="staff"   ${member.role === 'staff'   ? 'selected' : ''}>Staff</option>
                         </select>
                     </div>
                     <div id="dol_section" style="display: ${member.role === 'manager' ? 'none' : 'block'};">
@@ -3209,34 +2966,27 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             showCancelButton: true,
             didOpen: () => {
                 document.getElementById('edit_emp_name').focus();
-                
                 const roleSelect = document.getElementById('edit_emp_role');
                 roleSelect.addEventListener('change', function() {
                     const dolSection = document.getElementById('dol_section');
-                    if (this.value === 'manager') {
-                        dolSection.style.display = 'none';
-                    } else {
-                        dolSection.style.display = 'block';
-                    }
+                    dolSection.style.display = this.value === 'manager' ? 'none' : 'block';
                 });
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                const newRole = document.getElementById('edit_emp_role').value;
-                
+                const newRole    = document.getElementById('edit_emp_role').value;
                 const updateData = {
                     engagement_idno: engagementId,
-                    emp_id: member.emp_id,
-                    emp_name: document.getElementById('edit_emp_name').value,
-                    role: newRole
+                    emp_id:          member.emp_id,
+                    emp_name:        document.getElementById('edit_emp_name').value,
+                    role:            newRole
                 };
 
                 if (newRole !== 'manager') {
                     const dolInputs = document.querySelectorAll('.audit-dol-input');
                     dolInputs.forEach(input => {
                         const fieldName = input.getAttribute('data-field-name');
-                        const value = input.value.trim();
-                        updateData[fieldName] = value;
+                        updateData[fieldName] = input.value.trim();
                     });
                 } else {
                     relevantAuditTypes.forEach(auditType => {
@@ -3252,13 +3002,13 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 })
                 .then(response => response.json())
                 .then(data => {
-    if (data.success) {
-        sessionStorage.setItem('reopenTeamModal', 'true');
-        location.reload();
-    } else {
-        Swal.fire('Error', data.message || 'Failed to update team member', 'error');
-    }
-})
+                    if (data.success) {
+                        sessionStorage.setItem('reopenTeamModal', 'true');
+                        location.reload();
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update team member', 'error');
+                    }
+                })
                 .catch(error => {
                     console.error('Error:', error);
                     Swal.fire('Error', 'Failed to update team member: ' + error.message, 'error');
@@ -3280,7 +3030,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             if (result.isConfirmed) {
                 const deleteData = {
                     engagement_idno: engagementId,
-                    emp_id: member.emp_id
+                    emp_id:          member.emp_id
                 };
 
                 fetch('../api/delete-team-member.php', {
