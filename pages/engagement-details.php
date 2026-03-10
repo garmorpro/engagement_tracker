@@ -98,24 +98,23 @@ if ($timeline) {
     ]
 ];
 
-    foreach ($timelineSteps as $key => $label) {
+    foreach ($timelineSteps as $step) {
 
-    $dateField = $key . '_date';
-    $completedField = $key . '_completed_at';
+    $dateField = $step['date'];
+    $completedField = $step['completed'];
 
     if (
         !empty($timeline[$dateField]) &&
         ($timeline[$completedField] === null || $timeline[$completedField] === '')
     ) {
 
-        $nextStepName = $label;
+        $nextStepName = $step['label'];
         $nextStepDate = $timeline[$dateField];
 
         $today = new DateTime();
         $target = new DateTime($nextStepDate);
 
         $interval = $today->diff($target);
-
         $daysDifference = $interval->days;
 
         if ($target < $today) {
