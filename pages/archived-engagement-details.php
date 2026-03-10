@@ -345,7 +345,7 @@ $engagementData = $engagement;
             color: var(--teal);
         }
 
-        .engagement-badge.archive {
+        .engagement-badge.archived {
             background: rgba(120, 130, 150, 0.15);
             color: #7a8599;
         }
