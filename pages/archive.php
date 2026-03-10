@@ -1283,9 +1283,9 @@ function getTimeAgo($datetime) {
                         <?php endif; ?>
                     </div>
                 </div>
-                <button class="icon-btn" title="Settings">
+                <!-- <button class="icon-btn" title="Settings">
                     <i class="bi bi-gear"></i>
-                </button>
+                </button> -->
             </div>
 
             <div class="profile-section">
@@ -1580,7 +1580,7 @@ foreach ($allTimelineData as $row) {
 
 
 
-    
+
     // Check if we should show the engagement created toast
     if (sessionStorage.getItem('showEngagementCreatedToast')) {
         sessionStorage.removeItem('showEngagementCreatedToast');

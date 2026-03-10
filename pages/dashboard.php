@@ -1273,9 +1273,9 @@ function getTimeAgo($datetime) {
                         <?php endif; ?>
                     </div>
                 </div>
-                <button class="icon-btn" title="Settings">
+                <!-- <button class="icon-btn" title="Settings">
                     <i class="bi bi-gear"></i>
-                </button>
+                </button> -->
             </div>
 
             <div class="profile-section">
