@@ -1376,7 +1376,7 @@ $engagementData = $engagement;
                     ?>
                     <span class="engagement-badge badge-status">
                         <i class="bi <?php echo $statusIcon; ?>"></i>
-                        <?php echo strtoupper($statusText); ?>
+                        <?php echo ucfirst($statusText); ?>
                     </span>
                     <!-- <span class="engagement-badge badge-priority">
                         <i class="bi bi-exclamation-circle"></i>
