@@ -410,6 +410,9 @@ body {
     </div>
     <h1>Engagement Tracker</h1>
     <p>Select your account to sign in</p>
+    <?php if (isset($_GET['timeout'])): ?>
+    <div class="alert alert-warning">You were logged out due to inactivity. Please login again.</div>
+<?php endif; ?>
 </div>
 
 <div class="login-card">
