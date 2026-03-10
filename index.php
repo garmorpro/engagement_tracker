@@ -61,8 +61,10 @@ body {
 }
 
 .login-container h1 {
-    font-size: 32px; font-weight: 700;
-    margin-bottom: 0.5rem; color: white;
+    font-size: 32px; 
+    font-weight: 700;
+    margin-bottom: 0.5rem; 
+    color: white;
 }
 
 .login-container p {
@@ -75,7 +77,7 @@ body {
     border-radius: 16px;
     padding: 2rem;
     width: 100%;
-    max-width: 800px;
+    max-width: 600px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     position: relative;
 }
