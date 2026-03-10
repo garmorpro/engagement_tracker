@@ -2135,7 +2135,7 @@ $engagementData = $engagement;
                         background: isDarkMode ? '#1A2332' : '#FFFFFF',
                         color: isDarkMode ? '#E8EAED' : '#1A1A1A'
                     }).then(() => {
-                        location.reload();
+                        window.location.href = "dashboard.php";
                     });
                 } else {
                     Swal.fire('Error', data.message || 'Failed to restore engagement', 'error');
