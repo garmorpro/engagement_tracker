@@ -1353,13 +1353,13 @@ function getTimeAgo($datetime) {
             </div>
         </div>
 
-        <div class="status-card" data-filter="planning" style="cursor: pointer;">
-            <div class="status-card-icon planning">
+        <div class="status-card" data-filter="archived" style="cursor: pointer;">
+            <div class="status-card-icon archived">
                 <i class="bi bi-clipboard-check"></i>
             </div>
             <div class="status-card-content">
-                <div class="status-card-label">Planning</div>
-                <div class="status-card-value"><?php echo $planningCount; ?></div>
+                <div class="status-card-label">Archived</div>
+                <div class="status-card-value"><?php echo $archivedCount; ?></div>
             </div>
         </div>
 
