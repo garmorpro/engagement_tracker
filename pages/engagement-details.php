@@ -2136,6 +2136,11 @@ if (!$timeline) {
         showToast(message);
     }
 
+    if (sessionStorage.getItem('reopenTeamModal')) {
+    sessionStorage.removeItem('reopenTeamModal');
+    document.getElementById('manageTeamIconBtn').click();
+}
+
     darkModeBtn?.addEventListener('click', () => {
         const isDark = document.body.classList.toggle('dark-mode');
         localStorage.setItem('darkMode', isDark);
@@ -3274,19 +3279,13 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        const idx = currentTeam.findIndex(m => String(m.emp_id) === String(member.emp_id));
-                        if (idx !== -1) {
-                            currentTeam[idx] = {
-                                ...currentTeam[idx],
-                                ...data.member
-                            };
-                        }
-                        renderTeamList();
-                    } else {
-                        Swal.fire('Error', data.message || 'Failed to update team member', 'error');
-                    }
-                })
+    if (data.success) {
+        sessionStorage.setItem('reopenTeamModal', 'true');
+        location.reload();
+    } else {
+        Swal.fire('Error', data.message || 'Failed to update team member', 'error');
+    }
+})
                 .catch(error => {
                     console.error('Error:', error);
                     Swal.fire('Error', 'Failed to update team member: ' + error.message, 'error');
