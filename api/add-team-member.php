@@ -37,7 +37,7 @@ try {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
 
-    $stmt->bind_param('sssssssss',
+    $stmt->bind_param('ssssssss',
         $engagementIdno,
         $empName,
         $role,
