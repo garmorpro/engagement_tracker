@@ -1444,7 +1444,7 @@ foreach ($allTimelineData as $row) {
                         <?php
                             $colorClass = 'color-' . (($index % 5) + 1);
                             $initials = strtoupper(substr($eng['eng_name'], 0, 1) . substr(explode(' ', $eng['eng_name'])[1] ?? '', 0, 1));
-                            $dueDate = $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : 'N/A';
+                            // $dueDate = $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : 'N/A';
                             $statusClass = strtolower($eng['eng_status'] ?? 'planning');
                         ?>
                         <tr style="cursor: pointer;" class="engagement-row" data-status="<?php echo htmlspecialchars($eng['eng_status']); ?>" onclick="window.location.href='engagement-details.php?id=<?php echo htmlspecialchars($eng['eng_idno']); ?>'">
