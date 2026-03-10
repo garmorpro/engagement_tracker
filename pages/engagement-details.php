@@ -758,15 +758,13 @@ $engagementData = $engagement;
 
         .details-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 1.5rem 2rem;
 }
 
 .detail-item {
     display: flex;
     flex-direction: column;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
 }
 
 .detail-label {
