@@ -1369,10 +1369,10 @@ $engagementData = $engagement;
                 <i class="bi bi-pencil"></i>
                 Edit
             </button>
-            <button class="btn-icon">
-                <i class="bi bi-archive"></i>
+            <button class="btn-icon" title="Restore" onclick="event.stopPropagation(); restoreEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
+                <i class="bi bi-arrow-counterclockwise"></i>
             </button>
-            <button class="btn-icon">
+            <button class="btn-icon" title="Delete" onclick="event.stopPropagation(); deleteEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                 <i class="bi bi-trash"></i>
             </button>
         </div>
@@ -2095,6 +2095,62 @@ $engagementData = $engagement;
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
+
+
+
+// Restore engagement function
+    async function restoreEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        const result = await Swal.fire({
+            title: 'Restore Engagement?',
+            text: 'Are you sure you want to restore this engagement? It will be moved back to complete status.',
+            icon: 'question',
+            confirmButtonText: 'Restore',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#4487FC',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/restore-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Restored!',
+                        text: 'Engagement has been restored successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        background: isDarkMode ? '#1A2332' : '#FFFFFF',
+                        color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to restore engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to restore engagement', 'error');
+            }
+        }
+    }
+
+
+
+
+
     // Scroll detection for header shadow
     const pageHeader = document.getElementById('pageHeader');
     window.addEventListener('scroll', () => {
@@ -2117,6 +2173,51 @@ $engagementData = $engagement;
             } else {
                 icon.classList.remove('bi-sun');
                 icon.classList.add('bi-moon');
+            }
+        }
+    }
+
+
+    // Delete engagement function
+    async function deleteEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        const result = await Swal.fire({
+            title: 'Delete Engagement?',
+            text: 'This action cannot be undone. The engagement and all related data will be permanently deleted.',
+            icon: 'warning',
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#C90012',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A',
+            confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
+            cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/delete-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Set flag to show toast after reload
+                    sessionStorage.setItem('showDeletedToast', 'true');
+                    location.reload();
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to delete engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to delete engagement', 'error');
             }
         }
     }
