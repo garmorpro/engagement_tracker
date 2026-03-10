@@ -1118,13 +1118,13 @@ $engagementData = $engagement;
 
         .left-column {
             display: grid;
-            grid-template-rows: auto;
+            grid-template-rows: auto auto;
             gap: 2rem;
         }
 
         .right-column {
             display: grid;
-            grid-template-rows: auto auto;
+            grid-template-rows: auto auto auto;
             gap: 2rem;
         }
 
