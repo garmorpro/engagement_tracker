@@ -1314,7 +1314,7 @@ function getTimeAgo($datetime) {
                     </div>
 
                     <div class="profile-dropdown-menu">
-                        <a href="#" class="profile-dropdown-item">
+                        <!-- <a href="#" class="profile-dropdown-item">
                             <i class="bi bi-person-circle"></i> My Profile
                         </a>
                         <a href="#" class="profile-dropdown-item">
@@ -1322,7 +1322,7 @@ function getTimeAgo($datetime) {
                         </a>
                         <a href="#" class="profile-dropdown-item">
                             <i class="bi bi-question-circle"></i> Help & Support
-                        </a>
+                        </a> -->
                         <a href="<?php echo BASE_URL . '/auth/logout.php'; ?>" class="profile-dropdown-item logout">
                             <i class="bi bi-box-arrow-right"></i> Log Out
                         </a>
