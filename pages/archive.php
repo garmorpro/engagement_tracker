@@ -1404,9 +1404,9 @@ function getTimeAgo($datetime) {
         </div>
 
         <div class="action-buttons">
-            <button class="btn-new-engagement">
+            <!-- <button class="btn-new-engagement">
                 <i class="bi bi-plus"></i> New Engagement
-            </button>
+            </button> -->
         </div>
     </div>
 
