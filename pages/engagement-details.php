@@ -1384,6 +1384,7 @@ $engagementData = $engagement;
                 <!-- Badges -->
                 <div class="engagement-badges">
                     <?php
+                        $statusClass = strtolower($eng['eng_status'] ?? 'planning');
                         $statusText = str_replace('-', ' ', $engagement['eng_status']);
                         $statusIcon = match($engagement['eng_status']) {
                             'in-progress' => 'bi-play-circle-fill',
@@ -1394,7 +1395,7 @@ $engagementData = $engagement;
                             default       => 'bi-circle'
                         };
                     ?>
-                    <span class="engagement-badge <?php echo $engagement['eng_status']; ?>">
+                    <span class="engagement-badge <?php echo $statusClass; ?>">
                         <i class="bi <?php echo $statusIcon; ?>"></i>
                         <?php echo ucfirst($statusText); ?>
                     </span>
