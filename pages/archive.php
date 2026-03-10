@@ -1363,7 +1363,7 @@ function getTimeAgo($datetime) {
             </div>
         </div>
 
-        <div class="status-card" data-filter="in-progress" style="cursor: pointer;">
+        <!-- <div class="status-card" data-filter="in-progress" style="cursor: pointer;">
             <div class="status-card-icon in-progress">
                 <i class="bi bi-play-circle"></i>
             </div>
@@ -1391,7 +1391,7 @@ function getTimeAgo($datetime) {
                 <div class="status-card-label">Complete</div>
                 <div class="status-card-value"><?php echo $completeCount; ?></div>
             </div>
-        </div>
+        </div> -->
     </div>
 
     <!-- SEARCH & FILTERS -->
