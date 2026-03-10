@@ -60,28 +60,31 @@ if ($timeline) {
 
     foreach ($timelineSteps as $key => $label) {
 
-        $dateField = $key . '_date';
-        $completedField = $key . '_completed_at';
+    $dateField = $key . '_date';
+    $completedField = $key . '_completed_at';
 
-        if (!empty($timeline[$dateField]) && empty($timeline[$completedField])) {
+    if (
+        !empty($timeline[$dateField]) &&
+        ($timeline[$completedField] === null || $timeline[$completedField] === '')
+    ) {
 
-            $nextStepName = $label;
-            $nextStepDate = $timeline[$dateField];
+        $nextStepName = $label;
+        $nextStepDate = $timeline[$dateField];
 
-            $today = new DateTime();
-            $target = new DateTime($nextStepDate);
+        $today = new DateTime();
+        $target = new DateTime($nextStepDate);
 
-            $interval = $today->diff($target);
+        $interval = $today->diff($target);
 
-            $daysDifference = $interval->days;
+        $daysDifference = $interval->days;
 
-            if ($target < $today) {
-                $isOverdue = true;
-            }
-
-            break;
+        if ($target < $today) {
+            $isOverdue = true;
         }
+
+        break;
     }
+}
 }
 
 $criticalValue = "No upcoming dates";
