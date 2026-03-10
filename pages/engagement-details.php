@@ -2092,7 +2092,7 @@ $engagementData = $engagement;
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script>
 (function() {
-    const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes in milliseconds
+    const INACTIVITY_LIMIT = 5 * 60 * 1000; // 15 minutes in milliseconds
     let inactivityTimer;
 
     function resetTimer() {
