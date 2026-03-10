@@ -1550,7 +1550,7 @@ $engagementData = $engagement;
                             <div class="team-member-avatar" style="background: <?php echo $gradient; ?>; flex-shrink: 0;"><?php echo htmlspecialchars($initials); ?></div>
                             <div class="team-member-info" style="flex: 1; min-width: 0;">
                                 <div class="team-member-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
-                                <div class="team-member-title"><?php echo htmlspecialchars($member['role']); ?></div>
+                                <div class="team-member-title"><?php echo htmlspecialchars(ucfirst($member['role'])); ?></div>
 
                                 <?php if (!empty($member['audit_types'])): ?>
                                     <?php foreach ($member['audit_types'] as $auditType => $tags): ?>
