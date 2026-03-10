@@ -1495,8 +1495,8 @@ foreach ($allTimelineData as $row) {
                             <td><?php echo htmlspecialchars($dueDate); ?></td>
                             <td>
                                 <div class="action-icons">
-                                    <button class="action-icon" title="Archive" onclick="event.stopPropagation(); archiveEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
-                                        <i class="bi bi-archive"></i>
+                                    <button class="action-icon" title="Restore" onclick="event.stopPropagation(); restoreEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
+                                        <i class="bi bi-arrow-counterclockwise"></i>
                                     </button>
                                     <button class="action-icon" title="Delete" onclick="event.stopPropagation(); deleteEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                                         <i class="bi bi-trash"></i>
