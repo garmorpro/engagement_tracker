@@ -771,13 +771,14 @@ $engagementData = $engagement;
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: .05em;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     margin-bottom: 0.25rem;
 }
 
 .detail-value {
     font-size: 0.95rem;
     font-weight: 500;
+    color: var(--text-primary);
 }
 
         .detail-value.badge {
