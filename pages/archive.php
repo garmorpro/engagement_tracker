@@ -5,16 +5,52 @@ require_once '../includes/functions.php';
 // Get all engagements data
 $allEngagements = getAllEngagements($conn);
 
+// Get all timelines
+$allTimelineData = getAllTimelineData($conn);
+
 // Filter to only show archived engagements
 $engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] === 'archived');
 
-// Calculate status counts from ALL engagements (not just archived)
+$archivedCount = count($engagements);
+
+// Calculate status counts
 $totalCount = count($allEngagements);
 $inProgressCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'in-progress'));
 $planningCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'planning'));
 $reviewCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'in-review'));
 $completeCount = count(array_filter($allEngagements, fn($e) => $e['eng_status'] === 'complete'));
-$archiveCount = count($engagements);
+
+// Get unread notifications
+$notifications = [];
+$unreadNotificationCount = 0;
+
+// Check if table exists before querying
+$tableCheckQuery = "SHOW TABLES LIKE 'engagement_notifications'";
+$tableCheckResult = $conn->query($tableCheckQuery);
+
+if ($tableCheckResult && $tableCheckResult->num_rows > 0) {
+    $notificationQuery = "SELECT * FROM engagement_notifications WHERE is_read = 'N' ORDER BY notif_timestamp DESC LIMIT 10";
+    $notificationResult = $conn->query($notificationQuery);
+    $notifications = $notificationResult ? $notificationResult->fetch_all(MYSQLI_ASSOC) : [];
+    $unreadNotificationCount = count($notifications);
+}
+
+// Helper function for time ago display
+function getTimeAgo($datetime) {
+    $now = new DateTime();
+    $created = new DateTime($datetime);
+    $diff = $now->diff($created);
+    
+    if ($diff->days > 0) {
+        return $diff->days . ' day' . ($diff->days > 1 ? 's' : '') . ' ago';
+    } elseif ($diff->h > 0) {
+        return $diff->h . ' hour' . ($diff->h > 1 ? 's' : '') . ' ago';
+    } elseif ($diff->i > 0) {
+        return $diff->i . ' minute' . ($diff->i > 1 ? 's' : '') . ' ago';
+    } else {
+        return 'Just now';
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -207,6 +243,123 @@ $archiveCount = count($engagements);
 
         .icon-btn:hover {
             color: var(--text-primary);
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: -100px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            min-width: 380px;
+            margin-top: 0.75rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px);
+            transition: all 0.2s;
+            z-index: 1000;
+            padding: 0;
+            overflow: hidden;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .notification-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .notification-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+        }
+
+        .notification-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .notification-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .notification-item:hover {
+            background-color: var(--gray-100);
+        }
+
+        .notification-item.unread {
+            background-color: rgba(68, 135, 252, 0.05);
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.upcoming {
+            background: rgba(241, 115, 19, 0.1);
+            color: var(--warning-orange);
+        }
+
+        .notification-icon.milestone {
+            background: rgba(160, 77, 253, 0.1);
+            color: var(--info-purple);
+        }
+
+        .notification-icon.archive {
+            background: rgba(128, 128, 128, 0.1);
+            color: #6b7280;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-message {
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            color: var(--text-secondary);
+            font-size: 11px;
+            margin-top: 0.5rem;
+        }
+
+        .notification-empty {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
         }
 
         .notification-badge {
@@ -408,6 +561,12 @@ $archiveCount = count($engagements);
             box-shadow: 0 4px 12px rgba(68, 135, 252, 0.08);
         }
 
+        .status-card.active {
+            background: rgba(68, 135, 252, 0.08);
+            border-color: var(--primary-blue);
+            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.15);
+        }
+
         .status-card-icon {
             width: 48px;
             height: 48px;
@@ -424,7 +583,7 @@ $archiveCount = count($engagements);
             color: var(--primary-blue);
         }
 
-        .status-card-icon.in-progress {
+        .status-card-icon.complete {
             background: rgba(79, 198, 95, 0.1);
             color: var(--success-green);
         }
@@ -439,7 +598,7 @@ $archiveCount = count($engagements);
             color: var(--info-purple);
         }
 
-        .status-card-icon.complete {
+        .status-card-icon.in-progress {
             background: rgba(77, 191, 184, 0.1);
             color: var(--teal);
         }
@@ -480,7 +639,7 @@ $archiveCount = count($engagements);
 
         .search-input-wrapper {
             position: relative;
-            width: 280px;
+            width: 400px;
         }
 
         .search-input {
@@ -512,58 +671,9 @@ $archiveCount = count($engagements);
             color: var(--text-secondary);
         }
 
-        .filter-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            background: var(--bg-secondary) !important;
-            border: 1px solid var(--border-color) !important;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-primary) !important;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        /* Filter button removed */
 
-        .filter-btn i {
-            color: var(--text-primary) !important;
-        }
-
-        .filter-btn:hover {
-            border-color: var(--primary-blue) !important;
-            background: rgba(68, 135, 252, 0.08) !important;
-        }
-
-        .view-toggle {
-            display: flex;
-            gap: 0.25rem;
-            background: var(--gray-100);
-            padding: 0.25rem;
-            border-radius: 8px;
-        }
-
-        .view-btn {
-            width: 36px;
-            height: 36px;
-            border: none;
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .view-btn.active {
-            background: var(--bg-secondary);
-            color: var(--primary-blue);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
+        /* View toggle removed */
 
         .action-buttons {
             display: flex;
@@ -633,10 +743,12 @@ $archiveCount = count($engagements);
             border-color: var(--border-color);
             color: var(--text-primary);
             background-color: var(--bg-secondary) !important;
+            word-break: break-word;
         }
 
         .table tbody tr {
             transition: background-color 0.2s;
+            cursor: pointer;
         }
 
         .table tbody tr:hover td {
@@ -703,6 +815,14 @@ $archiveCount = count($engagements);
             color: var(--primary-blue);
         }
 
+        .badge-audit-type {
+            background: rgba(68, 135, 252, 0.15);
+            color: var(--primary-blue);
+            display: inline-block;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+
         .status-badge {
             display: inline-block;
             padding: 0.4rem 0.75rem;
@@ -711,14 +831,9 @@ $archiveCount = count($engagements);
             font-weight: 600;
         }
 
-        .status-badge.in-progress {
+        .status-badge.complete {
             background: rgba(79, 198, 95, 0.15);
             color: var(--success-green);
-        }
-
-        .status-badge.archived {
-            background: rgba(128, 128, 128, 0.15);
-            color: #6b7280;
         }
 
         .status-badge.planning {
@@ -736,7 +851,7 @@ $archiveCount = count($engagements);
             color: var(--danger-red);
         }
 
-        .status-badge.complete {
+        .status-badge.in-progress {
             background: rgba(77, 191, 184, 0.15);
             color: var(--teal);
         }
@@ -766,18 +881,204 @@ $archiveCount = count($engagements);
             color: var(--primary-blue);
         }
 
-        /* ========== SWEETALERT2 DARK MODE ========== */
+        /* ========== SWEETALERT2 STYLING ========== */
+        .swal2-container {
+            z-index: 2000;
+        }
+
+        .swal2-popup {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            max-width: 550px;
+            width: calc(100vw - 2rem);
+            overflow-x: hidden;
+        }
+
         body.dark-mode .swal2-popup {
             background: #1A2332 !important;
             color: #E8EAED !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .swal2-title {
+            color: var(--text-primary);
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+            padding: 0;
         }
 
         body.dark-mode .swal2-title {
             color: #E8EAED !important;
         }
 
+        .swal2-html-container {
+            color: var(--text-primary);
+            padding: 0;
+            margin: 0;
+        }
+
         body.dark-mode .swal2-html-container {
             color: #E8EAED !important;
+        }
+
+        .swal2-input {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            border-radius: 6px;
+            padding: 0.5rem 0.6rem !important;
+            font-size: 13px !important;
+            transition: all 0.2s;
+            width: 100% !important;
+            box-sizing: border-box;
+            margin: 0 !important;
+        }
+
+        .swal2-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+            outline: none;
+        }
+
+        .swal2-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        body.dark-mode .swal2-input,
+        body.dark-mode .swal2-textarea {
+            background: #2D3847 !important;
+            border: 1px solid #2D3847 !important;
+            color: #E8EAED !important;
+        }
+
+        .swal2-actions {
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin-left: 0;
+            margin-right: 0;
+            margin-bottom: 0;
+        }
+
+        .swal2-confirm,
+        .swal2-cancel {
+            flex: 1;
+            max-width: 200px;
+            margin: 0 !important;
+            padding: 0.7rem 1.5rem !important;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+            min-width: 0;
+            height: auto;
+        }
+
+        .swal2-confirm {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+        }
+
+        .swal2-confirm:hover {
+            background: #3671E0;
+            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3);
+        }
+
+        .swal2-confirm:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.2);
+        }
+
+        .swal2-cancel {
+            background: var(--border-color);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .swal2-cancel:hover {
+            background: rgba(68, 135, 252, 0.05);
+            border-color: var(--primary-blue);
+            color: var(--primary-blue);
+        }
+
+        .swal2-cancel:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+        }
+
+        body.dark-mode .swal-dark-btn {
+            background: #4487FC !important;
+        }
+
+        body.dark-mode .swal-dark-cancel-btn {
+            background: #2D3847 !important;
+            color: #E8EAED !important;
+        }
+
+        /* ========== SWEETALERT2 DARK MODE ========== */
+        /* (Already included above in the complete swal2 styling section) */
+
+        /* ========== TOAST NOTIFICATIONS ========== */
+        .custom-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--success-green);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            animation: slideInUp 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .custom-toast.success {
+            background: var(--bg-secondary);
+            border-left-color: var(--success-green);
+        }
+
+        .custom-toast.hide {
+            animation: slideOutDown 0.3s ease-out forwards;
+        }
+
+        .custom-toast i {
+            font-size: 20px;
+            color: var(--success-green);
+            flex-shrink: 0;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateX(-400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutDown {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(-400px);
+                opacity: 0;
+            }
         }
 
         /* ========== RESPONSIVE ========== */
@@ -831,9 +1132,9 @@ $archiveCount = count($engagements);
             </a>
 
             <div class="header-nav">
-                <a href="dashboard.php" class="nav-item">Dashboard</a>
-                <a href="#" class="nav-item">Analytics</a>
-                <a href="archive.php" class="nav-item active">Archive <span class="badge"><?php echo $archiveCount; ?></span></a>
+                <a href="dashboard.php" class="nav-item active">Dashboard</a>
+                <a href="analytics.php" class="nav-item">Analytics</a>
+                <a href="archive.php" class="nav-item">Archive <span class="badge"><?php echo $archivedCount; ?></span></a>
             </div>
         </div>
 
@@ -842,10 +1143,136 @@ $archiveCount = count($engagements);
                 <button class="icon-btn" title="Dark mode">
                     <i class="bi bi-moon"></i>
                 </button>
-                <button class="icon-btn" title="Notifications">
-                    <i class="bi bi-bell"></i>
-                    <div class="notification-badge">2</div>
-                </button>
+                <div style="position: relative;">
+                    <button class="icon-btn" title="Notifications" onclick="event.stopPropagation(); document.getElementById('notificationDropdown')?.classList.toggle('active')">
+                        <i class="bi bi-bell"></i>
+                        <?php if ($unreadNotificationCount > 0): ?>
+                        <div class="notification-badge"><?php echo $unreadNotificationCount; ?></div>
+                        <?php endif; ?>
+                    </button>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                            <button class="icon-btn" style="font-size: 14px;" onclick="document.getElementById('notificationDropdown').classList.remove('active')">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        <?php if (!empty($notifications)): ?>
+                            <?php foreach ($notifications as $notif): ?>
+                                <?php
+                                    $iconClass = 'upcoming';
+                                    $icon = 'bi-calendar-event';
+                                    if ($notif['notif_type'] === 'upcoming_milestone') {
+                                        $iconClass = 'milestone';
+                                        $icon = 'bi-check-circle';
+                                    } elseif ($notif['notif_type'] === 'ready_to_archive') {
+                                        $iconClass = 'archive';
+                                        $icon = 'bi-archive';
+                                    }
+                                    
+                                    $timeAgo = getTimeAgo($notif['notif_timestamp']);
+                                    
+                                    // For key dates and milestones, dynamically calculate days away
+                                    $displayMessage = $notif['notif_message'];
+                                    
+                                    if ($notif['notif_type'] === 'upcoming_key_date') {
+                                        $engIdno = $notif['engagement_idno'];
+                                        $timelineQuery = "SELECT 
+                                            internal_planning_call_date, internal_planning_call_completed_at,
+                                            planning_memo_date, planning_memo_completed_at,
+                                            irl_due_date, irl_completed_at,
+                                            client_planning_call_date, client_planning_call_completed_at,
+                                            fieldwork_date, fieldwork_completed_at,
+                                            leadsheet_date, leadsheet_completed_at,
+                                            conclusion_memo_date, conclusion_memo_completed_at,
+                                            draft_report_due_date, draft_report_completed_at,
+                                            final_report_date, final_report_completed_at,
+                                            archive_date, archive_completed_at
+                                            FROM engagement_timeline WHERE engagement_idno = ?";
+                                        $stmt = $conn->prepare($timelineQuery);
+                                        $stmt->bind_param('s', $engIdno);
+                                        $stmt->execute();
+                                        $tlResult = $stmt->get_result();
+                                        $timeline = $tlResult->fetch_assoc();
+                                        $stmt->close();
+                                        
+                                        if ($timeline) {
+                                            $dateFields = [
+                                                'internal_planning_call_date' => 'internal_planning_call_completed_at',
+                                                'planning_memo_date' => 'planning_memo_completed_at',
+                                                'irl_due_date' => 'irl_completed_at',
+                                                'client_planning_call_date' => 'client_planning_call_completed_at',
+                                                'fieldwork_date' => 'fieldwork_completed_at',
+                                                'leadsheet_date' => 'leadsheet_completed_at',
+                                                'conclusion_memo_date' => 'conclusion_memo_completed_at',
+                                                'draft_report_due_date' => 'draft_report_completed_at',
+                                                'final_report_date' => 'final_report_completed_at',
+                                                'archive_date' => 'archive_completed_at'
+                                            ];
+                                            
+                                            $titleMap = [
+                                                'internal_planning_call_date' => 'Internal Planning Call',
+                                                'planning_memo_date' => 'Planning Memo',
+                                                'irl_due_date' => 'IRL Due Date',
+                                                'client_planning_call_date' => 'Client Planning Call',
+                                                'fieldwork_date' => 'Fieldwork',
+                                                'leadsheet_date' => 'Leadsheet',
+                                                'conclusion_memo_date' => 'Conclusion Memo',
+                                                'draft_report_due_date' => 'Draft Report Due',
+                                                'final_report_date' => 'Final Report',
+                                                'archive_date' => 'Archive'
+                                            ];
+                                            
+                                            foreach ($dateFields as $dateCol => $completedCol) {
+                                                if ($timeline[$dateCol] && !$timeline[$completedCol]) {
+                                                    $daysAway = round((strtotime($timeline[$dateCol]) - time()) / 86400);
+                                                    $engName = htmlspecialchars($notif['engagement_idno']);
+                                                    $dateTitle = $titleMap[$dateCol];
+                                                    $displayMessage = $engName . ' - ' . $dateTitle . ' due in ' . max(0, $daysAway) . ' days';
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    } elseif ($notif['notif_type'] === 'upcoming_milestone') {
+                                        $engIdno = $notif['engagement_idno'];
+                                        $milestoneQuery = "SELECT m.milestone_type, m.due_date, e.eng_name
+                                            FROM engagement_milestones m
+                                            JOIN engagements e ON m.engagement_idno = e.eng_idno
+                                            WHERE m.engagement_idno = ? AND m.is_completed = 'N' AND m.due_date IS NOT NULL
+                                            ORDER BY m.due_date ASC LIMIT 1";
+                                        $stmt = $conn->prepare($milestoneQuery);
+                                        $stmt->bind_param('s', $engIdno);
+                                        $stmt->execute();
+                                        $mResult = $stmt->get_result();
+                                        $milestone = $mResult->fetch_assoc();
+                                        $stmt->close();
+                                        
+                                        if ($milestone) {
+                                            $daysAway = round((strtotime($milestone['due_date']) - time()) / 86400);
+                                            $milestoneTitle = implode(' ', array_map('ucfirst', explode('_', strtolower($milestone['milestone_type']))));
+                                            $displayMessage = $milestone['eng_name'] . ' - ' . $milestoneTitle . ' due in ' . max(0, $daysAway) . ' days';
+                                        }
+                                    }
+                                ?>
+                                <div class="notification-item <?php echo $notif['is_read'] === 'N' ? 'unread' : ''; ?>" onclick="markNotificationAsRead(<?php echo $notif['notif_id']; ?>)">
+                                    <div class="notification-icon <?php echo $iconClass; ?>">
+                                        <i class="bi <?php echo $icon; ?>"></i>
+                                    </div>
+                                    <div class="notification-content">
+                                        <div class="notification-title"><?php echo htmlspecialchars($notif['notif_title']); ?></div>
+                                        <div class="notification-message"><?php echo htmlspecialchars($displayMessage); ?></div>
+                                        <div class="notification-time"><?php echo $timeAgo; ?></div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <div class="notification-empty">
+                                <i class="bi bi-bell-slash" style="font-size: 32px; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                                No notifications
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
                 <button class="icon-btn" title="Settings">
                     <i class="bi bi-gear"></i>
                 </button>
@@ -853,7 +1280,23 @@ $archiveCount = count($engagements);
 
             <div class="profile-section">
                 <div class="profile-wrapper" id="profileToggle">
-                    <button class="profile-btn" title="Profile">A</button>
+                    <button class="profile-btn" title="Profile">
+                        <?php
+                            $initials = '';
+                    
+                            if (!empty($_SESSION['name'])) {
+                                $nameParts = explode(' ', trim($_SESSION['name']));
+                                
+                                foreach ($nameParts as $part) {
+                                    if (!empty($part)) {
+                                        $initials .= strtoupper($part[0]);
+                                    }
+                                }
+                            }
+                    
+                            echo $initials;
+                        ?>
+                    </button>
                     <button class="profile-dropdown-toggle">
                         <i class="bi bi-chevron-down"></i>
                     </button>
@@ -861,10 +1304,12 @@ $archiveCount = count($engagements);
 
                 <div class="profile-dropdown" id="profileDropdown">
                     <div class="profile-dropdown-header">
-                        <div class="profile-dropdown-avatar">JD</div>
+                        <div class="profile-dropdown-avatar">
+                            <?php echo $initials; ?>
+                        </div>
                         <div class="profile-dropdown-info">
-                            <div class="profile-dropdown-name">John Doe</div>
-                            <div class="profile-dropdown-email">john.doe@company.com</div>
+                            <div class="profile-dropdown-name"><?php echo $_SESSION['name'] ?? ''; ?></div>
+                            <div class="profile-dropdown-email"><?php echo $_SESSION['email'] ?? ''; ?></div>
                         </div>
                     </div>
 
@@ -878,7 +1323,7 @@ $archiveCount = count($engagements);
                         <a href="#" class="profile-dropdown-item">
                             <i class="bi bi-question-circle"></i> Help & Support
                         </a>
-                        <a href="#" class="profile-dropdown-item logout">
+                        <a href="<?php echo BASE_URL . '/auth/logout.php'; ?>" class="profile-dropdown-item logout">
                             <i class="bi bi-box-arrow-right"></i> Log Out
                         </a>
                     </div>
@@ -893,7 +1338,7 @@ $archiveCount = count($engagements);
 
     <!-- STATUS CARDS -->
     <div class="status-cards">
-        <div class="status-card">
+        <div class="status-card" data-filter="all" style="cursor: pointer;">
             <div class="status-card-icon total">
                 <i class="bi bi-briefcase"></i>
             </div>
@@ -903,17 +1348,7 @@ $archiveCount = count($engagements);
             </div>
         </div>
 
-        <div class="status-card">
-            <div class="status-card-icon in-progress">
-                <i class="bi bi-play-circle"></i>
-            </div>
-            <div class="status-card-content">
-                <div class="status-card-label">In Progress</div>
-                <div class="status-card-value"><?php echo $inProgressCount; ?></div>
-            </div>
-        </div>
-
-        <div class="status-card">
+        <div class="status-card" data-filter="planning" style="cursor: pointer;">
             <div class="status-card-icon planning">
                 <i class="bi bi-clipboard-check"></i>
             </div>
@@ -923,7 +1358,17 @@ $archiveCount = count($engagements);
             </div>
         </div>
 
-        <div class="status-card">
+        <div class="status-card" data-filter="in-progress" style="cursor: pointer;">
+            <div class="status-card-icon in-progress">
+                <i class="bi bi-play-circle"></i>
+            </div>
+            <div class="status-card-content">
+                <div class="status-card-label">In Progress</div>
+                <div class="status-card-value"><?php echo $inProgressCount; ?></div>
+            </div>
+        </div>
+
+        <div class="status-card" data-filter="in-review" style="cursor: pointer;">
             <div class="status-card-icon review">
                 <i class="bi bi-search"></i>
             </div>
@@ -933,7 +1378,7 @@ $archiveCount = count($engagements);
             </div>
         </div>
 
-        <div class="status-card">
+        <div class="status-card" data-filter="complete" style="cursor: pointer;">
             <div class="status-card-icon complete">
                 <i class="bi bi-check-circle"></i>
             </div>
@@ -951,20 +1396,9 @@ $archiveCount = count($engagements);
                 <i class="bi bi-search search-icon"></i>
                 <input type="text" class="search-input" placeholder="Search...">
             </div>
-            <button class="filter-btn">
-                <i class="bi bi-funnel"></i> Filters
-            </button>
         </div>
 
         <div class="action-buttons">
-            <div class="view-toggle">
-                <button class="view-btn active" title="List view">
-                    <i class="bi bi-list-ul"></i>
-                </button>
-                <button class="view-btn" title="Grid view">
-                    <i class="bi bi-grid-3x3-gap"></i>
-                </button>
-            </div>
             <button class="btn-new-engagement">
                 <i class="bi bi-plus"></i> New Engagement
             </button>
@@ -987,15 +1421,33 @@ $archiveCount = count($engagements);
                 </tr>
             </thead>
             <tbody>
+                <?php
+                $timelineLookup = [];
+
+foreach ($allTimelineData as $row) {
+    $timelineLookup[$row['engagement_idno']] = $row;
+}
+?>
                 <?php if (!empty($engagements)): ?>
-                    <?php foreach ($engagements as $index => $eng): ?>
+                    <?php foreach ($engagements as $index => $eng): 
+                         $engId = $eng['eng_idno'];
+                         $dueDate = 'N/A';
+                         if (isset($timelineLookup[$engId])) {
+                            $timeline = $timelineLookup[$engId];
+
+                            if (!empty($timeline['final_report_date'])) {
+                                $dueDate = date("M d, Y", strtotime($timeline['final_report_date']));
+                            }
+                        }
+                        ?>
+                        
                         <?php
                             $colorClass = 'color-' . (($index % 5) + 1);
                             $initials = strtoupper(substr($eng['eng_name'], 0, 1) . substr(explode(' ', $eng['eng_name'])[1] ?? '', 0, 1));
-                            $dueDate = $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : 'N/A';
+                            // $dueDate = $eng['eng_final_due'] ? date('Y-m-d', strtotime($eng['eng_final_due'])) : 'N/A';
                             $statusClass = strtolower($eng['eng_status'] ?? 'planning');
                         ?>
-                        <tr>
+                        <tr style="cursor: pointer;" class="engagement-row" data-status="<?php echo htmlspecialchars($eng['eng_status']); ?>" onclick="window.location.href='engagement-details.php?id=<?php echo htmlspecialchars($eng['eng_idno']); ?>'">
                             <td>
                                 <div class="engagement-id"><?php echo htmlspecialchars($eng['eng_idno']); ?></div>
                             </td>
@@ -1013,12 +1465,16 @@ $archiveCount = count($engagements);
                             <td><?php echo htmlspecialchars($eng['eng_manager'] ?? 'Unassigned'); ?></td>
                             <td>
                                 <?php 
-                                    $auditTypes = explode(',', $eng['eng_audit_type']);
-                                    foreach ($auditTypes as $type) {
-                                        $type = trim($type);
-                                        if (!empty($type)) {
-                                            echo '<span class="badge badge-audit-type">' . htmlspecialchars($type) . '</span> ';
+                                    if (!empty($eng['eng_audit_type'])) {
+                                        $auditTypes = explode(',', $eng['eng_audit_type']);
+                                        foreach ($auditTypes as $type) {
+                                            $type = trim($type);
+                                            if (!empty($type)) {
+                                                echo '<span class="badge badge-audit-type">' . htmlspecialchars($type) . '</span> ';
+                                            }
                                         }
+                                    } else {
+                                        echo '<span style="color: var(--text-secondary); font-size: 13px;">No audit type</span>';
                                     }
                                 ?>
                             </td>
@@ -1034,13 +1490,10 @@ $archiveCount = count($engagements);
                             <td><?php echo htmlspecialchars($dueDate); ?></td>
                             <td>
                                 <div class="action-icons">
-                                    <button class="action-icon" title="Edit">
-                                        <i class="bi bi-pencil-square"></i>
+                                    <button class="action-icon" title="Archive" onclick="event.stopPropagation(); archiveEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
+                                        <i class="bi bi-archive"></i>
                                     </button>
-                                    <button class="action-icon" title="Restore" onclick="event.stopPropagation(); restoreEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
-                                        <i class="bi bi-arrow-counterclockwise"></i>
-                                    </button>
-                                    <button class="action-icon" title="Delete">
+                                    <button class="action-icon" title="Delete" onclick="event.stopPropagation(); deleteEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
@@ -1063,25 +1516,39 @@ $archiveCount = count($engagements);
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script>
-    // Restore engagement function
-    async function restoreEngagement(engagementId) {
+    // Check if we should show the engagement created toast
+    if (sessionStorage.getItem('showEngagementCreatedToast')) {
+        sessionStorage.removeItem('showEngagementCreatedToast');
+        showToast('Engagement created successfully');
+    }
+
+    // Check if we should show the engagement deleted toast
+    if (sessionStorage.getItem('showDeletedToast')) {
+        sessionStorage.removeItem('showDeletedToast');
+        showToast('Engagement deleted successfully');
+    }
+
+    // Archive engagement function
+    async function archiveEngagement(engagementId) {
         const isDarkMode = localStorage.getItem('darkMode') === 'true';
         
         const result = await Swal.fire({
-            title: 'Restore Engagement?',
-            text: 'Are you sure you want to restore this engagement? It will be moved back to complete status.',
-            icon: 'question',
-            confirmButtonText: 'Restore',
+            title: 'Archive Engagement?',
+            text: 'Are you sure you want to archive this engagement? It will be moved to the archive and hidden from the main dashboard.',
+            icon: 'warning',
+            confirmButtonText: 'Archive',
             cancelButtonText: 'Cancel',
             showCancelButton: true,
             confirmButtonColor: '#4487FC',
             background: isDarkMode ? '#1A2332' : '#FFFFFF',
-            color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A',
+            confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
+            cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
         });
 
         if (result.isConfirmed) {
             try {
-                const response = await fetch('../api/restore-engagement.php', {
+                const response = await fetch('../api/archive-engagement.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1093,8 +1560,8 @@ $archiveCount = count($engagements);
 
                 if (data.success) {
                     Swal.fire({
-                        title: 'Restored!',
-                        text: 'Engagement has been restored successfully.',
+                        title: 'Archived!',
+                        text: 'Engagement has been archived successfully.',
                         icon: 'success',
                         confirmButtonText: 'OK',
                         background: isDarkMode ? '#1A2332' : '#FFFFFF',
@@ -1103,14 +1570,105 @@ $archiveCount = count($engagements);
                         location.reload();
                     });
                 } else {
-                    Swal.fire('Error', data.message || 'Failed to restore engagement', 'error');
+                    Swal.fire('Error', data.message || 'Failed to archive engagement', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                Swal.fire('Error', 'Failed to restore engagement', 'error');
+                Swal.fire('Error', 'Failed to archive engagement', 'error');
             }
         }
     }
+
+    // Delete engagement function
+    async function deleteEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        const result = await Swal.fire({
+            title: 'Delete Engagement?',
+            text: 'This action cannot be undone. The engagement and all related data will be permanently deleted.',
+            icon: 'warning',
+            confirmButtonText: 'Delete',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#C90012',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A',
+            confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
+            cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/delete-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Set flag to show toast after reload
+                    sessionStorage.setItem('showDeletedToast', 'true');
+                    location.reload();
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to delete engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to delete engagement', 'error');
+            }
+        }
+    }
+
+    // Mark notification as read
+    async function markNotificationAsRead(notifId) {
+        try {
+            const response = await fetch('../api/mark-notification-read.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ notif_id: notifId })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                // Reload to update unread count
+                location.reload();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // Close notification dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationBtn = document.querySelector('.icon-btn[title="Notifications"]');
+        
+        if (notificationDropdown && 
+            !notificationDropdown.contains(e.target) && 
+            !notificationBtn.contains(e.target)) {
+            notificationDropdown.classList.remove('active');
+        }
+    });
+
+    // Table row click handler
+    document.querySelectorAll('.table tbody tr').forEach(row => {
+        row.addEventListener('click', (e) => {
+            // Don't navigate if clicking on action icons
+            if (e.target.closest('.action-icon') || e.target.closest('.action-icons')) {
+                return;
+            }
+            
+            // Get the engagement ID from the first cell
+            const engagementId = row.querySelector('.engagement-id').textContent.trim();
+            if (engagementId) {
+                window.location.href = `engagement-details.php?id=${engagementId}`;
+            }
+        });
+    });
 
     // Dark mode toggle
     const darkModeBtn = document.querySelector('.icon-btn[title="Dark mode"]');
@@ -1168,20 +1726,312 @@ $archiveCount = count($engagements);
         });
     });
 
-    // View toggle
-    document.querySelectorAll('.view-btn').forEach((btn, idx) => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            // TODO: Implement view switching logic
+    // View toggle removed
+
+    // Status card filters
+    document.querySelectorAll('.status-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Get the filter value
+            const filterValue = card.getAttribute('data-filter');
+            
+            // If Total is clicked, refresh the page
+            if (filterValue === 'all') {
+                location.reload();
+                return;
+            }
+            
+            // Remove active class from all cards
+            document.querySelectorAll('.status-card').forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked card
+            card.classList.add('active');
+            
+            // Filter table rows
+            const rows = document.querySelectorAll('.engagement-row');
+            rows.forEach(row => {
+                const rowStatus = row.getAttribute('data-status');
+                row.style.display = rowStatus === filterValue ? '' : 'none';
+            });
         });
     });
 
     // Action buttons
     document.querySelector('.btn-new-engagement')?.addEventListener('click', () => {
-        // TODO: Open new engagement modal
-        alert('Open new engagement modal');
+        // New engagement form data
+        const htmlContent = `
+            <div style="text-align: left; max-height: 600px; overflow-y: auto;">
+                <!-- Basic Information Section -->
+                <div style="margin-bottom: 2.5rem;">
+                    <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Basic Information</h3>
+                    
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">Engagement Name <span style="color: #C90012;">*</span></label>
+                        <input type="text" id="new_eng_name" class="swal2-input" placeholder="Enter engagement name" style="width: 100%; padding: 0.75rem;">
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">Location</label>
+                        <input type="text" id="new_eng_location" class="swal2-input" placeholder="Enter location" style="width: 100%; padding: 0.75rem;">
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">Point of Contact</label>
+                        <input type="text" id="new_eng_poc" class="swal2-input" placeholder="Enter point of contact" style="width: 100%; padding: 0.75rem;">
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">Status</label>
+                        <select id="new_eng_status" class="swal2-input" style="width: 100%; padding: 0.75rem;">
+                            <option value="planning" selected>Planning</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="in-review">In Review</option>
+                            <option value="complete">Complete</option>
+                        </select>
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">Trusted Service Criteria</label>
+                        <input type="text" id="new_eng_tsc" class="swal2-input" placeholder="Enter TSC" style="width: 100%; padding: 0.75rem;">
+                    </div>
+                </div>
+
+                <!-- Audit Details Section -->
+                <div style="margin-bottom: 2.5rem;">
+                    <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">Audit Types (Select all that apply)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem;">
+                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="SOC 1" style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-size: 13px;">SOC 1</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="SOC 2" style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-size: 13px;">SOC 2</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="PCI" style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-size: 13px;">PCI</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="HITRUST" style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-size: 13px;">HITRUST</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="FISMA" style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-size: 13px;">FISMA</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="ISO" style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-size: 13px;">ISO</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="new-audit-type-checkbox" value="HIPAA" style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-size: 13px;">HIPAA</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- SOC Type Selector -->
+                    <div id="new_soc_type_section" style="margin-bottom: 1.5rem; display: none; padding: 1.25rem; background: rgba(68, 135, 252, 0.1); border-radius: 8px; border-left: 3px solid var(--primary-blue);">
+                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">SOC Type</label>
+                        <div style="display: flex; gap: 1.5rem; margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
+                                <input type="radio" name="new_soc_type" value="Type 1" style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-size: 13px;">Type 1</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
+                                <input type="radio" name="new_soc_type" value="Type 2" style="width: 18px; height: 18px; cursor: pointer;">
+                                <span style="font-size: 13px;">Type 2</span>
+                            </label>
+                        </div>
+
+                        <!-- Type 1: As Of Date -->
+                        <div id="new_soc_type1_dates" style="display: none;">
+                            <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">As Of Date</label>
+                            <input type="date" id="new_soc_as_of_date" class="swal2-input" style="width: 100%; padding: 0.75rem;">
+                        </div>
+
+                        <!-- Type 2: Start and End Dates -->
+                        <div id="new_soc_type2_dates" style="display: none;">
+                            <div style="margin-bottom: 0.9rem;">
+                                <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">Start Period</label>
+                                <input type="date" id="new_soc_start_period" class="swal2-input" style="width: 100%; padding: 0.75rem;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">End Period</label>
+                                <input type="date" id="new_soc_end_period" class="swal2-input" style="width: 100%; padding: 0.75rem;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">Scope</label>
+                        <textarea id="new_eng_scope" class="swal2-input" style="width: 100%; min-height: 80px; resize: vertical; padding: 0.75rem;" placeholder="Enter scope"></textarea>
+                    </div>
+
+                    <div style="margin-bottom: 1.25rem;">
+                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500;">
+                            <input type="checkbox" id="new_eng_repeat" style="width: 18px; height: 18px; cursor: pointer;">
+                            <span style="font-size: 13px;">Repeat Engagement</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Notes Section -->
+                <div>
+                    <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Notes</h3>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px;">Notes</label>
+                        <textarea id="new_eng_notes" class="swal2-input" style="width: 100%; min-height: 100px; resize: vertical; padding: 0.75rem;" placeholder="Enter notes"></textarea>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        Swal.fire({
+            title: 'Create New Engagement',
+            html: htmlContent,
+            confirmButtonText: 'Create Engagement',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            width: '700px',
+            didOpen: () => {
+                // Handle audit type checkboxes and SOC type visibility
+                const auditCheckboxes = document.querySelectorAll('.new-audit-type-checkbox');
+                const socTypeSection = document.getElementById('new_soc_type_section');
+                const socTypeRadios = document.querySelectorAll('input[name="new_soc_type"]');
+                const socType1Dates = document.getElementById('new_soc_type1_dates');
+                const socType2Dates = document.getElementById('new_soc_type2_dates');
+                
+                function updateFormVisibility() {
+                    const selectedTypes = Array.from(auditCheckboxes)
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+                    
+                    const hasSOC = selectedTypes.includes('SOC 1') || selectedTypes.includes('SOC 2');
+                    socTypeSection.style.display = hasSOC ? 'block' : 'none';
+                    updateDateFields();
+                }
+                
+                function updateDateFields() {
+                    const selectedSocType = document.querySelector('input[name="new_soc_type"]:checked')?.value;
+                    
+                    if (selectedSocType === 'Type 1') {
+                        socType1Dates.style.display = 'block';
+                        socType2Dates.style.display = 'none';
+                    } else if (selectedSocType === 'Type 2') {
+                        socType1Dates.style.display = 'none';
+                        socType2Dates.style.display = 'block';
+                    }
+                }
+                
+                auditCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', updateFormVisibility);
+                });
+                
+                socTypeRadios.forEach(radio => {
+                    radio.addEventListener('change', updateDateFields);
+                });
+
+                // Focus on engagement name
+                document.getElementById('new_eng_name').focus();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Get engagement name first
+                const engName = document.getElementById('new_eng_name').value?.trim();
+                if (!engName) {
+                    Swal.fire('Error', 'Engagement Name is required', 'error');
+                    return;
+                }
+
+                // Get selected audit types
+                const selectedAuditTypes = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked'))
+                    .map(cb => cb.value)
+                    .join(', ');
+
+                // Collect all form data
+                const newEngagementData = {
+                    eng_name: engName,
+                    eng_location: document.getElementById('new_eng_location').value || null,
+                    eng_poc: document.getElementById('new_eng_poc').value || null,
+                    eng_status: document.getElementById('new_eng_status').value || 'planning',
+                    eng_tsc: document.getElementById('new_eng_tsc').value || null,
+                    eng_audit_type: selectedAuditTypes || null,
+                    eng_soc_type: document.querySelector('input[name="new_soc_type"]:checked')?.value || null,
+                    eng_scope: document.getElementById('new_eng_scope').value || null,
+                    eng_as_of_date: document.getElementById('new_soc_as_of_date').value || null,
+                    eng_start_period: document.getElementById('new_soc_start_period').value || null,
+                    eng_end_period: document.getElementById('new_soc_end_period').value || null,
+                    eng_repeat: document.getElementById('new_eng_repeat').checked ? 'Y' : 'N',
+                    eng_notes: document.getElementById('new_eng_notes').value || null
+                };
+
+                // Send to API
+                fetch('../api/create-engagement.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newEngagementData)
+                })
+                .then(response => {
+                    console.log('Response status:', response.status);
+                    console.log('Response ok:', response.ok);
+                    return response.text();
+                })
+                .then(text => {
+                    console.log('Raw response:', text);
+                    try {
+                        const data = JSON.parse(text);
+                        console.log('Parsed data:', data);
+                        if (data.success) {
+                            // Reload page first, then show toast on next page load
+                            sessionStorage.setItem('showEngagementCreatedToast', 'true');
+                            location.reload();
+                        } else {
+                            Swal.fire('Error', data.message || 'Failed to create engagement', 'error');
+                        }
+                    } catch (parseError) {
+                        console.error('JSON parse error:', parseError);
+                        console.error('Response was:', text);
+                        // Check if the response contains success indication despite parse error
+                        if (text.includes('"success":true')) {
+                            sessionStorage.setItem('showEngagementCreatedToast', 'true');
+                            location.reload();
+                        } else {
+                            Swal.fire('Error', 'Invalid response from server: ' + text.substring(0, 200), 'error');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    Swal.fire('Error', 'Failed to create engagement: ' + error.message, 'error');
+                });
+            }
+        });
     });
+
+    // Toast notification function
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'custom-toast success';
+        toast.innerHTML = `
+            <i class="bi bi-check-circle-fill"></i>
+            <span>${message}</span>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('hide');
+            setTimeout(() => toast.remove(), 300);
+        }, 5000);
+    }
 </script>
 
 </body>
