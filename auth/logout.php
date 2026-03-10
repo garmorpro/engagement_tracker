@@ -18,8 +18,13 @@ $_SESSION = [];
 session_unset();
 session_destroy();
 
-// If this was a fetch request, just return JSON
-if (!headers_sent()) {
+// Detect if this was an AJAX/fetch request
+if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+    strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
     echo json_encode(['success' => true]);
     exit;
 }
+
+// Otherwise, redirect to login page
+header('Location: ' . BASE_URL . '/?logged_out=1');
+exit;
