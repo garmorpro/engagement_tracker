@@ -1418,8 +1418,26 @@ function getTimeAgo($datetime) {
                 </tr>
             </thead>
             <tbody>
+                <?php
+                $timelineLookup = [];
+
+foreach ($allTimelineData as $row) {
+    $timelineLookup[$row['engagement_idno']] = $row;
+}
+?>
                 <?php if (!empty($engagements)): ?>
-                    <?php foreach ($engagements as $index => $eng): ?>
+                    <?php foreach ($engagements as $index => $eng): 
+                         $engId = $eng['eng_idno'];
+                         $dueDate = 'N/A';
+                         if (isset($timelineLookup[$engId])) {
+                            $timeline = $timelineLookup[$engId];
+
+                            if (!empty($timeline['final_report_date'])) {
+                                $dueDate = date("M d, Y", strtotime($timeline['final_report_date']));
+                            }
+                        }
+                        ?>
+                        
                         <?php
                             $colorClass = 'color-' . (($index % 5) + 1);
                             $initials = strtoupper(substr($eng['eng_name'], 0, 1) . substr(explode(' ', $eng['eng_name'])[1] ?? '', 0, 1));
