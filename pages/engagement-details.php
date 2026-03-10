@@ -1364,38 +1364,55 @@ $engagementData = $engagement;
                 </div>
             </div>
 
+            <?php
+
+$badge = $overdue ? '<span class="overdue-badge pulse">Overdue</span>' : '';
+$statusClass = $overdue ? 'overdue' : 'upcoming';
+$statusText = $overdue ? 'Overdue' : 'Upcoming';
+$daysText = $overdue ? abs($days) . ' days late' : $days . ' days';
+
+?>
+
             <!-- Right Side: Sidebar -->
             <div class="engagement-right">
                 <div class="engagement-sidebar">
                     <!-- Critical Date Section -->
                     <div class="sidebar-section">
-                        <div class="critical-date-wrapper">
-                            <div class="critical-date-icon-wrapper">
-                                <div class="critical-date-icon">
-                                    <i class="bi bi-clock-history"></i>
-                                </div>
-                            </div>
-                            <span class="overdue-badge pulse">Overdue</span>
-                        </div>
-                        <div class="critical-date">
-                            <div class="critical-date-inner">
-                                <div class="critical-date-label">Next Critical Date</div>
-                                <div class="critical-date-value">37 days</div>
-                                <div class="critical-date-status overdue">overdue</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Upcoming Section -->
-                    <div class="sidebar-section">
-                        <div class="sidebar-section-title">Upcoming</div>
-                        <div class="upcoming-item">
-                            <div class="upcoming-label">Next Milestone</div>
-                            <div class="upcoming-title">Leadsheet Due</div>
-                        </div>
-                    </div>
-                </div>
+    <div class="critical-date-wrapper">
+        <div class="critical-date-icon-wrapper">
+            <div class="critical-date-icon <?php echo $statusClass; ?>">
+                <i class="bi bi-clock-history"></i>
             </div>
+        </div>
+
+        <?php echo $badge; ?>
+    </div>
+
+    <div class="critical-date">
+        <div class="critical-date-inner">
+            <div class="critical-date-label">Next Critical Date</div>
+            <div class="critical-date-value"><?php echo $daysText; ?></div>
+            <div class="critical-date-status <?php echo $statusClass; ?>">
+                <?php echo $statusText; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sidebar-section">
+    <div class="sidebar-section-title">Upcoming</div>
+    <div class="upcoming-item">
+        <div class="upcoming-label">Next Milestone</div>
+        <div class="upcoming-title"><?php echo $nextTask ?? 'None'; ?></div>
+    </div>
+</div>
+
+                </div>
+
+            </div>
+
+
+            
         </div>
     </div>
 
