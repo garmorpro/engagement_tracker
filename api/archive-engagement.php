@@ -19,7 +19,10 @@ if (!$engagement_id) {
 }
 
 try {
-    $query = "UPDATE engagements SET eng_status = 'archived' WHERE eng_idno = ?";
+    $query = "UPDATE engagements 
+            SET eng_status = 'archived',
+            eng_archive = IFNULL(eng_archive, CURDATE())
+            WHERE eng_idno = ?";
     $stmt = $conn->prepare($query);
     
     if (!$stmt) {
