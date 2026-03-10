@@ -1521,6 +1521,55 @@ foreach ($allTimelineData as $row) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script>
+
+    // Restore engagement function
+    async function restoreEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        const result = await Swal.fire({
+            title: 'Restore Engagement?',
+            text: 'Are you sure you want to restore this engagement? It will be moved back to complete status.',
+            icon: 'question',
+            confirmButtonText: 'Restore',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#4487FC',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/restore-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Restored!',
+                        text: 'Engagement has been restored successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        background: isDarkMode ? '#1A2332' : '#FFFFFF',
+                        color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to restore engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to restore engagement', 'error');
+            }
+        }
+    }
     // Check if we should show the engagement created toast
     if (sessionStorage.getItem('showEngagementCreatedToast')) {
         sessionStorage.removeItem('showEngagementCreatedToast');
