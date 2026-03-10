@@ -55,8 +55,8 @@ try {
     $query = "INSERT INTO engagements (
         eng_name, eng_poc, eng_location, eng_repeat, eng_audit_type, 
         eng_soc_type, eng_scope, eng_tsc, eng_start_period, eng_end_period, 
-        eng_as_of_date, eng_last_communication, eng_notes, eng_status, eng_created, eng_updated
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+        eng_as_of_date, eng_notes, eng_status, eng_created, eng_updated
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($query);
     
@@ -67,10 +67,10 @@ try {
     $engLastCommunication = null;
     
     $stmt->bind_param(
-        'ssssssssssssss',
+        'sssssssssssss',
         $eng_name, $eng_poc, $eng_location, $eng_repeat, $eng_audit_type,
         $eng_soc_type, $eng_scope, $eng_tsc, $eng_start_period, $eng_end_period,
-        $eng_as_of_date, $engLastCommunication, $eng_notes, $eng_status
+        $eng_as_of_date, $eng_notes, $eng_status
     );
 
     if (!$stmt->execute()) {
