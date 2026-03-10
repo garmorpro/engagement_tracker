@@ -325,6 +325,26 @@ $engagementData = $engagement;
             color: var(--success-green);
         }
 
+        .engagement-badge.in-progress {
+            background: rgba(79, 198, 95, 0.1);
+            color: var(--success-green);
+        }
+
+        .engagement-badge.planning {
+            background: rgba(241, 115, 19, 0.1);
+            color: var(--warning-orange);
+        }
+
+        .engagement-badge.review {
+            background: rgba(160, 77, 253, 0.1);
+            color: var(--info-purple);
+        }
+
+        .engagement-badge.complete {
+            background: rgba(77, 191, 184, 0.1);
+            color: var(--teal);
+        }
+
         .badge-priority {
             background: rgba(201, 0, 18, 0.15);
             color: var(--danger-red);
@@ -1374,7 +1394,7 @@ $engagementData = $engagement;
                             default       => 'bi-circle'
                         };
                     ?>
-                    <span class="engagement-badge badge-status">
+                    <span class="engagement-badge <?php echo $engagement['eng_status']; ?>">
                         <i class="bi <?php echo $statusIcon; ?>"></i>
                         <?php echo ucfirst($statusText); ?>
                     </span>
