@@ -19,14 +19,18 @@ if (!$engagement_id) {
 }
 
 try {
-    $query = "UPDATE engagements SET eng_status = 'complete' WHERE eng_idno = ?";
+    $query = "UPDATE engagements 
+          SET eng_status = 'complete',
+              eng_archive = NULL
+          WHERE eng_idno = ?";
+
     $stmt = $conn->prepare($query);
-    
+
     if (!$stmt) {
         echo json_encode(['success' => false, 'message' => 'Prepare failed: ' . $conn->error]);
         exit;
     }
-    
+
     $stmt->bind_param('s', $engagement_id);
     
     if ($stmt->execute()) {
