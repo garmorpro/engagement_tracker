@@ -1630,43 +1630,13 @@ foreach ($dolOrder as $auditType) {
                         <div class="detail-value"><?php echo htmlspecialchars($engagement['eng_audit_type'] ?? 'N/A'); ?></div>
                     </div>
 
-                    <!-- Last Contact -->
-                    <div class="detail-item">
-                        <div class="detail-label">Last Contact</div>
-                        <div class="detail-value">
-                            <?php 
-                            $lastContact = $engagement['eng_last_contact'] ?? null;
-                            echo ($lastContact && $lastContact !== '0000-00-00') 
-                                ? date("Y-m-d", strtotime($lastContact))
-                                : 'N/A';
-                            ?>
-                        </div>
-                    </div>
-
-                    <!-- Section 3 Requested -->
-                    <div class="detail-item">
-                        <div class="detail-label">Section 3 Requested</div>
-                        <div class="detail-value">
-                            <?php 
-                            $section3 = $engagement['eng_section_3_requested'] ?? null;
-                            if ($section3 && $section3 !== '0000-00-00') {
-                                echo '<span style="display: flex; align-items: center; gap: 0.5rem;">';
-                                echo date("Y-m-d", strtotime($section3));
-                                echo ' <i class="bi bi-check-circle-fill" style="color: var(--success-green); font-size: 14px;"></i>';
-                                echo '</span>';
-                            } else {
-                                echo 'N/A';
-                            }
-                            ?>
-                        </div>
-                    </div>
 
                     <!-- Created -->
                     <div class="detail-item">
                         <div class="detail-label">Created</div>
                         <div class="detail-value">
                             <?php 
-                            $created = $engagement['eng_created_date'] ?? null;
+                            $created = $engagement['eng_created'] ?? null;
                             echo ($created && $created !== '0000-00-00') 
                                 ? date("M d, Y", strtotime($created))
                                 : 'N/A';
@@ -1679,7 +1649,7 @@ foreach ($dolOrder as $auditType) {
                         <div class="detail-label">Last Updated</div>
                         <div class="detail-value">
                             <?php 
-                            $updated = $engagement['eng_last_updated_date'] ?? null;
+                            $updated = $engagement['eng_updated'] ?? null;
                             echo ($updated && $updated !== '0000-00-00') 
                                 ? date("M d, Y", strtotime($updated))
                                 : 'N/A';
@@ -1692,7 +1662,7 @@ foreach ($dolOrder as $auditType) {
                         <div class="detail-label">Archive Date</div>
                         <div class="detail-value">
                             <?php 
-                            $archiveDate = $engagement['eng_archive_date'] ?? null;
+                            $archiveDate = $engagement['eng_archive'] ?? null;
                             echo ($archiveDate && $archiveDate !== '0000-00-00') 
                                 ? date("M d, Y", strtotime($archiveDate))
                                 : 'N/A';
