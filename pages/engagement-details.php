@@ -38,6 +38,68 @@ foreach ($allTimelineData as $row) {
     }
 }
 
+$nextStepName = null;
+$nextStepDate = null;
+$daysDifference = null;
+$isOverdue = false;
+
+if ($timeline) {
+
+    $timelineSteps = [
+        'internal_planning_call' => 'Internal Planning Call',
+        'planning_memo' => 'Planning Memo',
+        'irl' => 'IRL Due',
+        'client_planning_call' => 'Client Planning Call',
+        'fieldwork' => 'Fieldwork',
+        'leadsheet' => 'Leadsheet Due',
+        'conclusion_memo' => 'Conclusion Memo',
+        'draft_report' => 'Draft Report',
+        'final_report' => 'Final Report',
+        'archive' => 'Archive'
+    ];
+
+    foreach ($timelineSteps as $key => $label) {
+
+        $dateField = $key . '_date';
+        $completedField = $key . '_completed_at';
+
+        if (!empty($timeline[$dateField]) && empty($timeline[$completedField])) {
+
+            $nextStepName = $label;
+            $nextStepDate = $timeline[$dateField];
+
+            $today = new DateTime();
+            $target = new DateTime($nextStepDate);
+
+            $interval = $today->diff($target);
+
+            $daysDifference = $interval->days;
+
+            if ($target < $today) {
+                $isOverdue = true;
+            }
+
+            break;
+        }
+    }
+}
+
+$criticalValue = "No upcoming dates";
+$criticalStatus = "";
+$badgeText = "";
+
+if ($nextStepDate) {
+
+    if ($isOverdue) {
+        $criticalValue = $daysDifference . " days";
+        $criticalStatus = "overdue";
+        $badgeText = "Overdue";
+    } else {
+        $criticalValue = $daysDifference . " days";
+        $criticalStatus = "upcoming";
+    }
+}
+
 
 // ENGAGEMENT TEAM
 $team = []; // start as empty array
@@ -1376,13 +1438,19 @@ $engagementData = $engagement;
                                     <i class="bi bi-clock-history"></i>
                                 </div>
                             </div>
-                            <span class="overdue-badge pulse">Overdue</span>
+                            <?php if ($isOverdue): ?>
+<span class="overdue-badge pulse">Overdue</span>
+<?php endif; ?>
                         </div>
                         <div class="critical-date">
                             <div class="critical-date-inner">
                                 <div class="critical-date-label">Next Critical Date</div>
-                                <div class="critical-date-value">37 days</div>
-                                <div class="critical-date-status overdue">overdue</div>
+                                <div class="critical-date-value <?php echo $isOverdue ? 'overdue' : 'upcoming'; ?>">
+                                   <?php echo htmlspecialchars($criticalValue); ?>
+                                </div>
+                                <div class="critical-date-status <?php echo $criticalStatus; ?>">
+                                   <?php echo $isOverdue ? 'overdue' : 'remaining'; ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1392,7 +1460,9 @@ $engagementData = $engagement;
                         <div class="sidebar-section-title">Upcoming</div>
                         <div class="upcoming-item">
                             <div class="upcoming-label">Next Milestone</div>
-                            <div class="upcoming-title">Leadsheet Due</div>
+                            <div class="upcoming-title">
+                                <?php echo htmlspecialchars($nextStepName ?? 'None'); ?>
+                            </div>
                         </div>
                     </div>
                 </div>
