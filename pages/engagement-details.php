@@ -637,6 +637,7 @@ $engagementData = $engagement;
         /* ========== TEAM SECTION ========== */
         .team-members {
             display: grid;
+            margin-top: 1rem;
             gap: 1rem;
         }
 
