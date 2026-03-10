@@ -1500,7 +1500,7 @@ $engagementData = $engagement;
                         <div class="critical-date">
                             <div class="critical-date-inner">
                                 <div class="critical-date-label">Next Critical Date</div>
-                                <div class="critical-date-value <?php echo $isOverdue ? 'overdue' : 'upcoming'; ?>">
+                                <div class="critical-date-value <?php echo $isOverdue ? 'overdue' : 'remaining'; ?>">
                                    <?php echo htmlspecialchars($criticalValue); ?>
                                 </div>
                                 <div class="critical-date-status <?php echo $isOverdue ? 'overdue' : 'remaining'; ?>">
