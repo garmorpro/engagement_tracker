@@ -1504,22 +1504,31 @@ $engagementData = $engagement;
                     $auditTypes = array_filter(array_column($team, 'audit_type'), fn($v) => !is_null($v) && $v !== '');
 
                     // Group members by employee name and role
-                    $groupedTeam = [];
-                    foreach ($team as $member) {
-                        $key = $member['emp_name'] . '|' . $member['role'];
-                        if (!isset($groupedTeam[$key])) {
-                            $groupedTeam[$key] = [
-                                'emp_name' => $member['emp_name'],
-                                'role' => $member['role'],
-                                'audit_types' => []
-                            ];
-                        }
+$groupedTeam = [];
+foreach ($team as $member) {
+    $key = $member['emp_name'] . '|' . $member['role'];
+    if (!isset($groupedTeam[$key])) {
+        $dolMap = [];
+        $dolFields = [
+            'SOC 1' => 'emp_soc1_dol',
+            'SOC 2' => 'emp_soc2_dol',
+            'HIPAA' => 'emp_hipaa_dol',
+            'HITRUST' => 'emp_hitrust_dol',
+            'FISMA' => 'emp_fisma_dol',
+        ];
+        foreach ($dolFields as $auditType => $field) {
+            if (!empty($member[$field])) {
+                $dolMap[$auditType] = array_map('trim', explode(',', $member[$field]));
+            }
+        }
 
-                        // Only explode emp_dol if it's not empty
-                        $dolArray = !empty($member['emp_dol']) ? explode(',', $member['emp_dol']) : [];
-                        $auditType = $member['audit_type'] ?? 'General';
-                        $groupedTeam[$key]['audit_types'][$auditType] = $dolArray;
-                    }
+        $groupedTeam[$key] = [
+            'emp_name' => $member['emp_name'],
+            'role'     => $member['role'],
+            'audit_types' => $dolMap
+        ];
+    }
+}
 
                     // -----------------------------
                     // Sort grouped team by role priority
