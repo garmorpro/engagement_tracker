@@ -3,7 +3,7 @@
 session_start();
 require_once '../includes/functions.php';
 require_once '../path.php';
-// require_once '../includes/db.php';
+require_once '../includes/db.php'; // Make sure $conn is available
 
 // Only allow POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -49,7 +49,15 @@ if (!preg_match("/^\d{" . $expected_length . "}$/", $passcode) || $passcode !== 
     exit;
 }
 
-// Update logged_in and last_active
+// Set session variables
+$_SESSION['user_id'] = $user['user_id'];
+$_SESSION['account_name'] = $user['account_name'];
+$_SESSION['name'] = $user['name'];
+$_SESSION['email'] = $user['email'] ?? '';
+$_SESSION['role'] = $user['role'];
+$_SESSION['last_activity'] = time(); // Track session activity
+
+// Update logged_in and last_active in DB
 $stmt = $conn->prepare("
     UPDATE `service_accounts`
     SET `logged_in` = 1, `last_active` = NOW()
@@ -58,13 +66,6 @@ $stmt = $conn->prepare("
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $stmt->close();
-
-// Set session
-$_SESSION['user_id'] = $user['user_id'];
-$_SESSION['account_name'] = $user['account_name'];
-$_SESSION['name'] = $user['name'];
-$_SESSION['email'] = $user['email'] ?? '';
-$_SESSION['role'] = $user['role'];
 
 // Redirect to dashboard
 header('Location: ' . BASE_URL . '/pages/dashboard.php');
