@@ -46,17 +46,57 @@ $isOverdue = false;
 if ($timeline) {
 
     $timelineSteps = [
-        'internal_planning_call' => 'Internal Planning Call',
-        'planning_memo' => 'Planning Memo',
-        'irl' => 'IRL Due',
-        'client_planning_call' => 'Client Planning Call',
-        'fieldwork' => 'Fieldwork',
-        'leadsheet' => 'Leadsheet Due',
-        'conclusion_memo' => 'Conclusion Memo',
-        'draft_report' => 'Draft Report',
-        'final_report' => 'Final Report',
-        'archive' => 'Archive'
-    ];
+    [
+        'label' => 'Internal Planning Call',
+        'date' => 'internal_planning_call_date',
+        'completed' => 'internal_planning_call_completed_at'
+    ],
+    [
+        'label' => 'Planning Memo',
+        'date' => 'planning_memo_date',
+        'completed' => 'planning_memo_completed_at'
+    ],
+    [
+        'label' => 'IRL Due',
+        'date' => 'irl_due_date',
+        'completed' => 'irl_completed_at'
+    ],
+    [
+        'label' => 'Client Planning Call',
+        'date' => 'client_planning_call_date',
+        'completed' => 'client_planning_call_completed_at'
+    ],
+    [
+        'label' => 'Fieldwork',
+        'date' => 'fieldwork_date',
+        'completed' => 'fieldwork_completed_at'
+    ],
+    [
+        'label' => 'Leadsheet Due',
+        'date' => 'leadsheet_date',
+        'completed' => 'leadsheet_completed_at'
+    ],
+    [
+        'label' => 'Conclusion Memo',
+        'date' => 'conclusion_memo_date',
+        'completed' => 'conclusion_memo_completed_at'
+    ],
+    [
+        'label' => 'Draft Report',
+        'date' => 'draft_report_due_date',
+        'completed' => 'draft_report_completed_at'
+    ],
+    [
+        'label' => 'Final Report',
+        'date' => 'final_report_date',
+        'completed' => 'final_report_completed_at'
+    ],
+    [
+        'label' => 'Archive',
+        'date' => 'archive_date',
+        'completed' => 'archive_completed_at'
+    ]
+];
 
     foreach ($timelineSteps as $key => $label) {
 
