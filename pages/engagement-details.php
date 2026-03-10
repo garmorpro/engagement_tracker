@@ -1552,22 +1552,42 @@ $engagementData = $engagement;
                                 <div class="team-member-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
                                 <div class="team-member-title"><?php echo htmlspecialchars(ucfirst($member['role'])); ?></div>
 
-                                <?php if (!empty($member['audit_types'])): ?>
-                                    <?php foreach ($member['audit_types'] as $auditType => $tags): ?>
-                                        <?php if (!empty($tags)): ?>
-                                            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 0.5rem; overflow-wrap: break-word; word-wrap: break-word;">
-                                                <div style="margin-bottom: 0.3rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
-                                                    <?php echo htmlspecialchars($auditType); ?> DOL
-                                                </div>
-                                                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                                    <?php foreach ($tags as $tag): ?>
-                                                        <span class="team-member-tag" style="white-space: normal; overflow-wrap: break-word;"><?php echo htmlspecialchars(trim($tag)); ?></span>
-                                                    <?php endforeach; ?>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
+                                <?php
+$dolOrder = ['SOC 1', 'SOC 2', 'HIPAA', 'HITRUST', 'FISMA'];
+$hasDolData = false;
+foreach ($dolOrder as $auditType) {
+    if (isset($member['audit_types'][$auditType]) && !empty($member['audit_types'][$auditType])) {
+        $hasDolData = true;
+        break;
+    }
+}
+?>
+
+<?php if ($hasDolData && strtolower($member['role']) !== 'manager'): ?>
+    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
+            <i class="bi bi-briefcase" style="font-size: 11px; color: var(--text-secondary);"></i>
+            <span style="font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</span>
+        </div>
+        <?php foreach ($dolOrder as $auditType): ?>
+            <?php if (isset($member['audit_types'][$auditType]) && !empty($member['audit_types'][$auditType])): ?>
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); min-width: 55px;"><?php echo htmlspecialchars($auditType); ?></span>
+                    <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                        <?php foreach ($member['audit_types'][$auditType] as $tag): ?>
+                            <?php if (!empty(trim($tag))): ?>
+                                <span style="background: rgba(68, 135, 252, 0.15); color: var(--primary-blue); border: 1px solid rgba(68, 135, 252, 0.3); padding: 0.2rem 0.55rem; border-radius: 5px; font-size: 11px; font-weight: 700;"><?php echo htmlspecialchars(trim($tag)); ?></span>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
+<?php endif; ?>
+
+
+
                             </div>
                         </div>
                     <?php endforeach; ?>
