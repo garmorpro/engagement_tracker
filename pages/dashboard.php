@@ -512,7 +512,7 @@ function getTimeAgo($datetime) {
 
         .profile-dropdown-item.logout {
             color: var(--danger-red);
-            border-top: 1px solid var(--border-color);
+            /* border-top: 1px solid var(--border-color); */
             margin-top: 0.25rem;
             padding-top: 0.65rem;
         }
