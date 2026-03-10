@@ -1,6 +1,9 @@
 <?php
 // includes/session_check.php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once '../includes/db.php';
 require_once '../path.php';
 
