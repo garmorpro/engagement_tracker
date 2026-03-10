@@ -2131,7 +2131,7 @@ $engagementData = $engagement;
                 if (data.success) {
                     // Set flag to show toast after reload
                     sessionStorage.setItem('showDeletedToast', 'true');
-                    window.location.href = "archive.php";
+                    window.location.href = "dashboard.php";
                 } else {
                     Swal.fire('Error', data.message || 'Failed to delete engagement', 'error');
                 }
