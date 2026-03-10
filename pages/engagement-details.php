@@ -459,6 +459,19 @@ $engagementData = $engagement;
             animation: none;
         }
 
+        .critical-date-icon.remaining {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--primary-blue);
+}
+
+.critical-date-value.remaining {
+    color: var(--primary-blue);
+}
+
+.critical-date-status.remaining {
+    color: var(--primary-blue);
+}
+
         .overdue-badge {
             display: inline-block;
             background: rgba(201, 0, 18, 0.15);
@@ -1476,7 +1489,7 @@ $engagementData = $engagement;
                     <div class="sidebar-section">
                         <div class="critical-date-wrapper">
                             <div class="critical-date-icon-wrapper">
-                                <div class="critical-date-icon">
+                                <div class="critical-date-icon <?php echo $isOverdue ? 'overdue' : 'remaining'; ?>">
                                     <i class="bi bi-clock-history"></i>
                                 </div>
                             </div>
@@ -1490,7 +1503,7 @@ $engagementData = $engagement;
                                 <div class="critical-date-value <?php echo $isOverdue ? 'overdue' : 'upcoming'; ?>">
                                    <?php echo htmlspecialchars($criticalValue); ?>
                                 </div>
-                                <div class="critical-date-status <?php echo $criticalStatus; ?>">
+                                <div class="critical-date-status <?php echo $isOverdue ? 'overdue' : 'remaining'; ?>">
                                    <?php echo $isOverdue ? 'overdue' : 'remaining'; ?>
                                 </div>
                             </div>
