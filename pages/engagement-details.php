@@ -335,7 +335,7 @@ $engagementData = $engagement;
             color: var(--warning-orange);
         }
 
-        .engagement-badge.review {
+        .engagement-badge.in-review {
             background: rgba(160, 77, 253, 0.1);
             color: var(--info-purple);
         }
