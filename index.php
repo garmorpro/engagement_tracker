@@ -411,7 +411,19 @@ body {
     <h1>Engagement Tracker</h1>
     <p>Select your account to sign in</p>
     <?php if (isset($_GET['timeout'])): ?>
-    <div class="alert alert-warning">You were logged out due to inactivity. Please login again.</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Session Expired',
+        text: 'You were logged out due to inactivity. Please login again.',
+        background: 'var(--bg-secondary)',
+        color: 'white',
+        confirmButtonColor: 'var(--primary-blue)',
+        iconColor: 'var(--danger-red)'
+    });
+});
+</script>
 <?php endif; ?>
 </div>
 
