@@ -580,7 +580,7 @@ function getTimeAgo($datetime) {
             color: var(--primary-blue);
         }
 
-        .status-card-icon.in-progress {
+        .status-card-icon.complete {
             background: rgba(79, 198, 95, 0.1);
             color: var(--success-green);
         }
@@ -595,7 +595,7 @@ function getTimeAgo($datetime) {
             color: var(--info-purple);
         }
 
-        .status-card-icon.complete {
+        .status-card-icon.in-progress {
             background: rgba(77, 191, 184, 0.1);
             color: var(--teal);
         }
@@ -828,7 +828,7 @@ function getTimeAgo($datetime) {
             font-weight: 600;
         }
 
-        .status-badge.in-progress {
+        .status-badge.complete {
             background: rgba(79, 198, 95, 0.15);
             color: var(--success-green);
         }
@@ -848,7 +848,7 @@ function getTimeAgo($datetime) {
             color: var(--danger-red);
         }
 
-        .status-badge.complete {
+        .status-badge.in-progress {
             background: rgba(77, 191, 184, 0.15);
             color: var(--teal);
         }

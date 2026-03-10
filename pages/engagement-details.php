@@ -325,7 +325,7 @@ $engagementData = $engagement;
             color: var(--success-green);
         }
 
-        .engagement-badge.in-progress {
+        .engagement-badge.complete {
             background: rgba(79, 198, 95, 0.1);
             color: var(--success-green);
         }
@@ -340,7 +340,7 @@ $engagementData = $engagement;
             color: var(--info-purple);
         }
 
-        .engagement-badge.complete {
+        .engagement-badge.in-progress {
             background: rgba(77, 191, 184, 0.1);
             color: var(--teal);
         }
