@@ -14,7 +14,7 @@ if (empty($_SESSION['user_id'])) {
 }
 
 // Set inactivity limit (15 minutes)
-$inactive_limit = 15 * 60; // 15 minutes in seconds
+$inactive_limit = 1 * 60; // 15 minutes in seconds
 
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > $inactive_limit)) {
     // Session expired: log out
