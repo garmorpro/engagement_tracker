@@ -603,6 +603,11 @@ function getTimeAgo($datetime) {
             color: var(--teal);
         }
 
+        .status-card-icon.archived {
+            background: rgba(120, 130, 150, 0.15);
+            color: #7a8599;
+        }
+
         .status-card-content {
             flex: 1;
         }
