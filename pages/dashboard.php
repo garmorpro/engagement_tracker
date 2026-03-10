@@ -5,6 +5,9 @@ require_once '../includes/functions.php';
 // Get all engagements data
 $allEngagements = getAllEngagements($conn);
 
+// Get all timelines
+$allTimelineData = getAllTimelineData($conn);
+
 // Filter to only show active engagements
 $engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
 
