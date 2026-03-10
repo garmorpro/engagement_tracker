@@ -1627,7 +1627,7 @@ foreach ($dolOrder as $auditType) {
                     <!-- Scope -->
                     <div class="detail-item">
                         <div class="detail-label">Scope</div>
-                        <div class="detail-value"><?php echo htmlspecialchars($engagement['eng_audit_type'] ?? 'N/A'); ?></div>
+                        <div class="detail-value"><?php echo htmlspecialchars($engagement['eng_scope'] ?? 'N/A'); ?></div>
                     </div>
 
 
