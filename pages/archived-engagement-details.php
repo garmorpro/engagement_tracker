@@ -2177,6 +2177,12 @@ $engagementData = $engagement;
         }
     }
 
+    // Check if we should show the engagement deleted toast
+    if (sessionStorage.getItem('showDeletedToast')) {
+        sessionStorage.removeItem('showDeletedToast');
+        showToast('Engagement deleted successfully');
+    }
+
 
     // Delete engagement function
     async function deleteEngagement(engagementId) {
@@ -2211,7 +2217,7 @@ $engagementData = $engagement;
                 if (data.success) {
                     // Set flag to show toast after reload
                     sessionStorage.setItem('showDeletedToast', 'true');
-                    location.reload();
+                    window.location.href = "archive.php";
                 } else {
                     Swal.fire('Error', data.message || 'Failed to delete engagement', 'error');
                 }
