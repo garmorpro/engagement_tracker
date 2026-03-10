@@ -1110,7 +1110,7 @@ $engagementData = $engagement;
         /* ========== TWO COLUMN LAYOUT ========== */
         .two-column-wrapper {
             display: grid;
-            grid-template-columns: 320px 1fr;
+            grid-template-columns: 400px 1fr;
             gap: 2rem;
             margin-bottom: 3rem;
             align-items: start;
@@ -1119,7 +1119,6 @@ $engagementData = $engagement;
         .left-column {
             display: grid;
             grid-template-rows: auto;
-            width: 400px;
             gap: 2rem;
         }
 
