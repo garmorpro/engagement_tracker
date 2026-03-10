@@ -1,5 +1,5 @@
 (function() {
-    const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
+    const INACTIVITY_LIMIT = 1 * 60 * 1000; // 15 minutes
     let inactivityTimer;
 
     function resetTimer() {
