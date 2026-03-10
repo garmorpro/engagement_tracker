@@ -1665,7 +1665,7 @@ foreach ($allTimelineData as $row) {
             // Get the engagement ID from the first cell
             const engagementId = row.querySelector('.engagement-id').textContent.trim();
             if (engagementId) {
-                window.location.href = `engagement-details.php?id=${engagementId}`;
+                window.location.href = `archived-engagement-details.php?id=${engagementId}`;
             }
         });
     });
