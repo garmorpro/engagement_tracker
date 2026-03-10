@@ -400,6 +400,24 @@ body {
     background: var(--border-color) !important;
     color: white !important;
 }
+
+.timeout-alert {
+    background: rgba(201, 0, 18, 0.1); /* semi-transparent red */
+    border: 1px solid var(--danger-red);
+    color: var(--danger-red);
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 13px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 </style>
 </head>
 <body>
@@ -411,19 +429,9 @@ body {
     <h1>Engagement Tracker</h1>
     <p>Select your account to sign in</p>
     <?php if (isset($_GET['timeout'])): ?>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    Swal.fire({
-        icon: 'warning',
-        title: 'Session Expired',
-        text: 'You were logged out due to inactivity. Please login again.',
-        background: 'var(--bg-secondary)',
-        color: 'white',
-        confirmButtonColor: 'var(--primary-blue)',
-        iconColor: 'var(--danger-red)'
-    });
-});
-</script>
+    <div class="timeout-alert">
+        You were logged out due to inactivity. Please login again.
+    </div>
 <?php endif; ?>
 </div>
 
