@@ -1,7 +1,8 @@
 <?php 
+require_once '../auth/session_check.php';
 require_once '../path.php';
 require_once '../includes/functions.php';
-require_once '../auth/session_check.php';
+
 
 // Get all engagements data
 $allEngagements = getAllEngagements($conn);

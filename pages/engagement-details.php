@@ -1,7 +1,7 @@
 <?php 
+require_once '../auth/session_check.php';
 require_once '../path.php';
 require_once '../includes/functions.php';
-require_once '../auth/session_check.php';
 
 // Get engagement ID from query parameter
 $engagementId = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : null;
