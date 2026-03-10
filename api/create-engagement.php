@@ -114,22 +114,22 @@ try {
     
     $eng_idno = $row['eng_idno'];
 
-    // Automatically create timeline row for this engagement
-    $timelineQuery = "INSERT INTO engagement_timeline (engagement_idno) VALUES (?)";
-    $stmt = $conn->prepare($timelineQuery);
+    // // Automatically create timeline row for this engagement
+    // $timelineQuery = "INSERT INTO engagement_timeline (engagement_idno) VALUES (?)";
+    // $stmt = $conn->prepare($timelineQuery);
     
-    if (!$stmt) {
-        $conn->rollback();
-        throw new Exception('Prepare failed on timeline: ' . $conn->error);
-    }
+    // if (!$stmt) {
+    //     $conn->rollback();
+    //     throw new Exception('Prepare failed on timeline: ' . $conn->error);
+    // }
     
-    $stmt->bind_param('s', $eng_idno);
+    // $stmt->bind_param('s', $eng_idno);
 
-    if (!$stmt->execute()) {
-        $conn->rollback();
-        throw new Exception('Failed to create timeline: ' . $stmt->error);
-    }
-    $stmt->close();
+    // if (!$stmt->execute()) {
+    //     $conn->rollback();
+    //     throw new Exception('Failed to create timeline: ' . $stmt->error);
+    // }
+    // $stmt->close();
 
     // Commit transaction
     $conn->commit();
