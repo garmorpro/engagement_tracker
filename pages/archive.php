@@ -856,6 +856,11 @@ function getTimeAgo($datetime) {
             color: var(--teal);
         }
 
+        .status-badge.archived {
+            background: rgba(120, 130, 150, 0.15);
+            color: #7a8599;
+        }
+
         .action-icons {
             display: flex;
             gap: 0.5rem;
