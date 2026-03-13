@@ -1,5 +1,5 @@
 <?php 
-require_once '../auth/session_check.php';
+// require_once '../auth/session_check.php';
 require_once '../path.php';
 require_once '../includes/functions.php';
 
@@ -2093,7 +2093,7 @@ $engagementData = $engagement;
 <script>
     const BASE_URL = "<?= BASE_URL ?>";
 </script>
-<script src="../assets/js/activity_counter.js?v=<?php echo time(); ?>"></script>
+<!-- <script src="../assets/js/activity_counter.js?v=<?php echo time(); ?>"></script> -->
 <script>
 
     // Check if we should show the engagement deleted toast
