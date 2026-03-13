@@ -1145,8 +1145,8 @@ function getTimeAgo($datetime) {
 
             <div class="header-nav">
                 <a href="dashboard.php" class="nav-item">Dashboard</a>
-                <a href="analytics.php" class="nav-item">Analytics</a>
                 <a href="archive.php" class="nav-item active">Archive <span class="badge"><?php echo $archivedCount; ?></span></a>
+                <a href="tools.php" class="nav-item">Tools</a>
             </div>
         </div>
 
