@@ -191,11 +191,14 @@ $engagementData = $engagement;
     <link rel="stylesheet" href="../assets/styles/main.css?v=<?php echo time(); ?>">
     <style>
         :root {
-            --primary-blue: #4487FC;
-            --success-green: #4FC65F;
-            --warning-orange: #F17313;
-            --danger-red: #C90012;
-            --info-purple: #A04DFD;
+            /* These four are aliased to the navy palette below via var()
+               indirection, so they automatically track light/dark mode
+               without needing separate dark-mode overrides. */
+            --primary-blue: var(--ink);
+            --success-green: var(--staff);
+            --warning-orange: var(--intern);
+            --danger-red: var(--critical);
+            --info-purple: var(--senior);
             --teal: #4DBFB8;
             --gray-100: #F1F2F5;
             --gray-200: #D0D5DB;
@@ -207,7 +210,6 @@ $engagementData = $engagement;
             --text-primary: #1A1A1A;
             --text-secondary: #6A7382;
 
-            /* Team/DOL section only — see CLAUDE.md phased-redesign note */
             --ink: #1B3A5C;
             --paper: #F4F6F8;
             --card: #FFFFFF;
@@ -349,37 +351,39 @@ $engagementData = $engagement;
         }
 
         .badge-status {
-            background: rgba(79, 198, 95, 0.15);
+            background: color-mix(in srgb, var(--success-green) 15%, transparent);
             color: var(--success-green);
         }
 
+        /* Status colors match the Engagements list page (dashboard.php):
+           planning=intern(amber), in-progress=ink(navy), in-review=senior(purple), complete=staff(green) */
         .engagement-badge.complete {
-            background: rgba(79, 198, 95, 0.1);
-            color: var(--success-green);
+            background: color-mix(in srgb, var(--staff) 12%, transparent);
+            color: var(--staff);
         }
 
         .engagement-badge.planning {
-            background: rgba(241, 115, 19, 0.1);
-            color: var(--warning-orange);
+            background: color-mix(in srgb, var(--intern) 14%, transparent);
+            color: var(--intern);
         }
 
         .engagement-badge.in-review {
-            background: rgba(160, 77, 253, 0.1);
-            color: var(--info-purple);
+            background: color-mix(in srgb, var(--senior) 14%, transparent);
+            color: var(--senior);
         }
 
         .engagement-badge.in-progress {
-            background: rgba(77, 191, 184, 0.1);
-            color: var(--teal);
+            background: color-mix(in srgb, var(--ink) 12%, transparent);
+            color: var(--ink);
         }
 
         .badge-priority {
-            background: rgba(201, 0, 18, 0.15);
+            background: color-mix(in srgb, var(--danger-red) 15%, transparent);
             color: var(--danger-red);
         }
 
         .badge-repeat {
-            background: rgba(68, 135, 252, 0.15);
+            background: color-mix(in srgb, var(--primary-blue) 15%, transparent);
             color: var(--primary-blue);
         }
 
@@ -495,7 +499,7 @@ $engagementData = $engagement;
             width: 48px;
             height: 48px;
             border-radius: 10px;
-            background: rgba(201, 0, 18, 0.15);
+            background: color-mix(in srgb, var(--danger-red) 15%, transparent);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -508,7 +512,7 @@ $engagementData = $engagement;
         }
 
         .critical-date-icon.remaining {
-    background: rgba(59, 130, 246, 0.15);
+    background: color-mix(in srgb, var(--primary-blue) 15%, transparent);
     color: var(--primary-blue);
 }
 
@@ -522,7 +526,7 @@ $engagementData = $engagement;
 
         .overdue-badge {
             display: inline-block;
-            background: rgba(201, 0, 18, 0.15);
+            background: color-mix(in srgb, var(--danger-red) 15%, transparent);
             color: var(--danger-red);
             padding: 0.4rem 0.8rem;
             border-radius: 6px;
@@ -538,10 +542,10 @@ $engagementData = $engagement;
 
         @keyframes pulse {
             from {
-                box-shadow: 0 0 0 0 rgba(201, 0, 18, 0.7);
+                box-shadow: 0 0 0 0 color-mix(in srgb, var(--danger-red) 70%, transparent);
             }
             to {
-                box-shadow: 0 0 0 8px rgba(201, 0, 18, 0);
+                box-shadow: 0 0 0 8px color-mix(in srgb, var(--danger-red) 0%, transparent);
             }
         }
 
@@ -632,8 +636,8 @@ $engagementData = $engagement;
         }
 
         .btn-edit:hover {
-            background: #3671E0;
-            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3);
+            background: color-mix(in srgb, var(--primary-blue) 85%, black);
+            box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-blue) 30%, transparent);
         }
 
         .btn-icon {
@@ -654,7 +658,7 @@ $engagementData = $engagement;
         .btn-icon:hover {
             border-color: var(--primary-blue);
             color: var(--primary-blue);
-            background: rgba(68, 135, 252, 0.05);
+            background: color-mix(in srgb, var(--primary-blue) 5%, transparent);
         }
 
         /* ========== SECTION STYLING ========== */
@@ -731,18 +735,18 @@ $engagementData = $engagement;
         }
 
         .section-icon.team {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4CAF50;
+            background: color-mix(in srgb, var(--manager) 16%, transparent);
+            color: var(--manager);
         }
 
         .section-icon.timeline {
-            background: rgba(33, 150, 243, 0.2);
-            color: #2196F3;
+            background: color-mix(in srgb, var(--senior) 16%, transparent);
+            color: var(--senior);
         }
 
         .section-icon.milestones {
-            background: rgba(160, 77, 253, 0.2);
-            color: #A04DFD;
+            background: color-mix(in srgb, var(--staff) 16%, transparent);
+            color: var(--staff);
         }
 
         .section-title {
@@ -947,13 +951,13 @@ $engagementData = $engagement;
         }
 
         .section-icon.details {
-            background: rgba(68, 135, 252, 0.2);
-            color: #2196F3;
+            background: color-mix(in srgb, var(--ink) 16%, transparent);
+            color: var(--ink);
         }
 
         .section-icon.notes {
-            background: rgba(255, 152, 0, 0.2);
-            color: #FF9800;
+            background: color-mix(in srgb, var(--intern) 16%, transparent);
+            color: var(--intern);
         }
 
        .details-grid {
@@ -1054,7 +1058,7 @@ $engagementData = $engagement;
 
         .swal2-input:focus {
             border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 10%, transparent);
             outline: none;
         }
 
@@ -1094,13 +1098,13 @@ $engagementData = $engagement;
         }
 
         .swal2-confirm:hover {
-            background: #3671E0;
-            box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3);
+            background: color-mix(in srgb, var(--primary-blue) 85%, black);
+            box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-blue) 30%, transparent);
         }
 
         .swal2-confirm:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.2);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 20%, transparent);
         }
 
         .swal2-cancel {
@@ -1110,14 +1114,14 @@ $engagementData = $engagement;
         }
 
         .swal2-cancel:hover {
-            background: rgba(68, 135, 252, 0.05);
+            background: color-mix(in srgb, var(--primary-blue) 5%, transparent);
             border-color: var(--primary-blue);
             color: var(--primary-blue);
         }
 
         .swal2-cancel:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 10%, transparent);
         }
 
         /* Milestone Modal Styling */
@@ -1159,10 +1163,10 @@ $engagementData = $engagement;
         }
 
         body.dark-mode .custom-toast {
-            background: rgba(26, 35, 50, 0.95);
-            border-color: rgba(45, 56, 71, 0.8);
+            background: color-mix(in srgb, var(--card) 95%, transparent);
+            border-color: color-mix(in srgb, var(--line-strong) 80%, transparent);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            border-left: 4px solid #4FC65F;
+            border-left: 4px solid var(--success-green);
         }
 
         .custom-toast.hide {
@@ -2157,9 +2161,9 @@ $engagementData = $engagement;
             confirmButtonText: 'Delete',
             cancelButtonText: 'Cancel',
             showCancelButton: true,
-            confirmButtonColor: '#C90012',
-            background: isDarkMode ? '#1A2332' : '#FFFFFF',
-            color: isDarkMode ? '#E8EAED' : '#1A1A1A',
+            confirmButtonColor: 'var(--danger-red)',
+            background: 'var(--card)',
+            color: 'var(--text-primary)',
             confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
             cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
         });
@@ -2229,9 +2233,9 @@ $engagementData = $engagement;
             confirmButtonText: 'Archive',
             cancelButtonText: 'Cancel',
             showCancelButton: true,
-            confirmButtonColor: '#4487FC',
-            background: isDarkMode ? '#1A2332' : '#FFFFFF',
-            color: isDarkMode ? '#E8EAED' : '#1A1A1A',
+            confirmButtonColor: 'var(--primary-blue)',
+            background: 'var(--card)',
+            color: 'var(--text-primary)',
             confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
             cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
         });
@@ -2254,8 +2258,8 @@ $engagementData = $engagement;
                         text: 'Engagement has been archived successfully.',
                         icon: 'success',
                         confirmButtonText: 'OK',
-                        background: isDarkMode ? '#1A2332' : '#FFFFFF',
-                        color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+                        background: 'var(--card)',
+                        color: 'var(--text-primary)'
                     }).then(() => {
                         window.location.href = "archive.php";
                     });
@@ -2517,7 +2521,7 @@ $engagementData = $engagement;
                             </div>
                         </div>
 
-                        <div id="soc_type_section" style="margin-bottom: 1.5rem; display: none; padding: 1rem; background: rgba(68, 135, 252, 0.1); border-radius: 8px; border-left: 3px solid var(--primary-blue);">
+                        <div id="soc_type_section" style="margin-bottom: 1.5rem; display: none; padding: 1rem; background: color-mix(in srgb, var(--primary-blue) 10%, transparent); border-radius: 8px; border-left: 3px solid var(--primary-blue);">
                             <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC Audit Type</label>
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
                                 <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
