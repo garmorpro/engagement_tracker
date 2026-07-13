@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
 
 use Dotenv\Dotenv;
 
@@ -11,7 +10,8 @@ use Dotenv\Dotenv;
  */
 $root = realpath(__DIR__ . '/../../../');
 if ($root === false) {
-    die('❌ Failed to resolve project root');
+    error_log('db.php: failed to resolve project root from ' . __DIR__);
+    die('❌ Server configuration error');
 }
 
 /**
@@ -24,6 +24,13 @@ require_once $root . '/vendor/autoload.php';
  */
 $dotenv = Dotenv::createImmutable($root);
 $dotenv->load();
+
+/**
+ * Only show PHP errors on-screen when explicitly opted into via .env
+ * (APP_DEBUG=true). Defaults to off so production never leaks stack
+ * traces/file paths to visitors; errors are still logged either way.
+ */
+ini_set('display_errors', ($_ENV['APP_DEBUG'] ?? 'false') === 'true' ? '1' : '0');
 
 /**
  * Read ENV
