@@ -162,8 +162,9 @@ if (!empty($_SESSION['name'])) {
         /* ---------- header ---------- */
         .top-header { background: var(--card); border-bottom: 1px solid var(--line); padding: 0 1.75rem; position: sticky; top: 0; z-index: 100; }
         .header-inner { max-width: 1080px; margin: 0 auto; height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 2.5rem; }
-        .brand { display: flex; align-items: center; gap: 0.55rem; flex-shrink: 0; text-decoration: none; }
-        .brand-mark { font-size: 17px; font-weight: 800; letter-spacing: -0.015em; color: var(--ink); }
+        .brand { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; text-decoration: none; }
+        .brand-icon { width: 26px; height: 26px; border-radius: 7px; background: var(--ink); color: var(--card); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .brand-mark { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
 
         .main-nav { display: flex; gap: 1.6rem; }
         .main-nav a { font-size: 13px; font-weight: 600; color: var(--text-muted); text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; }
@@ -220,7 +221,7 @@ if (!empty($_SESSION['name'])) {
         .main-container { max-width: 1080px; margin: 0 auto; padding: 2.25rem 1.75rem 4rem; }
 
         .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; margin-bottom: 0.35rem; flex-wrap: wrap; }
-        .page-head h1 { font-size: 26px; margin: 0; font-weight: 800; letter-spacing: -0.015em; }
+        .page-head h1 { font-size: 24px; margin: 0; font-weight: 700; letter-spacing: -0.015em; }
         .page-sub { font-size: 13px; color: var(--text-muted); margin: 4px 0 0; }
 
         .head-actions { display: flex; align-items: center; gap: 1.5rem; }
@@ -263,7 +264,7 @@ if (!empty($_SESSION['name'])) {
 
         .reg-tick { width: 3px; align-self: stretch; border-radius: 2px; flex-shrink: 0; }
         .reg-id { font-size: 11.5px; color: var(--text-muted); width: 90px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .reg-main { flex: 1 1 260px; min-width: 0; }
+        .reg-main { flex: 0 1 420px; min-width: 0; }
         .reg-name { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .reg-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .reg-type { display: flex; align-items: center; gap: 4px; width: 170px; flex-shrink: 0; overflow: hidden; }
@@ -284,7 +285,7 @@ if (!empty($_SESSION['name'])) {
         .list-head { display: flex; align-items: center; gap: 1.25rem; padding: 0 4px 6px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
         .list-head .lh-tick { width: 3px; flex-shrink: 0; }
         .list-head .lh-id { width: 90px; flex-shrink: 0; }
-        .list-head .lh-main { flex: 1 1 260px; }
+        .list-head .lh-main { flex: 0 1 420px; }
         .list-head .lh-type { width: 170px; flex-shrink: 0; }
         .list-head .lh-due { width: 96px; flex-shrink: 0; text-align: right; }
         .list-head .lh-actions { width: 56px; flex-shrink: 0; }
@@ -324,6 +325,7 @@ if (!empty($_SESSION['name'])) {
 <div class="top-header">
     <div class="header-inner">
         <a href="dashboard.php" class="brand">
+            <span class="brand-icon">ET</span>
             <span class="brand-mark">Engagement Tracker</span>
         </a>
         <nav class="main-nav">
