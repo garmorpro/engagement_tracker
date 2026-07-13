@@ -3162,23 +3162,34 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 .then(r => r.json())
                 .then(data => {
                     const existingNames = currentTeam.map(m => m.emp_name.toLowerCase());
-                    const matches = (data.employees || []).filter(e => !existingNames.includes(e.emp_name.toLowerCase()));
-                    renderResults(query, matches);
+                    const allMatches = data.employees || [];
+                    const matches = allMatches.filter(e => !existingNames.includes(e.emp_name.toLowerCase()));
+                    const onTeamAlready = allMatches.filter(e => existingNames.includes(e.emp_name.toLowerCase()));
+                    renderResults(query, matches, onTeamAlready);
                 })
-                .catch(() => renderResults(query, []));
+                .catch(() => renderResults(query, [], []));
         }
 
-        function renderResults(query, matches) {
-            let html = matches.length
-                ? matches.map(e => `
+        function renderResults(query, matches, onTeamAlready) {
+            let html = '';
+            if (matches.length) {
+                html += matches.map(e => `
                     <div class="team2-ac-item" data-emp-name="${e.emp_name}" data-emp-role="${e.emp_role}">
                         <div class="team2-avatar" style="width:22px;height:22px;font-size:9px;background:${roleColorVar[e.emp_role] || 'var(--ink)'}">${e.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('')}</div>
                         ${e.emp_name}
                         <span class="role">${roleLabels[e.emp_role] || e.emp_role}</span>
                     </div>
-                `).join('')
-                : `<div class="team2-ac-empty">No employee named "${query}" in the roster.</div>`;
-            html += `<div class="team2-ac-newbtn" id="ac_new_btn">+ Add "${query}" as a new employee…</div>`;
+                `).join('');
+            } else if (onTeamAlready.length) {
+                html += `<div class="team2-ac-empty">${onTeamAlready.map(e => e.emp_name).join(', ')} — already on this team.</div>`;
+            } else {
+                html += `<div class="team2-ac-empty">No employee named "${query}" in the roster.</div>`;
+            }
+            // Only offer "add as new" when nobody by this name exists at all — if they're
+            // already in the roster (whether on this team or not), that'd create a confusing duplicate.
+            if (!matches.length && !onTeamAlready.length) {
+                html += `<div class="team2-ac-newbtn" id="ac_new_btn">+ Add "${query}" as a new employee…</div>`;
+            }
 
             list.innerHTML = html;
             list.style.display = 'block';
