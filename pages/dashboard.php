@@ -43,6 +43,25 @@ function getDueInfo($engIdno, $timelineLookup) {
     return [$due, 'ok'];
 }
 
+// Renders the comma-separated eng_audit_type string as compact badges
+// instead of a raw string that truncates mid-word in a fixed-width column.
+function renderTypeBadges($rawTypes) {
+    $types = array_filter(array_map('trim', explode(',', (string) $rawTypes)));
+    if (empty($types)) {
+        return '<span class="type-none">No audit type</span>';
+    }
+    $shown = array_slice($types, 0, 2);
+    $remaining = count($types) - count($shown);
+    $html = '<span class="type-badge" title="' . htmlspecialchars(implode(', ', $types)) . '">' . htmlspecialchars($shown[0]) . '</span>';
+    if (isset($shown[1])) {
+        $html .= '<span class="type-badge" title="' . htmlspecialchars(implode(', ', $types)) . '">' . htmlspecialchars($shown[1]) . '</span>';
+    }
+    if ($remaining > 0) {
+        $html .= '<span class="type-more" title="' . htmlspecialchars(implode(', ', $types)) . '">+' . $remaining . '</span>';
+    }
+    return $html;
+}
+
 $attentionCount = 0;
 foreach ($activeEngagements as $e) {
     [, $state] = getDueInfo($e['eng_idno'], $timelineLookup);
@@ -151,7 +170,7 @@ if (!empty($_SESSION['name'])) {
         .main-nav a.active { color: var(--text); border-bottom-color: var(--ink); }
         .main-nav a:hover { color: var(--text); }
 
-        .header-right { display: flex; align-items: center; gap: 0.3rem; margin-left: auto; }
+        .header-right { display: flex; align-items: center; gap: 0.65rem; margin-left: auto; }
         .icon-btn { width: 32px; height: 32px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 15px; }
         .icon-btn:hover { background: color-mix(in srgb, var(--ink) 8%, var(--paper)); color: var(--text); }
 
@@ -178,8 +197,8 @@ if (!empty($_SESSION['name'])) {
         .notification-time { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
         .notification-empty { padding: 2rem 1rem; text-align: center; color: var(--text-muted); font-size: 12.5px; }
 
-        .profile-section { position: relative; margin-left: 4px; }
-        .profile-wrapper { display: flex; align-items: center; gap: 2px; cursor: pointer; }
+        .profile-section { position: relative; margin-left: 0.4rem; padding-left: 0.75rem; border-left: 1px solid var(--line); }
+        .profile-wrapper { display: flex; align-items: center; gap: 6px; cursor: pointer; }
         .profile-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--card); border: none; font-weight: 700; font-size: 11.5px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .profile-dropdown-toggle { border: none; background: transparent; color: var(--text-muted); cursor: pointer; padding: 2px; }
         .profile-dropdown {
@@ -247,7 +266,10 @@ if (!empty($_SESSION['name'])) {
         .reg-main { flex: 1 1 260px; min-width: 0; }
         .reg-name { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .reg-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .reg-type { font-size: 12.5px; color: var(--text-muted); width: 170px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .reg-type { display: flex; align-items: center; gap: 4px; width: 170px; flex-shrink: 0; overflow: hidden; }
+        .type-badge { font-size: 10.5px; font-weight: 700; color: var(--ink); background: color-mix(in srgb, var(--ink) 12%, transparent); padding: 2px 7px; border-radius: 5px; white-space: nowrap; flex-shrink: 0; }
+        .type-more { font-size: 11px; color: var(--text-muted); font-weight: 600; flex-shrink: 0; }
+        .type-none { font-size: 12.5px; color: var(--text-muted); }
 
         .reg-due { font-size: 12.5px; font-weight: 600; width: 96px; flex-shrink: 0; text-align: right; }
         .reg-due .tag { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -565,7 +587,7 @@ if (!empty($_SESSION['name'])) {
                 . '<div class="reg-name">' . htmlspecialchars($eng['eng_name']) . '</div>'
                 . '<div class="reg-sub">' . htmlspecialchars($eng['eng_manager'] ?? 'Unassigned') . '</div>'
                 . '</div>'
-                . '<div class="reg-type">' . htmlspecialchars($eng['eng_audit_type'] ?: 'No audit type') . '</div>'
+                . '<div class="reg-type">' . renderTypeBadges($eng['eng_audit_type']) . '</div>'
                 . $dueHtml
                 . '<div class="row-actions">' . $actions . '</div>'
                 . '</div>';
