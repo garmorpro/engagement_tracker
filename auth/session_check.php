@@ -1,10 +1,8 @@
 <?php
 // includes/session_check.php
 
-// Start session if not started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require_once __DIR__ . '/../includes/session_config.php';
+startSecureSession();
 
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../path.php'; // Make sure BASE_URL is defined

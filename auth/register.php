@@ -1,6 +1,7 @@
 <?php
 // auth/register.php
-session_start();
+require_once '../includes/session_config.php';
+startSecureSession();
 require_once '../includes/functions.php';
 require_once '../path.php';
 requireAdminVerified();

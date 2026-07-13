@@ -1,6 +1,7 @@
 <?php
 // auth/logout.php
-if (session_status() === PHP_SESSION_NONE) session_start();
+require_once __DIR__ . '/../includes/session_config.php';
+startSecureSession();
 
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../path.php';
