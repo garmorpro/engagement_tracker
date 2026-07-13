@@ -31,6 +31,20 @@ Live at `https://engagements.morganserver.com` (see `path.php`). Repo: `github.c
 - PIN entry (`login.php`, `verify_admin_pin.php`) is rate limited via the `login_attempts` table and the `isRateLimited()`/`recordFailedAttempt()`/`clearAttempts()` helpers in `functions.php`, keyed by IP (and IP+user_id for regular login). See known issues for thresholds and the proxy caveat.
 - Every `session_start()` call site must go through `startSecureSession()` in `includes/session_config.php` (never call `session_start()` directly) — it sets `SameSite=Lax`/`Secure`/`HttpOnly` on the session cookie, which has to happen before the session starts.
 
+## UI redesign (in progress, page by page)
+
+Started 2026-07-13, after the security review. New pages use a navy/slate/parchment palette (`--ink`, `--paper`, `--card`, `--line`, `--manager`/`--senior`/`--staff`/`--intern` for role colors) instead of the original bright blue/purple/teal tokens — deliberately chosen to read as a compliance/audit tool rather than a generic SaaS dashboard. Not applied page-wide yet; each page keeps its old palette until it gets its own redesign pass, so the app looks inconsistent across pages for now. Converted so far:
+
+- **`dashboard.php`** — merged with `archive.php` into a single page toggled via `?view=archived` (see known issues below); `archive.php` is now just a redirect. Engagements grouped into labeled sections by status, sorted by due date, with search and a "needs attention" filter.
+- **`engagement-details.php`** — only the **Team** section and its two management modals were redesigned (not the rest of the page — Details/Notes/Timeline/Milestones are still on the old palette). See below for what changed functionally.
+
+### Team / Division of Labor (DOL) rework
+
+- **New `employees` table** (`emp_id`, `emp_name`, `emp_role` — one of `manager`/`senior`/`staff`/`intern`) is a lightweight roster used purely for autocomplete when adding someone to an engagement's team. It is **not** foreign-keyed to `engagement_team` — adding a team member still just copies `emp_name`/`role` as free text into `engagement_team`, exactly as before; `employees` only supplies suggestions. Created and seeded (from distinct names already used in `engagement_team`) by `includes/migrate_create_employees_table.php` (CLI-only) — **must be run once on the server** after deploying.
+- New endpoints: `api/search-employees.php` (autocomplete search) and `api/add-employee.php` (adds a new person to the roster; idempotent — returns the existing row if the name already exists). Both `requireApiAuth()`.
+- DOL (duties, e.g. `CC1, CC2`) is still stored exactly as before — a comma-separated string per audit type (`emp_soc1_dol`, `emp_soc2_dol`, `emp_hipaa_dol`, `emp_hitrust_dol`, `emp_fisma_dol` on `engagement_team`) via the same `api/update-team-member.php` contract. Only the *input UI* changed: a tag input (type a duty, Enter/comma to add, click × or Backspace to remove) instead of a raw text box, joined back into the same comma-separated string on save.
+- The "Manage Team Members" modal keeps its original two-column layout (list + add/stats) — the redesign was palette-only there, since that's the one piece of the old UI that already tested well. The "Edit Team Member" modal and the read-only Team card were both restructured (identity header + segmented role control on Edit; role-grouped compact rows with per-audit-type DOL lines on the card).
+
 ## Known issues / backlog
 
 Found during a 2026-07-13 security review — see conversation history for full detail. Fixed same day unless noted:

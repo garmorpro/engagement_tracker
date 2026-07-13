@@ -206,6 +206,20 @@ $engagementData = $engagement;
             --border-color: #D0D5DB;
             --text-primary: #1A1A1A;
             --text-secondary: #6A7382;
+
+            /* Team/DOL section only — see CLAUDE.md phased-redesign note */
+            --ink: #1B3A5C;
+            --paper: #F4F6F8;
+            --card: #FFFFFF;
+            --line: #DCE1E7;
+            --line-strong: #C2CAD3;
+            --critical: #B3261E;
+            --critical-tint: rgba(179, 38, 30, 0.07);
+            --critical-tint-strong: rgba(179, 38, 30, 0.13);
+            --manager: #1B3A5C;
+            --senior: #7A4FB0;
+            --staff: #1F7A54;
+            --intern: #A66A00;
         }
 
         body.dark-mode {
@@ -218,6 +232,19 @@ $engagementData = $engagement;
             --border-color: #2D3847;
             --text-primary: #E8EAED;
             --text-secondary: #8B95A6;
+
+            --ink: #6E9FCB;
+            --paper: #10161D;
+            --card: #171F28;
+            --line: #2A343E;
+            --line-strong: #3C4854;
+            --critical: #E5766F;
+            --critical-tint: rgba(229, 118, 111, 0.1);
+            --critical-tint-strong: rgba(229, 118, 111, 0.18);
+            --manager: #6E9FCB;
+            --senior: #B79AE0;
+            --staff: #5FB98A;
+            --intern: #D3A44E;
         }
 
         body {
@@ -752,58 +779,93 @@ $engagementData = $engagement;
             gap: 1rem;
         }
 
-        .team-member {
-            background: var(--gray-100);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.25rem;
-            display: flex;
-            gap: 1rem;
-        }
+        /* ========== TEAM CARD (v2) ========== */
+        .team2-panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+        .team2-warn-badge { font-size: 11px; font-weight: 700; color: var(--critical); background: var(--critical-tint); border: 1px solid color-mix(in srgb, var(--critical) 30%, var(--line)); padding: 3px 9px; border-radius: 20px; animation: pulse 1.5s infinite; }
+        .team2-avatar { width: 34px; height: 34px; border-radius: 8px; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .team2-name { font-weight: 600; font-size: 13.5px; color: var(--text-primary); }
+        .team2-lead-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.9rem; background: color-mix(in srgb, var(--manager) 6%, var(--card)); border-bottom: 1px solid var(--line); }
+        .team2-lead-tag { margin-left: auto; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--manager); background: color-mix(in srgb, var(--manager) 14%, transparent); padding: 3px 8px; border-radius: 20px; }
+        .team2-role-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); padding: 0.8rem 0.9rem 0.4rem; }
+        .team2-compact-member { display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+        .team2-compact-member:last-child { border-bottom: none; }
+        .team2-compact-dol { flex: 1 1 auto; min-width: 160px; }
+        .team2-dol-lines { display: flex; flex-direction: column; gap: 4px; margin-top: 2px; }
+        .team2-dol-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .team2-dol-type-tag { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); width: 44px; flex-shrink: 0; }
+        .team2-chip-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+        .team2-chip { font-size: 10.5px; font-weight: 700; color: var(--ink); background: color-mix(in srgb, var(--ink) 12%, transparent); padding: 3px 8px 3px 6px; border-radius: 5px; border-left: 2px solid var(--ink); }
+        .team2-chip.t-soc2 { color: var(--senior); background: color-mix(in srgb, var(--senior) 12%, transparent); border-left-color: var(--senior); }
+        .team2-no-dol { font-size: 11px; color: var(--critical); font-weight: 600; }
+        .team2-empty { padding: 2rem 1rem; text-align: center; color: var(--text-secondary); font-size: 13px; }
 
-        .team-member-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
+        /* ========== MANAGE TEAM MEMBERS MODAL (v2) ========== */
+        .team2-manage-body { display: flex; gap: 1.5rem; height: 100%; min-height: 500px; }
+        .team2-manage-left { flex: 1.3; display: flex; flex-direction: column; overflow: hidden; min-width: 300px; }
+        .team2-manage-left h3 { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .team2-manage-right { width: 280px; display: flex; flex-direction: column; gap: 1.25rem; padding-left: 1.5rem; border-left: 1px solid var(--line); flex-shrink: 0; }
+        .team2-manage-right h4 { font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .team2-list-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; padding-right: 0.4rem; }
+        .team2-card-row { padding: 0.8rem; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; }
+        .team2-card-row-top { display: flex; align-items: flex-start; gap: 0.7rem; }
+        .team2-card-row .team2-icon-btns { margin-left: auto; display: flex; gap: 4px; flex-shrink: 0; }
+        .team2-card-row .team2-icon-btns button { width: 28px; height: 28px; border: 1px solid var(--line); background: var(--card); color: var(--text-secondary); border-radius: 6px; cursor: pointer; }
+        .team2-card-row .team2-icon-btns button:hover { border-color: var(--ink); color: var(--ink); }
+        .team2-card-row .team2-icon-btns button.danger:hover { border-color: var(--critical); color: var(--critical); }
+        .team2-role-label { font-size: 11px; font-weight: 700; text-transform: capitalize; color: var(--text-secondary); }
+        .team2-stat-mini { padding: 0.7rem 0.8rem; border-left: 3px solid var(--ink); border-radius: 6px; background: color-mix(in srgb, var(--ink) 7%, var(--card)); margin-bottom: 0.6rem; }
+        .team2-stat-mini .n { font-size: 18px; font-weight: 800; color: var(--text-primary); }
+        .team2-stat-mini .l { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); }
 
-        .team-member-info {
-            flex: 1;
+        .team2-field { margin-bottom: 0.6rem; }
+        .team2-field input[type="text"] {
+            width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--card); color: var(--text-primary); font-size: 13px;
         }
+        .team2-field input:focus { outline: none; border-color: var(--ink); }
+        .team2-btn { padding: 9px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; border: none; }
+        .team2-btn-primary { background: var(--ink); color: var(--card); width: 100%; }
+        .team2-btn-secondary { background: var(--card); color: var(--text-secondary); border: 1px solid var(--line); }
 
-        .team-member-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
+        .team2-ac-wrap { position: relative; }
+        .team2-ac-list {
+            position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--card); border: 1px solid var(--line);
+            border-radius: 8px; box-shadow: 0 8px 22px rgba(0,0,0,0.16); max-height: 220px; overflow-y: auto; z-index: 10;
         }
+        .team2-ac-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: pointer; font-size: 13px; color: var(--text-primary); }
+        .team2-ac-item:hover { background: var(--paper); }
+        .team2-ac-item .role { margin-left: auto; font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); }
+        .team2-ac-empty { padding: 10px; font-size: 12.5px; color: var(--text-secondary); }
+        .team2-ac-newbtn { display: flex; align-items: center; gap: 6px; padding: 9px 10px; font-size: 12.5px; font-weight: 600; color: var(--ink); cursor: pointer; border-top: 1px solid var(--line); }
+        .team2-ac-newbtn:hover { background: var(--paper); }
 
-        .team-member-title {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
+        /* ========== EDIT TEAM MEMBER MODAL (v2) ========== */
+        .team2-edit-header { display: flex; align-items: center; gap: 0.9rem; padding: 0 0 1.1rem; margin-bottom: 1.1rem; border-bottom: 1px solid var(--line); }
+        .team2-avatar-lg { width: 42px; height: 42px; border-radius: 10px; color: #fff; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .team2-edit-name { font-weight: 700; font-size: 15px; color: var(--text-primary); }
+        .team2-edit-role-badge { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; padding: 2px 7px; border-radius: 5px; }
+        .team2-edit-role-badge.manager { color: var(--manager); background: color-mix(in srgb, var(--manager) 14%, transparent); }
+        .team2-edit-role-badge.senior { color: var(--senior); background: color-mix(in srgb, var(--senior) 14%, transparent); }
+        .team2-edit-role-badge.staff { color: var(--staff); background: color-mix(in srgb, var(--staff) 14%, transparent); }
+        .team2-edit-role-badge.intern { color: var(--intern); background: color-mix(in srgb, var(--intern) 14%, transparent); }
 
-        .team-member-tags {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
+        .team2-segmented { display: flex; background: var(--paper); border-radius: 8px; padding: 3px; gap: 2px; }
+        .team2-segmented button { flex: 1; border: none; background: transparent; padding: 7px 4px; border-radius: 6px; font-size: 11.5px; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+        .team2-segmented button.active { background: var(--card); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
 
-        .team-member-tag {
-            background: rgba(68, 135, 252, 0.15);
-            color: var(--primary-blue);
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            font-weight: 600;
+        .team2-edit-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+        .team2-dol-columns { display: flex; flex-direction: column; gap: 0.8rem; }
+        .team2-dol-col-label { font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+        .team2-tag-input-box {
+            display: flex; flex-wrap: wrap; gap: 5px; align-items: center; padding: 6px 8px;
+            border: 1px solid var(--line); border-radius: 7px; background: var(--paper); min-height: 40px; cursor: text;
         }
+        .team2-tag-input-box:focus-within { border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 12%, transparent); }
+        .team2-tag-input-box .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+        .team2-tag-chip { display: inline-flex; align-items: center; gap: 5px; background: color-mix(in srgb, var(--ink) 13%, transparent); color: var(--ink); font-size: 11.5px; font-weight: 700; padding: 3px 6px 3px 9px; border-radius: 5px; }
+        .team2-tag-chip button { border: none; background: none; color: inherit; cursor: pointer; display: flex; padding: 0; opacity: 0.65; }
+        .team2-tag-chip button:hover { opacity: 1; }
+        .team2-tag-input-box input { border: none; background: none; outline: none; font-size: 13px; color: var(--text-primary); flex: 1; min-width: 90px; padding: 3px 2px; }
+        .team2-tag-hint { font-size: 11px; color: var(--text-secondary); margin-top: 5px; }
 
         /* ========== TIMELINE SECTION ========== */
         .timeline-grid {
@@ -1659,8 +1721,8 @@ $engagementData = $engagement;
                     $hasDOL = false;
                     if (!empty($team)) {
                         foreach ($team as $member) {
-                            if (!empty($member['emp_soc1_dol']) || !empty($member['emp_soc2_dol']) || 
-                                !empty($member['emp_hipaa_dol']) || !empty($member['emp_hitrust_dol']) || 
+                            if (!empty($member['emp_soc1_dol']) || !empty($member['emp_soc2_dol']) ||
+                                !empty($member['emp_hipaa_dol']) || !empty($member['emp_hitrust_dol']) ||
                                 !empty($member['emp_fisma_dol'])) {
                                 $hasDOL = true;
                                 break;
@@ -1671,17 +1733,7 @@ $engagementData = $engagement;
 
                     <div style="display: flex; align-items: center; gap: 0.75rem;">
                         <?php if (!$hasDOL): ?>
-                            <div style="
-                                background-color: #ff4d4f;
-                                color: white;
-                                font-weight: 600;
-                                padding: 0.25rem 0.6rem;
-                                border-radius: 0.5rem;
-                                font-size: 12px;
-                                animation: pulse 1.5s infinite;
-                            ">
-                                No DOL Set
-                            </div>
+                            <div class="team2-warn-badge">No DOL Set</div>
                         <?php endif; ?>
                         <button id="manageTeamIconBtn" class="btn-icon" style="margin: 0; padding: 0.5rem;" title="Manage team members">
                             <i class="bi bi-gear"></i>
@@ -1689,106 +1741,97 @@ $engagementData = $engagement;
                     </div>
                 </div>
 
-                <div class="team-members">
+                <div class="team2-panel" style="border-top: none; border-radius: 0 0 12px 12px;">
                 <?php if (!empty($team)): ?>
 
                     <?php
                     // Group members by employee name and role
                     $groupedTeam = [];
+                    $dolFields = [
+                        'SOC 1'   => 'emp_soc1_dol',
+                        'SOC 2'   => 'emp_soc2_dol',
+                        'HIPAA'   => 'emp_hipaa_dol',
+                        'HITRUST' => 'emp_hitrust_dol',
+                        'FISMA'   => 'emp_fisma_dol',
+                    ];
+                    $dolTypeClass = ['SOC 1' => '', 'SOC 2' => 't-soc2', 'HIPAA' => '', 'HITRUST' => 't-soc2', 'FISMA' => ''];
                     foreach ($team as $member) {
                         $key = $member['emp_name'] . '|' . $member['role'];
                         if (!isset($groupedTeam[$key])) {
                             $dolMap = [];
-                            $dolFields = [
-                                'SOC 1'   => 'emp_soc1_dol',
-                                'SOC 2'   => 'emp_soc2_dol',
-                                'HIPAA'   => 'emp_hipaa_dol',
-                                'HITRUST' => 'emp_hitrust_dol',
-                                'FISMA'   => 'emp_fisma_dol',
-                            ];
                             foreach ($dolFields as $auditType => $field) {
                                 if (!empty($member[$field])) {
-                                    $dolMap[$auditType] = array_map('trim', explode(',', $member[$field]));
+                                    $dolMap[$auditType] = array_filter(array_map('trim', explode(',', $member[$field])));
                                 }
                             }
                             $groupedTeam[$key] = [
                                 'emp_name'    => $member['emp_name'],
-                                'role'        => $member['role'],
+                                'role'        => strtolower($member['role'] ?? ''),
                                 'audit_types' => $dolMap
                             ];
                         }
                     }
 
-                    // Sort grouped team by role priority
-                    $roleOrder = ['manager' => 1, 'senior' => 2, 'staff' => 3];
-                    uasort($groupedTeam, function($a, $b) use ($roleOrder) {
-                        $roleA = strtolower($a['role'] ?? '');
-                        $roleB = strtolower($b['role'] ?? '');
-                        return ($roleOrder[$roleA] ?? 999) <=> ($roleOrder[$roleB] ?? 999);
-                    });
+                    $manager = null;
+                    $bucketed = ['senior' => [], 'staff' => [], 'intern' => []];
+                    foreach ($groupedTeam as $member) {
+                        if ($member['role'] === 'manager') {
+                            $manager = $manager ?? $member;
+                        } elseif (isset($bucketed[$member['role']])) {
+                            $bucketed[$member['role']][] = $member;
+                        }
+                    }
+                    $initialsOf = function ($name) {
+                        $initials = '';
+                        foreach (explode(' ', $name) as $part) {
+                            if ($part !== '') $initials .= strtoupper($part[0]);
+                        }
+                        return $initials;
+                    };
                     ?>
 
-                    <?php foreach ($groupedTeam as $member): ?>
-                        <?php
-                            // Get initials
-                            $nameParts = explode(' ', $member['emp_name']);
-                            $initials  = '';
-                            foreach ($nameParts as $part) { $initials .= strtoupper($part[0]); }
+                    <?php if ($manager): ?>
+                        <div class="team2-lead-row">
+                            <div class="team2-avatar" style="background:var(--manager)"><?php echo htmlspecialchars($initialsOf($manager['emp_name'])); ?></div>
+                            <div class="team2-name"><?php echo htmlspecialchars($manager['emp_name']); ?></div>
+                            <span class="team2-lead-tag">Manager</span>
+                        </div>
+                    <?php endif; ?>
 
-                            // Gradient colors by role
-                            $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)';
-                            switch (strtolower($member['role'] ?? '')) {
-                                case 'manager': $gradient = 'linear-gradient(135deg, #4487FC, #4DA6FF)'; break;
-                                case 'senior':  $gradient = 'linear-gradient(135deg, #A04DFD, #D67FFF)'; break;
-                                case 'staff':   $gradient = 'linear-gradient(135deg, #4FC65F, #7FDD8A)'; break;
-                            }
-                        ?>
-                        <div class="team-member" style="display: flex; gap: 0.75rem; align-items: flex-start;">
-                            <div class="team-member-avatar" style="background: <?php echo $gradient; ?>; flex-shrink: 0;"><?php echo htmlspecialchars($initials); ?></div>
-                            <div class="team-member-info" style="flex: 1; min-width: 0;">
-                                <div class="team-member-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
-                                <div class="team-member-title"><?php echo htmlspecialchars(ucfirst($member['role'])); ?></div>
-
-                                <?php
-                                $dolOrder   = ['SOC 1', 'SOC 2', 'HIPAA', 'HITRUST', 'FISMA'];
-                                $hasDolData = false;
-                                foreach ($dolOrder as $auditType) {
-                                    if (isset($member['audit_types'][$auditType]) && !empty($member['audit_types'][$auditType])) {
-                                        $hasDolData = true;
-                                        break;
-                                    }
-                                }
-                                ?>
-
-                                <?php if ($hasDolData && strtolower($member['role']) !== 'manager'): ?>
-                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
-                                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem;">
-                                            <i class="bi bi-briefcase" style="font-size: 11px; color: var(--text-secondary);"></i>
-                                            <span style="font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Division of Labor</span>
-                                        </div>
-                                        <?php foreach ($dolOrder as $auditType): ?>
-                                            <?php if (isset($member['audit_types'][$auditType]) && !empty($member['audit_types'][$auditType])): ?>
-                                                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
-                                                    <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); min-width: 55px;"><?php echo htmlspecialchars($auditType); ?></span>
-                                                    <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
-                                                        <?php foreach ($member['audit_types'][$auditType] as $tag): ?>
-                                                            <?php if (!empty(trim($tag))): ?>
-                                                                <span style="background: rgba(68, 135, 252, 0.15); color: var(--primary-blue); border: 1px solid rgba(68, 135, 252, 0.3); padding: 0.2rem 0.55rem; border-radius: 5px; font-size: 11px; font-weight: 700;"><?php echo htmlspecialchars(trim($tag)); ?></span>
-                                                            <?php endif; ?>
+                    <?php foreach (['senior' => 'Senior', 'staff' => 'Staff', 'intern' => 'Intern'] as $roleKey => $roleLabel): ?>
+                        <?php if (empty($bucketed[$roleKey])) continue; ?>
+                        <div class="team2-role-group-label"><?php echo $roleLabel; ?> (<?php echo count($bucketed[$roleKey]); ?>)</div>
+                        <?php foreach ($bucketed[$roleKey] as $member): ?>
+                            <div class="team2-compact-member">
+                                <div class="team2-avatar" style="background:var(--<?php echo $roleKey; ?>)"><?php echo htmlspecialchars($initialsOf($member['emp_name'])); ?></div>
+                                <div class="team2-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
+                                <div class="team2-compact-dol">
+                                    <?php
+                                        $dolGroups = array_filter($member['audit_types'], fn($tags) => !empty($tags));
+                                    ?>
+                                    <?php if (empty($dolGroups)): ?>
+                                        <span class="team2-no-dol">No DOL assigned</span>
+                                    <?php else: ?>
+                                        <div class="team2-dol-lines">
+                                            <?php foreach ($dolGroups as $auditType => $tags): ?>
+                                                <div class="team2-dol-line">
+                                                    <span class="team2-dol-type-tag"><?php echo htmlspecialchars($auditType); ?></span>
+                                                    <div class="team2-chip-row">
+                                                        <?php foreach ($tags as $tag): ?>
+                                                            <span class="team2-chip <?php echo $dolTypeClass[$auditType] ?? ''; ?>"><?php echo htmlspecialchars($tag); ?></span>
                                                         <?php endforeach; ?>
                                                     </div>
                                                 </div>
-                                            <?php endif; ?>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php endif; ?>
-
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                        </div>
+                        <?php endforeach; ?>
                     <?php endforeach; ?>
 
                 <?php else: ?>
-                    <div class="no-team-members">
+                    <div class="team2-empty">
                         <i class="bi bi-exclamation-triangle-fill" style="margin-right: 0.3rem;"></i>
                         No team assigned yet.
                     </div>
@@ -2950,10 +2993,10 @@ $engagementData = $engagement;
 document.getElementById('manageTeamIconBtn').addEventListener('click', function() {
     let currentTeam = <?php echo json_encode($team); ?>;
     const engagementId = '<?php echo $engagementId; ?>';
-    
+
     const engagementAuditTypes = '<?php echo htmlspecialchars($engagement['eng_audit_type'] ?? '', ENT_QUOTES); ?>';
     const auditTypesArray = engagementAuditTypes.split(',').map(t => t.trim()).filter(t => t);
-    
+
     const supportedAuditTypes = {
         'SOC 1':   'emp_soc1_dol',
         'SOC 2':   'emp_soc2_dol',
@@ -2961,52 +3004,30 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         'HITRUST': 'emp_hitrust_dol',
         'FISMA':   'emp_fisma_dol'
     };
-    
     const relevantAuditTypes = auditTypesArray.filter(type => supportedAuditTypes.hasOwnProperty(type));
-    
-    let teamHTML = `
-        <div style="display: flex; gap: 1.5rem; height: 100%; min-height: 500px;">
-            <!-- LEFT SIDE: Team List -->
-            <div style="flex: 1.3; display: flex; flex-direction: column; overflow: hidden; min-width: 300px;">
-                <h3 style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Team Members</h3>
-                <div id="team-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; padding-right: 0.5rem;">
-                </div>
+    const roleColorVar = { manager: 'var(--manager)', senior: 'var(--senior)', staff: 'var(--staff)', intern: 'var(--intern)' };
+    const roleLabels = { manager: 'Manager', senior: 'Senior', staff: 'Staff', intern: 'Intern' };
+
+    const teamHTML = `
+        <div class="team2-manage-body">
+            <div class="team2-manage-left">
+                <h3>Team Members</h3>
+                <div class="team2-list-scroll" id="team-list"></div>
             </div>
-
-            <!-- RIGHT SIDE: Add Member + Stats Panel -->
-            <div style="width: 320px; display: flex; flex-direction: column; gap: 1.5rem; padding-left: 1.5rem; border-left: 1px solid var(--border-color); flex-shrink: 0;">
+            <div class="team2-manage-right">
                 <div>
-                    <h4 style="font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Add Member</h4>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <input type="text" id="add_emp_name" class="swal2-input" placeholder="Name" style="width: 100%; font-size: 12px; padding: 0.6rem; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px;">
-                        <select id="add_emp_role" class="swal2-input" style="width: 100%; font-size: 12px; padding: 0.6rem; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 6px;">
-                            <option value="">Role</option>
-                            <option value="manager">Manager</option>
-                            <option value="senior">Senior</option>
-                            <option value="staff">Staff</option>
-                        </select>
-                        <button id="addTeamMemberBtn" style="background: linear-gradient(135deg, var(--primary-blue), #3671E0); color: white; border: none; padding: 0.7rem; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-top: 0.3rem;">
-                            <i class="bi bi-plus-circle"></i> Add
-                        </button>
+                    <h4>Add Member</h4>
+                    <div class="team2-field team2-ac-wrap">
+                        <input type="text" id="add_emp_search" class="swal2-input" placeholder="Search employees…" autocomplete="off" style="margin: 0; width: 100%; font-size: 13px;">
+                        <div class="team2-ac-list" id="add_emp_ac_list" style="display:none;"></div>
                     </div>
                 </div>
-
                 <div>
-                    <h4 style="font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Overview</h4>
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <div style="padding: 0.75rem; background: rgba(68, 135, 252, 0.1); border-left: 3px solid var(--primary-blue); border-radius: 6px;">
-                            <div style="font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 0.3rem; letter-spacing: 0.4px;">Managers</div>
-                            <div style="font-size: 20px; font-weight: 700; color: var(--primary-blue);" id="manager-count">0</div>
-                        </div>
-                        <div style="padding: 0.75rem; background: rgba(160, 77, 253, 0.1); border-left: 3px solid #A04DFD; border-radius: 6px;">
-                            <div style="font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 0.3rem; letter-spacing: 0.4px;">Seniors</div>
-                            <div style="font-size: 20px; font-weight: 700; color: #A04DFD;" id="senior-count">0</div>
-                        </div>
-                        <div style="padding: 0.75rem; background: rgba(79, 198, 95, 0.1); border-left: 3px solid #4FC65F; border-radius: 6px;">
-                            <div style="font-size: 10px; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; margin-bottom: 0.3rem; letter-spacing: 0.4px;">Staff</div>
-                            <div style="font-size: 20px; font-weight: 700; color: #4FC65F;" id="staff-count">0</div>
-                        </div>
-                    </div>
+                    <h4>Overview</h4>
+                    <div class="team2-stat-mini"><div class="n" id="manager-count">0</div><div class="l">Managers</div></div>
+                    <div class="team2-stat-mini"><div class="n" id="senior-count">0</div><div class="l">Seniors</div></div>
+                    <div class="team2-stat-mini"><div class="n" id="staff-count">0</div><div class="l">Staff</div></div>
+                    <div class="team2-stat-mini"><div class="n" id="intern-count">0</div><div class="l">Interns</div></div>
                 </div>
             </div>
         </div>
@@ -3022,17 +3043,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         customClass: { popup: 'milestone-modal-popup' },
         didOpen: () => {
             renderTeamList();
-            
-            document.getElementById('addTeamMemberBtn').addEventListener('click', () => {
-                const empName = document.getElementById('add_emp_name').value.trim();
-                const empRole = document.getElementById('add_emp_role').value;
-                
-                if (!empName || !empRole) {
-                    Swal.showValidationMessage('Please fill in name and role');
-                    return;
-                }
-                addTeamMember(empName, empRole);
-            });
+            wireAddMemberSearch();
         },
         willClose: () => {
             location.reload();
@@ -3042,8 +3053,6 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
     function renderTeamList() {
         const teamListElement = document.getElementById('team-list');
         if (!teamListElement) return;
-        
-        teamListElement.innerHTML = '';
 
         if (currentTeam.length === 0) {
             teamListElement.innerHTML = `
@@ -3058,65 +3067,43 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             return;
         }
 
-        currentTeam.forEach((member, idx) => {
-            const roleColor = {
-                'manager': '#4487FC',
-                'senior':  '#A04DFD',
-                'staff':   '#4FC65F'
-            }[member.role] || '#4487FC';
-
-            const nameParts = member.emp_name.split(' ');
-            const initials  = nameParts.map(p => p[0].toUpperCase()).join('');
-            const memberId  = member.emp_id;
-
-            teamListElement.innerHTML += `
-                <div class="team-member-card" data-emp-id="${memberId}" style="padding: 1rem; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 10px; transition: all 0.2s ease;">
-                    <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                        <div style="width: 44px; height: 44px; border-radius: 8px; background: linear-gradient(135deg, ${roleColor}, ${roleColor}dd); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; flex-shrink: 0; font-size: 14px;">
-                            ${initials}
+        teamListElement.innerHTML = currentTeam.map(member => {
+            const initials = member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
+            const roleKey = (member.role || '').toLowerCase();
+            return `
+                <div class="team2-card-row" data-emp-id="${member.emp_id}">
+                    <div class="team2-card-row-top">
+                        <div class="team2-avatar" style="background:${roleColorVar[roleKey] || 'var(--ink)'}">${initials}</div>
+                        <div style="flex:1; min-width:0;">
+                            <div class="team2-name">${member.emp_name}</div>
+                            <div class="team2-role-label">${roleLabels[roleKey] || member.role}</div>
                         </div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: 600; font-size: 14px; color: var(--text-primary); margin-bottom: 0.15rem; word-break: break-word; line-height: 1.3;">${member.emp_name}</div>
-                            <div style="font-size: 11px; color: var(--text-secondary); text-transform: capitalize;">${member.role}</div>
-                        </div>
-                        <div style="display: flex; gap: 0.4rem; flex-shrink: 0;">
-                            <button class="edit-team-btn" data-emp-id="${memberId}" style="background: var(--primary-blue); color: white; border: none; padding: 0.5rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
-                                <i class="bi bi-pencil" style="font-size: 13px;"></i>
-                            </button>
-                            <button class="delete-team-btn" data-emp-id="${memberId}" style="background: #C90012; color: white; border: none; padding: 0.5rem; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
-                                <i class="bi bi-trash3" style="font-size: 13px;"></i>
-                            </button>
+                        <div class="team2-icon-btns">
+                            <button class="edit-team-btn" data-emp-id="${member.emp_id}" title="Edit"><i class="bi bi-pencil"></i></button>
+                            <button class="danger delete-team-btn" data-emp-id="${member.emp_id}" title="Remove"><i class="bi bi-trash3"></i></button>
                         </div>
                     </div>
-                    ${member.role !== 'manager' ? getDOLByAuditType(member) : ''}
-                    <style>
-                        .team-member-card:hover { background: var(--bg-secondary); border-color: var(--primary-blue); box-shadow: 0 4px 12px rgba(68, 135, 252, 0.1); }
-                        .edit-team-btn:hover   { background: #2560d9; transform: translateY(-1px); }
-                        .delete-team-btn:hover { background: #a60010; transform: translateY(-1px); }
-                    </style>
+                    ${roleKey !== 'manager' ? getDOLByAuditType(member) : ''}
                 </div>
             `;
-        });
+        }).join('');
 
         document.querySelectorAll('.edit-team-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const empId  = this.getAttribute('data-emp-id');
-                const member = currentTeam.find(m => String(m.emp_id) === String(empId));
-                if (member) { editTeamMember(member); }
-                else { Swal.fire('Error', 'Member not found', 'error'); }
+                const member = currentTeam.find(m => String(m.emp_id) === String(this.dataset.empId));
+                if (member) editTeamMember(member);
+                else Swal.fire('Error', 'Member not found', 'error');
             });
         });
-
         document.querySelectorAll('.delete-team-btn').forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const empId  = this.getAttribute('data-emp-id');
-                const member = currentTeam.find(m => String(m.emp_id) === String(empId));
-                if (member) { deleteTeamMember(member); }
-                else { Swal.fire('Error', 'Member not found', 'error'); }
+                const member = currentTeam.find(m => String(m.emp_id) === String(this.dataset.empId));
+                if (member) deleteTeamMember(member);
+                else Swal.fire('Error', 'Member not found', 'error');
             });
         });
 
@@ -3125,161 +3112,276 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
 
     function getDOLByAuditType(member) {
         const dolSections = [];
-        
         relevantAuditTypes.forEach(auditType => {
             const fieldName = supportedAuditTypes[auditType];
-            const dolValue  = member[fieldName];
-            
+            const dolValue = member[fieldName];
             if (dolValue) {
-                const duties   = dolValue.split(',').map(d => d.trim()).filter(d => d);
-                const pillsHTML = duties.map(duty => 
-                    `<span style="display: inline-block; background: var(--primary-blue); color: white; padding: 0.25rem 0.6rem; border-radius: 5px; font-size: 10px; font-weight: 600; margin-left: 0.4rem;">${duty}</span>`
-                ).join('');
-                
+                const duties = dolValue.split(',').map(d => d.trim()).filter(d => d);
+                const typeClass = auditType === 'SOC 2' || auditType === 'HITRUST' ? 't-soc2' : '';
+                const pillsHTML = duties.map(duty => `<span class="team2-chip ${typeClass}">${duty}</span>`).join('');
                 dolSections.push(`
-                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color);">
-                        <span style="font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.3px; min-width: 60px;">${auditType}</span>
-                        <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">${pillsHTML}</div>
+                    <div class="team2-dol-line" style="margin-top: 0.6rem;">
+                        <span class="team2-dol-type-tag">${auditType}</span>
+                        <div class="team2-chip-row">${pillsHTML}</div>
                     </div>
                 `);
             }
         });
-        
         if (dolSections.length > 0) {
-            return dolSections.join('');
-        } else {
-            return '<div style="font-size: 10px; color: var(--danger-red); font-weight: 600; margin-top: 0.75rem;">No DOL assigned</div>';
+            return `<div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--line);">${dolSections.join('')}</div>`;
         }
+        return '<div class="team2-no-dol" style="margin-top: 0.6rem;">No DOL assigned</div>';
     }
 
     function updateRoleCounts() {
-        const managerCount = document.getElementById('manager-count');
-        const seniorCount  = document.getElementById('senior-count');
-        const staffCount   = document.getElementById('staff-count');
-        
-        if (managerCount) managerCount.textContent = currentTeam.filter(m => m.role === 'manager').length;
-        if (seniorCount)  seniorCount.textContent  = currentTeam.filter(m => m.role === 'senior').length;
-        if (staffCount)   staffCount.textContent   = currentTeam.filter(m => m.role === 'staff').length;
+        ['manager', 'senior', 'staff', 'intern'].forEach(role => {
+            const el = document.getElementById(role + '-count');
+            if (el) el.textContent = currentTeam.filter(m => (m.role || '').toLowerCase() === role).length;
+        });
+    }
+
+    // ---------- Add Member: employee-roster autocomplete ----------
+    function wireAddMemberSearch() {
+        const input = document.getElementById('add_emp_search');
+        const list = document.getElementById('add_emp_ac_list');
+        if (!input || !list) return;
+
+        let debounceTimer = null;
+        input.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            const query = input.value.trim();
+            if (!query) { list.style.display = 'none'; return; }
+            debounceTimer = setTimeout(() => searchEmployees(query), 200);
+        });
+        document.addEventListener('click', (ev) => {
+            if (!ev.target.closest('.team2-ac-wrap')) list.style.display = 'none';
+        });
+
+        function searchEmployees(query) {
+            fetch('../api/search-employees.php?q=' + encodeURIComponent(query))
+                .then(r => r.json())
+                .then(data => {
+                    const existingNames = currentTeam.map(m => m.emp_name.toLowerCase());
+                    const matches = (data.employees || []).filter(e => !existingNames.includes(e.emp_name.toLowerCase()));
+                    renderResults(query, matches);
+                })
+                .catch(() => renderResults(query, []));
+        }
+
+        function renderResults(query, matches) {
+            let html = matches.length
+                ? matches.map(e => `
+                    <div class="team2-ac-item" data-emp-name="${e.emp_name}" data-emp-role="${e.emp_role}">
+                        <div class="team2-avatar" style="width:22px;height:22px;font-size:9px;background:${roleColorVar[e.emp_role] || 'var(--ink)'}">${e.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('')}</div>
+                        ${e.emp_name}
+                        <span class="role">${roleLabels[e.emp_role] || e.emp_role}</span>
+                    </div>
+                `).join('')
+                : `<div class="team2-ac-empty">No employee named "${query}" in the roster.</div>`;
+            html += `<div class="team2-ac-newbtn" id="ac_new_btn">+ Add "${query}" as a new employee…</div>`;
+
+            list.innerHTML = html;
+            list.style.display = 'block';
+
+            list.querySelectorAll('.team2-ac-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    addTeamMember(item.dataset.empName, item.dataset.empRole);
+                    input.value = '';
+                    list.style.display = 'none';
+                });
+            });
+            document.getElementById('ac_new_btn')?.addEventListener('click', () => {
+                renderNewEmployeeRolePicker(query);
+            });
+        }
+
+        function renderNewEmployeeRolePicker(name) {
+            list.innerHTML = `
+                <div class="team2-ac-empty" style="padding-bottom:4px;">Role for "${name}"?</div>
+                ${['manager', 'senior', 'staff', 'intern'].map(role => `
+                    <div class="team2-ac-item" data-role="${role}">${roleLabels[role]}</div>
+                `).join('')}
+            `;
+            list.querySelectorAll('.team2-ac-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    createEmployeeThenAdd(name, item.dataset.role);
+                    input.value = '';
+                    list.style.display = 'none';
+                });
+            });
+        }
+
+        function createEmployeeThenAdd(name, role) {
+            fetch('../api/add-employee.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ emp_name: name, emp_role: role })
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        addTeamMember(name, role);
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to add employee', 'error');
+                    }
+                })
+                .catch(error => Swal.fire('Error', 'Failed to add employee: ' + error.message, 'error'));
+        }
     }
 
     function addTeamMember(empName, empRole) {
-        const newMember = {
-            engagement_idno: engagementId,
-            emp_name:        empName,
-            role:            empRole
-        };
-
         fetch('../api/add-team-member.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newMember)
+            body: JSON.stringify({ engagement_idno: engagementId, emp_name: empName, role: empRole })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
                 currentTeam.push(data.member);
-                document.getElementById('add_emp_name').value = '';
-                document.getElementById('add_emp_role').value = '';
                 renderTeamList();
             } else {
-                Swal.showValidationMessage('Error: ' + (data.message || 'Failed to add team member'));
+                Swal.fire('Error', data.message || 'Failed to add team member', 'error');
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            Swal.showValidationMessage('Error: ' + error.message);
+            Swal.fire('Error', 'Failed to add team member: ' + error.message, 'error');
         });
     }
 
     function editTeamMember(member) {
-        let dolSections = '';
-        
+        const roleKey = (member.role || '').toLowerCase();
+        let selectedRole = roleKey;
+        const tagState = {};
         relevantAuditTypes.forEach(auditType => {
-            const fieldName  = supportedAuditTypes[auditType];
-            const currentDol = member[fieldName] || '';
-            dolSections += `
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">DOL - ${auditType}</label>
-                    <input type="text" class="audit-dol-input" data-field-name="${fieldName}" placeholder="e.g., CC1, CC2, CC3" value="${currentDol}" style="width: 100%; padding: 0.5rem 0.6rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px;">
-                </div>
-            `;
+            const fieldName = supportedAuditTypes[auditType];
+            tagState[fieldName] = (member[fieldName] || '').split(',').map(t => t.trim()).filter(Boolean);
         });
 
+        const dolColumnsHtml = relevantAuditTypes.map(auditType => `
+            <div>
+                <div class="team2-dol-col-label">${auditType}</div>
+                <div class="team2-tag-input-box" data-field="${supportedAuditTypes[auditType]}">
+                    <div class="tags"></div>
+                    <input type="text" placeholder="Add duty…">
+                </div>
+            </div>
+        `).join('');
+
         Swal.fire({
-            title: 'Edit Team Member',
             html: `
-                <div style="text-align: left; display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Employee Name</label>
-                        <input type="text" id="edit_emp_name" class="swal2-input" value="${member.emp_name}" style="width: 100%;">
+                <div style="text-align: left;">
+                    <div class="team2-edit-header">
+                        <div class="team2-avatar-lg" id="edit_avatar" style="background:${roleColorVar[roleKey] || 'var(--ink)'}">${member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('')}</div>
+                        <div>
+                            <div class="team2-edit-name">${member.emp_name}</div>
+                            <div class="team2-edit-role-badge ${roleKey}" id="edit_role_badge">${roleLabels[roleKey] || member.role}</div>
+                        </div>
                     </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Role</label>
-                        <select id="edit_emp_role" class="swal2-input" style="width: 100%; padding: 0.6rem;">
-                            <option value="manager" ${member.role === 'manager' ? 'selected' : ''}>Manager</option>
-                            <option value="senior"  ${member.role === 'senior'  ? 'selected' : ''}>Senior</option>
-                            <option value="staff"   ${member.role === 'staff'   ? 'selected' : ''}>Staff</option>
-                        </select>
+                    <div class="team2-field">
+                        <label class="team2-edit-label">Role on this Engagement</label>
+                        <div class="team2-segmented" id="edit_role_segment">
+                            ${['manager', 'senior', 'staff', 'intern'].map(role =>
+                                `<button type="button" data-role="${role}" class="${role === roleKey ? 'active' : ''}">${roleLabels[role]}</button>`
+                            ).join('')}
+                        </div>
                     </div>
-                    <div id="dol_section" style="display: ${member.role === 'manager' ? 'none' : 'block'};">
-                        <h4 style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Duties and Responsibilities</h4>
-                        ${dolSections}
+                    <div class="team2-field" id="edit_dol_section" style="display:${roleKey === 'manager' ? 'none' : 'block'};">
+                        <label class="team2-edit-label">Duties &amp; Responsibilities</label>
+                        <div class="team2-dol-columns">${dolColumnsHtml}</div>
+                        <div class="team2-tag-hint">e.g. CC1, CC2 — press Enter or comma to add a duty</div>
                     </div>
                 </div>
             `,
             confirmButtonText: 'Save Changes',
             cancelButtonText: 'Cancel',
             showCancelButton: true,
+            confirmButtonColor: 'var(--ink)',
             didOpen: () => {
-                document.getElementById('edit_emp_name').focus();
-                const roleSelect = document.getElementById('edit_emp_role');
-                roleSelect.addEventListener('change', function() {
-                    const dolSection = document.getElementById('dol_section');
-                    dolSection.style.display = this.value === 'manager' ? 'none' : 'block';
+                document.querySelectorAll('.team2-tag-input-box').forEach(box => {
+                    const fieldName = box.dataset.field;
+                    const tagsEl = box.querySelector('.tags');
+                    const input = box.querySelector('input');
+
+                    function render() {
+                        tagsEl.innerHTML = tagState[fieldName].map((t, i) =>
+                            `<span class="team2-tag-chip">${t}<button type="button" data-i="${i}">&times;</button></span>`
+                        ).join('');
+                        tagsEl.querySelectorAll('button').forEach(btn => {
+                            btn.addEventListener('click', (ev) => {
+                                ev.stopPropagation();
+                                tagState[fieldName].splice(Number(btn.dataset.i), 1);
+                                render();
+                            });
+                        });
+                    }
+                    render();
+                    box.addEventListener('click', () => input.focus());
+                    input.addEventListener('keydown', (ev) => {
+                        if (ev.key === 'Enter' || ev.key === ',') {
+                            ev.preventDefault();
+                            const val = input.value.trim().replace(/,$/, '');
+                            if (val && !tagState[fieldName].includes(val)) {
+                                tagState[fieldName].push(val);
+                                render();
+                            }
+                            input.value = '';
+                        } else if (ev.key === 'Backspace' && !input.value && tagState[fieldName].length) {
+                            tagState[fieldName].pop();
+                            render();
+                        }
+                    });
                 });
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const newRole    = document.getElementById('edit_emp_role').value;
+
+                document.querySelectorAll('#edit_role_segment button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('#edit_role_segment button').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        selectedRole = btn.dataset.role;
+                        document.getElementById('edit_avatar').style.background = roleColorVar[selectedRole] || 'var(--ink)';
+                        const badge = document.getElementById('edit_role_badge');
+                        badge.className = 'team2-edit-role-badge ' + selectedRole;
+                        badge.textContent = roleLabels[selectedRole];
+                        document.getElementById('edit_dol_section').style.display = selectedRole === 'manager' ? 'none' : 'block';
+                    });
+                });
+
+            },
+            preConfirm: () => {
                 const updateData = {
                     engagement_idno: engagementId,
-                    emp_id:          member.emp_id,
-                    emp_name:        document.getElementById('edit_emp_name').value,
-                    role:            newRole
+                    emp_id: member.emp_id,
+                    emp_name: member.emp_name,
+                    role: selectedRole
                 };
-
-                if (newRole !== 'manager') {
-                    const dolInputs = document.querySelectorAll('.audit-dol-input');
-                    dolInputs.forEach(input => {
-                        const fieldName = input.getAttribute('data-field-name');
-                        updateData[fieldName] = input.value.trim();
-                    });
-                } else {
-                    relevantAuditTypes.forEach(auditType => {
-                        const fieldName = supportedAuditTypes[auditType];
-                        updateData[fieldName] = '';
-                    });
-                }
-
-                fetch('../api/update-team-member.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updateData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        sessionStorage.setItem('reopenTeamModal', 'true');
-                        location.reload();
-                    } else {
-                        Swal.fire('Error', data.message || 'Failed to update team member', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire('Error', 'Failed to update team member: ' + error.message, 'error');
+                relevantAuditTypes.forEach(auditType => {
+                    const fieldName = supportedAuditTypes[auditType];
+                    updateData[fieldName] = selectedRole === 'manager' ? '' : tagState[fieldName].join(', ');
                 });
+                return updateData;
             }
+        }).then((result) => {
+            if (!result.isConfirmed || !result.value) return;
+
+            fetch('../api/update-team-member.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(result.value)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    sessionStorage.setItem('reopenTeamModal', 'true');
+                    location.reload();
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to update team member', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to update team member: ' + error.message, 'error');
+            });
         });
     }
 
@@ -3291,18 +3393,13 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             confirmButtonText: 'Remove',
             cancelButtonText: 'Cancel',
             showCancelButton: true,
-            confirmButtonColor: '#C90012'
+            confirmButtonColor: 'var(--danger-red)'
         }).then((result) => {
             if (result.isConfirmed) {
-                const deleteData = {
-                    engagement_idno: engagementId,
-                    emp_id:          member.emp_id
-                };
-
                 fetch('../api/delete-team-member.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(deleteData)
+                    body: JSON.stringify({ engagement_idno: engagementId, emp_id: member.emp_id })
                 })
                 .then(response => response.json())
                 .then(data => {
