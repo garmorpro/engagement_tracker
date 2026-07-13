@@ -26,6 +26,14 @@ if (!preg_match('/^\d{6}$/', $passcode)) {
     exit;
 }
 
+// Rate limiting: cap attempts per IP.
+$ip = getClientIp();
+if (isRateLimited($conn, $ip, 'admin_pin', 5, 15 * 60)) {
+    http_response_code(429);
+    echo json_encode(['success' => false, 'error' => 'Too many failed attempts. Please try again in 15 minutes.']);
+    exit;
+}
+
 // Look up super admin account
 $stmt = $conn->prepare("SELECT `passcode` FROM `service_accounts` WHERE `role` = 'super_admin' AND `account_name` = 'admin' LIMIT 1");
 $stmt->execute();
@@ -33,9 +41,11 @@ $stmt->bind_result($storedPasscode);
 if ($stmt->fetch()) {
     $stmt->close();
     if (password_verify($passcode, $storedPasscode)) {
+        clearAttempts($conn, $ip, 'admin_pin');
         $_SESSION['admin_verified'] = time();
         echo json_encode(['success' => true]);
     } else {
+        recordFailedAttempt($conn, $ip, 'admin_pin');
         echo json_encode(['success' => false, 'error' => 'Incorrect PIN']);
     }
 } else {

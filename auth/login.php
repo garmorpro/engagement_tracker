@@ -22,6 +22,16 @@ if (!$user_id || !$passcode) {
     exit;
 }
 
+// Rate limiting: cap attempts per IP overall, and per IP+user_id specifically.
+$ip = getClientIp();
+$userIdentifier = $ip . ':' . $user_id;
+
+if (isRateLimited($conn, $ip, 'login_ip', 20, 15 * 60) || isRateLimited($conn, $userIdentifier, 'login_user', 5, 15 * 60)) {
+    $_SESSION['error'] = 'Too many failed attempts. Please try again in 15 minutes.';
+    header('Location: ' . BASE_URL);
+    exit;
+}
+
 // Fetch user
 $stmt = $conn->prepare("
     SELECT `user_id`, `name`, `account_name`, `passcode`, `role`, `status`, `email`
@@ -36,6 +46,8 @@ $user = $result->fetch_assoc();
 $stmt->close();
 
 if (!$user) {
+    recordFailedAttempt($conn, $ip, 'login_ip');
+    recordFailedAttempt($conn, $userIdentifier, 'login_user');
     $_SESSION['error'] = 'User not found or inactive.';
     header('Location: ' . BASE_URL);
     exit;
@@ -44,10 +56,15 @@ if (!$user) {
 // Check passcode
 $expected_length = ($user['role'] === 'super_admin') ? 6 : 4;
 if (!preg_match("/^\d{" . $expected_length . "}$/", $passcode) || !password_verify($passcode, $user['passcode'])) {
+    recordFailedAttempt($conn, $ip, 'login_ip');
+    recordFailedAttempt($conn, $userIdentifier, 'login_user');
     $_SESSION['error'] = 'Incorrect PIN.';
     header('Location: ' . BASE_URL);
     exit;
 }
+
+clearAttempts($conn, $ip, 'login_ip');
+clearAttempts($conn, $userIdentifier, 'login_user');
 
 // Set session variables
 $_SESSION['user_id'] = $user['user_id'];

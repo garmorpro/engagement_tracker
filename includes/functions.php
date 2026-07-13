@@ -35,6 +35,51 @@ function requireAdminVerified()
 }
 
 
+// RATE LIMITING
+// Backed by the login_attempts table (see includes/migrate_create_login_attempts_table.php).
+// $identifier scopes the limit (e.g. an IP address, or "ip:user_id"); $type separates
+// independent buckets (e.g. "login_ip", "login_user", "admin_pin").
+
+function getClientIp()
+{
+    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+}
+
+// Returns true if $identifier has hit $maxAttempts failures for $type within $windowSeconds.
+function isRateLimited($conn, string $identifier, string $type, int $maxAttempts, int $windowSeconds): bool
+{
+    $stmt = $conn->prepare(
+        "SELECT COUNT(*) FROM login_attempts
+         WHERE identifier = ? AND attempt_type = ? AND attempted_at > (NOW() - INTERVAL ? SECOND)"
+    );
+    $stmt->bind_param('ssi', $identifier, $type, $windowSeconds);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+
+    return $count >= $maxAttempts;
+}
+
+function recordFailedAttempt($conn, string $identifier, string $type): void
+{
+    $stmt = $conn->prepare(
+        "INSERT INTO login_attempts (identifier, attempt_type, attempted_at) VALUES (?, ?, NOW())"
+    );
+    $stmt->bind_param('ss', $identifier, $type);
+    $stmt->execute();
+    $stmt->close();
+}
+
+function clearAttempts($conn, string $identifier, string $type): void
+{
+    $stmt = $conn->prepare("DELETE FROM login_attempts WHERE identifier = ? AND attempt_type = ?");
+    $stmt->bind_param('ss', $identifier, $type);
+    $stmt->execute();
+    $stmt->close();
+}
+
+
 // LOGOUT
 
 function logoutUser($conn)
