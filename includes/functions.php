@@ -42,7 +42,28 @@ function requireAdminVerified()
 
 function getClientIp()
 {
-    return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+
+    // Only trust proxy-supplied IP headers when the direct connection is from
+    // a loopback address (i.e. a local reverse proxy). Trusting these headers
+    // unconditionally would let any client spoof them to dodge rate limits.
+    $trustedProxy = in_array($remoteAddr, ['127.0.0.1', '::1'], true);
+
+    if ($trustedProxy) {
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            // Nearest trusted proxy prepends the original client IP first.
+            $forwardedIps = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $clientIp = trim($forwardedIps[0]);
+            if (filter_var($clientIp, FILTER_VALIDATE_IP)) {
+                return $clientIp;
+            }
+        }
+        if (!empty($_SERVER['HTTP_X_REAL_IP']) && filter_var($_SERVER['HTTP_X_REAL_IP'], FILTER_VALIDATE_IP)) {
+            return $_SERVER['HTTP_X_REAL_IP'];
+        }
+    }
+
+    return $remoteAddr;
 }
 
 // Returns true if $identifier has hit $maxAttempts failures for $type within $windowSeconds.
