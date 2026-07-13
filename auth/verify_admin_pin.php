@@ -32,7 +32,7 @@ $stmt->execute();
 $stmt->bind_result($storedPasscode);
 if ($stmt->fetch()) {
     $stmt->close();
-    if ($passcode === $storedPasscode) {
+    if (password_verify($passcode, $storedPasscode)) {
         $_SESSION['admin_verified'] = time();
         echo json_encode(['success' => true]);
     } else {

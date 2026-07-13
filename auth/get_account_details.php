@@ -29,7 +29,7 @@ try {
         die(json_encode(['success' => false, 'message' => 'Database connection not available']));
     }
     
-    $query = "SELECT `user_id`, `name`, `email`, `passcode` FROM `service_accounts` WHERE `user_id` = ?";
+    $query = "SELECT `user_id`, `name`, `email` FROM `service_accounts` WHERE `user_id` = ?";
     $stmt = $conn->prepare($query);
     
     if (!$stmt) {
@@ -55,8 +55,7 @@ try {
             'account' => [
                 'user_id' => intval($account['user_id']),
                 'name' => $account['name'] ?: '',
-                'email' => $account['email'] ?: '',
-                'passcode' => $account['passcode'] ?: ''
+                'email' => $account['email'] ?: ''
             ]
         ]);
     } else {

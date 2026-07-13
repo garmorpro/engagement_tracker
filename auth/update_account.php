@@ -5,7 +5,7 @@ header('Content-Type: application/json');
 $json_input = file_get_contents('php://input');
 $data = json_decode($json_input, true);
 
-if (!$data || !isset($data['user_id']) || !isset($data['name']) || !isset($data['email']) || !isset($data['passcode'])) {
+if (!$data || !isset($data['user_id']) || !isset($data['name']) || !isset($data['email'])) {
     http_response_code(400);
     die(json_encode(['success' => false, 'message' => 'Missing required fields']));
 }
@@ -13,15 +13,17 @@ if (!$data || !isset($data['user_id']) || !isset($data['name']) || !isset($data[
 $userId = intval($data['user_id']);
 $name = trim($data['name']);
 $email = trim($data['email']);
-$passcode = trim($data['passcode']);
+// Passcode is optional on edit: blank means "keep the current PIN" (hashes can't
+// be shown back to the admin to prefill the field, so the form starts empty).
+$passcode = trim($data['passcode'] ?? '');
 
 // Validation
-if (!$userId || !$name || !$email || !$passcode) {
+if (!$userId || !$name || !$email) {
     http_response_code(400);
     die(json_encode(['success' => false, 'message' => 'Invalid input values']));
 }
 
-if (strlen($passcode) !== 4 || !ctype_digit($passcode)) {
+if ($passcode !== '' && (strlen($passcode) !== 4 || !ctype_digit($passcode))) {
     http_response_code(400);
     die(json_encode(['success' => false, 'message' => 'PIN must be exactly 4 digits']));
 }
@@ -43,23 +45,36 @@ try {
         die(json_encode(['success' => false, 'message' => 'Database connection not available']));
     }
     
-    $query = "
-        UPDATE `service_accounts`
-        SET `name` = ?,
-            `email` = ?,
-            `passcode` = ?
-        WHERE `user_id` = ?
-    ";
-    
-    $stmt = $conn->prepare($query);
-    
-    if (!$stmt) {
-        http_response_code(500);
-        die(json_encode(['success' => false, 'message' => 'Prepare error: ' . $conn->error]));
+    if ($passcode !== '') {
+        $hashedPasscode = password_hash($passcode, PASSWORD_DEFAULT);
+        $query = "
+            UPDATE `service_accounts`
+            SET `name` = ?,
+                `email` = ?,
+                `passcode` = ?
+            WHERE `user_id` = ?
+        ";
+        $stmt = $conn->prepare($query);
+        if (!$stmt) {
+            http_response_code(500);
+            die(json_encode(['success' => false, 'message' => 'Prepare error: ' . $conn->error]));
+        }
+        $stmt->bind_param('sssi', $name, $email, $hashedPasscode, $userId);
+    } else {
+        $query = "
+            UPDATE `service_accounts`
+            SET `name` = ?,
+                `email` = ?
+            WHERE `user_id` = ?
+        ";
+        $stmt = $conn->prepare($query);
+        if (!$stmt) {
+            http_response_code(500);
+            die(json_encode(['success' => false, 'message' => 'Prepare error: ' . $conn->error]));
+        }
+        $stmt->bind_param('ssi', $name, $email, $userId);
     }
-    
-    $stmt->bind_param('sssi', $name, $email, $passcode, $userId);
-    
+
     if (!$stmt->execute()) {
         http_response_code(500);
         die(json_encode(['success' => false, 'message' => 'Execute error: ' . $stmt->error]));

@@ -47,8 +47,9 @@ if ($count > 0) {
 }
 
 // Insert new account
+$hashedPasscode = password_hash($passcode, PASSWORD_DEFAULT);
 $stmt = $conn->prepare("INSERT INTO service_accounts (name, email, passcode, role, status, account_created, account_updated) VALUES (?, ?, ?, ?, 'active', NOW(), NOW())");
-$stmt->bind_param('ssss', $name, $email, $passcode, $role);
+$stmt->bind_param('ssss', $name, $email, $hashedPasscode, $role);
 $success = $stmt->execute();
 $stmt->close();
 

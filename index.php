@@ -599,9 +599,9 @@ body {
                 <input type="email" class="form-control" id="editEmail" name="email" required>
             </div>
             <div class="mb-3">
-                <label class="form-label">4-Digit PIN</label>
-                <input type="text" class="form-control text-center pin-field" 
-                       id="editPasscode" name="passcode" maxlength="4" required>
+                <label class="form-label">4-Digit PIN (leave blank to keep current PIN)</label>
+                <input type="text" class="form-control text-center pin-field"
+                       id="editPasscode" name="passcode" maxlength="4" placeholder="••••">
             </div>
             <div class="button-group">
                 <button type="button" class="btn btn-secondary" onclick="closeEditUserModal()">Cancel</button>
@@ -839,7 +839,7 @@ function editAccount(userId, accountName) {
             document.getElementById('editUserId').value = account.user_id;
             document.getElementById('editAccountName').value = account.name;
             document.getElementById('editEmail').value = account.email;
-            document.getElementById('editPasscode').value = account.passcode;
+            document.getElementById('editPasscode').value = '';
             document.getElementById('editUserModal').classList.add('active');
             setTimeout(() => document.getElementById('editAccountName').focus(), 100);
         } else {
@@ -873,8 +873,8 @@ function submitEditForm(event) {
     const name = document.getElementById('editAccountName').value;
     const email = document.getElementById('editEmail').value;
     const passcode = document.getElementById('editPasscode').value;
-    
-    if (!userId || !name || !email || !passcode) {
+
+    if (!userId || !name || !email) {
         Swal.fire({
             icon: 'error',
             title: 'Missing Fields',
@@ -885,7 +885,19 @@ function submitEditForm(event) {
         });
         return;
     }
-    
+
+    if (passcode && !/^\d{4}$/.test(passcode)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid PIN',
+            text: 'PIN must be exactly 4 digits',
+            background: 'var(--bg-secondary)',
+            color: 'white',
+            confirmButtonColor: 'var(--primary-blue)'
+        });
+        return;
+    }
+
     const apiUrl = getApiUrl('update_account.php');
     
     console.log('Submitting update to:', apiUrl);

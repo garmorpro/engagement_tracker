@@ -43,7 +43,7 @@ if (!$user) {
 
 // Check passcode
 $expected_length = ($user['role'] === 'super_admin') ? 6 : 4;
-if (!preg_match("/^\d{" . $expected_length . "}$/", $passcode) || $passcode !== $user['passcode']) {
+if (!preg_match("/^\d{" . $expected_length . "}$/", $passcode) || !password_verify($passcode, $user['passcode'])) {
     $_SESSION['error'] = 'Incorrect PIN.';
     header('Location: ' . BASE_URL);
     exit;
