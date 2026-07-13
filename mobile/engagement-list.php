@@ -1,6 +1,7 @@
 <?php
 require_once '../path.php';
 require_once '../includes/functions.php';
+require_once '../auth/session_check.php';
 
 // Fetch all engagements
 $query = "SELECT * FROM engagements WHERE eng_status != 'archived' ORDER BY eng_created DESC";

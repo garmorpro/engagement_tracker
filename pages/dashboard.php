@@ -1,5 +1,5 @@
 <?php 
-// require_once '../auth/session_check.php';
+require_once '../auth/session_check.php';
 require_once '../path.php';
 require_once '../includes/functions.php';
 

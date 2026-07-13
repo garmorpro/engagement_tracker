@@ -1,6 +1,7 @@
 <?php
 require_once '../path.php';
 require_once '../includes/functions.php';
+requireApiAuth();
 require_once '../pages/notification-helper.php';
 
 header('Content-Type: application/json');

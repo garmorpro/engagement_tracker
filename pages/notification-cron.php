@@ -12,6 +12,11 @@
  * - Engagements ready to archive (3+ days after completion)
  */
 
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    exit('Forbidden');
+}
+
 // Use absolute path instead of relative path
 $basePath = dirname(dirname(__FILE__));
 require_once $basePath . '/path.php';

@@ -33,6 +33,7 @@ $stmt->bind_result($storedPasscode);
 if ($stmt->fetch()) {
     $stmt->close();
     if ($passcode === $storedPasscode) {
+        $_SESSION['admin_verified'] = time();
         echo json_encode(['success' => true]);
     } else {
         echo json_encode(['success' => false, 'error' => 'Incorrect PIN']);

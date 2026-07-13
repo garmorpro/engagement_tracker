@@ -7,6 +7,11 @@
  * php notification-test.php
  */
 
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    exit('Forbidden');
+}
+
 require_once '../path.php';
 require_once '../includes/functions.php';
 require_once 'notification-helper.php';

@@ -20,7 +20,7 @@ if ($userId <= 0) {
 // Include your database connection
 require_once '../includes/functions.php';
 require_once '../path.php';
-// require_once '../includes/init.php';
+requireAdminVerified();
 
 try {
     // Check if $conn exists

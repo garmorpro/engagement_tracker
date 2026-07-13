@@ -6,6 +6,35 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once 'db.php';
 
 
+// API AUTH GUARD
+// Call at the top of any api/*.php endpoint, after this file is required.
+// Ends the request with a 401 JSON response if there is no logged-in session.
+function requireApiAuth()
+{
+    if (empty($_SESSION['user_id'])) {
+        http_response_code(401);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Not authenticated']);
+        exit;
+    }
+}
+
+// ADMIN ACCOUNT-MANAGEMENT GUARD
+// Call at the top of any account-management endpoint (get_accounts, register,
+// get_account_details, update_account, delete_account). Requires that
+// verify_admin_pin.php has been passed within the last 15 minutes.
+function requireAdminVerified()
+{
+    $window = 15 * 60; // seconds
+    if (empty($_SESSION['admin_verified']) || (time() - $_SESSION['admin_verified']) > $window) {
+        http_response_code(403);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Admin verification required']);
+        exit;
+    }
+}
+
+
 // LOGOUT
 
 function logoutUser($conn)

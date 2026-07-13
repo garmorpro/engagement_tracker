@@ -3,6 +3,7 @@
 session_start();
 require_once '../includes/functions.php';
 require_once '../path.php';
+requireAdminVerified();
 
 header('Content-Type: application/json');
 

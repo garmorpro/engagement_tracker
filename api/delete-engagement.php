@@ -4,6 +4,7 @@ ob_clean();
 
 require_once '../path.php';
 require_once '../includes/functions.php';
+requireApiAuth();
 
 header('Content-Type: application/json');
 header('Cache-Control: no-cache, no-store, must-revalidate');

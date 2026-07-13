@@ -1,4 +1,8 @@
 <?php
+if (php_sapi_name() !== 'cli') {
+    http_response_code(403);
+    exit('Forbidden');
+}
 $basePath = dirname(dirname(__FILE__));
 require_once $basePath . '/path.php';
 require_once $basePath . '/includes/functions.php';

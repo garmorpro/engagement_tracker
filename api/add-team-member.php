@@ -1,6 +1,7 @@
 <?php
 require_once '../path.php';
 require_once '../includes/functions.php';
+requireApiAuth();
 
 $input = json_decode(file_get_contents('php://input'), true);
 

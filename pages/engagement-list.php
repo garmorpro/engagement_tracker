@@ -1,9 +1,8 @@
 <?php 
-// sessions_start();
 require_once '../path.php';
 require_once '../includes/functions.php';
+require_once '../auth/session_check.php';
 require_once '../includes/init.php';
-logoutUser($conn);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['delete_eng_id'])) {
     $engId = (int)$_POST['delete_eng_id'];

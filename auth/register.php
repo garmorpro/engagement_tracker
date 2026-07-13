@@ -3,6 +3,7 @@
 session_start();
 require_once '../includes/functions.php';
 require_once '../path.php';
+requireAdminVerified();
 
 // Only handle POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

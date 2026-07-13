@@ -1,6 +1,7 @@
 <?php
 require_once '../path.php';
 require_once '../includes/functions.php';
+requireApiAuth();
 
 header('Content-Type: application/json');
 
