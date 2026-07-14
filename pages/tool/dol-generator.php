@@ -300,6 +300,22 @@ if (!empty($_SESSION['name'])) {
         return SOC2_DEFAULT_WEIGHTS[name] || 1;
     }
 
+    // Display/save order for SOC 2 results — the weighted split still decides
+    // who gets what (heaviest first, interleaved), this just re-sorts each
+    // person's assigned list back into a readable order afterward. Anything
+    // not in this list (a manually added custom item) sorts to the end.
+    const SOC2_CRITERIA_ORDER = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'];
+    function sortSoc2Criteria(names) {
+        return [...names].sort((a, b) => {
+            const ia = SOC2_CRITERIA_ORDER.indexOf(a);
+            const ib = SOC2_CRITERIA_ORDER.indexOf(b);
+            if (ia === -1 && ib === -1) return 0;
+            if (ia === -1) return 1;
+            if (ib === -1) return -1;
+            return ia - ib;
+        });
+    }
+
     function initials(name) {
         return (name || '').split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
     }
@@ -533,6 +549,9 @@ if (!empty($_SESSION['name'])) {
         }
 
         lastResult = computeSplit(members, criteria);
+        if (selectedAuditType === 'SOC 2') {
+            lastResult.forEach(m => { m.assigned = sortSoc2Criteria(m.assigned); });
+        }
         const totalWeight = criteria.reduce((sum, c) => sum + c.weight, 0);
         renderResult(totalHours, criteria.length, totalWeight);
     });
