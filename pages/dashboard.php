@@ -419,15 +419,16 @@ if (!empty($_SESSION['name'])) {
             .reg-type, .list-head .lh-type { display: none; }
         }
 
-        /* ========== SWEETALERT2 STYLING (ported from engagement-details.php) ==========
-           Without this, .swal2-input/.swal2-confirm/.swal2-cancel fall back to the
-           library's own default (white-input) styling regardless of dark mode, even
-           though the popup shell itself picks up swalColors(). Fixes every Swal.fire
-           on this page: New/Edit Engagement, Team, Timeline, Archive/Delete confirms. */
+        /* ========== SWEETALERT2 STYLING ==========
+           Hardcoded per-mode (not var()-indirected) on purpose: SweetAlert2 renders
+           its popup as a direct child of <body>, appended dynamically after load,
+           and custom-property indirection through that context was not resolving
+           reliably in practice — text stayed dark-on-dark even with !important.
+           Matches the same light/dark hex pairs swalColors() already uses in JS. */
         .swal2-container { z-index: 2000; }
         .swal2-popup {
-            background: var(--card);
-            border: 1px solid var(--line);
+            background: #FFFFFF !important;
+            border: 1px solid #DCE1E7;
             border-radius: 16px;
             padding: 1.5rem;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
@@ -435,13 +436,12 @@ if (!empty($_SESSION['name'])) {
             width: calc(100vw - 2rem);
             overflow-x: hidden;
         }
-        body.dark-mode .swal2-popup { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); }
-        .swal2-title { color: var(--text-primary) !important; font-size: 22px; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.3; padding: 0; }
-        .swal2-html-container, .swal2-html-container * { color: var(--text-primary); }
+        .swal2-title { color: #16202B !important; font-size: 22px; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.3; padding: 0; }
+        .swal2-html-container, .swal2-html-container * { color: #16202B !important; }
         .swal2-input, select.swal2-input, textarea.swal2-input {
-            background: var(--paper) !important;
-            border: 1px solid var(--line);
-            color: var(--text-primary) !important;
+            background: #F4F6F8 !important;
+            border: 1px solid #DCE1E7 !important;
+            color: #16202B !important;
             border-radius: 6px;
             padding: 0.5rem 0.6rem !important;
             font-size: 13px !important;
@@ -450,23 +450,33 @@ if (!empty($_SESSION['name'])) {
             box-sizing: border-box;
             margin: 0 !important;
         }
-        .swal2-input:focus {
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 10%, transparent);
-            outline: none;
-        }
-        .swal2-input::placeholder { color: var(--text-secondary) !important; opacity: 1; }
+        .swal2-input:focus { border-color: #1B3A5C !important; box-shadow: 0 0 0 3px rgba(27, 58, 92, 0.1); outline: none; }
+        .swal2-input::placeholder { color: #5B6B7C !important; opacity: 1; }
         .swal2-actions { gap: 0.75rem; margin-top: 1.5rem; display: flex; justify-content: center; padding: 0; margin-left: 0; margin-right: 0; margin-bottom: 0; }
         .swal2-confirm, .swal2-cancel {
             flex: 1; max-width: 200px; margin: 0 !important; padding: 0.7rem 1.5rem !important;
             border-radius: 8px; font-weight: 600; font-size: 13px; transition: all 0.2s; min-width: 0; height: auto;
         }
-        .swal2-confirm { background: var(--primary-blue) !important; color: #fff !important; border: none; }
-        .swal2-confirm:hover { background: color-mix(in srgb, var(--primary-blue) 85%, black) !important; box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-blue) 30%, transparent); }
-        .swal2-confirm:focus { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 20%, transparent); }
-        .swal2-cancel { background: var(--line) !important; color: var(--text-primary) !important; border: 1px solid var(--line); }
-        .swal2-cancel:hover { background: color-mix(in srgb, var(--primary-blue) 5%, transparent) !important; border-color: var(--primary-blue); color: var(--primary-blue) !important; }
-        .swal2-cancel:focus { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 10%, transparent); }
+        .swal2-confirm { background: #1B3A5C !important; color: #fff !important; border: none; }
+        .swal2-confirm:hover { background: #14283F !important; box-shadow: 0 4px 12px rgba(27, 58, 92, 0.3); }
+        .swal2-confirm:focus { outline: none; box-shadow: 0 0 0 3px rgba(27, 58, 92, 0.2); }
+        .swal2-cancel { background: #DCE1E7 !important; color: #16202B !important; border: 1px solid #DCE1E7; }
+        .swal2-cancel:hover { background: rgba(27, 58, 92, 0.05) !important; border-color: #1B3A5C; color: #1B3A5C !important; }
+        .swal2-cancel:focus { outline: none; box-shadow: 0 0 0 3px rgba(27, 58, 92, 0.1); }
+
+        body.dark-mode .swal2-popup { background: #171F28 !important; border-color: #2A343E; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); }
+        body.dark-mode .swal2-title { color: #E7ECF1 !important; }
+        body.dark-mode .swal2-html-container, body.dark-mode .swal2-html-container * { color: #E7ECF1 !important; }
+        body.dark-mode .swal2-input, body.dark-mode select.swal2-input, body.dark-mode textarea.swal2-input {
+            background: #10161D !important; border-color: #2A343E !important; color: #E7ECF1 !important;
+        }
+        body.dark-mode .swal2-input:focus { border-color: #6E9FCB !important; box-shadow: 0 0 0 3px rgba(110, 159, 203, 0.15); }
+        body.dark-mode .swal2-input::placeholder { color: #93A1AF !important; }
+        body.dark-mode .swal2-confirm { background: #6E9FCB !important; color: #10161D !important; }
+        body.dark-mode .swal2-confirm:hover { background: #8CB4D8 !important; box-shadow: 0 4px 12px rgba(110, 159, 203, 0.3); }
+        body.dark-mode .swal2-confirm:focus { box-shadow: 0 0 0 3px rgba(110, 159, 203, 0.25); }
+        body.dark-mode .swal2-cancel { background: #2A343E !important; color: #E7ECF1 !important; border-color: #2A343E; }
+        body.dark-mode .swal2-cancel:hover { background: rgba(110, 159, 203, 0.12) !important; border-color: #6E9FCB; color: #6E9FCB !important; }
 
         /* ========== ENGAGEMENT DRAWER ========== */
         .drawer-scrim {
