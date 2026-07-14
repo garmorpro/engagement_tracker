@@ -526,10 +526,26 @@ if (!empty($_SESSION['name'])) {
         .drawer-close-btn { flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
         .drawer-close-btn:hover { border-color: var(--line-strong); color: var(--text); background: var(--paper); }
 
-        .drawer-badge-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+        .drawer-badge-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; align-items: center; }
         .drawer-badge { font-size: 11px; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; letter-spacing: 0.01em; }
-        .drawer-badge.b-status { background: color-mix(in srgb, var(--ink) 12%, transparent); color: var(--ink); }
         .drawer-badge.b-repeat { background: color-mix(in srgb, var(--ink) 12%, transparent); color: var(--ink); }
+
+        .drawer-status-wrap { position: relative; display: inline-flex; }
+        .drawer-status-badge { border: none; cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 5px; }
+        .drawer-status-badge:hover { filter: brightness(1.1); }
+        .drawer-status-badge .bi-chevron-down { font-size: 9px; opacity: 0.75; }
+        .drawer-status-popover {
+            position: absolute; top: calc(100% + 6px); left: 0; background: var(--card); border: 1px solid var(--line);
+            border-radius: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.18); padding: 0.35rem; width: 168px; z-index: 20;
+            display: none;
+        }
+        .drawer-status-popover.open { display: block; }
+        .drawer-status-popover-item { display: flex; align-items: center; gap: 0.55rem; padding: 0.5rem 0.6rem; border-radius: 7px; font-size: 12.5px; font-weight: 600; cursor: pointer; color: var(--text); }
+        .drawer-status-popover-item:hover { background: var(--paper); }
+        .drawer-status-popover-item.current { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+        .drawer-status-popover-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .drawer-status-popover-item .check { margin-left: auto; font-size: 13px; color: var(--ink); opacity: 0; }
+        .drawer-status-popover-item.current .check { opacity: 1; }
 
         .drawer-header-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
         .drawer-btn { font-size: 12.5px; font-weight: 600; padding: 0.5rem 0.85rem; border-radius: 7px; border: 1px solid var(--line); background: var(--card); color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
@@ -1494,6 +1510,30 @@ if (!empty($_SESSION['name'])) {
         if (extraFlag) sessionStorage.setItem(extraFlag, 'true');
     }
 
+    // Quick status change from the drawer header popover. Reloads (rather than
+    // refreshing the drawer in place) because a status change can move the
+    // engagement into a different section on the list behind it.
+    async function updateEngagementStatus(engagementId, newStatus) {
+        try {
+            const response = await fetch('../api/update-engagement.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ engagement_id: engagementId, eng_status: newStatus })
+            });
+            const data = await response.json();
+            if (data.success) {
+                reopenDrawerAfterReload(engagementId);
+                sessionStorage.setItem('showEngagementUpdatedToast', 'true');
+                location.reload();
+            } else {
+                Swal.fire('Error', data.message || 'Failed to update status', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Error', 'Failed to update status', 'error');
+        }
+    }
+
     function renderDrawer(data) {
         const eng = data.engagement;
         const timeline = data.timeline || {};
@@ -1503,12 +1543,38 @@ if (!empty($_SESSION['name'])) {
         document.getElementById('drawerClientName').textContent = eng.eng_name;
 
         const statusInfo = STATUS_META[eng.eng_status] || { label: eng.eng_status, var: '--text-muted' };
-        let badgeHtml = `<span class="drawer-badge b-status" style="background:color-mix(in srgb, var(${statusInfo.var}) 12%, transparent); color:var(${statusInfo.var})">${escapeHtml(statusInfo.label)}</span>`;
+        const statusOptionsHtml = Object.entries(STATUS_META).map(([key, meta]) => `
+            <div class="drawer-status-popover-item ${key === eng.eng_status ? 'current' : ''}" data-status="${key}">
+                <span class="dot" style="background:var(${meta.var})"></span>${escapeHtml(meta.label)}<span class="check"><i class="bi bi-check"></i></span>
+            </div>
+        `).join('');
+        let badgeHtml = `
+            <div class="drawer-status-wrap" id="drawerStatusWrap">
+                <button class="drawer-badge drawer-status-badge" id="drawerStatusBadge" style="background:color-mix(in srgb, var(${statusInfo.var}) 12%, transparent); color:var(${statusInfo.var})">
+                    ${escapeHtml(statusInfo.label)} <i class="bi bi-chevron-down"></i>
+                </button>
+                <div class="drawer-status-popover" id="drawerStatusPopover">${statusOptionsHtml}</div>
+            </div>
+        `;
         const auditTypes = (eng.eng_audit_type || '').split(',').map(t => t.trim()).filter(Boolean);
         if (eng.eng_repeat === 'Y') {
             badgeHtml += `<span class="drawer-badge b-repeat"><i class="bi bi-arrow-repeat"></i> Repeat</span>`;
         }
         document.getElementById('drawerBadgeRow').innerHTML = badgeHtml;
+
+        document.getElementById('drawerStatusBadge').addEventListener('click', (ev) => {
+            ev.stopPropagation();
+            document.getElementById('drawerStatusPopover').classList.toggle('open');
+        });
+        document.querySelectorAll('#drawerStatusPopover .drawer-status-popover-item').forEach(item => {
+            item.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                document.getElementById('drawerStatusPopover').classList.remove('open');
+                if (item.dataset.status !== eng.eng_status) {
+                    updateEngagementStatus(eng.eng_idno, item.dataset.status);
+                }
+            });
+        });
 
         let period = 'N/A';
         if (eng.eng_start_period && eng.eng_end_period) {
@@ -2651,6 +2717,11 @@ if (!empty($_SESSION['name'])) {
     document.getElementById('drawerEditBtn').addEventListener('click', () => { if (drawerData) openEditEngagementModal(); });
     document.getElementById('drawerArchiveBtn').addEventListener('click', () => { if (drawerData) archiveEngagement(drawerData.engagement.eng_idno); });
     document.getElementById('drawerDeleteBtn').addEventListener('click', () => { if (drawerData) deleteEngagement(drawerData.engagement.eng_idno); });
+    document.addEventListener('click', (ev) => {
+        if (!ev.target.closest('.drawer-status-wrap')) {
+            document.getElementById('drawerStatusPopover')?.classList.remove('open');
+        }
+    });
 
     // Reopen the drawer (and, if flagged, the Manage Team modal) after a reload
     // triggered by a save inside it — mirrors the app's existing reload+reopen idiom.
