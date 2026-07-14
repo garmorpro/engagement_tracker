@@ -625,7 +625,6 @@ if (!empty($_SESSION['name'])) {
         </a>
         <nav class="main-nav">
             <a class="active" href="dashboard.php">Engagements</a>
-            <a href="engagement-timeline.php">Timeline</a>
             <a href="engagement-analytics.php">Analytics</a>
             <a href="tools.php">Tools</a>
         </nav>

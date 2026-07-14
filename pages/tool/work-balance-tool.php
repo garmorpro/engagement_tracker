@@ -34,9 +34,6 @@ require_once '../../auth/session_check.php';
             <a class="btn btn-sm me-2 tab-btn" href="engagement-list.php">
               <i class="bi bi-list-ul"></i> List
             </a>
-            <a class="btn btn-sm me-2 tab-btn" href="engagement-timeline.php">
-              <i class="bi bi-calendar2"></i> Timeline
-            </a>
             <a class="btn btn-sm tab-btn" href="engagement-analytics.php">
               <i class="bi bi-graph-up"></i> Analytics
             </a>
