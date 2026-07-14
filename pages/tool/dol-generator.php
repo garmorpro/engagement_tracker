@@ -91,6 +91,14 @@ if (!empty($_SESSION['name'])) {
         .field-hint { font-size: 11px; color: var(--text-muted); margin-top: 0.4rem; }
         .field-error { font-size: 11.5px; color: var(--critical); margin-top: 0.5rem; font-weight: 600; }
 
+        .weight-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--line); }
+        .weight-row:last-child { border-bottom: none; }
+        .weight-name { flex: 1; font-size: 12.5px; font-weight: 700; }
+        .weight-input-wrap { display: flex; align-items: center; gap: 0.4rem; }
+        .weight-input { width: 56px; padding: 0.4rem 0.5rem; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); color: var(--text); font-size: 13px; text-align: center; }
+        .weight-input:focus { outline: none; border-color: var(--ink); }
+        .weight-suffix { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+
         .audit-type-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .audit-pill { padding: 0.5rem 0.9rem; border-radius: 8px; border: 1.5px solid var(--line); background: var(--paper); color: var(--text-muted); font-size: 12.5px; font-weight: 700; cursor: pointer; }
         .audit-pill.active { border-color: var(--ink); background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); }
@@ -211,6 +219,10 @@ if (!empty($_SESSION['name'])) {
             <label class="field-label">Criteria (comma or line separated)</label>
             <textarea class="textarea-input" id="criteriaInput"></textarea>
             <div class="field-hint" id="criteriaHint"></div>
+
+            <label class="field-label" style="margin-top: 1.1rem;">Weight Each Criterion</label>
+            <div id="weightEditorList"></div>
+            <div class="field-hint">Higher weight = bigger/denser section. The split matches each person's share of total <em>weight</em> to their share of hours, not just item count — and hands out items one at a time to whoever's furthest under their target, so it doesn't just chunk the list in order.</div>
         </div>
 
         <div id="genErrorBox" class="field-error hidden" style="margin-bottom: 0.75rem;"></div>
@@ -274,6 +286,19 @@ if (!empty($_SESSION['name'])) {
     let eligibleMembers = [];  // team members with role senior/staff/intern
     let selectedAuditType = null;
     let lastResult = null;     // computed split, kept for the Save step
+    let criteriaWeights = {};  // name -> weight, editable per engagement
+
+    // Default relative weights for the standard SOC 2 criteria — bigger number
+    // means a denser/more involved section. Only used as a starting point; the
+    // weight editor lets these be adjusted per engagement.
+    const SOC2_DEFAULT_WEIGHTS = {
+        'CC1': 1, 'CC2': 1, 'CC3': 2, 'CC4': 1, 'CC5': 1,
+        'CC6': 3, 'CC7': 2, 'CC8': 3, 'CC9': 1,
+        'Availability': 2, 'Confidentiality': 1, 'Privacy': 3, 'Processing Integrity': 3
+    };
+    function getDefaultWeight(name) {
+        return SOC2_DEFAULT_WEIGHTS[name] || 1;
+    }
 
     function initials(name) {
         return (name || '').split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
@@ -303,33 +328,78 @@ if (!empty($_SESSION['name'])) {
         return text.split(/[,\n]/).map(c => c.trim()).filter(Boolean);
     }
 
-    // Largest-remainder (Hamilton) apportionment: converts each member's exact
-    // fractional share of the criteria count into a whole number, guaranteed
-    // to sum to exactly the total criteria count. Criteria are then assigned
-    // as sequential chunks in the order they were entered, so it's obvious
-    // why any given person got what they got.
+    // Keeps criteriaWeights in sync with whatever's currently in the criteria
+    // textarea — preserves a weight the user already set for a name that's
+    // still present, and defaults anything new (SOC 2 known name -> its
+    // standard weight, otherwise 1).
+    function syncCriteriaWeights() {
+        const names = parseCriteriaInput(document.getElementById('criteriaInput').value);
+        const next = {};
+        names.forEach(name => {
+            next[name] = criteriaWeights.hasOwnProperty(name) ? criteriaWeights[name] : getDefaultWeight(name);
+        });
+        criteriaWeights = next;
+        renderWeightEditor(names);
+    }
+
+    function renderWeightEditor(names) {
+        const container = document.getElementById('weightEditorList');
+        if (!names.length) {
+            container.innerHTML = '<div class="empty-note">Enter criteria above to set weights.</div>';
+            return;
+        }
+        container.innerHTML = names.map(name => `
+            <div class="weight-row" data-name="${escapeHtml(name)}">
+                <span class="weight-name">${escapeHtml(name)}</span>
+                <div class="weight-input-wrap">
+                    <input type="number" class="weight-input criterion-weight-input" min="1" step="1" value="${criteriaWeights[name]}">
+                    <span class="weight-suffix">weight</span>
+                </div>
+            </div>
+        `).join('');
+        container.querySelectorAll('.weight-row').forEach(row => {
+            const name = row.dataset.name;
+            row.querySelector('.criterion-weight-input').addEventListener('input', (e) => {
+                criteriaWeights[name] = parseFloat(e.target.value) || 1;
+            });
+        });
+    }
+
+    function buildWeightedCriteria() {
+        return parseCriteriaInput(document.getElementById('criteriaInput').value)
+            .map(name => ({ name, weight: criteriaWeights[name] || 1 }));
+    }
+
+    // Splits by weight, not raw item count, so a person's share of the actual
+    // work stays proportional to their hours even when some criteria are
+    // bigger than others. Assigns criteria one at a time, heaviest first, each
+    // one going to whoever is currently furthest under their target weight —
+    // this interleaves the assignment instead of handing out contiguous
+    // chunks in list order.
     function computeSplit(members, criteria) {
         const totalHours = members.reduce((sum, m) => sum + m.hours, 0);
-        const n = criteria.length;
+        const totalWeight = criteria.reduce((sum, c) => sum + c.weight, 0);
 
-        const withShares = members.map(m => {
-            const exact = totalHours > 0 ? (m.hours / totalHours) * n : 0;
-            return { ...m, exact, count: Math.floor(exact), remainder: exact - Math.floor(exact) };
+        const state = members.map(m => ({
+            ...m,
+            targetWeight: totalHours > 0 ? (m.hours / totalHours) * totalWeight : 0,
+            assignedWeight: 0,
+            assigned: []
+        }));
+
+        const byWeightDesc = [...criteria].sort((a, b) => b.weight - a.weight);
+        byWeightDesc.forEach(c => {
+            let best = state[0];
+            let bestSlack = -Infinity;
+            state.forEach(s => {
+                const slack = s.targetWeight - s.assignedWeight;
+                if (slack > bestSlack) { bestSlack = slack; best = s; }
+            });
+            best.assigned.push(c.name);
+            best.assignedWeight += c.weight;
         });
 
-        let assigned = withShares.reduce((sum, m) => sum + m.count, 0);
-        let remaining = n - assigned;
-
-        const byRemainder = [...withShares].sort((a, b) => b.remainder - a.remainder);
-        for (let i = 0; i < remaining; i++) byRemainder[i].count += 1;
-
-        let idx = 0;
-        withShares.forEach(m => {
-            m.assigned = criteria.slice(idx, idx + m.count);
-            idx += m.count;
-        });
-
-        return withShares;
+        return state;
     }
 
     // ---------- Engagement selection ----------
@@ -385,6 +455,7 @@ if (!empty($_SESSION['name'])) {
     function updateCriteriaForAuditType() {
         const textarea = document.getElementById('criteriaInput');
         const hint = document.getElementById('criteriaHint');
+        criteriaWeights = {}; // switching audit type starts weights fresh
         if (selectedAuditType === 'SOC 2') {
             const derived = deriveSoc2Criteria(engagementData.engagement.eng_tsc);
             textarea.value = derived.join(', ');
@@ -395,7 +466,9 @@ if (!empty($_SESSION['name'])) {
             textarea.value = '';
             hint.textContent = 'Paste or type the criteria to split for this audit type.';
         }
+        syncCriteriaWeights();
     }
+    document.getElementById('criteriaInput').addEventListener('input', () => syncCriteriaWeights());
 
     function renderTeamHours() {
         const container = document.getElementById('teamHoursList');
@@ -452,7 +525,7 @@ if (!empty($_SESSION['name'])) {
             return;
         }
 
-        const criteria = parseCriteriaInput(document.getElementById('criteriaInput').value);
+        const criteria = buildWeightedCriteria();
         if (!criteria.length) {
             errorBox.textContent = 'Enter at least one criterion to split.';
             errorBox.classList.remove('hidden');
@@ -460,17 +533,18 @@ if (!empty($_SESSION['name'])) {
         }
 
         lastResult = computeSplit(members, criteria);
-        renderResult(totalHours, criteria.length);
+        const totalWeight = criteria.reduce((sum, c) => sum + c.weight, 0);
+        renderResult(totalHours, criteria.length, totalWeight);
     });
 
-    function renderResult(totalHours, criteriaCount) {
+    function renderResult(totalHours, criteriaCount, totalWeight) {
         document.getElementById('setupSections').classList.add('hidden');
         document.getElementById('resultSection').classList.remove('hidden');
 
         const engName = escapeHtml(engagementData.engagement.eng_name);
         const hoursBreakdown = lastResult.map(m => m.hours).join(' / ');
         document.getElementById('resultSummary').innerHTML =
-            `${engName} &middot; ${escapeHtml(selectedAuditType)} &middot; ${criteriaCount} criteria across ${lastResult.length} people, split by hours (${hoursBreakdown} = ${totalHours} total)`;
+            `${engName} &middot; ${escapeHtml(selectedAuditType)} &middot; ${criteriaCount} criteria (${totalWeight} total weight) across ${lastResult.length} people, split by hours (${hoursBreakdown} = ${totalHours} total)`;
 
         document.getElementById('resultMembers').innerHTML = lastResult.map(m => {
             const roleKey = (m.role || '').toLowerCase();
@@ -486,7 +560,7 @@ if (!empty($_SESSION['name'])) {
                             <div class="member-name">${escapeHtml(m.emp_name)}</div>
                             <div class="member-role">${ROLE_LABELS[roleKey] || m.role}</div>
                         </div>
-                        <span class="result-share">${m.hours} hrs &middot; ${pct}% &middot; ${m.assigned.length} criteria</span>
+                        <span class="result-share">${m.hours} hrs &middot; ${pct}% &middot; ${m.assigned.length} criteria (${m.assignedWeight} wt)</span>
                     </div>
                     <div class="result-chips">${chips}</div>
                 </div>
