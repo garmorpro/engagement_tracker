@@ -30,6 +30,18 @@ $statusMeta = [
 ];
 $sectionOrder = ['in-progress', 'in-review', 'planning', 'complete'];
 
+// Status mix for the active-portfolio distribution card — only statuses that
+// actually have an active engagement show up, in $sectionOrder's order, so a
+// new status (or the first "Complete" engagement) appears on its own with no
+// code change needed.
+$statusCounts = [];
+foreach ($sectionOrder as $status) {
+    $count = count(array_filter($activeEngagements, fn($e) => $e['eng_status'] === $status));
+    if ($count > 0) {
+        $statusCounts[$status] = $count;
+    }
+}
+
 // Due date state for an engagement: [dateObj|null, 'overdue'|'soon'|'ok'|'none']
 function getDueInfo($engIdno, $timelineLookup) {
     if (!isset($timelineLookup[$engIdno]) || empty($timelineLookup[$engIdno]['final_report_date'])) {
@@ -312,6 +324,14 @@ if (!empty($_SESSION['name'])) {
         .stat-card .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); margin-top: 3px; }
         .stat-card--attention { background: var(--critical-tint); border-color: color-mix(in srgb, var(--critical) 30%, var(--line)); }
         .stat-card--attention .value, .stat-card--attention .label { color: var(--critical); }
+
+        .dist-card { background: var(--card); border: 1px solid var(--line); border-radius: 11px; padding: 0.85rem 1.1rem; flex: 1; min-width: 260px; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; }
+        .dist-bar { display: flex; height: 9px; border-radius: 5px; overflow: hidden; background: var(--line); }
+        .dist-seg { height: 100%; }
+        .dist-legend { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+        .dist-legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 11.5px; color: var(--text-muted); }
+        .dist-legend-item .dot { width: 7px; height: 7px; border-radius: 2px; flex-shrink: 0; }
+        .dist-legend-item b { color: var(--text); font-weight: 700; }
 
         /* ---------- toast ---------- */
         .custom-toast {
@@ -777,6 +797,23 @@ if (!empty($_SESSION['name'])) {
         <?php if (!$showArchived): ?>
             <div class="stat-card"><div><div class="value"><?php echo $activeCount; ?></div><div class="label">Total Active</div></div></div>
             <div class="stat-card <?php echo $attentionCount ? 'stat-card--attention' : ''; ?>"><div><div class="value"><?php echo $attentionCount; ?></div><div class="label">Needs Attention</div></div></div>
+            <?php if (!empty($statusCounts)): ?>
+            <div class="dist-card">
+                <div class="dist-bar">
+                    <?php foreach ($statusCounts as $status => $count): ?>
+                        <div class="dist-seg" style="width:<?php echo ($count / $activeCount) * 100; ?>%; background:var(<?php echo $statusMeta[$status]['var']; ?>);"></div>
+                    <?php endforeach; ?>
+                </div>
+                <div class="dist-legend">
+                    <?php foreach ($statusCounts as $status => $count): ?>
+                        <div class="dist-legend-item">
+                            <span class="dot" style="background:var(<?php echo $statusMeta[$status]['var']; ?>)"></span>
+                            <b><?php echo $count; ?></b>&nbsp;<?php echo $statusMeta[$status]['label']; ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
         <?php else: ?>
             <div class="stat-card"><div><div class="value"><?php echo $archivedCount; ?></div><div class="label">Total Archived</div></div></div>
         <?php endif; ?>
