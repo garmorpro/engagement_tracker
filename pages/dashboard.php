@@ -419,6 +419,55 @@ if (!empty($_SESSION['name'])) {
             .reg-type, .list-head .lh-type { display: none; }
         }
 
+        /* ========== SWEETALERT2 STYLING (ported from engagement-details.php) ==========
+           Without this, .swal2-input/.swal2-confirm/.swal2-cancel fall back to the
+           library's own default (white-input) styling regardless of dark mode, even
+           though the popup shell itself picks up swalColors(). Fixes every Swal.fire
+           on this page: New/Edit Engagement, Team, Timeline, Archive/Delete confirms. */
+        .swal2-container { z-index: 2000; }
+        .swal2-popup {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            max-width: 550px;
+            width: calc(100vw - 2rem);
+            overflow-x: hidden;
+        }
+        body.dark-mode .swal2-popup { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); }
+        .swal2-title { color: var(--text-primary); font-size: 22px; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.3; padding: 0; }
+        .swal2-html-container { color: var(--text-primary); padding: 0; margin: 0; }
+        .swal2-input {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            color: var(--text-primary);
+            border-radius: 6px;
+            padding: 0.5rem 0.6rem !important;
+            font-size: 13px !important;
+            transition: all 0.2s;
+            width: 100% !important;
+            box-sizing: border-box;
+            margin: 0 !important;
+        }
+        .swal2-input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 10%, transparent);
+            outline: none;
+        }
+        .swal2-input::placeholder { color: var(--text-secondary); }
+        .swal2-actions { gap: 0.75rem; margin-top: 1.5rem; display: flex; justify-content: center; padding: 0; margin-left: 0; margin-right: 0; margin-bottom: 0; }
+        .swal2-confirm, .swal2-cancel {
+            flex: 1; max-width: 200px; margin: 0 !important; padding: 0.7rem 1.5rem !important;
+            border-radius: 8px; font-weight: 600; font-size: 13px; transition: all 0.2s; min-width: 0; height: auto;
+        }
+        .swal2-confirm { background: var(--primary-blue); color: white; border: none; }
+        .swal2-confirm:hover { background: color-mix(in srgb, var(--primary-blue) 85%, black); box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-blue) 30%, transparent); }
+        .swal2-confirm:focus { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 20%, transparent); }
+        .swal2-cancel { background: var(--line); color: var(--text-primary); border: 1px solid var(--line); }
+        .swal2-cancel:hover { background: color-mix(in srgb, var(--primary-blue) 5%, transparent); border-color: var(--primary-blue); color: var(--primary-blue); }
+        .swal2-cancel:focus { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 10%, transparent); }
+
         /* ========== ENGAGEMENT DRAWER ========== */
         .drawer-scrim {
             position: fixed; inset: 0; background: rgba(15, 23, 34, 0.44);
