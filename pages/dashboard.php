@@ -910,10 +910,12 @@ if (!empty($_SESSION['name'])) {
     <div class="drawer-body" id="drawerBody">
         <div class="drawer-loading">Loading&hellip;</div>
     </div>
+    <input type="file" id="timelineImportFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
     const BASE_URL = "<?= BASE_URL ?>";
 
@@ -1526,7 +1528,10 @@ if (!empty($_SESSION['name'])) {
             <div class="drawer-section">
                 <div class="drawer-section-head">
                     <div class="drawer-section-title"><span class="dot" style="background:var(--good)"></span>Timeline &amp; Key Dates</div>
-                    <button class="drawer-link-btn" id="drawerEditTimelineBtn">Edit Timeline</button>
+                    <div style="display:flex; gap:0.9rem;">
+                        <button class="drawer-link-btn" id="drawerImportTimelineBtn">Import Timeline</button>
+                        <button class="drawer-link-btn" id="drawerEditTimelineBtn">Edit Timeline</button>
+                    </div>
                 </div>
                 <div id="drawerTimelineContent"></div>
                 <div class="drawer-tl-hint">Click a date to mark it complete or incomplete.</div>
@@ -1537,7 +1542,10 @@ if (!empty($_SESSION['name'])) {
         renderDrawerTimeline(timeline, eng.eng_idno);
 
         document.getElementById('drawerManageTeamBtn').addEventListener('click', openManageTeamModal);
-        document.getElementById('drawerEditTimelineBtn').addEventListener('click', openEditTimelineModal);
+        document.getElementById('drawerEditTimelineBtn').addEventListener('click', () => openEditTimelineModal());
+        document.getElementById('drawerImportTimelineBtn').addEventListener('click', () => {
+            document.getElementById('timelineImportFileInput').click();
+        });
     }
 
     function renderDrawerTeam(team, auditTypes) {
@@ -2144,26 +2152,34 @@ if (!empty($_SESSION['name'])) {
     }
 
     // ---------- Edit Timeline modal (ported from engagement-details.php) ----------
-    function openEditTimelineModal() {
+    function openEditTimelineModal(overrides) {
         const engagementId = drawerData.engagement.eng_idno;
         const timeline = drawerData.timeline || {};
         const timelineData = {
-            internal_planning_call_date: timeline.internal_planning_call_date || '',
-            planning_memo_date:          timeline.planning_memo_date || '',
-            irl_due_date:                timeline.irl_due_date || '',
-            client_planning_call_date:   timeline.client_planning_call_date || '',
-            fieldwork_date:              timeline.fieldwork_date || '',
-            leadsheet_date:              timeline.leadsheet_date || '',
-            conclusion_memo_date:        timeline.conclusion_memo_date || '',
-            draft_report_due_date:       timeline.draft_report_due_date || '',
-            final_report_date:           timeline.final_report_date || '',
-            archive_date:                timeline.archive_date || ''
+            internal_planning_call_date: (overrides && overrides.internal_planning_call_date) || timeline.internal_planning_call_date || '',
+            planning_memo_date:          (overrides && overrides.planning_memo_date) || timeline.planning_memo_date || '',
+            irl_due_date:                (overrides && overrides.irl_due_date) || timeline.irl_due_date || '',
+            client_planning_call_date:   (overrides && overrides.client_planning_call_date) || timeline.client_planning_call_date || '',
+            fieldwork_date:              (overrides && overrides.fieldwork_date) || timeline.fieldwork_date || '',
+            leadsheet_date:              (overrides && overrides.leadsheet_date) || timeline.leadsheet_date || '',
+            conclusion_memo_date:        (overrides && overrides.conclusion_memo_date) || timeline.conclusion_memo_date || '',
+            draft_report_due_date:       (overrides && overrides.draft_report_due_date) || timeline.draft_report_due_date || '',
+            final_report_date:           (overrides && overrides.final_report_date) || timeline.final_report_date || '',
+            archive_date:                (overrides && overrides.archive_date) || timeline.archive_date || ''
         };
+        const importedCount = overrides ? Object.keys(overrides).length : 0;
+        const importBanner = overrides
+            ? `<div style="margin-bottom:1rem; padding:0.75rem 0.9rem; background:color-mix(in srgb, var(--primary-blue) 10%, transparent); border-left:3px solid var(--primary-blue); border-radius:6px; font-size:12.5px; color:var(--text-primary);">
+                   ${importedCount ? `Filled ${importedCount} date${importedCount === 1 ? '' : 's'} from your spreadsheet` : 'Could not match any task names from your spreadsheet'} — review before saving.
+               </div>`
+            : '';
 
         Swal.fire({
             title: 'Edit Timeline & Key Dates',
             html: `
-                <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; box-sizing: border-box; margin: 1rem 0;">
+                <div style="text-align: left; margin: 1rem 0;">
+                ${importBanner}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; box-sizing: border-box;">
                     <div style="width: 100%; box-sizing: border-box; min-width: 0;">
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Internal Planning Call</label>
                         <input type="date" id="internal_planning_call_date" class="swal2-input" value="${timelineData.internal_planning_call_date}">
@@ -2204,6 +2220,7 @@ if (!empty($_SESSION['name'])) {
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Archive Date</label>
                         <input type="date" id="archive_date" class="swal2-input" value="${timelineData.archive_date}">
                     </div>
+                </div>
                 </div>
             `,
             confirmButtonText: 'Save Changes',
@@ -2471,6 +2488,89 @@ if (!empty($_SESSION['name'])) {
             }
         });
     }
+
+    // ---------- Timeline import from spreadsheet (.xlsx/.xls/.csv) ----------
+    // Best-effort keyword matching, not exact — always routes into the same
+    // Edit Timeline modal for review rather than saving directly.
+    const TIMELINE_IMPORT_PATTERNS = {
+        internal_planning_call_date: [/internal.*planning.*call/i],
+        planning_memo_date:          [/^planning memo$/i, /\bplanning memo\b/i],
+        irl_due_date:                [/\birl\b/i, /information request list/i],
+        client_planning_call_date:   [/client.*planning.*call/i],
+        fieldwork_date:              [/^fieldwork$/i, /\bfieldwork\b/i],
+        leadsheet_date:              [/lead\s*sheet/i],
+        conclusion_memo_date:        [/conclusion memo/i],
+        draft_report_due_date:       [/draft report/i],
+        final_report_date:           [/final report/i],
+        archive_date:                [/approval of archive/i, /prepare.*archive/i, /\barchive\b/i]
+    };
+
+    function parseSpreadsheetRows(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    resolve(XLSX.utils.sheet_to_json(sheet, { defval: '' }));
+                } catch (err) {
+                    reject(err);
+                }
+            };
+            reader.onerror = () => reject(new Error('Could not read the file'));
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    function parseDateCell(value) {
+        if (!value && value !== 0) return null;
+        if (value instanceof Date) {
+            return isNaN(value.getTime()) ? null : value.toISOString().slice(0, 10);
+        }
+        if (typeof value === 'number' && window.XLSX && XLSX.SSF) {
+            const d = XLSX.SSF.parse_date_code(value);
+            if (d) return `${d.y}-${String(d.m).padStart(2, '0')}-${String(d.d).padStart(2, '0')}`;
+        }
+        const parsed = new Date(String(value).trim());
+        return isNaN(parsed.getTime()) ? null : parsed.toISOString().slice(0, 10);
+    }
+
+    function matchTimelineFieldsFromRows(rows) {
+        if (!rows.length) return {};
+        const keys = Object.keys(rows[0]);
+        const taskKey = keys.find(k => /task/i.test(k) && /name/i.test(k)) || keys.find(k => /task/i.test(k)) || keys[0];
+        const dateKey = keys.find(k => /planned/i.test(k) && /finish/i.test(k))
+            || keys.find(k => /finish/i.test(k))
+            || keys.find(k => /due/i.test(k));
+        if (!dateKey) return {};
+
+        const result = {};
+        Object.entries(TIMELINE_IMPORT_PATTERNS).forEach(([field, patterns]) => {
+            for (const pattern of patterns) {
+                const row = rows.find(r => pattern.test(String(r[taskKey] || '').trim()));
+                if (row) {
+                    const parsedDate = parseDateCell(row[dateKey]);
+                    if (parsedDate) { result[field] = parsedDate; break; }
+                }
+            }
+        });
+        return result;
+    }
+
+    document.getElementById('timelineImportFileInput').addEventListener('change', async (ev) => {
+        const file = ev.target.files[0];
+        ev.target.value = '';
+        if (!file || !drawerData) return;
+        try {
+            const rows = await parseSpreadsheetRows(file);
+            const matched = matchTimelineFieldsFromRows(rows);
+            openEditTimelineModal(matched);
+        } catch (err) {
+            console.error('Error:', err);
+            Swal.fire('Error', 'Could not read that spreadsheet: ' + err.message, 'error');
+        }
+    });
 
     // Wire drawer chrome
     document.getElementById('drawerCloseBtn').addEventListener('click', closeDrawer);
