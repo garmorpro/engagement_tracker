@@ -1875,24 +1875,47 @@ if (!empty($_SESSION['name'])) {
                         list.style.display = 'none';
                     });
                 });
-                document.getElementById('ac_new_btn')?.addEventListener('click', () => {
-                    renderNewEmployeeRolePicker(query);
+                document.getElementById('ac_new_btn')?.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    input.value = '';
+                    list.style.display = 'none';
+                    promptNewEmployeeRole(query);
                 });
             }
 
-            function renderNewEmployeeRolePicker(name) {
-                list.innerHTML = `
-                    <div class="team2-ac-empty" style="padding-bottom:4px;">Role for "${name}"?</div>
-                    ${['manager', 'senior', 'staff', 'intern'].map(role => `
-                        <div class="team2-ac-item" data-role="${role}">${ROLE_LABELS[role]}</div>
-                    `).join('')}
-                `;
-                list.querySelectorAll('.team2-ac-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        createEmployeeThenAdd(name, item.dataset.role);
-                        input.value = '';
-                        list.style.display = 'none';
-                    });
+            function promptNewEmployeeRole(name) {
+                let selectedRole = 'staff';
+                Swal.fire({
+                    title: 'Add New Employee',
+                    html: `
+                        <div style="text-align:left;">
+                            <div style="font-size:13px; color:var(--text-secondary); margin-bottom:0.85rem;">
+                                What role does <strong style="color:var(--text-primary);">${escapeHtml(name)}</strong> have?
+                            </div>
+                            <div class="team2-segmented" id="new_emp_role_segment">
+                                ${['manager', 'senior', 'staff', 'intern'].map(role =>
+                                    `<button type="button" data-role="${role}" class="${role === selectedRole ? 'active' : ''}">${ROLE_LABELS[role]}</button>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    `,
+                    confirmButtonText: 'Add Employee',
+                    cancelButtonText: 'Cancel',
+                    showCancelButton: true,
+                    confirmButtonColor: 'var(--ink)',
+                    didOpen: () => {
+                        document.querySelectorAll('#new_emp_role_segment button').forEach(btn => {
+                            btn.addEventListener('click', () => {
+                                document.querySelectorAll('#new_emp_role_segment button').forEach(b => b.classList.remove('active'));
+                                btn.classList.add('active');
+                                selectedRole = btn.dataset.role;
+                            });
+                        });
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        createEmployeeThenAdd(name, selectedRole);
+                    }
                 });
             }
 
