@@ -31,11 +31,8 @@ require_once '../../auth/session_check.php';
             <a class="btn btn-sm me-2 tab-btn active" href="dashboard.php">
               <i class="bi bi-grid"></i> Board
             </a>
-            <a class="btn btn-sm me-2 tab-btn" href="engagement-list.php">
+            <a class="btn btn-sm tab-btn" href="engagement-list.php">
               <i class="bi bi-list-ul"></i> List
-            </a>
-            <a class="btn btn-sm tab-btn" href="engagement-analytics.php">
-              <i class="bi bi-graph-up"></i> Analytics
             </a>
           </div>
 
