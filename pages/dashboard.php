@@ -131,6 +131,18 @@ if (!empty($_SESSION['name'])) {
             --critical-tint-strong: rgba(179, 38, 30, 0.13);
             --caution: #A66A00;
             --good: #1F7A54;
+
+            /* Role colors + legacy-name aliases for the engagement drawer,
+               ported from engagement-details.php's Team/DOL section. */
+            --manager: var(--ink);
+            --staff: var(--good);
+            --intern: var(--caution);
+            --senior: #7A4FB0;
+            --text-primary: var(--text);
+            --text-secondary: var(--text-muted);
+            --primary-blue: var(--ink);
+            --danger-red: var(--critical);
+            --success-green: var(--good);
         }
         body.dark-mode {
             --ink: #6E9FCB;
@@ -146,6 +158,7 @@ if (!empty($_SESSION['name'])) {
             --critical-tint-strong: rgba(229, 118, 111, 0.18);
             --caution: #D3A44E;
             --good: #5FB98A;
+            --senior: #B79AE0;
         }
 
         * { box-sizing: border-box; }
@@ -311,11 +324,197 @@ if (!empty($_SESSION['name'])) {
         .custom-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
         .custom-toast.hide { opacity: 0; }
 
+        /* ========== MANAGE TEAM MEMBERS MODAL (ported from engagement-details.php) ========== */
+        .team2-manage-body { display: flex; gap: 1.5rem; height: 100%; min-height: 500px; }
+        .team2-manage-left { flex: 1.3; display: flex; flex-direction: column; overflow: hidden; min-width: 300px; }
+        .team2-manage-left h3 { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .team2-manage-right { width: 280px; display: flex; flex-direction: column; gap: 1.25rem; padding-left: 1.5rem; border-left: 1px solid var(--line); flex-shrink: 0; }
+        .team2-manage-right h4 { font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .team2-list-scroll { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; padding-right: 0.4rem; }
+        .team2-card-row { padding: 0.8rem; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; }
+        .team2-card-row-top { display: flex; align-items: flex-start; gap: 0.7rem; }
+        .team2-card-row .team2-icon-btns { margin-left: auto; display: flex; gap: 4px; flex-shrink: 0; }
+        .team2-card-row .team2-icon-btns button { width: 28px; height: 28px; border: 1px solid var(--line); background: var(--card); color: var(--text-secondary); border-radius: 6px; cursor: pointer; }
+        .team2-card-row .team2-icon-btns button:hover { border-color: var(--ink); color: var(--ink); }
+        .team2-card-row .team2-icon-btns button.danger:hover { border-color: var(--critical); color: var(--critical); }
+        .team2-avatar { width: 34px; height: 34px; border-radius: 8px; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .team2-name { font-weight: 600; font-size: 13.5px; color: var(--text-primary); }
+        .team2-role-label { font-size: 11px; font-weight: 700; text-transform: capitalize; color: var(--text-secondary); }
+        .team2-stat-mini { padding: 0.7rem 0.8rem; border-left: 3px solid var(--ink); border-radius: 6px; background: color-mix(in srgb, var(--ink) 7%, var(--card)); margin-bottom: 0.6rem; }
+        .team2-stat-mini .n { font-size: 18px; font-weight: 800; color: var(--text-primary); }
+        .team2-stat-mini .l { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); }
+        .team2-dol-line { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .team2-dol-type-tag { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-secondary); width: 44px; flex-shrink: 0; }
+        .team2-chip-row { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+        .team2-chip { font-size: 10.5px; font-weight: 700; color: var(--ink); background: color-mix(in srgb, var(--ink) 12%, transparent); padding: 3px 8px 3px 6px; border-radius: 5px; border-left: 2px solid var(--ink); }
+        .team2-chip.t-soc2 { color: var(--senior); background: color-mix(in srgb, var(--senior) 12%, transparent); border-left-color: var(--senior); }
+        .team2-no-dol { font-size: 11px; color: var(--critical); font-weight: 600; }
+
+        .team2-field { margin-bottom: 0.6rem; }
+        .team2-field input[type="text"] { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--card); color: var(--text-primary); font-size: 13px; }
+        .team2-field input:focus { outline: none; border-color: var(--ink); }
+
+        .team2-ac-wrap { position: relative; }
+        .team2-ac-list {
+            position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--card); border: 1px solid var(--line);
+            border-radius: 8px; box-shadow: 0 8px 22px rgba(0,0,0,0.16); max-height: 220px; overflow-y: auto; z-index: 10;
+        }
+        .team2-ac-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; cursor: pointer; font-size: 13px; color: var(--text-primary); }
+        .team2-ac-item:hover { background: var(--paper); }
+        .team2-ac-item .role { margin-left: auto; font-size: 10px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); }
+        .team2-ac-empty { padding: 10px; font-size: 12.5px; color: var(--text-secondary); }
+        .team2-ac-newbtn { display: flex; align-items: center; gap: 6px; padding: 9px 10px; font-size: 12.5px; font-weight: 600; color: var(--ink); cursor: pointer; border-top: 1px solid var(--line); }
+        .team2-ac-newbtn:hover { background: var(--paper); }
+
+        /* ========== EDIT TEAM MEMBER MODAL (ported from engagement-details.php) ========== */
+        .team2-edit-header { display: flex; align-items: center; gap: 0.9rem; padding: 0 0 1.1rem; margin-bottom: 1.1rem; border-bottom: 1px solid var(--line); }
+        .team2-avatar-lg { width: 42px; height: 42px; border-radius: 10px; color: #fff; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .team2-edit-name { font-weight: 700; font-size: 15px; color: var(--text-primary); }
+        .team2-edit-role-badge { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; padding: 2px 7px; border-radius: 5px; }
+        .team2-edit-role-badge.manager { color: var(--manager); background: color-mix(in srgb, var(--manager) 14%, transparent); }
+        .team2-edit-role-badge.senior { color: var(--senior); background: color-mix(in srgb, var(--senior) 14%, transparent); }
+        .team2-edit-role-badge.staff { color: var(--staff); background: color-mix(in srgb, var(--staff) 14%, transparent); }
+        .team2-edit-role-badge.intern { color: var(--intern); background: color-mix(in srgb, var(--intern) 14%, transparent); }
+
+        .team2-segmented { display: flex; background: var(--paper); border-radius: 8px; padding: 3px; gap: 2px; }
+        .team2-segmented button { flex: 1; border: none; background: transparent; padding: 7px 4px; border-radius: 6px; font-size: 11.5px; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+        .team2-segmented button.active { background: var(--card); color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+        .team2-edit-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+        .team2-dol-columns { display: flex; flex-direction: column; gap: 0.8rem; }
+        .team2-dol-col-label { font-size: 10px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+        .team2-tag-input-box {
+            display: flex; flex-wrap: wrap; gap: 5px; align-items: center; padding: 6px 8px;
+            border: 1px solid var(--line); border-radius: 7px; background: var(--paper); min-height: 40px; cursor: text;
+        }
+        .team2-tag-input-box:focus-within { border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 12%, transparent); }
+        .team2-tag-input-box .tags { display: flex; flex-wrap: wrap; gap: 5px; }
+        .team2-tag-chip { display: inline-flex; align-items: center; gap: 5px; background: color-mix(in srgb, var(--ink) 13%, transparent); color: var(--ink); font-size: 11.5px; font-weight: 700; padding: 3px 6px 3px 9px; border-radius: 5px; }
+        .team2-tag-chip button { border: none; background: none; color: inherit; cursor: pointer; display: flex; padding: 0; opacity: 0.65; }
+        .team2-tag-chip button:hover { opacity: 1; }
+        .team2-tag-input-box input { border: none; background: none; outline: none; font-size: 13px; color: var(--text-primary); flex: 1; min-width: 90px; padding: 3px 2px; }
+        .team2-tag-hint { font-size: 11px; color: var(--text-secondary); margin-top: 5px; }
+
+        .milestone-modal-popup {
+            max-height: 600px !important;
+            height: 600px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            width: 800px !important;
+            max-width: 800px !important;
+        }
+        .milestone-modal-popup .swal2-html-container {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
         @media (max-width: 720px) {
             .main-nav { display: none; }
             .search-wrap { width: 100%; }
             .toolbar { flex-wrap: wrap; }
             .reg-type, .list-head .lh-type { display: none; }
+        }
+
+        /* ========== ENGAGEMENT DRAWER ========== */
+        .drawer-scrim {
+            position: fixed; inset: 0; background: rgba(15, 23, 34, 0.44);
+            opacity: 1; transition: opacity 0.25s ease; z-index: 140;
+        }
+        body.dark-mode .drawer-scrim { background: rgba(4, 7, 11, 0.6); }
+        .drawer-scrim.hidden { opacity: 0; pointer-events: none; }
+
+        .drawer {
+            position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100vw);
+            background: var(--paper); border-left: 1px solid var(--line);
+            box-shadow: -12px 0 40px rgba(20, 30, 45, 0.18);
+            z-index: 141; display: flex; flex-direction: column;
+            transform: translateX(0); transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        body.dark-mode .drawer { box-shadow: -12px 0 40px rgba(0, 0, 0, 0.5); }
+        .drawer.closed { transform: translateX(100%); }
+
+        .drawer-header { flex-shrink: 0; background: var(--card); border-bottom: 1px solid var(--line); padding: 1.25rem 1.5rem 1.1rem; }
+        .drawer-header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+        .drawer-eng-id { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted); font-variant-numeric: tabular-nums; margin-bottom: 0.35rem; }
+        .drawer-client-name { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
+        .drawer-close-btn { flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
+        .drawer-close-btn:hover { border-color: var(--line-strong); color: var(--text); background: var(--paper); }
+
+        .drawer-badge-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
+        .drawer-badge { font-size: 11px; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; letter-spacing: 0.01em; }
+        .drawer-badge.b-status { background: color-mix(in srgb, var(--ink) 12%, transparent); color: var(--ink); }
+        .drawer-badge.b-audit { background: color-mix(in srgb, var(--senior) 12%, transparent); color: var(--senior); }
+        .drawer-badge.b-report { background: var(--paper); color: var(--text-muted); border: 1px solid var(--line); }
+        .drawer-badge.b-repeat { background: color-mix(in srgb, var(--ink) 12%, transparent); color: var(--ink); }
+
+        .drawer-header-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+        .drawer-btn { font-size: 12.5px; font-weight: 600; padding: 0.5rem 0.85rem; border-radius: 7px; border: 1px solid var(--line); background: var(--card); color: var(--text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; }
+        .drawer-btn:hover { border-color: var(--line-strong); color: var(--text); }
+        .drawer-btn.drawer-btn-primary { background: var(--ink); border-color: var(--ink); color: #fff; }
+        .drawer-btn.drawer-btn-primary:hover { background: color-mix(in srgb, var(--ink) 85%, black); }
+        .drawer-btn.drawer-btn-danger:hover { border-color: var(--critical); color: var(--critical); }
+
+        .drawer-body { flex: 1; overflow-y: auto; padding: 1.35rem 1.5rem 2.5rem; }
+
+        .drawer-section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.25rem; margin-bottom: 0.85rem; }
+        .drawer-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; }
+        .drawer-section-title { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 0.45rem; }
+        .drawer-section-title .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .drawer-link-btn { font-size: 12px; font-weight: 600; color: var(--ink); background: none; border: none; cursor: pointer; padding: 0; }
+        .drawer-link-btn:hover { text-decoration: underline; }
+
+        .drawer-info-grid, .drawer-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.25rem; }
+        .drawer-info-item { min-width: 0; }
+        .drawer-info-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem; }
+        .drawer-info-value { font-size: 13.5px; font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+        .drawer-info-value.muted { font-weight: 500; color: var(--text-muted); }
+        .drawer-detail-scope { grid-column: 1 / -1; }
+        .drawer-detail-scope .drawer-info-value { line-height: 1.5; font-weight: 500; font-size: 13px; color: var(--text-muted); white-space: pre-line; }
+
+        .drawer-notes-text { font-size: 13px; line-height: 1.6; color: var(--text-muted); white-space: pre-line; }
+
+        .drawer-team-lead-row { display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.6rem; background: color-mix(in srgb, var(--manager) 7%, transparent); border-radius: 8px; margin-bottom: 0.6rem; }
+        .drawer-avatar { width: 30px; height: 30px; border-radius: 8px; color: #fff; font-weight: 700; font-size: 11.5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .drawer-lead-name { font-size: 13.5px; font-weight: 700; }
+        .drawer-lead-role { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--manager); }
+
+        .drawer-role-group-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0.5rem 0 0.35rem; }
+        .drawer-member-row { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.4rem 0.2rem; border-top: 1px solid var(--line); }
+        .drawer-role-group:first-child .drawer-member-row:first-child { border-top: none; }
+        .drawer-member-row .drawer-avatar { width: 26px; height: 26px; font-size: 10.5px; }
+        .drawer-member-info { flex: 1; min-width: 0; }
+        .drawer-member-name { font-size: 13px; font-weight: 600; }
+        .drawer-dol-lines { margin-top: 0.25rem; }
+        .drawer-dol-line { display: flex; align-items: baseline; gap: 0.4rem; font-size: 11.5px; margin-bottom: 0.15rem; flex-wrap: wrap; }
+        .drawer-dol-line .drawer-dol-audit-label { font-weight: 700; color: var(--text-muted); width: 46px; flex-shrink: 0; }
+        .drawer-dol-chip { display: inline-flex; background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); font-weight: 700; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 10.5px; }
+        .drawer-dol-chip.t-soc2 { background: color-mix(in srgb, var(--senior) 12%, transparent); color: var(--senior); }
+        .drawer-dol-chips-wrap { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+        .drawer-no-dol { font-size: 11.5px; color: var(--text-muted); font-style: italic; }
+        .drawer-team-empty { padding: 1rem; text-align: center; color: var(--text-muted); font-size: 12.5px; font-style: italic; }
+
+        .drawer-timeline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; }
+        .drawer-tl-item { display: flex; align-items: center; gap: 0.55rem; padding: 0.4rem 0; cursor: pointer; border-radius: 6px; }
+        .drawer-tl-item:hover { background: var(--paper); }
+        .drawer-tl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--line-strong); }
+        .drawer-tl-dot.done { background: var(--good); }
+        .drawer-tl-dot.overdue { background: var(--critical); }
+        .drawer-tl-info { min-width: 0; }
+        .drawer-tl-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; color: var(--text-muted); }
+        .drawer-tl-date { font-size: 12.5px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+        .drawer-tl-date.overdue { color: var(--critical); }
+        .drawer-tl-date.empty { color: var(--text-muted); font-weight: 500; }
+        .drawer-tl-hint { font-size: 10.5px; color: var(--text-muted); margin-top: 0.75rem; }
+
+        .drawer-loading { padding: 3rem 1rem; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+        @media (max-width: 640px) {
+            .drawer { width: 100vw; }
+            .drawer-info-grid, .drawer-details-grid, .drawer-timeline-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -628,6 +827,29 @@ if (!empty($_SESSION['name'])) {
 
 </div>
 
+<!-- ========== ENGAGEMENT DRAWER ========== -->
+<div class="drawer-scrim hidden" id="drawerScrim"></div>
+<div class="drawer closed" id="drawer">
+    <div class="drawer-header">
+        <div class="drawer-header-top">
+            <div style="min-width:0;">
+                <div class="drawer-eng-id" id="drawerEngId"></div>
+                <h2 class="drawer-client-name" id="drawerClientName"></h2>
+                <div class="drawer-badge-row" id="drawerBadgeRow"></div>
+            </div>
+            <button class="drawer-close-btn" id="drawerCloseBtn" title="Close"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="drawer-header-actions">
+            <button class="drawer-btn drawer-btn-primary" id="drawerEditBtn"><i class="bi bi-pencil"></i> Edit</button>
+            <button class="drawer-btn" id="drawerArchiveBtn"><i class="bi bi-archive"></i> Archive</button>
+            <button class="drawer-btn drawer-btn-danger" id="drawerDeleteBtn"><i class="bi bi-trash"></i> Delete</button>
+        </div>
+    </div>
+    <div class="drawer-body" id="drawerBody">
+        <div class="drawer-loading">Loading&hellip;</div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <script>
@@ -649,6 +871,14 @@ if (!empty($_SESSION['name'])) {
     if (sessionStorage.getItem('showRestoredToast')) {
         sessionStorage.removeItem('showRestoredToast');
         showToast('Engagement restored successfully');
+    }
+    if (sessionStorage.getItem('showTimelineToast')) {
+        sessionStorage.removeItem('showTimelineToast');
+        showToast('Timeline updated successfully');
+    }
+    if (sessionStorage.getItem('showEngagementUpdatedToast')) {
+        sessionStorage.removeItem('showEngagementUpdatedToast');
+        showToast('Engagement updated successfully');
     }
 
     function swalColors() {
@@ -781,9 +1011,16 @@ if (!empty($_SESSION['name'])) {
         }
     });
 
-    // Row click -> detail page; action buttons wired separately
+    // Row click -> quick-view drawer (active list) or full page (archived list, not yet converted)
+    const IS_ARCHIVED_VIEW = <?php echo $showArchived ? 'true' : 'false'; ?>;
     document.querySelectorAll('.reg-row').forEach(row => {
-        row.addEventListener('click', () => { window.location.href = row.dataset.detailHref; });
+        row.addEventListener('click', () => {
+            if (IS_ARCHIVED_VIEW) {
+                window.location.href = row.dataset.detailHref;
+            } else {
+                openDrawer(row.dataset.id);
+            }
+        });
     });
     document.querySelectorAll('.row-actions button').forEach(btn => {
         btn.addEventListener('click', (ev) => {
@@ -1066,6 +1303,1094 @@ if (!empty($_SESSION['name'])) {
             });
         });
     });
+
+    // ===================================================================
+    // ENGAGEMENT DRAWER
+    // Quick-view slide-over replacing engagement-details.php as the way
+    // an engagement opens from this list. Team/Timeline/Edit modals below
+    // are ported near-verbatim from that page so their behavior matches.
+    // ===================================================================
+    const STATUS_META = <?php echo json_encode($statusMeta); ?>;
+    const DOL_AUDIT_TYPES = {
+        'SOC 1':   'emp_soc1_dol',
+        'SOC 2':   'emp_soc2_dol',
+        'HIPAA':   'emp_hipaa_dol',
+        'HITRUST': 'emp_hitrust_dol',
+        'FISMA':   'emp_fisma_dol'
+    };
+    const DOL_TYPE_CLASS = { 'SOC 1': '', 'SOC 2': 't-soc2', 'HIPAA': '', 'HITRUST': 't-soc2', 'FISMA': '' };
+    const ROLE_COLOR_VAR = { manager: 'var(--manager)', senior: 'var(--senior)', staff: 'var(--staff)', intern: 'var(--intern)' };
+    const ROLE_LABELS = { manager: 'Manager', senior: 'Senior', staff: 'Staff', intern: 'Intern' };
+    const TIMELINE_STEPS = [
+        { label: 'Internal Planning Call', date: 'internal_planning_call_date', completed: 'internal_planning_call_completed_at' },
+        { label: 'Planning Memo',          date: 'planning_memo_date',          completed: 'planning_memo_completed_at' },
+        { label: 'IRL Due',                date: 'irl_due_date',                completed: 'irl_completed_at' },
+        { label: 'Client Planning Call',   date: 'client_planning_call_date',   completed: 'client_planning_call_completed_at' },
+        { label: 'Fieldwork',              date: 'fieldwork_date',              completed: 'fieldwork_completed_at' },
+        { label: 'Leadsheet Due',          date: 'leadsheet_date',              completed: 'leadsheet_completed_at' },
+        { label: 'Conclusion Memo',        date: 'conclusion_memo_date',        completed: 'conclusion_memo_completed_at' },
+        { label: 'Draft Report Due',       date: 'draft_report_due_date',       completed: 'draft_report_completed_at' },
+        { label: 'Final Report',           date: 'final_report_date',           completed: 'final_report_completed_at' },
+        { label: 'Archive',                date: 'archive_date',                completed: 'archive_completed_at' }
+    ];
+
+    let drawerData = null;
+    const drawerEl = document.getElementById('drawer');
+    const drawerScrimEl = document.getElementById('drawerScrim');
+
+    function initials(name) {
+        return (name || '').split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
+    }
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+    function escAttr(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    function fmtDate(raw) {
+        if (!raw || raw === '0000-00-00') return null;
+        const d = new Date(raw.length === 10 ? raw + 'T00:00:00' : raw);
+        if (isNaN(d.getTime())) return null;
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    async function fetchEngagementData(id) {
+        const res = await fetch('../api/get-engagement-details.php?id=' + encodeURIComponent(id));
+        return res.json();
+    }
+
+    async function openDrawer(id) {
+        drawerEl.classList.remove('closed');
+        drawerScrimEl.classList.remove('hidden');
+        document.getElementById('drawerBody').innerHTML = '<div class="drawer-loading">Loading&hellip;</div>';
+        const data = await fetchEngagementData(id);
+        if (!data.success) {
+            closeDrawer();
+            Swal.fire('Error', data.message || 'Failed to load engagement', 'error');
+            return;
+        }
+        drawerData = data;
+        renderDrawer(data);
+    }
+
+    function closeDrawer() {
+        drawerEl.classList.add('closed');
+        drawerScrimEl.classList.add('hidden');
+    }
+
+    async function refreshDrawer() {
+        if (!drawerData) return;
+        const data = await fetchEngagementData(drawerData.engagement.eng_idno);
+        if (data.success) {
+            drawerData = data;
+            renderDrawer(data);
+        }
+    }
+
+    function reopenDrawerAfterReload(id, extraFlag) {
+        sessionStorage.setItem('reopenDrawerFor', id);
+        if (extraFlag) sessionStorage.setItem(extraFlag, 'true');
+    }
+
+    function renderDrawer(data) {
+        const eng = data.engagement;
+        const timeline = data.timeline || {};
+        const team = data.team || [];
+
+        document.getElementById('drawerEngId').textContent = eng.eng_idno;
+        document.getElementById('drawerClientName').textContent = eng.eng_name;
+
+        const statusInfo = STATUS_META[eng.eng_status] || { label: eng.eng_status, var: '--text-muted' };
+        let badgeHtml = `<span class="drawer-badge b-status" style="background:color-mix(in srgb, var(${statusInfo.var}) 12%, transparent); color:var(${statusInfo.var})">${escapeHtml(statusInfo.label)}</span>`;
+        const auditTypes = (eng.eng_audit_type || '').split(',').map(t => t.trim()).filter(Boolean);
+        auditTypes.forEach(t => { badgeHtml += `<span class="drawer-badge b-audit">${escapeHtml(t)}</span>`; });
+        if (eng.eng_soc_type) {
+            const reportLabel = eng.eng_soc_type === 'Type 1' ? 'Type I' : (eng.eng_soc_type === 'Type 2' ? 'Type II' : eng.eng_soc_type);
+            badgeHtml += `<span class="drawer-badge b-report">${escapeHtml(reportLabel)}</span>`;
+        }
+        if (eng.eng_repeat === 'Y') {
+            badgeHtml += `<span class="drawer-badge b-repeat"><i class="bi bi-arrow-repeat"></i> Repeat</span>`;
+        }
+        document.getElementById('drawerBadgeRow').innerHTML = badgeHtml;
+
+        let period = 'N/A';
+        if (eng.eng_start_period && eng.eng_end_period) {
+            period = `${fmtDate(eng.eng_start_period) || 'N/A'} – ${fmtDate(eng.eng_end_period) || 'N/A'}`;
+        } else if (eng.eng_as_of_date) {
+            period = 'As of ' + (fmtDate(eng.eng_as_of_date) || 'N/A');
+        }
+        const reportTypeRow = eng.eng_soc_type
+            ? `<div class="drawer-info-item"><div class="drawer-info-label">Report Type</div><div class="drawer-info-value">${escapeHtml(eng.eng_soc_type === 'Type 1' ? 'Type I' : (eng.eng_soc_type === 'Type 2' ? 'Type II' : eng.eng_soc_type))}</div></div>`
+            : '';
+
+        document.getElementById('drawerBody').innerHTML = `
+            <div class="drawer-section">
+                <div class="drawer-section-head"><div class="drawer-section-title"><span class="dot" style="background:var(--ink)"></span>Overview</div></div>
+                <div class="drawer-info-grid">
+                    <div class="drawer-info-item"><div class="drawer-info-label">Location</div><div class="drawer-info-value">${escapeHtml(eng.eng_location || 'N/A')}</div></div>
+                    <div class="drawer-info-item"><div class="drawer-info-label">Review Period</div><div class="drawer-info-value">${escapeHtml(period)}</div></div>
+                    <div class="drawer-info-item"><div class="drawer-info-label">Audit Type</div><div class="drawer-info-value">${escapeHtml(auditTypes.join(', ') || 'N/A')}</div></div>
+                    ${reportTypeRow}
+                    <div class="drawer-info-item"><div class="drawer-info-label">Manager</div><div class="drawer-info-value">${escapeHtml(eng.eng_manager || 'Unassigned')}</div></div>
+                    <div class="drawer-info-item"><div class="drawer-info-label">Point of Contact</div><div class="drawer-info-value">${escapeHtml(eng.eng_poc || 'N/A')}</div></div>
+                </div>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-section-head"><div class="drawer-section-title"><span class="dot" style="background:var(--caution)"></span>Details</div></div>
+                <div class="drawer-details-grid">
+                    <div class="drawer-info-item"><div class="drawer-info-label">Created</div><div class="drawer-info-value muted">${fmtDate(eng.eng_created) || 'N/A'}</div></div>
+                    <div class="drawer-info-item"><div class="drawer-info-label">Last Updated</div><div class="drawer-info-value muted">${fmtDate(eng.eng_updated) || 'N/A'}</div></div>
+                    <div class="drawer-info-item"><div class="drawer-info-label">Archive Date</div><div class="drawer-info-value muted">${fmtDate(eng.eng_archive) || 'Not archived'}</div></div>
+                    <div class="drawer-info-item drawer-detail-scope"><div class="drawer-info-label">Scope</div><div class="drawer-info-value">${escapeHtml(eng.eng_scope || 'N/A')}</div></div>
+                </div>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-section-head"><div class="drawer-section-title"><span class="dot" style="background:var(--senior)"></span>Notes</div></div>
+                <div class="drawer-notes-text">${eng.eng_notes ? escapeHtml(eng.eng_notes) : '<span style="font-style:italic;color:var(--text-muted);">No notes added yet.</span>'}</div>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-section-head">
+                    <div class="drawer-section-title"><span class="dot" style="background:var(--manager)"></span>Team (DOL)</div>
+                    <button class="drawer-link-btn" id="drawerManageTeamBtn">Manage Team</button>
+                </div>
+                <div id="drawerTeamContent"></div>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-section-head">
+                    <div class="drawer-section-title"><span class="dot" style="background:var(--good)"></span>Timeline &amp; Key Dates</div>
+                    <button class="drawer-link-btn" id="drawerEditTimelineBtn">Edit Timeline</button>
+                </div>
+                <div id="drawerTimelineContent"></div>
+                <div class="drawer-tl-hint">Click a date to mark it complete or incomplete.</div>
+            </div>
+        `;
+
+        renderDrawerTeam(team, auditTypes);
+        renderDrawerTimeline(timeline, eng.eng_idno);
+
+        document.getElementById('drawerManageTeamBtn').addEventListener('click', openManageTeamModal);
+        document.getElementById('drawerEditTimelineBtn').addEventListener('click', openEditTimelineModal);
+    }
+
+    function renderDrawerTeam(team, auditTypes) {
+        const el = document.getElementById('drawerTeamContent');
+        if (!team.length) {
+            el.innerHTML = '<div class="drawer-team-empty">No team assigned yet.</div>';
+            return;
+        }
+
+        const relevantAuditTypes = auditTypes.filter(t => DOL_AUDIT_TYPES.hasOwnProperty(t));
+        const grouped = {};
+        team.forEach(member => {
+            const key = member.emp_name + '|' + member.role;
+            if (!grouped[key]) {
+                const dolMap = {};
+                relevantAuditTypes.forEach(auditType => {
+                    const field = DOL_AUDIT_TYPES[auditType];
+                    if (member[field]) {
+                        dolMap[auditType] = member[field].split(',').map(t => t.trim()).filter(Boolean);
+                    }
+                });
+                grouped[key] = { emp_name: member.emp_name, role: (member.role || '').toLowerCase(), audit_types: dolMap };
+            }
+        });
+
+        let manager = null;
+        const bucketed = { senior: [], staff: [], intern: [] };
+        Object.values(grouped).forEach(m => {
+            if (m.role === 'manager') { manager = manager || m; }
+            else if (bucketed[m.role]) { bucketed[m.role].push(m); }
+        });
+
+        function dolLinesHtml(member) {
+            const groups = Object.entries(member.audit_types).filter(([, tags]) => tags.length);
+            if (!groups.length) return '<span class="drawer-no-dol">No DOL assigned</span>';
+            return '<div class="drawer-dol-lines">' + groups.map(([auditType, tags]) => `
+                <div class="drawer-dol-line">
+                    <span class="drawer-dol-audit-label">${escapeHtml(auditType)}</span>
+                    <span class="drawer-dol-chips-wrap">${tags.map(t => `<span class="drawer-dol-chip ${DOL_TYPE_CLASS[auditType] || ''}">${escapeHtml(t)}</span>`).join('')}</span>
+                </div>
+            `).join('') + '</div>';
+        }
+
+        let html = '';
+        if (manager) {
+            html += `
+                <div class="drawer-team-lead-row">
+                    <div class="drawer-avatar" style="background:var(--manager)">${initials(manager.emp_name)}</div>
+                    <div><div class="drawer-lead-name">${escapeHtml(manager.emp_name)}</div><div class="drawer-lead-role">Manager</div></div>
+                </div>
+            `;
+        }
+        [['senior', 'Senior'], ['staff', 'Staff'], ['intern', 'Intern']].forEach(([roleKey, roleLabel]) => {
+            if (!bucketed[roleKey].length) return;
+            html += `<div class="drawer-role-group"><div class="drawer-role-group-label">${roleLabel} (${bucketed[roleKey].length})</div>`;
+            bucketed[roleKey].forEach(member => {
+                html += `
+                    <div class="drawer-member-row">
+                        <div class="drawer-avatar" style="background:var(--${roleKey})">${initials(member.emp_name)}</div>
+                        <div class="drawer-member-info">
+                            <div class="drawer-member-name">${escapeHtml(member.emp_name)}</div>
+                            ${dolLinesHtml(member)}
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+        });
+
+        if (!manager && !html) {
+            html = '<div class="drawer-team-empty">No team assigned yet.</div>';
+        }
+        el.innerHTML = html;
+    }
+
+    function renderDrawerTimeline(timeline, engagementId) {
+        const el = document.getElementById('drawerTimelineContent');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        el.innerHTML = TIMELINE_STEPS.map(step => {
+            const rawDate = timeline[step.date];
+            const completedAt = timeline[step.completed];
+            let dotClass = '';
+            let dateClass = '';
+            let dateLabel = 'Not set';
+
+            if (rawDate) {
+                dateLabel = fmtDate(rawDate) || 'Not set';
+                const due = new Date(rawDate + 'T00:00:00');
+                if (completedAt) {
+                    dotClass = 'done';
+                } else if (due < today) {
+                    dotClass = 'overdue';
+                    dateClass = 'overdue';
+                }
+            } else {
+                dateClass = 'empty';
+            }
+
+            return `
+                <div class="drawer-tl-item" data-date-field="${step.date}" data-completed-field="${step.completed}" data-checked="${completedAt ? '1' : '0'}" title="Click to mark ${completedAt ? 'incomplete' : 'complete'}">
+                    <span class="drawer-tl-dot ${dotClass}"></span>
+                    <div class="drawer-tl-info">
+                        <div class="drawer-tl-label">${escapeHtml(step.label)}</div>
+                        <div class="drawer-tl-date ${dateClass}">${escapeHtml(dateLabel)}</div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        el.querySelectorAll('.drawer-tl-item').forEach(item => {
+            item.addEventListener('click', async () => {
+                const dateField = item.dataset.dateField;
+                const completedField = item.dataset.completedField;
+                const isChecked = item.dataset.checked === '1';
+                const completedDateTime = !isChecked ? new Date().toISOString().slice(0, 19).replace('T', ' ') : null;
+                try {
+                    const response = await fetch('../api/update-timeline-checkbox.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            engagement_id: engagementId,
+                            date_field: dateField,
+                            completed_field: completedField,
+                            completed_datetime: completedDateTime
+                        })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        refreshDrawer();
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Failed to update timeline', 'error');
+                }
+            });
+        });
+    }
+
+    // ---------- Manage Team modal (ported from engagement-details.php) ----------
+    function openManageTeamModal() {
+        const engagementId = drawerData.engagement.eng_idno;
+        let currentTeam = (drawerData.team || []).slice();
+        const auditTypesArray = (drawerData.engagement.eng_audit_type || '').split(',').map(t => t.trim()).filter(Boolean);
+        const relevantAuditTypes = auditTypesArray.filter(type => DOL_AUDIT_TYPES.hasOwnProperty(type));
+
+        const teamHTML = `
+            <div class="team2-manage-body">
+                <div class="team2-manage-left">
+                    <h3>Team Members</h3>
+                    <div class="team2-list-scroll" id="team-list"></div>
+                </div>
+                <div class="team2-manage-right">
+                    <div>
+                        <h4>Add Member</h4>
+                        <div class="team2-field team2-ac-wrap">
+                            <input type="text" id="add_emp_search" class="swal2-input" placeholder="Search employees…" autocomplete="off" style="margin: 0; width: 100%; font-size: 13px;">
+                            <div class="team2-ac-list" id="add_emp_ac_list" style="display:none;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Overview</h4>
+                        <div class="team2-stat-mini"><div class="n" id="manager-count">0</div><div class="l">Managers</div></div>
+                        <div class="team2-stat-mini"><div class="n" id="senior-count">0</div><div class="l">Seniors</div></div>
+                        <div class="team2-stat-mini"><div class="n" id="staff-count">0</div><div class="l">Staff</div></div>
+                        <div class="team2-stat-mini"><div class="n" id="intern-count">0</div><div class="l">Interns</div></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        Swal.fire({
+            title: 'Manage Team Members',
+            html: teamHTML,
+            showConfirmButton: false,
+            cancelButtonText: 'Close',
+            width: '1400px',
+            heightAuto: false,
+            customClass: { popup: 'milestone-modal-popup' },
+            didOpen: () => {
+                renderTeamList();
+                wireAddMemberSearch();
+            },
+            willClose: () => {
+                reopenDrawerAfterReload(engagementId);
+                location.reload();
+            }
+        });
+
+        function renderTeamList() {
+            const teamListElement = document.getElementById('team-list');
+            if (!teamListElement) return;
+
+            if (currentTeam.length === 0) {
+                teamListElement.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary); padding: 3rem 2rem; flex: 1;">
+                        <div>
+                            <i class="bi bi-people" style="font-size: 48px; display: block; margin-bottom: 1rem; opacity: 0.4;"></i>
+                            <div style="font-size: 14px; font-weight: 600;">No team members yet</div>
+                        </div>
+                    </div>
+                `;
+                updateRoleCounts();
+                return;
+            }
+
+            teamListElement.innerHTML = currentTeam.map(member => {
+                const memberInitials = member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
+                const roleKey = (member.role || '').toLowerCase();
+                return `
+                    <div class="team2-card-row" data-emp-id="${member.emp_id}">
+                        <div class="team2-card-row-top">
+                            <div class="team2-avatar" style="background:${ROLE_COLOR_VAR[roleKey] || 'var(--ink)'}">${memberInitials}</div>
+                            <div style="flex:1; min-width:0;">
+                                <div class="team2-name">${member.emp_name}</div>
+                                <div class="team2-role-label">${ROLE_LABELS[roleKey] || member.role}</div>
+                            </div>
+                            <div class="team2-icon-btns">
+                                <button class="edit-team-btn" data-emp-id="${member.emp_id}" title="Edit"><i class="bi bi-pencil"></i></button>
+                                <button class="danger delete-team-btn" data-emp-id="${member.emp_id}" title="Remove"><i class="bi bi-trash3"></i></button>
+                            </div>
+                        </div>
+                        ${roleKey !== 'manager' ? getDOLByAuditType(member) : ''}
+                    </div>
+                `;
+            }).join('');
+
+            document.querySelectorAll('.edit-team-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const member = currentTeam.find(m => String(m.emp_id) === String(this.dataset.empId));
+                    if (member) editTeamMember(member);
+                    else Swal.fire('Error', 'Member not found', 'error');
+                });
+            });
+            document.querySelectorAll('.delete-team-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const member = currentTeam.find(m => String(m.emp_id) === String(this.dataset.empId));
+                    if (member) deleteTeamMember(member);
+                    else Swal.fire('Error', 'Member not found', 'error');
+                });
+            });
+
+            updateRoleCounts();
+        }
+
+        function getDOLByAuditType(member) {
+            const dolSections = [];
+            relevantAuditTypes.forEach(auditType => {
+                const fieldName = DOL_AUDIT_TYPES[auditType];
+                const dolValue = member[fieldName];
+                if (dolValue) {
+                    const duties = dolValue.split(',').map(d => d.trim()).filter(d => d);
+                    const typeClass = DOL_TYPE_CLASS[auditType] || '';
+                    const pillsHTML = duties.map(duty => `<span class="team2-chip ${typeClass}">${duty}</span>`).join('');
+                    dolSections.push(`
+                        <div class="team2-dol-line" style="margin-top: 0.6rem;">
+                            <span class="team2-dol-type-tag">${auditType}</span>
+                            <div class="team2-chip-row">${pillsHTML}</div>
+                        </div>
+                    `);
+                }
+            });
+            if (dolSections.length > 0) {
+                return `<div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--line);">${dolSections.join('')}</div>`;
+            }
+            return '<div class="team2-no-dol" style="margin-top: 0.6rem;">No DOL assigned</div>';
+        }
+
+        function updateRoleCounts() {
+            ['manager', 'senior', 'staff', 'intern'].forEach(role => {
+                const el = document.getElementById(role + '-count');
+                if (el) el.textContent = currentTeam.filter(m => (m.role || '').toLowerCase() === role).length;
+            });
+        }
+
+        function wireAddMemberSearch() {
+            const input = document.getElementById('add_emp_search');
+            const list = document.getElementById('add_emp_ac_list');
+            if (!input || !list) return;
+
+            let debounceTimer = null;
+            input.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                const query = input.value.trim();
+                if (!query) { list.style.display = 'none'; return; }
+                debounceTimer = setTimeout(() => searchEmployees(query), 200);
+            });
+            document.addEventListener('click', (ev) => {
+                if (!ev.target.closest('.team2-ac-wrap')) list.style.display = 'none';
+            });
+
+            function searchEmployees(query) {
+                fetch('../api/search-employees.php?q=' + encodeURIComponent(query))
+                    .then(r => r.json())
+                    .then(data => {
+                        const existingNames = currentTeam.map(m => m.emp_name.toLowerCase());
+                        const allMatches = data.employees || [];
+                        const matches = allMatches.filter(e => !existingNames.includes(e.emp_name.toLowerCase()));
+                        const onTeamAlready = allMatches.filter(e => existingNames.includes(e.emp_name.toLowerCase()));
+                        renderResults(query, matches, onTeamAlready);
+                    })
+                    .catch(() => renderResults(query, [], []));
+            }
+
+            function renderResults(query, matches, onTeamAlready) {
+                let html = '';
+                if (matches.length) {
+                    html += matches.map(e => `
+                        <div class="team2-ac-item" data-emp-name="${e.emp_name}" data-emp-role="${e.emp_role}">
+                            <div class="team2-avatar" style="width:22px;height:22px;font-size:9px;background:${ROLE_COLOR_VAR[e.emp_role] || 'var(--ink)'}">${e.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('')}</div>
+                            ${e.emp_name}
+                            <span class="role">${ROLE_LABELS[e.emp_role] || e.emp_role}</span>
+                        </div>
+                    `).join('');
+                } else if (onTeamAlready.length) {
+                    html += `<div class="team2-ac-empty">${onTeamAlready.map(e => e.emp_name).join(', ')} — already on this team.</div>`;
+                } else {
+                    html += `<div class="team2-ac-empty">No employee named "${query}" in the roster.</div>`;
+                }
+                if (!matches.length && !onTeamAlready.length) {
+                    html += `<div class="team2-ac-newbtn" id="ac_new_btn">+ Add "${query}" as a new employee…</div>`;
+                }
+
+                list.innerHTML = html;
+                list.style.display = 'block';
+
+                list.querySelectorAll('.team2-ac-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        addTeamMember(item.dataset.empName, item.dataset.empRole);
+                        input.value = '';
+                        list.style.display = 'none';
+                    });
+                });
+                document.getElementById('ac_new_btn')?.addEventListener('click', () => {
+                    renderNewEmployeeRolePicker(query);
+                });
+            }
+
+            function renderNewEmployeeRolePicker(name) {
+                list.innerHTML = `
+                    <div class="team2-ac-empty" style="padding-bottom:4px;">Role for "${name}"?</div>
+                    ${['manager', 'senior', 'staff', 'intern'].map(role => `
+                        <div class="team2-ac-item" data-role="${role}">${ROLE_LABELS[role]}</div>
+                    `).join('')}
+                `;
+                list.querySelectorAll('.team2-ac-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        createEmployeeThenAdd(name, item.dataset.role);
+                        input.value = '';
+                        list.style.display = 'none';
+                    });
+                });
+            }
+
+            function createEmployeeThenAdd(name, role) {
+                fetch('../api/add-employee.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ emp_name: name, emp_role: role })
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            addTeamMember(name, role);
+                        } else {
+                            Swal.fire('Error', data.message || 'Failed to add employee', 'error');
+                        }
+                    })
+                    .catch(error => Swal.fire('Error', 'Failed to add employee: ' + error.message, 'error'));
+            }
+        }
+
+        function addTeamMember(empName, empRole) {
+            fetch('../api/add-team-member.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ engagement_idno: engagementId, emp_name: empName, role: empRole })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentTeam.push(data.member);
+                    renderTeamList();
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to add team member', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to add team member: ' + error.message, 'error');
+            });
+        }
+
+        function editTeamMember(member) {
+            const roleKey = (member.role || '').toLowerCase();
+            let selectedRole = roleKey;
+            const tagState = {};
+            relevantAuditTypes.forEach(auditType => {
+                const fieldName = DOL_AUDIT_TYPES[auditType];
+                tagState[fieldName] = (member[fieldName] || '').split(',').map(t => t.trim()).filter(Boolean);
+            });
+
+            const dolColumnsHtml = relevantAuditTypes.map(auditType => `
+                <div>
+                    <div class="team2-dol-col-label">${auditType}</div>
+                    <div class="team2-tag-input-box" data-field="${DOL_AUDIT_TYPES[auditType]}">
+                        <div class="tags"></div>
+                        <input type="text" placeholder="Add duty…">
+                    </div>
+                </div>
+            `).join('');
+
+            Swal.fire({
+                html: `
+                    <div style="text-align: left;">
+                        <div class="team2-edit-header">
+                            <div class="team2-avatar-lg" id="edit_avatar" style="background:${ROLE_COLOR_VAR[roleKey] || 'var(--ink)'}">${member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('')}</div>
+                            <div>
+                                <div class="team2-edit-name">${member.emp_name}</div>
+                                <div class="team2-edit-role-badge ${roleKey}" id="edit_role_badge">${ROLE_LABELS[roleKey] || member.role}</div>
+                            </div>
+                        </div>
+                        <div class="team2-field">
+                            <label class="team2-edit-label">Role on this Engagement</label>
+                            <div class="team2-segmented" id="edit_role_segment">
+                                ${['manager', 'senior', 'staff', 'intern'].map(role =>
+                                    `<button type="button" data-role="${role}" class="${role === roleKey ? 'active' : ''}">${ROLE_LABELS[role]}</button>`
+                                ).join('')}
+                            </div>
+                        </div>
+                        <div class="team2-field" id="edit_dol_section" style="display:${roleKey === 'manager' ? 'none' : 'block'};">
+                            <label class="team2-edit-label">Duties &amp; Responsibilities</label>
+                            <div class="team2-dol-columns">${dolColumnsHtml}</div>
+                            <div class="team2-tag-hint">e.g. CC1, CC2 — press Enter or comma to add a duty</div>
+                        </div>
+                    </div>
+                `,
+                confirmButtonText: 'Save Changes',
+                cancelButtonText: 'Cancel',
+                showCancelButton: true,
+                confirmButtonColor: 'var(--ink)',
+                didOpen: () => {
+                    document.querySelectorAll('.team2-tag-input-box').forEach(box => {
+                        const fieldName = box.dataset.field;
+                        const tagsEl = box.querySelector('.tags');
+                        const input = box.querySelector('input');
+
+                        function render() {
+                            tagsEl.innerHTML = tagState[fieldName].map((t, i) =>
+                                `<span class="team2-tag-chip">${t}<button type="button" data-i="${i}">&times;</button></span>`
+                            ).join('');
+                            tagsEl.querySelectorAll('button').forEach(btn => {
+                                btn.addEventListener('click', (ev) => {
+                                    ev.stopPropagation();
+                                    tagState[fieldName].splice(Number(btn.dataset.i), 1);
+                                    render();
+                                });
+                            });
+                        }
+                        render();
+                        box.addEventListener('click', () => input.focus());
+                        input.addEventListener('keydown', (ev) => {
+                            if (ev.key === 'Enter' || ev.key === ',') {
+                                ev.preventDefault();
+                                const val = input.value.trim().replace(/,$/, '');
+                                if (val && !tagState[fieldName].includes(val)) {
+                                    tagState[fieldName].push(val);
+                                    render();
+                                }
+                                input.value = '';
+                            } else if (ev.key === 'Backspace' && !input.value && tagState[fieldName].length) {
+                                tagState[fieldName].pop();
+                                render();
+                            }
+                        });
+                    });
+
+                    document.querySelectorAll('#edit_role_segment button').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('#edit_role_segment button').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            selectedRole = btn.dataset.role;
+                            document.getElementById('edit_avatar').style.background = ROLE_COLOR_VAR[selectedRole] || 'var(--ink)';
+                            const badge = document.getElementById('edit_role_badge');
+                            badge.className = 'team2-edit-role-badge ' + selectedRole;
+                            badge.textContent = ROLE_LABELS[selectedRole];
+                            document.getElementById('edit_dol_section').style.display = selectedRole === 'manager' ? 'none' : 'block';
+                        });
+                    });
+                },
+                preConfirm: () => {
+                    const updateData = {
+                        engagement_idno: engagementId,
+                        emp_id: member.emp_id,
+                        emp_name: member.emp_name,
+                        role: selectedRole
+                    };
+                    relevantAuditTypes.forEach(auditType => {
+                        const fieldName = DOL_AUDIT_TYPES[auditType];
+                        updateData[fieldName] = selectedRole === 'manager' ? '' : tagState[fieldName].join(', ');
+                    });
+                    return updateData;
+                }
+            }).then((result) => {
+                if (!result.isConfirmed || !result.value) return;
+
+                fetch('../api/update-team-member.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(result.value)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        reopenDrawerAfterReload(engagementId, 'reopenTeamModal');
+                        location.reload();
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update team member', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Failed to update team member: ' + error.message, 'error');
+                });
+            });
+        }
+
+        function deleteTeamMember(member) {
+            Swal.fire({
+                title: 'Remove Team Member?',
+                text: `Are you sure you want to remove "${member.emp_name}" from the team? This action cannot be undone.`,
+                icon: 'warning',
+                confirmButtonText: 'Remove',
+                cancelButtonText: 'Cancel',
+                showCancelButton: true,
+                confirmButtonColor: 'var(--danger-red)'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('../api/delete-team-member.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ engagement_idno: engagementId, emp_id: member.emp_id })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            currentTeam = currentTeam.filter(m => String(m.emp_id) !== String(member.emp_id));
+                            renderTeamList();
+                        } else {
+                            Swal.fire('Error', data.message || 'Failed to delete team member', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire('Error', 'Failed to delete team member: ' + error.message, 'error');
+                    });
+                }
+            });
+        }
+    }
+
+    // ---------- Edit Timeline modal (ported from engagement-details.php) ----------
+    function openEditTimelineModal() {
+        const engagementId = drawerData.engagement.eng_idno;
+        const timeline = drawerData.timeline || {};
+        const timelineData = {
+            internal_planning_call_date: timeline.internal_planning_call_date || '',
+            planning_memo_date:          timeline.planning_memo_date || '',
+            irl_due_date:                timeline.irl_due_date || '',
+            client_planning_call_date:   timeline.client_planning_call_date || '',
+            fieldwork_date:              timeline.fieldwork_date || '',
+            leadsheet_date:              timeline.leadsheet_date || '',
+            conclusion_memo_date:        timeline.conclusion_memo_date || '',
+            draft_report_due_date:       timeline.draft_report_due_date || '',
+            final_report_date:           timeline.final_report_date || '',
+            archive_date:                timeline.archive_date || ''
+        };
+
+        Swal.fire({
+            title: 'Edit Timeline & Key Dates',
+            html: `
+                <div style="text-align: left; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; width: 100%; box-sizing: border-box; margin: 1rem 0;">
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Internal Planning Call</label>
+                        <input type="date" id="internal_planning_call_date" class="swal2-input" value="${timelineData.internal_planning_call_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Planning Memo</label>
+                        <input type="date" id="planning_memo_date" class="swal2-input" value="${timelineData.planning_memo_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">IRL Due</label>
+                        <input type="date" id="irl_due_date" class="swal2-input" value="${timelineData.irl_due_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Client Planning Call</label>
+                        <input type="date" id="client_planning_call_date" class="swal2-input" value="${timelineData.client_planning_call_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Fieldwork</label>
+                        <input type="date" id="fieldwork_date" class="swal2-input" value="${timelineData.fieldwork_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Leadsheet Due</label>
+                        <input type="date" id="leadsheet_date" class="swal2-input" value="${timelineData.leadsheet_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Conclusion Memo</label>
+                        <input type="date" id="conclusion_memo_date" class="swal2-input" value="${timelineData.conclusion_memo_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Draft Report Due</label>
+                        <input type="date" id="draft_report_due_date" class="swal2-input" value="${timelineData.draft_report_due_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Final Report Due</label>
+                        <input type="date" id="final_report_date" class="swal2-input" value="${timelineData.final_report_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Archive Date</label>
+                        <input type="date" id="archive_date" class="swal2-input" value="${timelineData.archive_date}">
+                    </div>
+                </div>
+            `,
+            confirmButtonText: 'Save Changes',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            didOpen: () => {
+                document.getElementById('internal_planning_call_date').focus();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const updatedData = {
+                    engagement_id:               engagementId,
+                    internal_planning_call_date: document.getElementById('internal_planning_call_date').value,
+                    planning_memo_date:          document.getElementById('planning_memo_date').value,
+                    irl_due_date:                document.getElementById('irl_due_date').value,
+                    client_planning_call_date:   document.getElementById('client_planning_call_date').value,
+                    fieldwork_date:              document.getElementById('fieldwork_date').value,
+                    leadsheet_date:              document.getElementById('leadsheet_date').value,
+                    conclusion_memo_date:        document.getElementById('conclusion_memo_date').value,
+                    draft_report_due_date:       document.getElementById('draft_report_due_date').value,
+                    final_report_date:           document.getElementById('final_report_date').value,
+                    archive_date:                document.getElementById('archive_date').value
+                };
+
+                fetch('../api/update-timeline.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        reopenDrawerAfterReload(engagementId);
+                        sessionStorage.setItem('showTimelineToast', 'true');
+                        location.reload();
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Failed to update timeline', 'error');
+                });
+            }
+        });
+    }
+
+    // ---------- Edit Engagement modal (ported from engagement-details.php) ----------
+    function openEditEngagementModal() {
+        const eng = drawerData.engagement;
+        const engagementId = eng.eng_idno;
+        const engagementData = {
+            eng_name:         eng.eng_name || '',
+            eng_location:     eng.eng_location || '',
+            eng_poc:          eng.eng_poc || '',
+            eng_status:       eng.eng_status || '',
+            eng_tsc:          eng.eng_tsc || '',
+            eng_audit_type:   eng.eng_audit_type || '',
+            eng_soc_type:     eng.eng_soc_type || '',
+            eng_scope:        eng.eng_scope || '',
+            eng_as_of_date:   eng.eng_as_of_date || '',
+            eng_start_period: eng.eng_start_period || '',
+            eng_end_period:   eng.eng_end_period || '',
+            eng_repeat:       eng.eng_repeat || '',
+            eng_notes:        eng.eng_notes || ''
+        };
+
+        const htmlContent = `
+            <div style="text-align: left; max-height: 600px; overflow-y: auto; padding: 1rem;">
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Basic Information</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Engagement Name</label>
+                        <input type="text" id="edit_eng_name" class="swal2-input" value="${escAttr(engagementData.eng_name)}" style="width: 100%;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Location</label>
+                        <input type="text" id="edit_eng_location" class="swal2-input" value="${escAttr(engagementData.eng_location)}" style="width: 100%;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Point of Contact</label>
+                        <input type="text" id="edit_eng_poc" class="swal2-input" value="${escAttr(engagementData.eng_poc)}" style="width: 100%;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Status</label>
+                        <select id="edit_eng_status" class="swal2-input" style="width: 100%; padding: 0.6rem;">
+                            <option value="planning"    ${engagementData.eng_status === 'planning'    ? 'selected' : ''}>Planning</option>
+                            <option value="in-progress" ${engagementData.eng_status === 'in-progress' ? 'selected' : ''}>In Progress</option>
+                            <option value="in-review"   ${engagementData.eng_status === 'in-review'   ? 'selected' : ''}>In Review</option>
+                            <option value="complete"    ${engagementData.eng_status === 'complete'    ? 'selected' : ''}>Complete</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Trusted Service Criteria</label>
+                        <input type="text" id="edit_eng_tsc" class="swal2-input" value="${escAttr(engagementData.eng_tsc)}" style="width: 100%;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Audit Types (Select all that apply)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="SOC 1" ${engagementData.eng_audit_type.includes('SOC 1') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">SOC 1</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="SOC 2" ${engagementData.eng_audit_type.includes('SOC 2') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">SOC 2</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="PCI" ${engagementData.eng_audit_type.includes('PCI') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">PCI</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="HITRUST" ${engagementData.eng_audit_type.includes('HITRUST') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">HITRUST</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="FISMA" ${engagementData.eng_audit_type.includes('FISMA') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">FISMA</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="ISO" ${engagementData.eng_audit_type.includes('ISO') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">ISO</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="checkbox" class="audit-type-checkbox" value="HIPAA" ${engagementData.eng_audit_type.includes('HIPAA') ? 'checked' : ''}>
+                                <span style="font-size: 13px;">HIPAA</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="soc_type_section" style="margin-bottom: 1.5rem; display: none; padding: 1rem; background: color-mix(in srgb, var(--primary-blue) 10%, transparent); border-radius: 8px; border-left: 3px solid var(--primary-blue);">
+                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">SOC Audit Type</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="radio" name="soc_type" value="Type 1" ${engagementData.eng_soc_type === 'Type 1' ? 'checked' : ''}>
+                                <span style="font-size: 13px;">Type 1</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
+                                <input type="radio" name="soc_type" value="Type 2" ${engagementData.eng_soc_type === 'Type 2' ? 'checked' : ''}>
+                                <span style="font-size: 13px;">Type 2</span>
+                            </label>
+                        </div>
+                        <div id="soc_type1_dates" style="display: none;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
+                            <input type="date" id="edit_soc_as_of_date" class="swal2-input" value="${engagementData.eng_as_of_date}" style="width: 100%;">
+                        </div>
+                        <div id="soc_type2_dates" style="display: none;">
+                            <div style="margin-bottom: 0.75rem;">
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Start Period</label>
+                                <input type="date" id="edit_soc_start_period" class="swal2-input" value="${engagementData.eng_start_period}" style="width: 100%;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">End Period</label>
+                                <input type="date" id="edit_soc_end_period" class="swal2-input" value="${engagementData.eng_end_period}" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Scope</label>
+                        <textarea id="edit_eng_scope" class="swal2-input" style="width: 100%; min-height: 80px; resize: vertical; padding: 0.6rem;">${escapeHtml(engagementData.eng_scope)}</textarea>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500;">
+                            <input type="checkbox" id="edit_eng_repeat" ${engagementData.eng_repeat === 'Y' ? 'checked' : ''}>
+                            <span style="font-size: 13px;">Repeat Engagement</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Hours &amp; Notes</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Notes</label>
+                        <textarea id="edit_eng_notes" class="swal2-input" style="width: 100%; min-height: 100px; resize: vertical; padding: 0.6rem;">${escapeHtml(engagementData.eng_notes)}</textarea>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        Swal.fire({
+            title: 'Edit Engagement',
+            html: htmlContent,
+            confirmButtonText: 'Save Changes',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            width: '700px',
+            confirmButtonColor: 'var(--ink)',
+            background: swalColors().background,
+            color: swalColors().color,
+            didOpen: () => {
+                const auditCheckboxes = document.querySelectorAll('.audit-type-checkbox');
+                const socTypeSection  = document.getElementById('soc_type_section');
+                const socTypeRadios   = document.querySelectorAll('input[name="soc_type"]');
+                const socType1Dates   = document.getElementById('soc_type1_dates');
+                const socType2Dates   = document.getElementById('soc_type2_dates');
+
+                function updateFormVisibility() {
+                    const selectedTypes = Array.from(auditCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+                    const hasSOC = selectedTypes.includes('SOC 1') || selectedTypes.includes('SOC 2');
+                    socTypeSection.style.display = hasSOC ? 'block' : 'none';
+                    updateDateFields();
+                }
+                function updateDateFields() {
+                    const selectedSocType = document.querySelector('input[name="soc_type"]:checked')?.value;
+                    if (selectedSocType === 'Type 1') {
+                        socType1Dates.style.display = 'block';
+                        socType2Dates.style.display = 'none';
+                    } else if (selectedSocType === 'Type 2') {
+                        socType1Dates.style.display = 'none';
+                        socType2Dates.style.display = 'block';
+                    }
+                }
+                auditCheckboxes.forEach(checkbox => checkbox.addEventListener('change', updateFormVisibility));
+                socTypeRadios.forEach(radio => radio.addEventListener('change', updateDateFields));
+                updateFormVisibility();
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const selectedAuditTypes = Array.from(document.querySelectorAll('.audit-type-checkbox'))
+                    .filter(cb => cb.checked).map(cb => cb.value).join(',');
+                const selectedSocType = document.querySelector('input[name="soc_type"]:checked')?.value || '';
+
+                const updatedData = {
+                    engagement_id:    engagementId,
+                    eng_name:         document.getElementById('edit_eng_name').value,
+                    eng_location:     document.getElementById('edit_eng_location').value,
+                    eng_poc:          document.getElementById('edit_eng_poc').value,
+                    eng_status:       document.getElementById('edit_eng_status').value,
+                    eng_tsc:          document.getElementById('edit_eng_tsc').value,
+                    eng_audit_type:   selectedAuditTypes,
+                    eng_soc_type:     selectedSocType,
+                    eng_scope:        document.getElementById('edit_eng_scope').value,
+                    eng_as_of_date:   document.getElementById('edit_soc_as_of_date')?.value || '',
+                    eng_start_period: document.getElementById('edit_soc_start_period')?.value || '',
+                    eng_end_period:   document.getElementById('edit_soc_end_period')?.value || '',
+                    eng_repeat:       document.getElementById('edit_eng_repeat').checked ? 'Y' : 'N',
+                    eng_notes:        document.getElementById('edit_eng_notes').value
+                };
+
+                fetch('../api/update-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        reopenDrawerAfterReload(engagementId);
+                        sessionStorage.setItem('showEngagementUpdatedToast', 'true');
+                        location.reload();
+                    } else {
+                        Swal.fire('Error', data.message || 'Failed to update engagement', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Failed to update engagement', 'error');
+                });
+            }
+        });
+    }
+
+    // Wire drawer chrome
+    document.getElementById('drawerCloseBtn').addEventListener('click', closeDrawer);
+    drawerScrimEl.addEventListener('click', closeDrawer);
+    document.getElementById('drawerEditBtn').addEventListener('click', () => { if (drawerData) openEditEngagementModal(); });
+    document.getElementById('drawerArchiveBtn').addEventListener('click', () => { if (drawerData) archiveEngagement(drawerData.engagement.eng_idno); });
+    document.getElementById('drawerDeleteBtn').addEventListener('click', () => { if (drawerData) deleteEngagement(drawerData.engagement.eng_idno); });
+
+    // Reopen the drawer (and, if flagged, the Manage Team modal) after a reload
+    // triggered by a save inside it — mirrors the app's existing reload+reopen idiom.
+    if (sessionStorage.getItem('reopenDrawerFor')) {
+        const reopenId = sessionStorage.getItem('reopenDrawerFor');
+        sessionStorage.removeItem('reopenDrawerFor');
+        const reopenTeam = sessionStorage.getItem('reopenTeamModal');
+        sessionStorage.removeItem('reopenTeamModal');
+        openDrawer(reopenId).then(() => {
+            if (reopenTeam) openManageTeamModal();
+        });
+    }
 
     function showToast(message) {
         const toast = document.createElement('div');
