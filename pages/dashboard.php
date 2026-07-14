@@ -529,8 +529,6 @@ if (!empty($_SESSION['name'])) {
         .drawer-badge-row { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem; }
         .drawer-badge { font-size: 11px; font-weight: 700; padding: 0.3rem 0.6rem; border-radius: 6px; letter-spacing: 0.01em; }
         .drawer-badge.b-status { background: color-mix(in srgb, var(--ink) 12%, transparent); color: var(--ink); }
-        .drawer-badge.b-audit { background: color-mix(in srgb, var(--senior) 12%, transparent); color: var(--senior); }
-        .drawer-badge.b-report { background: var(--paper); color: var(--text-muted); border: 1px solid var(--line); }
         .drawer-badge.b-repeat { background: color-mix(in srgb, var(--ink) 12%, transparent); color: var(--ink); }
 
         .drawer-header-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
@@ -1507,11 +1505,6 @@ if (!empty($_SESSION['name'])) {
         const statusInfo = STATUS_META[eng.eng_status] || { label: eng.eng_status, var: '--text-muted' };
         let badgeHtml = `<span class="drawer-badge b-status" style="background:color-mix(in srgb, var(${statusInfo.var}) 12%, transparent); color:var(${statusInfo.var})">${escapeHtml(statusInfo.label)}</span>`;
         const auditTypes = (eng.eng_audit_type || '').split(',').map(t => t.trim()).filter(Boolean);
-        auditTypes.forEach(t => { badgeHtml += `<span class="drawer-badge b-audit">${escapeHtml(t)}</span>`; });
-        if (eng.eng_soc_type) {
-            const reportLabel = eng.eng_soc_type === 'Type 1' ? 'Type I' : (eng.eng_soc_type === 'Type 2' ? 'Type II' : eng.eng_soc_type);
-            badgeHtml += `<span class="drawer-badge b-report">${escapeHtml(reportLabel)}</span>`;
-        }
         if (eng.eng_repeat === 'Y') {
             badgeHtml += `<span class="drawer-badge b-repeat"><i class="bi bi-arrow-repeat"></i> Repeat</span>`;
         }
