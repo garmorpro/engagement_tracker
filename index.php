@@ -24,21 +24,20 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 :root {
-    --primary-blue: #4487FC;
-    --danger-red: #C90012;
-    --info-purple: #A04DFD;
-    --teal: #4DBFB8;
-    --bg-primary: #0f1419;
-    --bg-secondary: #1A2332;
-    --bg-tertiary: #2A3A4D;
-    --border-color: #2D3847;
-    --text-secondary: #6A7382;
+    --ink: #6E9FCB;
+    --paper: #10161D;
+    --card: #171F28;
+    --line: #2A343E;
+    --line-strong: #3C4854;
+    --critical: #E5766F;
+    --text: #E7ECF1;
+    --text-muted: #93A1AF;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    background: linear-gradient(135deg, #0f1419 0%, #1a2332 100%);
+    background: linear-gradient(135deg, var(--paper) 0%, var(--card) 100%);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     min-height: 100vh;
     display: flex;
@@ -46,120 +45,121 @@ body {
     align-items: center;
     justify-content: center;
     padding: 2rem;
-    color: white;
+    color: var(--text);
 }
 
 .login-container { text-align: center; margin-bottom: 2rem; }
 .logo-icon {
-    width: 60px; height: 60px;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, #2196F3 100%);
-    border-radius: 14px;
+    width: 56px; height: 56px;
+    background: var(--ink);
+    border-radius: 13px;
     display: flex; align-items: center; justify-content: center;
-    color: white; font-size: 28px;
+    color: var(--paper); font-size: 26px;
     margin: 0 auto 1.5rem;
-    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.4);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--ink) 35%, transparent);
 }
 
 .login-container h1 {
-    font-size: 32px; 
+    font-size: 30px;
     font-weight: 700;
-    margin-bottom: 0.5rem; 
-    color: white;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+    color: var(--text);
 }
 
 .login-container p {
-    font-size: 14px; color: var(--text-secondary);
+    font-size: 13.5px; color: var(--text-muted);
 }
 
 .login-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: 16px;
-    padding: 2rem;
+    padding: 1.75rem;
     width: 100%;
-    max-width: 600px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-width: 440px;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
     position: relative;
 }
 
 .card-header {
-    display: flex; align-items: center; gap: 1rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    display: flex; align-items: center; gap: 0.7rem;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--line);
 }
 
 .card-header-icon {
-    width: 48px; height: 48px;
-    background: rgba(68, 135, 252, 0.15);
-    border-radius: 10px;
+    width: 38px; height: 38px;
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
+    border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--primary-blue);
-    font-size: 24px;
+    color: var(--ink);
+    font-size: 17px;
 }
 
 .card-header h6 {
-    font-size: 18px; font-weight: 600;
-    color: white; margin: 0;
+    font-size: 15px; font-weight: 700;
+    color: var(--text); margin: 0;
 }
 
 .add-user-btn {
-    position: absolute; top: 1rem; right: 1rem;
-    width: 36px; height: 36px;
-    border: 1px solid var(--border-color);
-    background: transparent; border-radius: 8px;
-    cursor: pointer; color: var(--primary-blue);
-    transition: all 0.2s; font-size: 18px;
+    position: absolute; top: 1.25rem; right: 1.25rem;
+    width: 32px; height: 32px;
+    border: 1px solid var(--line);
+    background: var(--paper); border-radius: 8px;
+    cursor: pointer; color: var(--text-muted);
+    transition: all 0.15s; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
 }
 
 .add-user-btn:hover {
-    background: rgba(68, 135, 252, 0.1);
-    border-color: var(--primary-blue);
-    transform: scale(1.1);
+    background: color-mix(in srgb, var(--critical) 8%, transparent);
+    border-color: var(--critical);
+    color: var(--critical);
 }
 
-.account-list { display: flex; flex-direction: column; gap: 1rem; }
+.account-list { display: flex; flex-direction: column; gap: 0.6rem; }
 
 .account-item {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    padding: 0.85rem 0.9rem;
     cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex; align-items: center; gap: 1rem;
+    transition: all 0.15s ease;
+    display: flex; align-items: center; gap: 0.85rem;
 }
 
 .account-item:hover {
-    background: var(--border-color);
-    border-color: var(--primary-blue);
-    transform: translateX(4px);
-    box-shadow: 0 8px 24px rgba(68, 135, 252, 0.15);
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
+    border-color: var(--ink);
+    transform: translateX(2px);
 }
 
 .account-icon {
-    width: 48px; height: 48px; border-radius: 10px;
+    width: 40px; height: 40px; border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 24px; flex-shrink: 0;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
 }
 
 .account-icon.user {
-    background: rgba(68, 135, 252, 0.15);
-    color: var(--primary-blue);
+    background: var(--ink);
+    color: var(--paper);
 }
 
 .account-icon.admin {
-    background: rgba(201, 0, 18, 0.15);
-    color: var(--danger-red);
+    background: var(--critical);
+    color: var(--paper);
 }
 
 .account-info { flex: 1; text-align: left; }
-.account-name { font-size: 14px; font-weight: 600; color: white; margin-bottom: 0.25rem; }
-.account-email { font-size: 12px; color: var(--text-secondary); }
+.account-name { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 0.15rem; }
+.account-email { font-size: 11.5px; color: var(--text-muted); }
 
 .modal-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(10, 15, 22, 0.55);
     display: none; align-items: center; justify-content: center;
     z-index: 1000;
 }
@@ -167,72 +167,82 @@ body {
 .modal-overlay.active { display: flex; }
 
 .modal-box {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: 16px;
-    padding: 2rem;
+    padding: 1.9rem;
     width: 90%;
-    max-width: 450px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
     position: relative;
 }
 
 .modal-close {
     position: absolute; top: 1rem; right: 1rem;
-    width: 32px; height: 32px;
+    width: 30px; height: 30px;
     border: none; background: transparent;
-    color: var(--text-secondary); font-size: 24px;
-    cursor: pointer; transition: color 0.2s;
-    padding: 0; line-height: 1;
+    color: var(--text-muted); font-size: 20px;
+    cursor: pointer; transition: all 0.15s;
+    padding: 0; line-height: 1; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
 }
 
-.modal-close:hover { color: white; }
+.modal-close:hover { color: var(--text); background: var(--paper); }
 
 .modal-header {
-    display: flex; align-items: center; gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 1.4rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--line);
 }
 
 .modal-header-icon {
-    width: 44px; height: 44px;
-    background: rgba(68, 135, 252, 0.15);
+    width: 42px; height: 42px;
+    background: color-mix(in srgb, var(--ink) 14%, transparent);
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--primary-blue);
-    font-size: 22px;
+    color: var(--ink);
+    font-size: 19px;
     flex-shrink: 0;
 }
 
+.modal-header-icon.admin {
+    background: color-mix(in srgb, var(--critical) 14%, transparent);
+    color: var(--critical);
+}
+
 .modal-header h5 {
-    font-size: 18px; font-weight: 600;
-    color: white; margin: 0; flex: 1;
+    font-size: 15.5px; font-weight: 700;
+    color: var(--text); margin: 0; flex: 1;
+}
+
+.modal-subtext {
+    font-size: 11.5px; color: var(--text-muted); margin-top: 2px;
 }
 
 .form-label {
-    font-size: 13px; color: var(--text-secondary);
+    font-size: 11.5px; color: var(--text-muted);
     text-transform: uppercase; letter-spacing: 0.5px;
-    margin-bottom: 0.5rem; font-weight: 600;
+    margin-bottom: 0.5rem; font-weight: 700;
 }
 
 .form-control {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    color: white;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--text);
     border-radius: 8px;
     padding: 0.75rem 1rem;
     font-size: 14px;
 }
 
-.form-control::placeholder { color: var(--text-secondary); }
+.form-control::placeholder { color: var(--text-muted); }
 
 .form-control:focus {
-    background: var(--bg-tertiary);
-    border-color: var(--primary-blue);
-    color: white;
-    box-shadow: 0 0 0 3px rgba(68, 135, 252, 0.1);
+    background: var(--paper);
+    border-color: var(--ink);
+    color: var(--text);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 10%, transparent);
+    outline: none;
 }
 
 .pin-field {
@@ -243,32 +253,48 @@ body {
     text-align: center;
 }
 
+/* PIN dot entry — replaces bullet-masked text for the sign-in and admin-verify
+   PINs. The real <input> stays focused/typable but visually hidden; JS toggles
+   .filled on these dots as digits are entered. Account-creation/edit PIN
+   fields keep the plain .pin-field text input above — you're setting a new
+   PIN there, not authenticating with one you already know. */
+.pin-hidden-input {
+    position: absolute; opacity: 0; pointer-events: none; height: 1px; width: 1px;
+}
+.pin-dots { display: flex; gap: 0.85rem; justify-content: center; margin: 1.6rem 0 0.5rem; }
+.pin-dot {
+    width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--line-strong);
+    transition: all 0.15s;
+}
+.pin-dot.filled { background: var(--ink); border-color: var(--ink); transform: scale(1.1); }
+.pin-hint { text-align: center; font-size: 11.5px; color: var(--text-muted); }
+.admin-note { font-size: 11.5px; color: var(--text-muted); text-align: center; margin-top: 1.1rem; line-height: 1.5; }
+
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, #3671E0 100%);
-    border: none; color: white;
-    font-weight: 600; border-radius: 8px;
+    background: var(--ink);
+    border: none; color: var(--paper);
+    font-weight: 700; border-radius: 8px;
     padding: 0.75rem 1.5rem;
-    transition: all 0.2s;
+    transition: all 0.15s;
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(68, 135, 252, 0.3);
-    background: linear-gradient(135deg, #3671E0 0%, #2857B8 100%);
+    background: color-mix(in srgb, var(--ink) 85%, black);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--ink) 30%, transparent);
 }
 
 .btn-secondary {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    font-weight: 600; border-radius: 8px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--text-muted);
+    font-weight: 700; border-radius: 8px;
     padding: 0.75rem 1.5rem;
-    transition: all 0.2s;
+    transition: all 0.15s;
 }
 
 .btn-secondary:hover {
-    background: var(--border-color);
-    color: white;
+    background: var(--line);
+    color: var(--text);
 }
 
 .button-group {
@@ -279,55 +305,53 @@ body {
 .button-group button { flex: 1; }
 
 .demo-credentials {
-    background: rgba(77, 191, 184, 0.1);
-    border: 1px solid var(--teal);
-    border-radius: 10px;
-    padding: 1.25rem;
-    margin-top: 2rem;
-    text-align: left;
+    background: color-mix(in srgb, var(--ink) 6%, var(--card));
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    padding: 1rem 1.15rem;
+    margin-top: 1.5rem;
+    text-align: center;
     width: 100%;
-    max-width: 600px;
+    max-width: 440px;
 }
 
 .demo-credentials h6 {
-    color: var(--teal);
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 700;
+    display: inline;
 }
 
 .demo-credentials p {
     font-size: 12px;
-    color: var(--text-secondary);
-    margin: 0.25rem 0;
+    color: var(--text-muted);
+    margin: 0.25rem 0 0;
 }
-
-.demo-credentials strong { color: var(--teal); }
 
 .mb-3 { margin-bottom: 1rem; }
 
 /* Dashboard list styling */
 .dashboard-user-item {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
+    background: transparent;
+    border: 1px solid var(--line);
     border-radius: 10px;
-    padding: 1rem 1.25rem;
+    padding: 0.7rem 0.8rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.75rem;
-    transition: all 0.2s ease;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.15s ease;
 }
 
 .dashboard-user-item:hover {
-    background: var(--border-color);
-    border-color: var(--primary-blue);
+    border-color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 5%, transparent);
 }
 
 .dashboard-user-item .account-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
 }
 
 .dashboard-user-info {
@@ -335,78 +359,83 @@ body {
 }
 
 .dashboard-user-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: white;
-    margin-bottom: 0.25rem;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.15rem;
 }
 
 .dashboard-user-email {
-    font-size: 12px;
-    color: var(--text-secondary);
+    font-size: 11px;
+    color: var(--text-muted);
 }
 
 .user-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 4px;
 }
 
 .user-actions button {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--text-muted);
     cursor: pointer;
-    font-size: 16px;
-    padding: 0.5rem;
-    transition: color 0.2s;
+    font-size: 12px;
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
 }
 
 .user-actions button:hover {
-    color: var(--primary-blue);
+    border-color: var(--ink);
+    color: var(--ink);
 }
 
 .user-actions button.delete:hover {
-    color: var(--danger-red);
+    border-color: var(--critical);
+    color: var(--critical);
 }
 
 /* SweetAlert2 Dark Theme Customization */
 .swal2-popup {
-    background: var(--bg-secondary) !important;
-    border: 1px solid var(--border-color) !important;
+    background: var(--card) !important;
+    border: 1px solid var(--line) !important;
 }
 
 .swal2-title {
-    color: white !important;
+    color: var(--text) !important;
 }
 
 .swal2-html-container {
-    color: var(--text-secondary) !important;
+    color: var(--text-muted) !important;
 }
 
 .swal2-confirm {
-    background: var(--primary-blue) !important;
-    box-shadow: 0 4px 12px rgba(68, 135, 252, 0.3) !important;
+    background: var(--ink) !important;
+    color: var(--paper) !important;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--ink) 30%, transparent) !important;
 }
 
 .swal2-confirm:hover {
-    background: #3671E0 !important;
+    background: color-mix(in srgb, var(--ink) 85%, black) !important;
 }
 
 .swal2-cancel {
-    background: var(--bg-tertiary) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-secondary) !important;
+    background: var(--paper) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--text-muted) !important;
 }
 
 .swal2-cancel:hover {
-    background: var(--border-color) !important;
-    color: white !important;
+    background: var(--line) !important;
+    color: var(--text) !important;
 }
 
 .timeout-alert {
-    background: rgba(201, 0, 18, 0.1); /* semi-transparent red */
-    border: 1px solid var(--danger-red);
-    color: var(--danger-red);
+    background: color-mix(in srgb, var(--critical) 10%, transparent);
+    border: 1px solid var(--critical);
+    color: var(--critical);
     padding: 0.75rem 1rem;
     border-radius: 10px;
     font-size: 13px;
@@ -444,7 +473,7 @@ body {
         </div>
         <h6>Select Account</h6>
     </div>
-    <button class="add-user-btn" onclick="openAdminVerification()" title="Admin Panel">
+    <button class="add-user-btn" onclick="openAdminVerification()" title="Admin access">
         <i class="bi bi-shield-fill"></i>
     </button>
 
@@ -452,29 +481,34 @@ body {
         <div class="account-list">
             <?php foreach ($accounts as $account): ?>
                 <?php if ($account['role'] === 'super_admin') continue; ?>
+                <?php
+                    $accountInitials = '';
+                    foreach (explode(' ', trim($account['name'])) as $part) {
+                        if ($part !== '') $accountInitials .= strtoupper($part[0]);
+                    }
+                ?>
                 <div class="account-item"
                      data-user-id="<?= $account['user_id'] ?>"
                      data-account-name="<?= htmlspecialchars($account['name']) ?>"
                      data-role="<?= $account['role'] ?>"
                      onclick="openPinModal(this)">
-                    <div class="account-icon user">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
+                    <div class="account-icon user"><?= htmlspecialchars($accountInitials) ?></div>
                     <div class="account-info">
                         <div class="account-name"><?= htmlspecialchars($account['name']) ?></div>
                         <div class="account-email"><?= htmlspecialchars($account['email']) ?></div>
                     </div>
+                    <i class="bi bi-chevron-right" style="color: var(--text-muted); font-size: 13px;"></i>
                 </div>
             <?php endforeach; ?>
         </div>
     <?php else: ?>
-        <p style="color: var(--text-secondary);">No accounts available</p>
+        <p style="color: var(--text-muted);">No accounts available</p>
     <?php endif; ?>
 </div>
 
 <div class="demo-credentials">
-    <h6>Sign In Instructions:</h6>
-    <p>Select an account and enter your PIN to continue</p>
+    <h6>Sign in:</h6>
+    <p>Select your account, then enter your PIN.</p>
 </div>
 
 <!-- PIN Entry Modal -->
@@ -485,59 +519,80 @@ body {
             <div class="modal-header-icon">
                 <i class="bi bi-lock-fill"></i>
             </div>
-            <h5 id="modalAccountName">Enter PIN</h5>
+            <div>
+                <h5 id="modalAccountName">Enter PIN</h5>
+                <div class="modal-subtext">Enter your 4-digit PIN</div>
+            </div>
         </div>
         <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
             <input type="hidden" name="user_id" id="pinUserId">
             <input type="hidden" name="passcode" id="pinFormPasscode">
-            <label class="form-label">PIN</label>
-            <input type="text" class="form-control text-center fs-4 pin-field" 
-                   id="pinInput" required autofocus>
+            <input type="text" class="pin-hidden-input" id="pinInput" inputmode="numeric" autocomplete="off" required autofocus>
+            <div class="pin-dots" id="pinDots">
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+            </div>
+            <div class="pin-hint">Type your PIN — it submits automatically</div>
         </form>
     </div>
 </div>
 
 <!-- Admin Verification Modal (PIN Entry) -->
 <div class="modal-overlay" id="adminVerifyModal">
-    <div class="modal-box" style="max-width: 500px;">
+    <div class="modal-box">
         <button class="modal-close" onclick="closeAdminVerify()">×</button>
         <div class="modal-header">
-            <div class="modal-header-icon">
+            <div class="modal-header-icon admin">
                 <i class="bi bi-shield-fill"></i>
             </div>
-            <h5>Admin Verification</h5>
+            <div>
+                <h5>Admin Verification</h5>
+                <div class="modal-subtext">Required to manage accounts</div>
+            </div>
         </div>
-        
-        <label class="form-label" style="display: block;">Enter Super Admin PIN</label>
-        <input type="text" class="form-control text-center fs-4 pin-field" 
-               id="adminVerifyPinInput" required autofocus>
-        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 1rem;">
-            This is required to access the admin dashboard for user management.
+
+        <input type="text" class="pin-hidden-input" id="adminVerifyPinInput" inputmode="numeric" autocomplete="off" required autofocus>
+        <div class="pin-dots" id="adminPinDots">
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+            <div class="pin-dot"></div>
+        </div>
+        <div class="pin-hint">Enter your 6-digit super-admin PIN</div>
+        <p class="admin-note">
+            This unlocks the account management screen. It is not part of everyday sign-in.
         </p>
     </div>
 </div>
 
 <!-- Admin Dashboard Modal (User Management) -->
 <div class="modal-overlay" id="adminDashboardModal">
-    <div class="modal-box" style="max-width: 600px;">
+    <div class="modal-box" style="max-width: 480px;">
         <button class="modal-close" onclick="closeAdminDashboard()">×</button>
         <div class="modal-header">
-            <div class="modal-header-icon">
+            <div class="modal-header-icon admin">
                 <i class="bi bi-shield-fill"></i>
             </div>
-            <h5>Admin Dashboard</h5>
+            <div>
+                <h5>Admin Dashboard</h5>
+                <div class="modal-subtext">Manage sign-in accounts</div>
+            </div>
         </div>
-        
+
         <div style="margin-bottom: 1.5rem;">
             <button type="button" class="btn btn-primary" style="width: 100%;" onclick="openAddUserModal()">
                 <i class="bi bi-person-fill-add"></i> Add New User
             </button>
         </div>
-        
-        <div style="margin-bottom: 1rem;">
-            <h6 style="font-size: 14px; color: var(--text-secondary); margin-bottom: 0.75rem;">ACTIVE USERS</h6>
+
+        <div style="margin-bottom: 0.6rem;">
+            <h6 style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted);">Active Users</h6>
         </div>
-        
+
         <div id="accountsList" style="max-height: 400px; overflow-y: auto;">
             <!-- Accounts will be dynamically populated here -->
         </div>
@@ -613,51 +668,61 @@ body {
 
 <script>
 const pinInputs = {};
+const pinDotsMap = { pinInput: 'pinDots', adminVerifyPinInput: 'adminPinDots' };
+
+function updatePinDots(inputId, length) {
+    const dotsId = pinDotsMap[inputId];
+    if (!dotsId) return;
+    document.querySelectorAll('#' + dotsId + ' .pin-dot').forEach((dot, i) => {
+        dot.classList.toggle('filled', i < length);
+    });
+}
 
 function setupPinMasking(inputId, maxLength = 4) {
     const input = document.getElementById(inputId);
     if (!input) return;
-    
+
     pinInputs[inputId] = '';
-    
+    updatePinDots(inputId, 0);
+
     input.addEventListener('keydown', function(e) {
         const key = e.key;
-        
+
         // Allow backspace
         if (key === 'Backspace') {
             e.preventDefault();
             pinInputs[inputId] = pinInputs[inputId].slice(0, -1);
-            e.target.value = '•'.repeat(pinInputs[inputId].length);
+            updatePinDots(inputId, pinInputs[inputId].length);
             return;
         }
-        
+
         // Only allow numbers
         if (!/\d/.test(key)) {
             e.preventDefault();
             return;
         }
-        
+
         // Don't exceed max length
         if (pinInputs[inputId].length >= maxLength) {
             e.preventDefault();
             return;
         }
-        
+
         e.preventDefault();
-        
+
         // Add the digit
         pinInputs[inputId] += key;
-        e.target.value = '•'.repeat(pinInputs[inputId].length);
-        
+        updatePinDots(inputId, pinInputs[inputId].length);
+
         // Auto-submit PIN form when 4 digits entered
         if (inputId === 'pinInput' && pinInputs[inputId].length === 4) {
             const passcodeField = document.getElementById('pinFormPasscode');
             passcodeField.value = pinInputs[inputId];
             setTimeout(() => {
                 document.getElementById('pinForm').submit();
-            }, 100);
+            }, 150);
         }
-        
+
         // Auto-verify admin PIN when 6 digits entered
         if (inputId === 'adminVerifyPinInput' && pinInputs[inputId].length === 6) {
             verifyAdminPin(pinInputs[inputId]);
@@ -672,6 +737,7 @@ function openPinModal(btn) {
     document.getElementById('pinUserId').value = userId;
     document.getElementById('pinInput').value = '';
     pinInputs['pinInput'] = '';
+    updatePinDots('pinInput', 0);
     document.getElementById('pinModal').classList.add('active');
     setTimeout(() => document.getElementById('pinInput').focus(), 100);
 }
@@ -680,12 +746,14 @@ function closePinModal() {
     document.getElementById('pinModal').classList.remove('active');
     document.getElementById('pinInput').value = '';
     pinInputs['pinInput'] = '';
+    updatePinDots('pinInput', 0);
 }
 
 function openAdminVerification() {
     document.getElementById('adminVerifyModal').classList.add('active');
     document.getElementById('adminVerifyPinInput').value = '';
     pinInputs['adminVerifyPinInput'] = '';
+    updatePinDots('adminVerifyPinInput', 0);
     setupPinMasking('adminVerifyPinInput', 6);
     setTimeout(() => document.getElementById('adminVerifyPinInput').focus(), 100);
 }
@@ -694,11 +762,12 @@ function closeAdminVerify() {
     document.getElementById('adminVerifyModal').classList.remove('active');
     document.getElementById('adminVerifyPinInput').value = '';
     pinInputs['adminVerifyPinInput'] = '';
+    updatePinDots('adminVerifyPinInput', 0);
 }
 
 function verifyAdminPin(pin) {
     const apiUrl = getApiUrl('verify_admin_pin.php');
-    
+
     fetch(apiUrl, {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
@@ -710,13 +779,28 @@ function verifyAdminPin(pin) {
             closeAdminVerify();
             openAdminDashboard();
         } else {
-            alert('Invalid Super Admin PIN');
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid PIN',
+                text: 'That super-admin PIN is incorrect.',
+                background: 'var(--card)',
+                color: 'var(--text)',
+                confirmButtonColor: 'var(--ink)'
+            });
             document.getElementById('adminVerifyPinInput').value = '';
             pinInputs['adminVerifyPinInput'] = '';
+            updatePinDots('adminVerifyPinInput', 0);
             document.getElementById('adminVerifyPinInput').focus();
         }
     })
-    .catch(() => alert('Error verifying Super Admin PIN'));
+    .catch(() => Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error verifying the super-admin PIN.',
+        background: 'var(--card)',
+        color: 'var(--text)',
+        confirmButtonColor: 'var(--ink)'
+    }));
 }
 
 function openAdminDashboard() {
@@ -754,17 +838,16 @@ function loadAccountsList() {
             accountsList.innerHTML = '';
             
             if (data.accounts.length === 0) {
-                accountsList.innerHTML = '<p style="color: var(--text-secondary); font-size: 12px;">No users found</p>';
+                accountsList.innerHTML = '<p style="color: var(--text-muted); font-size: 12px;">No users found</p>';
                 return;
             }
             
             data.accounts.forEach(account => {
+                const initials = (account.name || '').split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
                 const accountEl = document.createElement('div');
                 accountEl.className = 'dashboard-user-item';
                 accountEl.innerHTML = `
-                    <div class="account-icon user">
-                        <i class="bi bi-person-fill"></i>
-                    </div>
+                    <div class="account-icon user">${initials}</div>
                     <div class="dashboard-user-info">
                         <div class="dashboard-user-name">${account.name}</div>
                         <div class="dashboard-user-email">${account.email}</div>
@@ -825,9 +908,9 @@ function editAccount(userId, accountName) {
                 icon: 'error',
                 title: 'Invalid Response',
                 text: 'Server returned invalid data. Check console for details.',
-                background: 'var(--bg-secondary)',
-                color: 'white',
-                confirmButtonColor: 'var(--primary-blue)'
+                background: 'var(--card)',
+                color: 'var(--text)',
+                confirmButtonColor: 'var(--ink)'
             });
             return;
         }
@@ -847,9 +930,9 @@ function editAccount(userId, accountName) {
                 icon: 'error',
                 title: 'Error',
                 text: data.message || 'Failed to load user details',
-                background: 'var(--bg-secondary)',
-                color: 'white',
-                confirmButtonColor: 'var(--primary-blue)'
+                background: 'var(--card)',
+                color: 'var(--text)',
+                confirmButtonColor: 'var(--ink)'
             });
         }
     })
@@ -859,9 +942,9 @@ function editAccount(userId, accountName) {
             icon: 'error',
             title: 'Error',
             text: 'Error loading user details: ' + error.message,
-            background: 'var(--bg-secondary)',
-            color: 'white',
-            confirmButtonColor: 'var(--primary-blue)'
+            background: 'var(--card)',
+            color: 'var(--text)',
+            confirmButtonColor: 'var(--ink)'
         });
     });
 }
@@ -879,9 +962,9 @@ function submitEditForm(event) {
             icon: 'error',
             title: 'Missing Fields',
             text: 'Please fill in all fields',
-            background: 'var(--bg-secondary)',
-            color: 'white',
-            confirmButtonColor: 'var(--primary-blue)'
+            background: 'var(--card)',
+            color: 'var(--text)',
+            confirmButtonColor: 'var(--ink)'
         });
         return;
     }
@@ -891,9 +974,9 @@ function submitEditForm(event) {
             icon: 'error',
             title: 'Invalid PIN',
             text: 'PIN must be exactly 4 digits',
-            background: 'var(--bg-secondary)',
-            color: 'white',
-            confirmButtonColor: 'var(--primary-blue)'
+            background: 'var(--card)',
+            color: 'var(--text)',
+            confirmButtonColor: 'var(--ink)'
         });
         return;
     }
@@ -927,9 +1010,9 @@ function submitEditForm(event) {
                 icon: 'success',
                 title: 'Updated!',
                 text: 'Account updated successfully',
-                background: 'var(--bg-secondary)',
-                color: 'white',
-                confirmButtonColor: 'var(--primary-blue)'
+                background: 'var(--card)',
+                color: 'var(--text)',
+                confirmButtonColor: 'var(--ink)'
             }).then(() => {
                 closeEditUserModal();
                 loadAccountsList();
@@ -939,9 +1022,9 @@ function submitEditForm(event) {
                 icon: 'error',
                 title: 'Error',
                 text: data.message || 'Failed to update account',
-                background: 'var(--bg-secondary)',
-                color: 'white',
-                confirmButtonColor: 'var(--primary-blue)'
+                background: 'var(--card)',
+                color: 'var(--text)',
+                confirmButtonColor: 'var(--ink)'
             });
         }
     })
@@ -951,9 +1034,9 @@ function submitEditForm(event) {
             icon: 'error',
             title: 'Error',
             text: 'Error updating account: ' + error.message,
-            background: 'var(--bg-secondary)',
-            color: 'white',
-            confirmButtonColor: 'var(--primary-blue)'
+            background: 'var(--card)',
+            color: 'var(--text)',
+            confirmButtonColor: 'var(--ink)'
         });
     });
 }
@@ -964,12 +1047,12 @@ function deleteAccount(userId, accountName) {
         text: `Are you sure you want to delete "${accountName}"? This action cannot be undone.`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: 'var(--danger-red)',
-        cancelButtonColor: 'var(--border-color)',
+        confirmButtonColor: 'var(--critical)',
+        cancelButtonColor: 'var(--line)',
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel',
-        background: 'var(--bg-secondary)',
-        color: 'white',
+        background: 'var(--card)',
+        color: 'var(--text)',
         customClass: {
             popup: 'swal2-dark',
             title: 'swal2-title-custom',
@@ -991,9 +1074,9 @@ function deleteAccount(userId, accountName) {
                         icon: 'success',
                         title: 'Deleted!',
                         text: 'Account deleted successfully',
-                        background: 'var(--bg-secondary)',
-                        color: 'white',
-                        confirmButtonColor: 'var(--primary-blue)'
+                        background: 'var(--card)',
+                        color: 'var(--text)',
+                        confirmButtonColor: 'var(--ink)'
                     }).then(() => {
                         // Refresh page to close all modals
                         window.location.reload();
@@ -1003,9 +1086,9 @@ function deleteAccount(userId, accountName) {
                         icon: 'error',
                         title: 'Error',
                         text: data.message || 'Error deleting account',
-                        background: 'var(--bg-secondary)',
-                        color: 'white',
-                        confirmButtonColor: 'var(--primary-blue)'
+                        background: 'var(--card)',
+                        color: 'var(--text)',
+                        confirmButtonColor: 'var(--ink)'
                     });
                 }
             })
@@ -1014,9 +1097,9 @@ function deleteAccount(userId, accountName) {
                     icon: 'error',
                     title: 'Error',
                     text: 'Error deleting account',
-                    background: 'var(--bg-secondary)',
-                    color: 'white',
-                    confirmButtonColor: 'var(--primary-blue)'
+                    background: 'var(--card)',
+                    color: 'var(--text)',
+                    confirmButtonColor: 'var(--ink)'
                 });
             });
         }
