@@ -316,6 +316,46 @@ if (!empty($_SESSION['name'])) {
         });
     }
 
+    // Criteria that tend to share evidence/context and should never be split
+    // across two people. Bundled into a single unit (combined weight) before
+    // the weighted assignment runs, so the whole group always lands with
+    // whoever the algorithm would have given the first item to. Only bundles
+    // when 2+ members of a group are actually present in this split — e.g. if
+    // Availability isn't part of this engagement's TSC, CC4+CC7 still bundle
+    // together on their own.
+    const SOC2_CRITERIA_GROUPS = [
+        ['CC3', 'CC9'],
+        ['CC4', 'CC7', 'Availability'],
+        ['CC6', 'Confidentiality']
+    ];
+    function buildBundles(criteria, applyGroups) {
+        if (!applyGroups) {
+            return criteria.map(c => ({ names: [c.name], weight: c.weight }));
+        }
+        const byName = {};
+        criteria.forEach(c => { byName[c.name] = c; });
+        const used = new Set();
+        const bundles = [];
+
+        SOC2_CRITERIA_GROUPS.forEach(group => {
+            const present = group.filter(name => byName[name] && !used.has(name));
+            if (present.length > 1) {
+                const weight = present.reduce((sum, name) => sum + byName[name].weight, 0);
+                bundles.push({ names: present, weight });
+                present.forEach(name => used.add(name));
+            }
+        });
+
+        criteria.forEach(c => {
+            if (!used.has(c.name)) {
+                bundles.push({ names: [c.name], weight: c.weight });
+                used.add(c.name);
+            }
+        });
+
+        return bundles;
+    }
+
     function initials(name) {
         return (name || '').split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
     }
@@ -388,11 +428,13 @@ if (!empty($_SESSION['name'])) {
 
     // Splits by weight, not raw item count, so a person's share of the actual
     // work stays proportional to their hours even when some criteria are
-    // bigger than others. Assigns criteria one at a time, heaviest first, each
-    // one going to whoever is currently furthest under their target weight —
-    // this interleaves the assignment instead of handing out contiguous
-    // chunks in list order.
-    function computeSplit(members, criteria) {
+    // bigger than others. Criteria that belong to the same group (see
+    // buildBundles) are combined into a single unit first, so they always
+    // land with the same person. Bundles are then assigned one at a time,
+    // heaviest first, each going to whoever is currently furthest under
+    // their target weight — this interleaves the assignment instead of
+    // handing out contiguous chunks in list order.
+    function computeSplit(members, criteria, groupingEnabled) {
         const totalHours = members.reduce((sum, m) => sum + m.hours, 0);
         const totalWeight = criteria.reduce((sum, c) => sum + c.weight, 0);
 
@@ -403,16 +445,17 @@ if (!empty($_SESSION['name'])) {
             assigned: []
         }));
 
-        const byWeightDesc = [...criteria].sort((a, b) => b.weight - a.weight);
-        byWeightDesc.forEach(c => {
+        const bundles = buildBundles(criteria, groupingEnabled);
+        const byWeightDesc = [...bundles].sort((a, b) => b.weight - a.weight);
+        byWeightDesc.forEach(bundle => {
             let best = state[0];
             let bestSlack = -Infinity;
             state.forEach(s => {
                 const slack = s.targetWeight - s.assignedWeight;
                 if (slack > bestSlack) { bestSlack = slack; best = s; }
             });
-            best.assigned.push(c.name);
-            best.assignedWeight += c.weight;
+            best.assigned.push(...bundle.names);
+            best.assignedWeight += bundle.weight;
         });
 
         return state;
@@ -548,7 +591,7 @@ if (!empty($_SESSION['name'])) {
             return;
         }
 
-        lastResult = computeSplit(members, criteria);
+        lastResult = computeSplit(members, criteria, selectedAuditType === 'SOC 2');
         if (selectedAuditType === 'SOC 2') {
             lastResult.forEach(m => { m.assigned = sortSoc2Criteria(m.assigned); });
         }
