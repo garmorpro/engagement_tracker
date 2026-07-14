@@ -30,19 +30,23 @@ try {
         'irl_due_date',
         'client_planning_call_date',
         'fieldwork_date',
+        'fieldwork_client_calls_date',
+        'fieldwork_documentation_date',
         'leadsheet_date',
         'conclusion_memo_date',
         'draft_report_due_date',
         'final_report_date',
         'archive_date'
     ];
-    
+
     $validCompletedFields = [
         'internal_planning_call_completed_at',
         'planning_memo_completed_at',
         'irl_completed_at',
         'client_planning_call_completed_at',
         'fieldwork_completed_at',
+        'fieldwork_client_calls_completed_at',
+        'fieldwork_documentation_completed_at',
         'leadsheet_completed_at',
         'conclusion_memo_completed_at',
         'draft_report_completed_at',

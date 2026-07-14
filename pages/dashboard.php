@@ -1390,7 +1390,8 @@ if (!empty($_SESSION['name'])) {
         { label: 'Planning Memo',          date: 'planning_memo_date',          completed: 'planning_memo_completed_at' },
         { label: 'IRL Due',                date: 'irl_due_date',                completed: 'irl_completed_at' },
         { label: 'Client Planning Call',   date: 'client_planning_call_date',   completed: 'client_planning_call_completed_at' },
-        { label: 'Fieldwork',              date: 'fieldwork_date',              completed: 'fieldwork_completed_at' },
+        { label: 'Fieldwork - Client Calls',    date: 'fieldwork_client_calls_date',    completed: 'fieldwork_client_calls_completed_at' },
+        { label: 'Fieldwork - Documentation',   date: 'fieldwork_documentation_date',   completed: 'fieldwork_documentation_completed_at' },
         { label: 'Leadsheet Due',          date: 'leadsheet_date',              completed: 'leadsheet_completed_at' },
         { label: 'Conclusion Memo',        date: 'conclusion_memo_date',        completed: 'conclusion_memo_completed_at' },
         { label: 'Draft Report Due',       date: 'draft_report_due_date',       completed: 'draft_report_completed_at' },
@@ -2152,25 +2153,28 @@ if (!empty($_SESSION['name'])) {
     }
 
     // ---------- Edit Timeline modal (ported from engagement-details.php) ----------
-    function openEditTimelineModal(overrides) {
+    function openEditTimelineModal(overrides, unmatched) {
         const engagementId = drawerData.engagement.eng_idno;
         const timeline = drawerData.timeline || {};
         const timelineData = {
-            internal_planning_call_date: (overrides && overrides.internal_planning_call_date) || timeline.internal_planning_call_date || '',
-            planning_memo_date:          (overrides && overrides.planning_memo_date) || timeline.planning_memo_date || '',
-            irl_due_date:                (overrides && overrides.irl_due_date) || timeline.irl_due_date || '',
-            client_planning_call_date:   (overrides && overrides.client_planning_call_date) || timeline.client_planning_call_date || '',
-            fieldwork_date:              (overrides && overrides.fieldwork_date) || timeline.fieldwork_date || '',
-            leadsheet_date:              (overrides && overrides.leadsheet_date) || timeline.leadsheet_date || '',
-            conclusion_memo_date:        (overrides && overrides.conclusion_memo_date) || timeline.conclusion_memo_date || '',
-            draft_report_due_date:       (overrides && overrides.draft_report_due_date) || timeline.draft_report_due_date || '',
-            final_report_date:           (overrides && overrides.final_report_date) || timeline.final_report_date || '',
-            archive_date:                (overrides && overrides.archive_date) || timeline.archive_date || ''
+            internal_planning_call_date:   (overrides && overrides.internal_planning_call_date) || timeline.internal_planning_call_date || '',
+            planning_memo_date:            (overrides && overrides.planning_memo_date) || timeline.planning_memo_date || '',
+            irl_due_date:                  (overrides && overrides.irl_due_date) || timeline.irl_due_date || '',
+            client_planning_call_date:     (overrides && overrides.client_planning_call_date) || timeline.client_planning_call_date || '',
+            fieldwork_client_calls_date:   (overrides && overrides.fieldwork_client_calls_date) || timeline.fieldwork_client_calls_date || '',
+            fieldwork_documentation_date:  (overrides && overrides.fieldwork_documentation_date) || timeline.fieldwork_documentation_date || '',
+            leadsheet_date:                (overrides && overrides.leadsheet_date) || timeline.leadsheet_date || '',
+            conclusion_memo_date:          (overrides && overrides.conclusion_memo_date) || timeline.conclusion_memo_date || '',
+            draft_report_due_date:         (overrides && overrides.draft_report_due_date) || timeline.draft_report_due_date || '',
+            final_report_date:             (overrides && overrides.final_report_date) || timeline.final_report_date || '',
+            archive_date:                  (overrides && overrides.archive_date) || timeline.archive_date || ''
         };
         const importedCount = overrides ? Object.keys(overrides).length : 0;
         const importBanner = overrides
             ? `<div style="margin-bottom:1rem; padding:0.75rem 0.9rem; background:color-mix(in srgb, var(--primary-blue) 10%, transparent); border-left:3px solid var(--primary-blue); border-radius:6px; font-size:12.5px; color:var(--text-primary);">
-                   ${importedCount ? `Filled ${importedCount} date${importedCount === 1 ? '' : 's'} from your spreadsheet` : 'Could not match any task names from your spreadsheet'} — review before saving.
+                   ${importedCount ? `Filled ${importedCount} date${importedCount === 1 ? '' : 's'} from your spreadsheet` : 'Could not match any task names from your spreadsheet'}.
+                   ${unmatched && unmatched.length ? `<br>Couldn't find a match for: ${unmatched.map(escapeHtml).join(', ')}.` : ''}
+                   Review before saving.
                </div>`
             : '';
 
@@ -2197,8 +2201,12 @@ if (!empty($_SESSION['name'])) {
                         <input type="date" id="client_planning_call_date" class="swal2-input" value="${timelineData.client_planning_call_date}">
                     </div>
                     <div style="width: 100%; box-sizing: border-box; min-width: 0;">
-                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Fieldwork</label>
-                        <input type="date" id="fieldwork_date" class="swal2-input" value="${timelineData.fieldwork_date}">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Fieldwork - Client Calls</label>
+                        <input type="date" id="fieldwork_client_calls_date" class="swal2-input" value="${timelineData.fieldwork_client_calls_date}">
+                    </div>
+                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                        <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Fieldwork - Documentation</label>
+                        <input type="date" id="fieldwork_documentation_date" class="swal2-input" value="${timelineData.fieldwork_documentation_date}">
                     </div>
                     <div style="width: 100%; box-sizing: border-box; min-width: 0;">
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Leadsheet Due</label>
@@ -2237,7 +2245,8 @@ if (!empty($_SESSION['name'])) {
                     planning_memo_date:          document.getElementById('planning_memo_date').value,
                     irl_due_date:                document.getElementById('irl_due_date').value,
                     client_planning_call_date:   document.getElementById('client_planning_call_date').value,
-                    fieldwork_date:              document.getElementById('fieldwork_date').value,
+                    fieldwork_client_calls_date:  document.getElementById('fieldwork_client_calls_date').value,
+                    fieldwork_documentation_date: document.getElementById('fieldwork_documentation_date').value,
                     leadsheet_date:              document.getElementById('leadsheet_date').value,
                     conclusion_memo_date:        document.getElementById('conclusion_memo_date').value,
                     draft_report_due_date:       document.getElementById('draft_report_due_date').value,
@@ -2490,19 +2499,38 @@ if (!empty($_SESSION['name'])) {
     }
 
     // ---------- Timeline import from spreadsheet (.xlsx/.xls/.csv) ----------
-    // Best-effort keyword matching, not exact — always routes into the same
-    // Edit Timeline modal for review rather than saving directly.
+    // Each field tries an exact (case-insensitive, trimmed) match against the
+    // task name your template actually uses first, falling back to a looser
+    // keyword pattern for engagements whose sheet wording varies. Exact-first
+    // matters: a loose "draft report" pattern alone would grab "Prepare Draft
+    // Report" before "Draft Report Due" just because it appears earlier in
+    // the sheet. Always routes into the Edit Timeline modal for review rather
+    // than saving directly, and reports any of the 11 fields it couldn't find.
+    const TIMELINE_FIELD_LABELS = {
+        internal_planning_call_date:  'Internal Planning Call',
+        planning_memo_date:           'Planning Memo',
+        irl_due_date:                 'IRL Due',
+        client_planning_call_date:    'Client Planning Call',
+        fieldwork_client_calls_date:  'Fieldwork - Client Calls',
+        fieldwork_documentation_date: 'Fieldwork - Documentation',
+        leadsheet_date:               'Leadsheet Due',
+        conclusion_memo_date:         'Conclusion Memo',
+        draft_report_due_date:        'Draft Report Due',
+        final_report_date:            'Final Report Due',
+        archive_date:                 'Archive Date'
+    };
     const TIMELINE_IMPORT_PATTERNS = {
-        internal_planning_call_date: [/internal.*planning.*call/i],
-        planning_memo_date:          [/^planning memo$/i, /\bplanning memo\b/i],
-        irl_due_date:                [/\birl\b/i, /information request list/i],
-        client_planning_call_date:   [/client.*planning.*call/i],
-        fieldwork_date:              [/^fieldwork$/i, /\bfieldwork\b/i],
-        leadsheet_date:              [/lead\s*sheet/i],
-        conclusion_memo_date:        [/conclusion memo/i],
-        draft_report_due_date:       [/draft report/i],
-        final_report_date:           [/final report/i],
-        archive_date:                [/approval of archive/i, /prepare.*archive/i, /\barchive\b/i]
+        internal_planning_call_date:  { exact: 'Internal Team Planning Call',            fallback: [/internal.*planning.*call/i] },
+        planning_memo_date:           { exact: 'Compose Planning Memo',                  fallback: [/\bplanning memo\b/i] },
+        irl_due_date:                 { exact: 'Send Information Request List (IRL)',    fallback: [/\birl\b/i, /information request list/i] },
+        client_planning_call_date:    { exact: 'Client Planning Call',                   fallback: [/client.*planning.*call/i] },
+        fieldwork_client_calls_date:  { exact: 'Fieldwork - Client Calls',                fallback: [/fieldwork.*client.*call/i] },
+        fieldwork_documentation_date: { exact: 'Fieldwork - Documentation',               fallback: [/fieldwork.*document/i] },
+        leadsheet_date:                { exact: 'Lead Sheets Due',                        fallback: [/lead\s*sheet/i] },
+        conclusion_memo_date:          { exact: 'Compose Conclusion Memo',                fallback: [/conclusion memo/i] },
+        draft_report_due_date:         { exact: 'Draft Report Due',                       fallback: [/draft report.*due/i] },
+        final_report_date:             { exact: 'Final Report Due',                       fallback: [/final report/i] },
+        archive_date:                  { exact: 'Alek Archive',                           fallback: [/\barchive\b/i] }
     };
 
     function parseSpreadsheetRows(file) {
@@ -2511,9 +2539,11 @@ if (!empty($_SESSION['name'])) {
             reader.onload = (e) => {
                 try {
                     const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+                    // cellDates:false — read raw values (Excel serials / plain text) so
+                    // date conversion never passes through a JS Date/timezone at all.
+                    const workbook = XLSX.read(data, { type: 'array', cellDates: false, raw: true });
                     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    resolve(XLSX.utils.sheet_to_json(sheet, { defval: '' }));
+                    resolve(XLSX.utils.sheet_to_json(sheet, { defval: '', raw: true }));
                 } catch (err) {
                     reject(err);
                 }
@@ -2523,39 +2553,52 @@ if (!empty($_SESSION['name'])) {
         });
     }
 
+    // No Date object anywhere in here on purpose — Date/.toISOString() shifts
+    // date-only values by a day depending on local timezone, which is exactly
+    // what was happening before (6/1 imported as 6/2, etc).
     function parseDateCell(value) {
-        if (!value && value !== 0) return null;
-        if (value instanceof Date) {
-            return isNaN(value.getTime()) ? null : value.toISOString().slice(0, 10);
-        }
-        if (typeof value === 'number' && window.XLSX && XLSX.SSF) {
+        if (value === '' || value === null || value === undefined) return null;
+        if (typeof value === 'number') {
             const d = XLSX.SSF.parse_date_code(value);
-            if (d) return `${d.y}-${String(d.m).padStart(2, '0')}-${String(d.d).padStart(2, '0')}`;
+            if (!d) return null;
+            return `${d.y}-${String(d.m).padStart(2, '0')}-${String(d.d).padStart(2, '0')}`;
         }
-        const parsed = new Date(String(value).trim());
-        return isNaN(parsed.getTime()) ? null : parsed.toISOString().slice(0, 10);
+        const str = String(value).trim();
+        const slash = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})$/);
+        if (slash) {
+            let [, mo, da, yr] = slash;
+            if (yr.length === 2) yr = (Number(yr) < 70 ? '20' : '19') + yr;
+            return `${yr}-${mo.padStart(2, '0')}-${da.padStart(2, '0')}`;
+        }
+        const iso = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+        if (iso) return `${iso[1]}-${iso[2]}-${iso[3]}`;
+        return null;
     }
 
     function matchTimelineFieldsFromRows(rows) {
-        if (!rows.length) return {};
+        if (!rows.length) return { matched: {}, unmatched: Object.keys(TIMELINE_IMPORT_PATTERNS) };
         const keys = Object.keys(rows[0]);
         const taskKey = keys.find(k => /task/i.test(k) && /name/i.test(k)) || keys.find(k => /task/i.test(k)) || keys[0];
         const dateKey = keys.find(k => /planned/i.test(k) && /finish/i.test(k))
             || keys.find(k => /finish/i.test(k))
             || keys.find(k => /due/i.test(k));
-        if (!dateKey) return {};
 
-        const result = {};
-        Object.entries(TIMELINE_IMPORT_PATTERNS).forEach(([field, patterns]) => {
-            for (const pattern of patterns) {
-                const row = rows.find(r => pattern.test(String(r[taskKey] || '').trim()));
-                if (row) {
-                    const parsedDate = parseDateCell(row[dateKey]);
-                    if (parsedDate) { result[field] = parsedDate; break; }
+        const matched = {};
+        const unmatched = [];
+        Object.entries(TIMELINE_IMPORT_PATTERNS).forEach(([field, { exact, fallback }]) => {
+            if (!dateKey) { unmatched.push(field); return; }
+            let row = rows.find(r => String(r[taskKey] || '').trim().toLowerCase() === exact.toLowerCase());
+            if (!row) {
+                for (const pattern of fallback) {
+                    row = rows.find(r => pattern.test(String(r[taskKey] || '').trim()));
+                    if (row) break;
                 }
             }
+            const parsedDate = row ? parseDateCell(row[dateKey]) : null;
+            if (parsedDate) matched[field] = parsedDate;
+            else unmatched.push(field);
         });
-        return result;
+        return { matched, unmatched };
     }
 
     document.getElementById('timelineImportFileInput').addEventListener('change', async (ev) => {
@@ -2564,8 +2607,8 @@ if (!empty($_SESSION['name'])) {
         if (!file || !drawerData) return;
         try {
             const rows = await parseSpreadsheetRows(file);
-            const matched = matchTimelineFieldsFromRows(rows);
-            openEditTimelineModal(matched);
+            const { matched, unmatched } = matchTimelineFieldsFromRows(rows);
+            openEditTimelineModal(matched, unmatched.map(f => TIMELINE_FIELD_LABELS[f]));
         } catch (err) {
             console.error('Error:', err);
             Swal.fire('Error', 'Could not read that spreadsheet: ' + err.message, 'error');

@@ -32,6 +32,8 @@ try {
         'irl_due_date',
         'client_planning_call_date',
         'fieldwork_date',
+        'fieldwork_client_calls_date',
+        'fieldwork_documentation_date',
         'leadsheet_date',
         'conclusion_memo_date',
         'draft_report_due_date',
