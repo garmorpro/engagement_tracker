@@ -436,12 +436,12 @@ if (!empty($_SESSION['name'])) {
             overflow-x: hidden;
         }
         body.dark-mode .swal2-popup { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); }
-        .swal2-title { color: var(--text-primary); font-size: 22px; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.3; padding: 0; }
-        .swal2-html-container { color: var(--text-primary); padding: 0; margin: 0; }
-        .swal2-input {
-            background: var(--paper);
+        .swal2-title { color: var(--text-primary) !important; font-size: 22px; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.3; padding: 0; }
+        .swal2-html-container, .swal2-html-container * { color: var(--text-primary); }
+        .swal2-input, select.swal2-input, textarea.swal2-input {
+            background: var(--paper) !important;
             border: 1px solid var(--line);
-            color: var(--text-primary);
+            color: var(--text-primary) !important;
             border-radius: 6px;
             padding: 0.5rem 0.6rem !important;
             font-size: 13px !important;
@@ -455,17 +455,17 @@ if (!empty($_SESSION['name'])) {
             box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 10%, transparent);
             outline: none;
         }
-        .swal2-input::placeholder { color: var(--text-secondary); }
+        .swal2-input::placeholder { color: var(--text-secondary) !important; opacity: 1; }
         .swal2-actions { gap: 0.75rem; margin-top: 1.5rem; display: flex; justify-content: center; padding: 0; margin-left: 0; margin-right: 0; margin-bottom: 0; }
         .swal2-confirm, .swal2-cancel {
             flex: 1; max-width: 200px; margin: 0 !important; padding: 0.7rem 1.5rem !important;
             border-radius: 8px; font-weight: 600; font-size: 13px; transition: all 0.2s; min-width: 0; height: auto;
         }
-        .swal2-confirm { background: var(--primary-blue); color: white; border: none; }
-        .swal2-confirm:hover { background: color-mix(in srgb, var(--primary-blue) 85%, black); box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-blue) 30%, transparent); }
+        .swal2-confirm { background: var(--primary-blue) !important; color: #fff !important; border: none; }
+        .swal2-confirm:hover { background: color-mix(in srgb, var(--primary-blue) 85%, black) !important; box-shadow: 0 4px 12px color-mix(in srgb, var(--primary-blue) 30%, transparent); }
         .swal2-confirm:focus { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 20%, transparent); }
-        .swal2-cancel { background: var(--line); color: var(--text-primary); border: 1px solid var(--line); }
-        .swal2-cancel:hover { background: color-mix(in srgb, var(--primary-blue) 5%, transparent); border-color: var(--primary-blue); color: var(--primary-blue); }
+        .swal2-cancel { background: var(--line) !important; color: var(--text-primary) !important; border: 1px solid var(--line); }
+        .swal2-cancel:hover { background: color-mix(in srgb, var(--primary-blue) 5%, transparent) !important; border-color: var(--primary-blue); color: var(--primary-blue) !important; }
         .swal2-cancel:focus { outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-blue) 10%, transparent); }
 
         /* ========== ENGAGEMENT DRAWER ========== */
@@ -1183,31 +1183,31 @@ if (!empty($_SESSION['name'])) {
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem;">
                             <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="new-audit-type-checkbox" value="SOC 1" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px;">SOC 1</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">SOC 1</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="new-audit-type-checkbox" value="SOC 2" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px;">SOC 2</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">SOC 2</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="new-audit-type-checkbox" value="PCI" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px;">PCI</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">PCI</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="new-audit-type-checkbox" value="HITRUST" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px;">HITRUST</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">HITRUST</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="new-audit-type-checkbox" value="FISMA" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px;">FISMA</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">FISMA</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="new-audit-type-checkbox" value="ISO" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px;">ISO</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">ISO</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="new-audit-type-checkbox" value="HIPAA" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px;">HIPAA</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">HIPAA</span>
                             </label>
                         </div>
                     </div>
@@ -1217,11 +1217,11 @@ if (!empty($_SESSION['name'])) {
                         <div style="display: flex; gap: 1.5rem; margin-bottom: 1rem;">
                             <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
                                 <input type="radio" name="new_soc_type" value="Type 1" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px;">Type 1</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">Type 1</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
                                 <input type="radio" name="new_soc_type" value="Type 2" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px;">Type 2</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">Type 2</span>
                             </label>
                         </div>
                         <div id="new_soc_type1_dates" style="display: none;">
@@ -1247,7 +1247,7 @@ if (!empty($_SESSION['name'])) {
                     <div style="margin-bottom: 1.25rem;">
                         <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500;">
                             <input type="checkbox" id="new_eng_repeat" style="width: 18px; height: 18px; cursor: pointer;">
-                            <span style="font-size: 13px;">Repeat Engagement</span>
+                            <span style="font-size: 13px; color: var(--text-primary);">Repeat Engagement</span>
                         </label>
                     </div>
                 </div>
@@ -2259,31 +2259,31 @@ if (!empty($_SESSION['name'])) {
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="audit-type-checkbox" value="SOC 1" ${engagementData.eng_audit_type.includes('SOC 1') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">SOC 1</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">SOC 1</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="audit-type-checkbox" value="SOC 2" ${engagementData.eng_audit_type.includes('SOC 2') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">SOC 2</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">SOC 2</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="audit-type-checkbox" value="PCI" ${engagementData.eng_audit_type.includes('PCI') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">PCI</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">PCI</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="audit-type-checkbox" value="HITRUST" ${engagementData.eng_audit_type.includes('HITRUST') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">HITRUST</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">HITRUST</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="audit-type-checkbox" value="FISMA" ${engagementData.eng_audit_type.includes('FISMA') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">FISMA</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">FISMA</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="audit-type-checkbox" value="ISO" ${engagementData.eng_audit_type.includes('ISO') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">ISO</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">ISO</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
                                 <input type="checkbox" class="audit-type-checkbox" value="HIPAA" ${engagementData.eng_audit_type.includes('HIPAA') ? 'checked' : ''}>
-                                <span style="font-size: 13px;">HIPAA</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">HIPAA</span>
                             </label>
                         </div>
                     </div>
@@ -2293,11 +2293,11 @@ if (!empty($_SESSION['name'])) {
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem;">
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
                                 <input type="radio" name="soc_type" value="Type 1" ${engagementData.eng_soc_type === 'Type 1' ? 'checked' : ''}>
-                                <span style="font-size: 13px;">Type 1</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">Type 1</span>
                             </label>
                             <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500;">
                                 <input type="radio" name="soc_type" value="Type 2" ${engagementData.eng_soc_type === 'Type 2' ? 'checked' : ''}>
-                                <span style="font-size: 13px;">Type 2</span>
+                                <span style="font-size: 13px; color: var(--text-primary);">Type 2</span>
                             </label>
                         </div>
                         <div id="soc_type1_dates" style="display: none;">
@@ -2324,7 +2324,7 @@ if (!empty($_SESSION['name'])) {
                     <div style="margin-bottom: 1rem;">
                         <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500;">
                             <input type="checkbox" id="edit_eng_repeat" ${engagementData.eng_repeat === 'Y' ? 'checked' : ''}>
-                            <span style="font-size: 13px;">Repeat Engagement</span>
+                            <span style="font-size: 13px; color: var(--text-primary);">Repeat Engagement</span>
                         </label>
                     </div>
                 </div>
