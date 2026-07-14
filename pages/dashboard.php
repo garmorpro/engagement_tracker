@@ -365,6 +365,9 @@ if (!empty($_SESSION['name'])) {
         .team2-ac-empty { padding: 10px; font-size: 12.5px; color: var(--text-secondary); }
         .team2-ac-newbtn { display: flex; align-items: center; gap: 6px; padding: 9px 10px; font-size: 12.5px; font-weight: 600; color: var(--ink); cursor: pointer; border-top: 1px solid var(--line); }
         .team2-ac-newbtn:hover { background: var(--paper); }
+        .team2-new-emp-picker { padding: 10px; }
+        .team2-new-emp-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .team2-new-emp-actions .team2-btn { flex: 1; width: auto; }
 
         /* ========== EDIT TEAM MEMBER MODAL (ported from engagement-details.php) ========== */
         .team2-edit-header { display: flex; align-items: center; gap: 0.9rem; padding: 0 0 1.1rem; margin-bottom: 1.1rem; border-bottom: 1px solid var(--line); }
@@ -1744,7 +1747,14 @@ if (!empty($_SESSION['name'])) {
                 return;
             }
 
-            teamListElement.innerHTML = currentTeam.map(member => {
+            const roleOrder = ['manager', 'senior', 'staff', 'intern'];
+            const sortedTeam = currentTeam.slice().sort((a, b) => {
+                const ra = roleOrder.indexOf((a.role || '').toLowerCase());
+                const rb = roleOrder.indexOf((b.role || '').toLowerCase());
+                return (ra === -1 ? 99 : ra) - (rb === -1 ? 99 : rb);
+            });
+
+            teamListElement.innerHTML = sortedTeam.map(member => {
                 const memberInitials = member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
                 const roleKey = (member.role || '').toLowerCase();
                 return `
@@ -1877,45 +1887,52 @@ if (!empty($_SESSION['name'])) {
                 });
                 document.getElementById('ac_new_btn')?.addEventListener('click', (ev) => {
                     ev.stopPropagation();
-                    input.value = '';
-                    list.style.display = 'none';
-                    promptNewEmployeeRole(query);
+                    renderNewEmployeeRolePicker(query);
                 });
             }
 
-            function promptNewEmployeeRole(name) {
+            // Small inline picker (not a nested Swal — a second Swal.fire() while
+            // "Manage Team Members" is open replaces the shared popup instance,
+            // which closed the outer modal and reloaded the page). Lives in the
+            // same dropdown as the search results, so nothing else closes.
+            function renderNewEmployeeRolePicker(name) {
                 let selectedRole = 'staff';
-                Swal.fire({
-                    title: 'Add New Employee',
-                    html: `
-                        <div style="text-align:left;">
-                            <div style="font-size:13px; color:var(--text-secondary); margin-bottom:0.85rem;">
-                                What role does <strong style="color:var(--text-primary);">${escapeHtml(name)}</strong> have?
-                            </div>
-                            <div class="team2-segmented" id="new_emp_role_segment">
-                                ${['manager', 'senior', 'staff', 'intern'].map(role =>
-                                    `<button type="button" data-role="${role}" class="${role === selectedRole ? 'active' : ''}">${ROLE_LABELS[role]}</button>`
-                                ).join('')}
-                            </div>
+                list.innerHTML = `
+                    <div class="team2-new-emp-picker">
+                        <div class="team2-ac-empty" style="padding-bottom:8px;">
+                            Role for "<strong style="color:var(--text-primary);">${escapeHtml(name)}</strong>"?
                         </div>
-                    `,
-                    confirmButtonText: 'Add Employee',
-                    cancelButtonText: 'Cancel',
-                    showCancelButton: true,
-                    confirmButtonColor: 'var(--ink)',
-                    didOpen: () => {
-                        document.querySelectorAll('#new_emp_role_segment button').forEach(btn => {
-                            btn.addEventListener('click', () => {
-                                document.querySelectorAll('#new_emp_role_segment button').forEach(b => b.classList.remove('active'));
-                                btn.classList.add('active');
-                                selectedRole = btn.dataset.role;
-                            });
-                        });
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        createEmployeeThenAdd(name, selectedRole);
-                    }
+                        <div class="team2-segmented" id="new_emp_role_segment">
+                            ${['manager', 'senior', 'staff', 'intern'].map(role =>
+                                `<button type="button" data-role="${role}" class="${role === selectedRole ? 'active' : ''}">${ROLE_LABELS[role]}</button>`
+                            ).join('')}
+                        </div>
+                        <div class="team2-new-emp-actions">
+                            <button type="button" class="team2-btn team2-btn-secondary" id="new_emp_cancel">Cancel</button>
+                            <button type="button" class="team2-btn team2-btn-primary" id="new_emp_confirm">Add Employee</button>
+                        </div>
+                    </div>
+                `;
+                list.style.display = 'block';
+
+                document.querySelectorAll('#new_emp_role_segment button').forEach(btn => {
+                    btn.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        document.querySelectorAll('#new_emp_role_segment button').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        selectedRole = btn.dataset.role;
+                    });
+                });
+                document.getElementById('new_emp_cancel').addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    input.value = '';
+                    list.style.display = 'none';
+                });
+                document.getElementById('new_emp_confirm').addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    input.value = '';
+                    list.style.display = 'none';
+                    createEmployeeThenAdd(name, selectedRole);
                 });
             }
 
