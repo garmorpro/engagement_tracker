@@ -387,7 +387,16 @@ if (!empty($_SESSION['name'])) {
         .team2-ac-newbtn:hover { background: var(--paper); }
         .team2-new-emp-picker { padding: 10px; }
         .team2-new-emp-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .team2-btn { padding: 9px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; border: none; }
+        .team2-btn-primary { background: var(--ink); color: var(--card); }
+        .team2-btn-primary:hover { background: color-mix(in srgb, var(--ink) 85%, black); }
+        .team2-btn-secondary { background: var(--card); color: var(--text-secondary); border: 1px solid var(--line); }
+        .team2-btn-secondary:hover { border-color: var(--line-strong); color: var(--text-primary); }
         .team2-new-emp-actions .team2-btn { flex: 1; width: auto; }
+        .role-pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .role-pick-btn { padding: 8px 4px; border-radius: 7px; border: 1px solid var(--line); background: var(--paper); color: var(--text-secondary); font-size: 11.5px; font-weight: 700; cursor: pointer; text-align: center; }
+        .role-pick-btn:hover { border-color: var(--line-strong); }
+        .role-pick-btn.active { border-color: var(--ink); background: color-mix(in srgb, var(--ink) 12%, transparent); color: var(--ink); }
 
         /* ========== EDIT TEAM MEMBER MODAL (ported from engagement-details.php) ========== */
         .team2-edit-header { display: flex; align-items: center; gap: 0.9rem; padding: 0 0 1.1rem; margin-bottom: 1.1rem; border-bottom: 1px solid var(--line); }
@@ -2098,9 +2107,9 @@ if (!empty($_SESSION['name'])) {
                         <div class="team2-ac-empty" style="padding-bottom:8px;">
                             Role for "<strong style="color:var(--text-primary);">${escapeHtml(name)}</strong>"?
                         </div>
-                        <div class="team2-segmented" id="new_emp_role_segment">
+                        <div class="role-pick-grid" id="new_emp_role_segment">
                             ${['manager', 'senior', 'staff', 'intern'].map(role =>
-                                `<button type="button" data-role="${role}" class="${role === selectedRole ? 'active' : ''}">${ROLE_LABELS[role]}</button>`
+                                `<button type="button" data-role="${role}" class="role-pick-btn ${role === selectedRole ? 'active' : ''}">${ROLE_LABELS[role]}</button>`
                             ).join('')}
                         </div>
                         <div class="team2-new-emp-actions">
