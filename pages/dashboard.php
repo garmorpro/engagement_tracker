@@ -15,6 +15,13 @@ foreach ($allTimelineData as $row) {
     $timelineLookup[$row['engagement_idno']] = $row;
 }
 
+// eng_idno -> eng_name, used to show the client name instead of the raw ID
+// in the notification dropdown.
+$engNameLookup = [];
+foreach ($allEngagements as $row) {
+    $engNameLookup[$row['eng_idno']] = $row['eng_name'];
+}
+
 $activeEngagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
 $archivedEngagements = array_filter($allEngagements, fn($e) => $e['eng_status'] === 'archived');
 $activeCount = count($activeEngagements);
@@ -734,7 +741,7 @@ if (!empty($_SESSION['name'])) {
                                         foreach ($dateFields as $dateCol => $completedCol) {
                                             if ($timeline[$dateCol] && !$timeline[$completedCol]) {
                                                 $daysAway = round((strtotime($timeline[$dateCol]) - time()) / 86400);
-                                                $engName = htmlspecialchars($notif['engagement_idno']);
+                                                $engName = htmlspecialchars($engNameLookup[$notif['engagement_idno']] ?? $notif['engagement_idno']);
                                                 $dateTitle = $titleMap[$dateCol];
                                                 $displayMessage = $engName . ' - ' . $dateTitle . ' due in ' . max(0, $daysAway) . ' days';
                                                 break;
