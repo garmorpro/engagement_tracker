@@ -700,6 +700,8 @@ if (!empty($_SESSION['name'])) {
                                         irl_due_date, irl_completed_at,
                                         client_planning_call_date, client_planning_call_completed_at,
                                         fieldwork_date, fieldwork_completed_at,
+                                        fieldwork_client_calls_date, fieldwork_client_calls_completed_at,
+                                        fieldwork_documentation_date, fieldwork_documentation_completed_at,
                                         leadsheet_date, leadsheet_completed_at,
                                         conclusion_memo_date, conclusion_memo_completed_at,
                                         draft_report_due_date, draft_report_completed_at,
@@ -713,50 +715,80 @@ if (!empty($_SESSION['name'])) {
                                     $timeline = $tlResult->fetch_assoc();
                                     $stmt->close();
 
+                                    $dateFields = [
+                                        'internal_planning_call_date' => 'internal_planning_call_completed_at',
+                                        'planning_memo_date' => 'planning_memo_completed_at',
+                                        'irl_due_date' => 'irl_completed_at',
+                                        'client_planning_call_date' => 'client_planning_call_completed_at',
+                                        'fieldwork_date' => 'fieldwork_completed_at',
+                                        'fieldwork_client_calls_date' => 'fieldwork_client_calls_completed_at',
+                                        'fieldwork_documentation_date' => 'fieldwork_documentation_completed_at',
+                                        'leadsheet_date' => 'leadsheet_completed_at',
+                                        'conclusion_memo_date' => 'conclusion_memo_completed_at',
+                                        'draft_report_due_date' => 'draft_report_completed_at',
+                                        'final_report_date' => 'final_report_completed_at',
+                                        'archive_date' => 'archive_completed_at'
+                                    ];
+                                    $titleMap = [
+                                        'internal_planning_call_date' => 'Internal Planning Call',
+                                        'planning_memo_date' => 'Planning Memo',
+                                        'irl_due_date' => 'IRL Due Date',
+                                        'client_planning_call_date' => 'Client Planning Call',
+                                        'fieldwork_date' => 'Fieldwork',
+                                        'fieldwork_client_calls_date' => 'Fieldwork - Client Calls',
+                                        'fieldwork_documentation_date' => 'Fieldwork - Documentation',
+                                        'leadsheet_date' => 'Leadsheet',
+                                        'conclusion_memo_date' => 'Conclusion Memo',
+                                        'draft_report_due_date' => 'Draft Report Due',
+                                        'final_report_date' => 'Final Report',
+                                        'archive_date' => 'Archive'
+                                    ];
+                                    $engName = htmlspecialchars($engNameLookup[$notif['engagement_idno']] ?? $notif['engagement_idno']);
+
                                     if ($timeline) {
-                                        $dateFields = [
-                                            'internal_planning_call_date' => 'internal_planning_call_completed_at',
-                                            'planning_memo_date' => 'planning_memo_completed_at',
-                                            'irl_due_date' => 'irl_completed_at',
-                                            'client_planning_call_date' => 'client_planning_call_completed_at',
-                                            'fieldwork_date' => 'fieldwork_completed_at',
-                                            'leadsheet_date' => 'leadsheet_completed_at',
-                                            'conclusion_memo_date' => 'conclusion_memo_completed_at',
-                                            'draft_report_due_date' => 'draft_report_completed_at',
-                                            'final_report_date' => 'final_report_completed_at',
-                                            'archive_date' => 'archive_completed_at'
-                                        ];
-                                        $titleMap = [
-                                            'internal_planning_call_date' => 'Internal Planning Call',
-                                            'planning_memo_date' => 'Planning Memo',
-                                            'irl_due_date' => 'IRL Due Date',
-                                            'client_planning_call_date' => 'Client Planning Call',
-                                            'fieldwork_date' => 'Fieldwork',
-                                            'leadsheet_date' => 'Leadsheet',
-                                            'conclusion_memo_date' => 'Conclusion Memo',
-                                            'draft_report_due_date' => 'Draft Report Due',
-                                            'final_report_date' => 'Final Report',
-                                            'archive_date' => 'Archive'
-                                        ];
-                                        foreach ($dateFields as $dateCol => $completedCol) {
-                                            if ($timeline[$dateCol] && !$timeline[$completedCol]) {
-                                                $daysAway = round((strtotime($timeline[$dateCol]) - time()) / 86400);
-                                                $engName = htmlspecialchars($engNameLookup[$notif['engagement_idno']] ?? $notif['engagement_idno']);
-                                                $dateTitle = $titleMap[$dateCol];
-                                                $displayMessage = $engName . ' - ' . $dateTitle . ' due in ' . max(0, $daysAway) . ' days';
-                                                break;
+                                        // notif_field pins this notification to the specific date it was
+                                        // about, so it doesn't just show whichever field happens to still
+                                        // be incomplete — that could be a completely different one now
+                                        // that more than one key-date notification can exist per engagement.
+                                        // Older rows created before notif_field existed fall back to the
+                                        // original "first incomplete field" search.
+                                        if (!empty($notif['notif_field']) && isset($dateFields[$notif['notif_field']]) && $timeline[$notif['notif_field']]) {
+                                            $dateCol = $notif['notif_field'];
+                                            $daysAway = round((strtotime($timeline[$dateCol]) - time()) / 86400);
+                                            $dateTitle = $titleMap[$dateCol];
+                                            $displayMessage = $engName . ' - ' . $dateTitle . ' due in ' . max(0, $daysAway) . ' days';
+                                        } else {
+                                            foreach ($dateFields as $dateCol => $completedCol) {
+                                                if ($timeline[$dateCol] && !$timeline[$completedCol]) {
+                                                    $daysAway = round((strtotime($timeline[$dateCol]) - time()) / 86400);
+                                                    $dateTitle = $titleMap[$dateCol];
+                                                    $displayMessage = $engName . ' - ' . $dateTitle . ' due in ' . max(0, $daysAway) . ' days';
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
                                 } elseif ($notif['notif_type'] === 'upcoming_milestone') {
-                                    $engIdno = $notif['engagement_idno'];
-                                    $milestoneQuery = "SELECT m.milestone_type, m.due_date, e.eng_name
-                                        FROM engagement_milestones m
-                                        JOIN engagements e ON m.engagement_idno = e.eng_idno
-                                        WHERE m.engagement_idno = ? AND m.is_completed = 'N' AND m.due_date IS NOT NULL
-                                        ORDER BY m.due_date ASC LIMIT 1";
-                                    $stmt = $conn->prepare($milestoneQuery);
-                                    $stmt->bind_param('s', $engIdno);
+                                    $milestone = null;
+                                    if (!empty($notif['notif_field']) && ctype_digit((string) $notif['notif_field'])) {
+                                        $msId = (int) $notif['notif_field'];
+                                        $milestoneQuery = "SELECT m.milestone_type, m.due_date, e.eng_name
+                                            FROM engagement_milestones m
+                                            JOIN engagements e ON m.engagement_idno = e.eng_idno
+                                            WHERE m.ms_id = ?";
+                                        $stmt = $conn->prepare($milestoneQuery);
+                                        $stmt->bind_param('i', $msId);
+                                    } else {
+                                        // Fallback for notifications created before notif_field existed.
+                                        $engIdno = $notif['engagement_idno'];
+                                        $milestoneQuery = "SELECT m.milestone_type, m.due_date, e.eng_name
+                                            FROM engagement_milestones m
+                                            JOIN engagements e ON m.engagement_idno = e.eng_idno
+                                            WHERE m.engagement_idno = ? AND m.is_completed = 'N' AND m.due_date IS NOT NULL
+                                            ORDER BY m.due_date ASC LIMIT 1";
+                                        $stmt = $conn->prepare($milestoneQuery);
+                                        $stmt->bind_param('s', $engIdno);
+                                    }
                                     $stmt->execute();
                                     $mResult = $stmt->get_result();
                                     $milestone = $mResult->fetch_assoc();

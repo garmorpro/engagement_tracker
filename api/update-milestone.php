@@ -1,6 +1,7 @@
 <?php
 require_once '../path.php';
 require_once '../includes/functions.php';
+require_once '../pages/notification-helper.php';
 requireApiAuth();
 
 header('Content-Type: application/json');
@@ -46,11 +47,14 @@ try {
     $stmt->bind_param('ssi', $is_completed, $engagement_id, $milestone_id);
     
     if ($stmt->execute()) {
+        if ($is_completed === 'Y') {
+            resolveNotifications($engagement_id, 'upcoming_milestone', (string) $milestone_id);
+        }
         echo json_encode(['success' => true, 'message' => 'Milestone updated successfully']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Database update failed: ' . $stmt->error]);
     }
-    
+
     $stmt->close();
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);

@@ -6,34 +6,40 @@ require_once $basePath . '/includes/functions.php';
 
 /**
  * Create a notification in the database
- * 
+ *
  * @param string $engagement_idno - Engagement ID
  * @param string $notif_type - Type: upcoming_key_date, upcoming_milestone, ready_to_archive
  * @param string $notif_title - Notification title
  * @param string $notif_message - Notification message
+ * @param string|null $notif_field - Which specific item this is about: the
+ *        timeline date column for upcoming_key_date, the milestone id (as a
+ *        string) for upcoming_milestone, or null for ready_to_archive. Used
+ *        both to scope the "already notified" check to that specific item
+ *        (rather than the whole engagement) and to resolve this notification
+ *        automatically when that item gets marked complete.
  * @return bool - Success status
  */
-function createNotification($engagement_idno, $notif_type, $notif_title, $notif_message) {
+function createNotification($engagement_idno, $notif_type, $notif_title, $notif_message, $notif_field = null) {
     global $conn;
-    
+
     // Check if table exists
     $tableCheckQuery = "SHOW TABLES LIKE 'engagement_notifications'";
     $tableCheckResult = $conn->query($tableCheckQuery);
-    
+
     if (!$tableCheckResult || $tableCheckResult->num_rows === 0) {
         return false; // Table doesn't exist yet
     }
-    
-    $query = "INSERT INTO engagement_notifications 
-              (engagement_idno, notif_type, notif_title, notif_message, is_read, notif_timestamp) 
-              VALUES (?, ?, ?, ?, 'N', NOW())";
-    
+
+    $query = "INSERT INTO engagement_notifications
+              (engagement_idno, notif_type, notif_title, notif_message, notif_field, is_read, notif_timestamp)
+              VALUES (?, ?, ?, ?, ?, 'N', NOW())";
+
     $stmt = $conn->prepare($query);
     if (!$stmt) {
         return false;
     }
-    
-    $stmt->bind_param('ssss', $engagement_idno, $notif_type, $notif_title, $notif_message);
+
+    $stmt->bind_param('sssss', $engagement_idno, $notif_type, $notif_title, $notif_message, $notif_field);
     $result = $stmt->execute();
     $stmt->close();
 
@@ -42,6 +48,30 @@ function createNotification($engagement_idno, $notif_type, $notif_title, $notif_
     }
 
     return $result;
+}
+
+/**
+ * Marks any open notification(s) matching $notif_type (+ $notif_field, if
+ * given) as read. Called from the endpoints that actually mark the
+ * underlying item complete (timeline checkbox, milestone checkbox, archive),
+ * so a notification disappears when the thing it was about gets resolved
+ * instead of sitting there — possibly showing increasingly stale info —
+ * until someone happens to click it.
+ */
+function resolveNotifications($engagement_idno, $notif_type, $notif_field = null) {
+    global $conn;
+
+    if ($notif_field !== null) {
+        $stmt = $conn->prepare("UPDATE engagement_notifications SET is_read = 'Y'
+                                 WHERE engagement_idno = ? AND notif_type = ? AND notif_field = ? AND is_read = 'N'");
+        $stmt->bind_param('sss', $engagement_idno, $notif_type, $notif_field);
+    } else {
+        $stmt = $conn->prepare("UPDATE engagement_notifications SET is_read = 'Y'
+                                 WHERE engagement_idno = ? AND notif_type = ? AND is_read = 'N'");
+        $stmt->bind_param('ss', $engagement_idno, $notif_type);
+    }
+    $stmt->execute();
+    $stmt->close();
 }
 
 /**
@@ -65,90 +95,91 @@ function getTimelineTitle($columnName) {
 }
 
 /**
- * Check for upcoming key dates from engagement_timeline
- * Notifies when date is 1-7 days away AND hasn't been notified yet
- * Only sends once per engagement
+ * Check for upcoming key dates from engagement_timeline.
+ * Notifies when a specific date field is 1-7 days away, not completed, and
+ * hasn't already been notified on *for that specific field* — tracked via
+ * notif_field, so completing one date and having a different one come due
+ * later still notifies (the old version excluded the whole engagement
+ * forever after a single notification, regardless of which field it was
+ * about).
  */
 function checkUpcomingKeyDates() {
     global $conn;
-    
-    // Get all active engagements with timeline
-    $query = "SELECT DISTINCT t.engagement_idno, e.eng_name 
+
+    // All non-archived, non-complete engagements with a timeline row
+    $query = "SELECT t.*, e.eng_name
               FROM engagement_timeline t
               JOIN engagements e ON t.engagement_idno = e.eng_idno
-              WHERE e.eng_status NOT IN ('archived', 'complete')
-              AND t.engagement_idno NOT IN (
-                  SELECT DISTINCT engagement_idno 
-                  FROM engagement_notifications 
-                  WHERE notif_type = 'upcoming_key_date'
-              )";
-    
+              WHERE e.eng_status NOT IN ('archived', 'complete')";
     $result = $conn->query($query);
-    
+
     $dateFields = [
         'internal_planning_call_date' => 'internal_planning_call_completed_at',
         'planning_memo_date' => 'planning_memo_completed_at',
         'irl_due_date' => 'irl_completed_at',
         'client_planning_call_date' => 'client_planning_call_completed_at',
         'fieldwork_date' => 'fieldwork_completed_at',
+        'fieldwork_client_calls_date' => 'fieldwork_client_calls_completed_at',
+        'fieldwork_documentation_date' => 'fieldwork_documentation_completed_at',
         'leadsheet_date' => 'leadsheet_completed_at',
         'conclusion_memo_date' => 'conclusion_memo_completed_at',
         'draft_report_due_date' => 'draft_report_completed_at',
         'final_report_date' => 'final_report_completed_at',
         'archive_date' => 'archive_completed_at'
     ];
-    
+
     $titleMap = [
         'internal_planning_call_date' => 'Internal Planning Call',
         'planning_memo_date' => 'Planning Memo',
         'irl_due_date' => 'IRL Due Date',
         'client_planning_call_date' => 'Client Planning Call',
         'fieldwork_date' => 'Fieldwork',
+        'fieldwork_client_calls_date' => 'Fieldwork - Client Calls',
+        'fieldwork_documentation_date' => 'Fieldwork - Documentation',
         'leadsheet_date' => 'Leadsheet',
         'conclusion_memo_date' => 'Conclusion Memo',
         'draft_report_due_date' => 'Draft Report Due',
         'final_report_date' => 'Final Report',
         'archive_date' => 'Archive'
     ];
-    
+
+    // (engagement_idno|notif_field) pairs already notified on, so each date
+    // field is only ever notified once, independently of the others.
+    $already = [];
+    $notifiedResult = $conn->query("SELECT engagement_idno, notif_field FROM engagement_notifications
+                                     WHERE notif_type = 'upcoming_key_date' AND notif_field IS NOT NULL");
+    if ($notifiedResult) {
+        while ($row = $notifiedResult->fetch_assoc()) {
+            $already[$row['engagement_idno'] . '|' . $row['notif_field']] = true;
+        }
+    }
+
     if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $engagement_idno = $row['engagement_idno'];
-            $eng_name = $row['eng_name'];
-            
-            // Get timeline for this engagement
-            $timelineQuery = "SELECT * FROM engagement_timeline WHERE engagement_idno = ?";
-            $stmt = $conn->prepare($timelineQuery);
-            $stmt->bind_param('s', $engagement_idno);
-            $stmt->execute();
-            $timelineResult = $stmt->get_result();
-            $timeline = $timelineResult->fetch_assoc();
-            $stmt->close();
-            
-            if (!$timeline) continue;
-            
-            // Check each date/completed pair
+        while ($timeline = $result->fetch_assoc()) {
+            $engagement_idno = $timeline['engagement_idno'];
+            $eng_name = $timeline['eng_name'];
+
             foreach ($dateFields as $dateCol => $completedCol) {
                 $dateValue = $timeline[$dateCol];
                 $completedValue = $timeline[$completedCol];
-                
-                // Only notify if: date exists, is not completed, and is 1-7 days away
+
                 if ($dateValue && !$completedValue) {
                     $daysUntilDate = round((strtotime($dateValue) - time()) / 86400);
-                    
-                    // Notify when date is 1-7 days away
+
                     if ($daysUntilDate >= 1 && $daysUntilDate <= 7) {
+                        if (isset($already[$engagement_idno . '|' . $dateCol])) continue;
+
                         $title = 'Upcoming Key Date';
                         $dateTitle = $titleMap[$dateCol];
                         $message = $eng_name . ' - ' . $dateTitle . ' is due in ' . $daysUntilDate . ' days';
-                        
+
                         createNotification(
                             $engagement_idno,
                             'upcoming_key_date',
                             $title,
-                            $message
+                            $message,
+                            $dateCol
                         );
-                        break; // Only send one notification per engagement per check
                     }
                 }
             }
@@ -157,45 +188,53 @@ function checkUpcomingKeyDates() {
 }
 
 /**
- * Check for upcoming milestones
- * Notifies when milestone due date is 1-5 days away AND hasn't been notified yet
- * Only sends once per engagement
+ * Check for upcoming milestones.
+ * Notifies when a milestone's due date is 1-5 days away, not completed, and
+ * hasn't already been notified on for that specific milestone (tracked via
+ * notif_field = the milestone's ms_id) — same per-item fix as key dates.
  */
 function checkUpcomingMilestones() {
     global $conn;
-    
+
     $query = "
         SELECT m.ms_id, m.engagement_idno, m.milestone_type, m.due_date, e.eng_name
         FROM engagement_milestones m
         JOIN engagements e ON m.engagement_idno = e.eng_idno
         WHERE m.is_completed = 'N'
         AND m.due_date IS NOT NULL
-        AND m.engagement_idno NOT IN (
-            SELECT DISTINCT engagement_idno 
-            FROM engagement_notifications 
-            WHERE notif_type = 'upcoming_milestone'
-        )
     ";
-    
     $result = $conn->query($query);
-    
+
+    $already = [];
+    $notifiedResult = $conn->query("SELECT notif_field FROM engagement_notifications
+                                     WHERE notif_type = 'upcoming_milestone' AND notif_field IS NOT NULL");
+    if ($notifiedResult) {
+        while ($row = $notifiedResult->fetch_assoc()) {
+            $already[$row['notif_field']] = true;
+        }
+    }
+
     if ($result) {
         while ($row = $result->fetch_assoc()) {
+            $msKey = (string) $row['ms_id'];
+            if (isset($already[$msKey])) continue;
+
             $daysUntilDate = round((strtotime($row['due_date']) - time()) / 86400);
-            
+
             // Notify when date is 1-5 days away
             if ($daysUntilDate >= 1 && $daysUntilDate <= 5) {
                 // Convert milestone_type from snake_case to Title Case
                 $milestoneTitle = implode(' ', array_map('ucfirst', explode('_', strtolower($row['milestone_type']))));
-                
+
                 $title = 'Upcoming Milestone';
                 $message = $row['eng_name'] . ' - ' . $milestoneTitle . ' due in ' . $daysUntilDate . ' days';
-                
+
                 createNotification(
                     $row['engagement_idno'],
                     'upcoming_milestone',
                     $title,
-                    $message
+                    $message,
+                    $msKey
                 );
             }
         }
