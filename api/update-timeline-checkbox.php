@@ -73,7 +73,7 @@ try {
     
     if ($stmt->execute()) {
         if ($completed_datetime) {
-            resolveNotifications($engagement_id, 'upcoming_key_date', $date_field);
+            resolveKeyDateNotification($engagement_id, $date_field);
         }
         echo json_encode(['success' => true, 'message' => 'Timeline updated successfully']);
     } else {

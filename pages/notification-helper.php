@@ -75,6 +75,67 @@ function resolveNotifications($engagement_idno, $notif_type, $notif_field = null
 }
 
 /**
+ * upcoming_key_date notifications can now bundle several date fields into
+ * one message, so completing a single field shouldn't resolve the whole
+ * notification unless every field it covers is complete — otherwise you'd
+ * lose the alert for the other still-open items in that bundle. Checks the
+ * live timeline state for every field named in each candidate notification's
+ * notif_field list before resolving it.
+ */
+function resolveKeyDateNotification($engagement_idno, $completedField) {
+    global $conn;
+
+    $completedColMap = [
+        'internal_planning_call_date' => 'internal_planning_call_completed_at',
+        'planning_memo_date' => 'planning_memo_completed_at',
+        'irl_due_date' => 'irl_completed_at',
+        'client_planning_call_date' => 'client_planning_call_completed_at',
+        'fieldwork_date' => 'fieldwork_completed_at',
+        'fieldwork_client_calls_date' => 'fieldwork_client_calls_completed_at',
+        'fieldwork_documentation_date' => 'fieldwork_documentation_completed_at',
+        'leadsheet_date' => 'leadsheet_completed_at',
+        'conclusion_memo_date' => 'conclusion_memo_completed_at',
+        'draft_report_due_date' => 'draft_report_completed_at',
+        'final_report_date' => 'final_report_completed_at',
+        'archive_date' => 'archive_completed_at',
+    ];
+
+    $stmt = $conn->prepare("SELECT notif_id, notif_field FROM engagement_notifications
+                             WHERE engagement_idno = ? AND notif_type = 'upcoming_key_date' AND is_read = 'N'
+                             AND FIND_IN_SET(?, notif_field)");
+    $stmt->bind_param('ss', $engagement_idno, $completedField);
+    $stmt->execute();
+    $candidates = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    if (!$candidates) return;
+
+    $tlStmt = $conn->prepare("SELECT * FROM engagement_timeline WHERE engagement_idno = ?");
+    $tlStmt->bind_param('s', $engagement_idno);
+    $tlStmt->execute();
+    $timeline = $tlStmt->get_result()->fetch_assoc();
+    $tlStmt->close();
+    if (!$timeline) return;
+
+    foreach ($candidates as $row) {
+        $allDone = true;
+        foreach (explode(',', $row['notif_field']) as $field) {
+            $completedCol = $completedColMap[trim($field)] ?? null;
+            if (!$completedCol || empty($timeline[$completedCol])) {
+                $allDone = false;
+                break;
+            }
+        }
+        if ($allDone) {
+            $upd = $conn->prepare("UPDATE engagement_notifications SET is_read = 'Y' WHERE notif_id = ?");
+            $upd->bind_param('i', $row['notif_id']);
+            $upd->execute();
+            $upd->close();
+        }
+    }
+}
+
+/**
  * Convert timeline column name to readable title
  */
 function getTimelineTitle($columnName) {
@@ -143,14 +204,19 @@ function checkUpcomingKeyDates() {
         'archive_date' => 'Archive'
     ];
 
-    // (engagement_idno|notif_field) pairs already notified on, so each date
-    // field is only ever notified once, independently of the others.
+    // (engagement_idno|field) pairs already notified on — checked against
+    // every field named in a notif_field list (which may cover more than one
+    // field, since qualifying items for the same engagement get bundled into
+    // a single notification below), so each field is only ever notified
+    // once, independently of the others.
     $already = [];
     $notifiedResult = $conn->query("SELECT engagement_idno, notif_field FROM engagement_notifications
                                      WHERE notif_type = 'upcoming_key_date' AND notif_field IS NOT NULL");
     if ($notifiedResult) {
         while ($row = $notifiedResult->fetch_assoc()) {
-            $already[$row['engagement_idno'] . '|' . $row['notif_field']] = true;
+            foreach (explode(',', $row['notif_field']) as $f) {
+                $already[$row['engagement_idno'] . '|' . trim($f)] = true;
+            }
         }
     }
 
@@ -159,32 +225,55 @@ function checkUpcomingKeyDates() {
             $engagement_idno = $timeline['engagement_idno'];
             $eng_name = $timeline['eng_name'];
 
+            // Collect every not-yet-notified field currently due within the
+            // window for this engagement, then send one notification/Slack
+            // message covering all of them instead of one per field.
+            $dueItems = [];
             foreach ($dateFields as $dateCol => $completedCol) {
                 $dateValue = $timeline[$dateCol];
                 $completedValue = $timeline[$completedCol];
 
                 if ($dateValue && !$completedValue) {
                     $daysUntilDate = round((strtotime($dateValue) - time()) / 86400);
-
-                    if ($daysUntilDate >= 1 && $daysUntilDate <= 7) {
-                        if (isset($already[$engagement_idno . '|' . $dateCol])) continue;
-
-                        $title = 'Upcoming Key Date';
-                        $dateTitle = $titleMap[$dateCol];
-                        $message = $eng_name . ' - ' . $dateTitle . ' is due in ' . $daysUntilDate . ' days';
-
-                        createNotification(
-                            $engagement_idno,
-                            'upcoming_key_date',
-                            $title,
-                            $message,
-                            $dateCol
-                        );
+                    if ($daysUntilDate >= 1 && $daysUntilDate <= 7 && !isset($already[$engagement_idno . '|' . $dateCol])) {
+                        $dueItems[] = [
+                            'field' => $dateCol,
+                            'title' => $titleMap[$dateCol],
+                            'date' => $dateValue,
+                            'daysUntil' => $daysUntilDate,
+                        ];
                     }
                 }
             }
+
+            if (empty($dueItems)) continue;
+
+            $notifField = implode(',', array_column($dueItems, 'field'));
+
+            if (count($dueItems) === 1) {
+                $item = $dueItems[0];
+                $title = 'Upcoming Key Date';
+                $message = $eng_name . ' - ' . $item['title'] . ' is due ' . formatKeyDate($item['date']) . ' (' . formatDaysAway($item['daysUntil']) . ')';
+            } else {
+                $title = 'Upcoming Key Dates';
+                $lines = array_map(
+                    fn($item) => '• ' . $item['title'] . ' — ' . formatKeyDate($item['date']) . ' (' . formatDaysAway($item['daysUntil']) . ')',
+                    $dueItems
+                );
+                $message = $eng_name . ' has ' . count($dueItems) . ' upcoming key dates:' . "\n" . implode("\n", $lines);
+            }
+
+            createNotification($engagement_idno, 'upcoming_key_date', $title, $message, $notifField);
         }
     }
+}
+
+function formatKeyDate($dateValue) {
+    return date('M j, Y', strtotime($dateValue));
+}
+
+function formatDaysAway($days) {
+    return $days . ' day' . ($days == 1 ? '' : 's');
 }
 
 /**

@@ -15,13 +15,6 @@ foreach ($allTimelineData as $row) {
     $timelineLookup[$row['engagement_idno']] = $row;
 }
 
-// eng_idno -> eng_name, used to show the client name instead of the raw ID
-// in the notification dropdown.
-$engNameLookup = [];
-foreach ($allEngagements as $row) {
-    $engNameLookup[$row['eng_idno']] = $row['eng_name'];
-}
-
 $activeEngagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
 $archivedEngagements = array_filter($allEngagements, fn($e) => $e['eng_status'] === 'archived');
 $activeCount = count($activeEngagements);
@@ -226,7 +219,7 @@ if (!empty($_SESSION['name'])) {
         .notification-icon.milestone { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
         .notification-icon.archive { background: color-mix(in srgb, var(--text-muted) 14%, transparent); color: var(--text-muted); }
         .notification-title { font-size: 12.5px; font-weight: 700; }
-        .notification-message { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .notification-message { font-size: 12px; color: var(--text-muted); margin-top: 2px; white-space: pre-line; }
         .notification-time { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
         .notification-empty { padding: 2rem 1rem; text-align: center; color: var(--text-muted); font-size: 12.5px; }
 
@@ -690,85 +683,15 @@ if (!empty($_SESSION['name'])) {
                                 }
 
                                 $timeAgo = getTimeAgo($notif['notif_timestamp']);
+                                // upcoming_key_date messages are fully formatted (client name, exact
+                                // date, days-away, and — when more than one date on the same
+                                // engagement qualifies at once — every one of them bundled into a
+                                // single message) at creation time now, and the notification resolves
+                                // itself when the item(s) it's about get marked complete. No need to
+                                // live-recompute it here the way upcoming_milestone still does below.
                                 $displayMessage = $notif['notif_message'];
 
-                                if ($notif['notif_type'] === 'upcoming_key_date') {
-                                    $engIdno = $notif['engagement_idno'];
-                                    $timelineQuery = "SELECT
-                                        internal_planning_call_date, internal_planning_call_completed_at,
-                                        planning_memo_date, planning_memo_completed_at,
-                                        irl_due_date, irl_completed_at,
-                                        client_planning_call_date, client_planning_call_completed_at,
-                                        fieldwork_date, fieldwork_completed_at,
-                                        fieldwork_client_calls_date, fieldwork_client_calls_completed_at,
-                                        fieldwork_documentation_date, fieldwork_documentation_completed_at,
-                                        leadsheet_date, leadsheet_completed_at,
-                                        conclusion_memo_date, conclusion_memo_completed_at,
-                                        draft_report_due_date, draft_report_completed_at,
-                                        final_report_date, final_report_completed_at,
-                                        archive_date, archive_completed_at
-                                        FROM engagement_timeline WHERE engagement_idno = ?";
-                                    $stmt = $conn->prepare($timelineQuery);
-                                    $stmt->bind_param('s', $engIdno);
-                                    $stmt->execute();
-                                    $tlResult = $stmt->get_result();
-                                    $timeline = $tlResult->fetch_assoc();
-                                    $stmt->close();
-
-                                    $dateFields = [
-                                        'internal_planning_call_date' => 'internal_planning_call_completed_at',
-                                        'planning_memo_date' => 'planning_memo_completed_at',
-                                        'irl_due_date' => 'irl_completed_at',
-                                        'client_planning_call_date' => 'client_planning_call_completed_at',
-                                        'fieldwork_date' => 'fieldwork_completed_at',
-                                        'fieldwork_client_calls_date' => 'fieldwork_client_calls_completed_at',
-                                        'fieldwork_documentation_date' => 'fieldwork_documentation_completed_at',
-                                        'leadsheet_date' => 'leadsheet_completed_at',
-                                        'conclusion_memo_date' => 'conclusion_memo_completed_at',
-                                        'draft_report_due_date' => 'draft_report_completed_at',
-                                        'final_report_date' => 'final_report_completed_at',
-                                        'archive_date' => 'archive_completed_at'
-                                    ];
-                                    $titleMap = [
-                                        'internal_planning_call_date' => 'Internal Planning Call',
-                                        'planning_memo_date' => 'Planning Memo',
-                                        'irl_due_date' => 'IRL Due Date',
-                                        'client_planning_call_date' => 'Client Planning Call',
-                                        'fieldwork_date' => 'Fieldwork',
-                                        'fieldwork_client_calls_date' => 'Fieldwork - Client Calls',
-                                        'fieldwork_documentation_date' => 'Fieldwork - Documentation',
-                                        'leadsheet_date' => 'Leadsheet',
-                                        'conclusion_memo_date' => 'Conclusion Memo',
-                                        'draft_report_due_date' => 'Draft Report Due',
-                                        'final_report_date' => 'Final Report',
-                                        'archive_date' => 'Archive'
-                                    ];
-                                    $engName = htmlspecialchars($engNameLookup[$notif['engagement_idno']] ?? $notif['engagement_idno']);
-
-                                    if ($timeline) {
-                                        // notif_field pins this notification to the specific date it was
-                                        // about, so it doesn't just show whichever field happens to still
-                                        // be incomplete — that could be a completely different one now
-                                        // that more than one key-date notification can exist per engagement.
-                                        // Older rows created before notif_field existed fall back to the
-                                        // original "first incomplete field" search.
-                                        if (!empty($notif['notif_field']) && isset($dateFields[$notif['notif_field']]) && $timeline[$notif['notif_field']]) {
-                                            $dateCol = $notif['notif_field'];
-                                            $daysAway = round((strtotime($timeline[$dateCol]) - time()) / 86400);
-                                            $dateTitle = $titleMap[$dateCol];
-                                            $displayMessage = $engName . ' - ' . $dateTitle . ' due in ' . max(0, $daysAway) . ' days';
-                                        } else {
-                                            foreach ($dateFields as $dateCol => $completedCol) {
-                                                if ($timeline[$dateCol] && !$timeline[$completedCol]) {
-                                                    $daysAway = round((strtotime($timeline[$dateCol]) - time()) / 86400);
-                                                    $dateTitle = $titleMap[$dateCol];
-                                                    $displayMessage = $engName . ' - ' . $dateTitle . ' due in ' . max(0, $daysAway) . ' days';
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                    }
-                                } elseif ($notif['notif_type'] === 'upcoming_milestone') {
+                                if ($notif['notif_type'] === 'upcoming_milestone') {
                                     $milestone = null;
                                     if (!empty($notif['notif_field']) && ctype_digit((string) $notif['notif_field'])) {
                                         $msId = (int) $notif['notif_field'];
