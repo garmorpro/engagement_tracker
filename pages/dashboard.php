@@ -565,6 +565,19 @@ if (!empty($_SESSION['name'])) {
         .drawer-link-btn-danger { color: var(--critical); }
         .drawer-planning-doc-row { display: flex; gap: 0.9rem; margin-bottom: 0.9rem; }
 
+        .doc-lightbox-scrim {
+            position: fixed; inset: 0; background: rgba(10, 15, 22, 0.85); z-index: 300;
+            display: none; align-items: center; justify-content: center; padding: 3rem 2rem;
+        }
+        .doc-lightbox-scrim.open { display: flex; }
+        .doc-lightbox-img { max-width: 100%; max-height: 100%; border-radius: 8px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+        .doc-lightbox-close {
+            position: fixed; top: 1.5rem; right: 1.5rem; width: 40px; height: 40px; border-radius: 50%;
+            border: none; background: var(--card); color: var(--text); font-size: 17px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .doc-lightbox-close:hover { background: var(--line); }
+
         .drawer-info-grid, .drawer-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.25rem; }
         .drawer-info-item { min-width: 0; }
         .drawer-info-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem; }
@@ -963,6 +976,11 @@ if (!empty($_SESSION['name'])) {
     </div>
     <input type="file" id="timelineImportFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
     <input type="file" id="planningDocFileInput" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">
+</div>
+
+<div class="doc-lightbox-scrim" id="docLightboxScrim">
+    <button class="doc-lightbox-close" id="docLightboxClose" title="Close"><i class="bi bi-x-lg"></i></button>
+    <img class="doc-lightbox-img" id="docLightboxImg" src="" alt="Planning document">
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1658,7 +1676,7 @@ if (!empty($_SESSION['name'])) {
                 <button class="drawer-link-btn drawer-link-btn-danger" id="drawerRemoveDocBtn">Remove</button>
             `;
             document.getElementById('drawerViewDocBtn').addEventListener('click', () => {
-                window.open('../api/view-engagement-screenshot.php?id=' + encodeURIComponent(eng.eng_idno), '_blank');
+                openDocLightbox('../api/view-engagement-screenshot.php?id=' + encodeURIComponent(eng.eng_idno));
             });
             document.getElementById('drawerReplaceDocBtn').addEventListener('click', () => {
                 document.getElementById('planningDocFileInput').click();
@@ -2794,6 +2812,23 @@ if (!empty($_SESSION['name'])) {
         if (!ev.target.closest('.drawer-status-wrap')) {
             document.getElementById('drawerStatusPopover')?.classList.remove('open');
         }
+    });
+
+    // Planning doc lightbox
+    function openDocLightbox(url) {
+        document.getElementById('docLightboxImg').src = url;
+        document.getElementById('docLightboxScrim').classList.add('open');
+    }
+    function closeDocLightbox() {
+        document.getElementById('docLightboxScrim').classList.remove('open');
+        document.getElementById('docLightboxImg').src = '';
+    }
+    document.getElementById('docLightboxClose').addEventListener('click', closeDocLightbox);
+    document.getElementById('docLightboxScrim').addEventListener('click', (ev) => {
+        if (ev.target.id === 'docLightboxScrim') closeDocLightbox();
+    });
+    document.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape') closeDocLightbox();
     });
 
     // Reopen the drawer (and, if flagged, the Manage Team modal) after a reload
