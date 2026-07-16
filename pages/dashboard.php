@@ -562,6 +562,8 @@ if (!empty($_SESSION['name'])) {
         .drawer-section-title .dot { width: 6px; height: 6px; border-radius: 50%; }
         .drawer-link-btn { font-size: 12px; font-weight: 600; color: var(--ink); background: none; border: none; cursor: pointer; padding: 0; }
         .drawer-link-btn:hover { text-decoration: underline; }
+        .drawer-link-btn-danger { color: var(--critical); }
+        .drawer-planning-doc-row { display: flex; gap: 0.9rem; margin-bottom: 0.9rem; }
 
         .drawer-info-grid, .drawer-details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem 1.25rem; }
         .drawer-info-item { min-width: 0; }
@@ -960,6 +962,7 @@ if (!empty($_SESSION['name'])) {
         <div class="drawer-loading">Loading&hellip;</div>
     </div>
     <input type="file" id="timelineImportFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+    <input type="file" id="planningDocFileInput" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1628,6 +1631,7 @@ if (!empty($_SESSION['name'])) {
                         <button class="drawer-link-btn" id="drawerEditTimelineBtn">Edit Timeline</button>
                     </div>
                 </div>
+                <div id="drawerPlanningDocRow" class="drawer-planning-doc-row"></div>
                 <div id="drawerTimelineContent"></div>
                 <div class="drawer-tl-hint">Click a date to mark it complete or incomplete.</div>
             </div>
@@ -1635,6 +1639,7 @@ if (!empty($_SESSION['name'])) {
 
         renderDrawerTeam(team, auditTypes);
         renderDrawerTimeline(timeline, eng.eng_idno);
+        renderPlanningDocRow(eng);
 
         document.getElementById('drawerManageTeamBtn').addEventListener('click', openManageTeamModal);
         document.getElementById('drawerEditTimelineBtn').addEventListener('click', () => openEditTimelineModal());
@@ -1642,6 +1647,76 @@ if (!empty($_SESSION['name'])) {
             document.getElementById('timelineImportFileInput').click();
         });
     }
+
+    // ---------- Planning doc (uploaded screenshot of the client's key-dates table) ----------
+    function renderPlanningDocRow(eng) {
+        const row = document.getElementById('drawerPlanningDocRow');
+        if (eng.eng_planning_doc) {
+            row.innerHTML = `
+                <button class="drawer-link-btn" id="drawerViewDocBtn"><i class="bi bi-image"></i> View Planning Doc</button>
+                <button class="drawer-link-btn" id="drawerReplaceDocBtn">Replace</button>
+                <button class="drawer-link-btn drawer-link-btn-danger" id="drawerRemoveDocBtn">Remove</button>
+            `;
+            document.getElementById('drawerViewDocBtn').addEventListener('click', () => {
+                window.open('../api/view-engagement-screenshot.php?id=' + encodeURIComponent(eng.eng_idno), '_blank');
+            });
+            document.getElementById('drawerReplaceDocBtn').addEventListener('click', () => {
+                document.getElementById('planningDocFileInput').click();
+            });
+            document.getElementById('drawerRemoveDocBtn').addEventListener('click', () => {
+                Swal.fire({
+                    title: 'Remove Planning Doc?',
+                    text: 'This deletes the uploaded screenshot for this engagement. This cannot be undone.',
+                    icon: 'warning',
+                    confirmButtonText: 'Remove',
+                    cancelButtonText: 'Cancel',
+                    showCancelButton: true,
+                    confirmButtonColor: 'var(--danger-red)'
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+                    fetch('../api/delete-engagement-screenshot.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ engagement_id: eng.eng_idno })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) refreshDrawer();
+                        else Swal.fire('Error', data.message || 'Failed to remove screenshot', 'error');
+                    })
+                    .catch(() => Swal.fire('Error', 'Failed to remove screenshot', 'error'));
+                });
+            });
+        } else {
+            row.innerHTML = `<button class="drawer-link-btn" id="drawerUploadDocBtn"><i class="bi bi-upload"></i> Upload Planning Doc</button>`;
+            document.getElementById('drawerUploadDocBtn').addEventListener('click', () => {
+                document.getElementById('planningDocFileInput').click();
+            });
+        }
+    }
+
+    document.getElementById('planningDocFileInput').addEventListener('change', async (ev) => {
+        const file = ev.target.files[0];
+        ev.target.value = '';
+        if (!file || !drawerData) return;
+
+        const formData = new FormData();
+        formData.append('engagement_id', drawerData.engagement.eng_idno);
+        formData.append('screenshot', file);
+
+        try {
+            const res = await fetch('../api/upload-engagement-screenshot.php', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                refreshDrawer();
+            } else {
+                Swal.fire('Error', data.message || 'Failed to upload screenshot', 'error');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            Swal.fire('Error', 'Failed to upload screenshot', 'error');
+        }
+    });
 
     function renderDrawerTeam(team, auditTypes) {
         const el = document.getElementById('drawerTeamContent');
