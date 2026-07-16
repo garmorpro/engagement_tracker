@@ -2,6 +2,7 @@
 // Use absolute path instead of relative path
 $basePath = dirname(dirname(__FILE__));
 require_once $basePath . '/path.php';
+require_once $basePath . '/includes/functions.php';
 
 /**
  * Create a notification in the database
@@ -35,7 +36,11 @@ function createNotification($engagement_idno, $notif_type, $notif_title, $notif_
     $stmt->bind_param('ssss', $engagement_idno, $notif_type, $notif_title, $notif_message);
     $result = $stmt->execute();
     $stmt->close();
-    
+
+    if ($result) {
+        sendSlackNotification($conn, "*{$notif_title}*\n{$notif_message}");
+    }
+
     return $result;
 }
 

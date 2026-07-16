@@ -596,6 +596,18 @@ body {
         <div id="accountsList" style="max-height: 400px; overflow-y: auto;">
             <!-- Accounts will be dynamically populated here -->
         </div>
+
+        <div style="margin: 1.5rem 0 0.6rem; padding-top: 1.25rem; border-top: 1px solid var(--line);">
+            <h6 style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 0.6rem;">Slack Notifications</h6>
+            <label class="form-label">Incoming Webhook URL</label>
+            <input type="text" class="form-control" id="slackWebhookInput" placeholder="https://hooks.slack.com/services/...">
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0.5rem 0 0;">Leave blank to turn Slack notifications off. Applies to upcoming key dates, upcoming milestones, and ready-to-archive alerts.</p>
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" id="slackTestBtn">Send Test</button>
+                <button type="button" class="btn btn-primary" id="slackSaveBtn">Save</button>
+            </div>
+            <p id="slackStatusMsg" style="font-size: 11.5px; margin: 0.6rem 0 0; display: none;"></p>
+        </div>
     </div>
 </div>
 
@@ -806,7 +818,51 @@ function verifyAdminPin(pin) {
 function openAdminDashboard() {
     document.getElementById('adminDashboardModal').classList.add('active');
     loadAccountsList();
+    loadSlackSettings();
 }
+
+function showSlackStatus(message, isError) {
+    const el = document.getElementById('slackStatusMsg');
+    el.textContent = message;
+    el.style.color = isError ? 'var(--critical)' : 'var(--good, #1F7A54)';
+    el.style.display = 'block';
+}
+
+function loadSlackSettings() {
+    fetch(getApiUrl('get_slack_webhook.php'))
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('slackWebhookInput').value = data.webhook_url || '';
+            }
+        })
+        .catch(() => {});
+}
+
+document.getElementById('slackSaveBtn').addEventListener('click', () => {
+    const webhookUrl = document.getElementById('slackWebhookInput').value.trim();
+    fetch(getApiUrl('update_slack_webhook.php'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ webhook_url: webhookUrl })
+    })
+        .then(res => res.json())
+        .then(data => showSlackStatus(data.message, !data.success))
+        .catch(() => showSlackStatus('Failed to save Slack webhook', true));
+});
+
+document.getElementById('slackTestBtn').addEventListener('click', () => {
+    const webhookUrl = document.getElementById('slackWebhookInput').value.trim();
+    showSlackStatus('Sending…', false);
+    fetch(getApiUrl('test_slack_webhook.php'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ webhook_url: webhookUrl })
+    })
+        .then(res => res.json())
+        .then(data => showSlackStatus(data.message, !data.success))
+        .catch(() => showSlackStatus('Failed to send test message', true));
+});
 
 function closeAdminDashboard() {
     document.getElementById('adminDashboardModal').classList.remove('active');

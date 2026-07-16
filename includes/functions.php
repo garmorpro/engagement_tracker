@@ -469,3 +469,54 @@ function getAllActiveEngagementsMobile(mysqli $conn): array
 
     return $engagements;
 }
+
+
+// APP SETTINGS
+// Simple key/value store for app-wide config that should be editable from
+// the Admin Dashboard rather than a server file (currently just the Slack
+// webhook URL, but built to hold more than one setting).
+
+function getAppSetting(mysqli $conn, string $key): ?string
+{
+    $stmt = $conn->prepare("SELECT setting_value FROM app_settings WHERE setting_key = ?");
+    $stmt->bind_param('s', $key);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    return $row['setting_value'] ?? null;
+}
+
+function setAppSetting(mysqli $conn, string $key, string $value): bool
+{
+    $stmt = $conn->prepare("INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?)
+                             ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)");
+    $stmt->bind_param('ss', $key, $value);
+    return $stmt->execute();
+}
+
+// Posts $message to the configured Slack webhook, if one is set. Silently
+// no-ops when unconfigured (Slack is optional) and never throws — a Slack
+// delivery failure should never break notification creation, which is why
+// this is called from inside createNotification() rather than the other
+// way around.
+function sendSlackNotification(mysqli $conn, string $message): void
+{
+    $webhookUrl = getAppSetting($conn, 'slack_webhook_url');
+    if (empty($webhookUrl)) {
+        return;
+    }
+
+    $payload = json_encode(['text' => $message]);
+
+    $ch = curl_init($webhookUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_exec($ch);
+    if (curl_errno($ch)) {
+        error_log('Slack notification failed: ' . curl_error($ch));
+    }
+    curl_close($ch);
+}
