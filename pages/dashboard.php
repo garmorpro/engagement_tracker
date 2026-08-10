@@ -2762,8 +2762,16 @@ if (!empty($_SESSION['name'])) {
         planning_memo_date:           { exact: 'Compose Planning Memo',                  fallback: [/\bplanning memo\b/i] },
         irl_due_date:                 { exact: 'Send Information Request List (IRL)',    fallback: [/\birl\b/i, /information request list/i] },
         client_planning_call_date:    { exact: 'Client Planning Call',                   fallback: [/client.*planning.*call/i] },
-        fieldwork_client_calls_end_date:    { exact: 'Fieldwork - Client Calls',          fallback: [/fieldwork.*client.*call/i] },
-        fieldwork_documentation_end_date:   { exact: 'Fieldwork - Documentation',         fallback: [/fieldwork.*document/i] },
+        // Real templates seen so far label these as plain sub-task rows
+        // under a parent "Fieldwork" line — "Client Calls" and
+        // "Documentation Week 1" (which may repeat as Week 2, Week 3, etc.
+        // on longer engagements) — not "Fieldwork - Client Calls" like the
+        // fallback below assumes. \bclient\s*calls?\b matches "Client
+        // Calls" without also grabbing "Client Planning Call" (a different,
+        // separately-tracked field) since "Planning" breaks the \s*-only
+        // gap between "client" and "call".
+        fieldwork_client_calls_end_date:    { exact: 'Client Calls',          fallback: [/\bclient\s*calls?\b/i, /fieldwork.*client.*call/i] },
+        fieldwork_documentation_end_date:   { exact: 'Documentation',         fallback: [/\bdocumentation\b/i] },
         leadsheet_date:                { exact: 'Lead Sheets Due',                        fallback: [/lead\s*sheet/i] },
         conclusion_memo_date:          { exact: 'Compose Conclusion Memo',                fallback: [/conclusion memo/i] },
         draft_report_due_date:         { exact: 'Draft Report Due',                       fallback: [/draft report.*due/i] },
@@ -2837,6 +2845,34 @@ if (!empty($_SESSION['name'])) {
         const unmatched = [];
         Object.entries(TIMELINE_IMPORT_PATTERNS).forEach(([field, { exact, fallback }]) => {
             if (!dateKey) { unmatched.push(field); return; }
+
+            const startField = RANGE_FIELD_PAIRS[field];
+            if (startField) {
+                // The two fieldwork ranges can span more than one row on
+                // some templates — "Documentation Week 1"/"Week 2"/... —
+                // so match every row whose name qualifies (exact label
+                // first, falling back to the looser patterns) and span the
+                // full range: earliest start across all of them to latest
+                // finish, rather than just whichever row happens to be
+                // first in the sheet.
+                let matchedRows = rows.filter(r => String(r[taskKey] || '').trim().toLowerCase() === exact.toLowerCase());
+                if (!matchedRows.length) {
+                    for (const pattern of fallback) {
+                        matchedRows = rows.filter(r => pattern.test(String(r[taskKey] || '').trim()));
+                        if (matchedRows.length) break;
+                    }
+                }
+                const endDates = matchedRows.map(r => parseDateCell(r[dateKey])).filter(Boolean).sort();
+                if (!endDates.length) { unmatched.push(field); return; }
+                matched[field] = endDates[endDates.length - 1];
+
+                if (startDateKey) {
+                    const startDates = matchedRows.map(r => parseDateCell(r[startDateKey])).filter(Boolean).sort();
+                    if (startDates.length) matched[startField] = startDates[0];
+                }
+                return;
+            }
+
             let row = rows.find(r => String(r[taskKey] || '').trim().toLowerCase() === exact.toLowerCase());
             if (!row) {
                 for (const pattern of fallback) {
@@ -2847,11 +2883,6 @@ if (!empty($_SESSION['name'])) {
             const parsedDate = row ? parseDateCell(row[dateKey]) : null;
             if (parsedDate) {
                 matched[field] = parsedDate;
-                const startField = RANGE_FIELD_PAIRS[field];
-                if (startField && startDateKey) {
-                    const parsedStart = parseDateCell(row[startDateKey]);
-                    if (parsedStart) matched[startField] = parsedStart;
-                }
             } else {
                 unmatched.push(field);
             }
