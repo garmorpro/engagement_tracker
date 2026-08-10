@@ -608,6 +608,18 @@ body {
             </div>
             <p id="slackStatusMsg" style="font-size: 11.5px; margin: 0.6rem 0 0; display: none;"></p>
         </div>
+
+        <div style="margin: 1.5rem 0 0.6rem; padding-top: 1.25rem; border-top: 1px solid var(--line);">
+            <h6 style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 0.6rem;">Push Notifications (ntfy)</h6>
+            <label class="form-label">Topic URL</label>
+            <input type="text" class="form-control" id="ntfyTopicInput" placeholder="https://ntfy.sh/your-private-topic-name">
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0.5rem 0 0;">Install the free ntfy app on your phone and subscribe to this same topic name to get push notifications. Pick something private/hard-to-guess — anyone who knows the topic name can subscribe to it. Leave blank to turn push notifications off. Runs alongside Slack, not instead of it.</p>
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" id="ntfyTestBtn">Send Test</button>
+                <button type="button" class="btn btn-primary" id="ntfySaveBtn">Save</button>
+            </div>
+            <p id="ntfyStatusMsg" style="font-size: 11.5px; margin: 0.6rem 0 0; display: none;"></p>
+        </div>
     </div>
 </div>
 
@@ -819,6 +831,7 @@ function openAdminDashboard() {
     document.getElementById('adminDashboardModal').classList.add('active');
     loadAccountsList();
     loadSlackSettings();
+    loadNtfySettings();
 }
 
 function showSlackStatus(message, isError) {
@@ -862,6 +875,49 @@ document.getElementById('slackTestBtn').addEventListener('click', () => {
         .then(res => res.json())
         .then(data => showSlackStatus(data.message, !data.success))
         .catch(() => showSlackStatus('Failed to send test message', true));
+});
+
+function showNtfyStatus(message, isError) {
+    const el = document.getElementById('ntfyStatusMsg');
+    el.textContent = message;
+    el.style.color = isError ? 'var(--critical)' : 'var(--good, #1F7A54)';
+    el.style.display = 'block';
+}
+
+function loadNtfySettings() {
+    fetch(getApiUrl('get_ntfy_settings.php'))
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('ntfyTopicInput').value = data.topic_url || '';
+            }
+        })
+        .catch(() => {});
+}
+
+document.getElementById('ntfySaveBtn').addEventListener('click', () => {
+    const topicUrl = document.getElementById('ntfyTopicInput').value.trim();
+    fetch(getApiUrl('update_ntfy_settings.php'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic_url: topicUrl })
+    })
+        .then(res => res.json())
+        .then(data => showNtfyStatus(data.message, !data.success))
+        .catch(() => showNtfyStatus('Failed to save push notification settings', true));
+});
+
+document.getElementById('ntfyTestBtn').addEventListener('click', () => {
+    const topicUrl = document.getElementById('ntfyTopicInput').value.trim();
+    showNtfyStatus('Sending…', false);
+    fetch(getApiUrl('test_ntfy_notification.php'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic_url: topicUrl })
+    })
+        .then(res => res.json())
+        .then(data => showNtfyStatus(data.message, !data.success))
+        .catch(() => showNtfyStatus('Failed to send test push', true));
 });
 
 function closeAdminDashboard() {

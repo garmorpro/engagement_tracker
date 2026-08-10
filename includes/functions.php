@@ -520,3 +520,31 @@ function sendSlackNotification(mysqli $conn, string $message): void
     }
     curl_close($ch);
 }
+
+// Posts $title/$message as a push notification to the configured ntfy.sh
+// topic URL, if one is set. Same optional/never-throws contract as
+// sendSlackNotification() above — this runs alongside Slack, not instead of
+// it, so a missing or failing ntfy config must never block anything else.
+function sendNtfyNotification(mysqli $conn, string $title, string $message): void
+{
+    $topicUrl = getAppSetting($conn, 'ntfy_topic_url');
+    if (empty($topicUrl)) {
+        return;
+    }
+
+    $ch = curl_init($topicUrl);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'Title: ' . $title,
+        'Priority: default',
+        'Content-Type: text/plain; charset=utf-8'
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    curl_exec($ch);
+    if (curl_errno($ch)) {
+        error_log('ntfy notification failed: ' . curl_error($ch));
+    }
+    curl_close($ch);
+}

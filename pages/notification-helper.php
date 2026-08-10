@@ -45,6 +45,7 @@ function createNotification($engagement_idno, $notif_type, $notif_title, $notif_
 
     if ($result) {
         sendSlackNotification($conn, "*{$notif_title}*\n{$notif_message}");
+        sendNtfyNotification($conn, $notif_title, $notif_message);
     }
 
     return $result;
