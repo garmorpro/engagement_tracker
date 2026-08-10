@@ -696,6 +696,11 @@ if (!empty($_SESSION['name'])) {
                         </div>
                     </div>
                     <div class="profile-dropdown-menu">
+                        <?php if (in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'], true)): ?>
+                        <a href="settings.php" class="profile-dropdown-item">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                        <?php endif; ?>
                         <a href="<?php echo BASE_URL . '/auth/logout.php'; ?>" class="profile-dropdown-item logout">
                             <i class="bi bi-box-arrow-right"></i> Log Out
                         </a>

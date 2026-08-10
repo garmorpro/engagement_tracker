@@ -20,7 +20,7 @@ if ($userId <= 0) {
 // Include your database connection
 require_once '../includes/functions.php';
 require_once '../path.php';
-requireAdminVerified();
+requireAdminRole();
 
 try {
     // Check if $conn exists
@@ -29,7 +29,7 @@ try {
         die(json_encode(['success' => false, 'message' => 'Database connection not available']));
     }
     
-    $query = "SELECT `user_id`, `name`, `email` FROM `service_accounts` WHERE `user_id` = ?";
+    $query = "SELECT `user_id`, `name`, `email`, `role` FROM `service_accounts` WHERE `user_id` = ?";
     $stmt = $conn->prepare($query);
     
     if (!$stmt) {
@@ -55,7 +55,8 @@ try {
             'account' => [
                 'user_id' => intval($account['user_id']),
                 'name' => $account['name'] ?: '',
-                'email' => $account['email'] ?: ''
+                'email' => $account['email'] ?: '',
+                'role' => $account['role'] ?: 'standard'
             ]
         ]);
     } else {

@@ -18,10 +18,15 @@ function requireApiAuth()
     }
 }
 
-// ADMIN ACCOUNT-MANAGEMENT GUARD
-// Call at the top of any account-management endpoint (get_accounts, register,
-// get_account_details, update_account, delete_account). Requires that
-// verify_admin_pin.php has been passed within the last 15 minutes.
+// ADMIN ACCOUNT-MANAGEMENT GUARD (legacy)
+// Originally called at the top of every account-management endpoint,
+// requiring that verify_admin_pin.php had been passed within the last 15
+// minutes — a separate 6-digit super-admin PIN gate reached from the
+// pre-login public page. Superseded by requireAdminRole() below once
+// account management + settings moved to an in-app Settings page reached
+// via the profile dropdown, gated on the logged-in session's own role
+// instead. Left in place, unused, in case that PIN flow is ever revisited —
+// auth/verify_admin_pin.php still works standalone if called directly.
 function requireAdminVerified()
 {
     $window = 15 * 60; // seconds
@@ -29,6 +34,23 @@ function requireAdminVerified()
         http_response_code(403);
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => 'Admin verification required']);
+        exit;
+    }
+}
+
+// ADMIN ROLE GUARD
+// Call at the top of any account-management or admin-settings endpoint.
+// Requires an authenticated session whose role is 'admin' or 'super_admin' —
+// no separate PIN step, just the account's own role. Pairs with the
+// page-level check at the top of pages/settings.php, which redirects
+// non-admins away before they ever see the page.
+function requireAdminRole()
+{
+    requireApiAuth();
+    if (!in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'], true)) {
+        http_response_code(403);
+        header('Content-Type: application/json');
+        echo json_encode(['success' => false, 'message' => 'Admin access required']);
         exit;
     }
 }

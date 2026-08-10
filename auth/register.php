@@ -4,11 +4,11 @@ require_once '../includes/session_config.php';
 startSecureSession();
 require_once '../includes/functions.php';
 require_once '../path.php';
-requireAdminVerified();
+requireAdminRole();
 
 // Only handle POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ' . BASE_URL);
+    header('Location: ' . BASE_URL . '/pages/settings.php');
     exit;
 }
 
@@ -29,7 +29,7 @@ if (!in_array($role, ['standard', 'admin'])) $errors[] = 'Invalid role.';
 
 if ($errors) {
     $_SESSION['error'] = implode('<br>', $errors);
-    header('Location: ' . BASE_URL);
+    header('Location: ' . BASE_URL . '/pages/settings.php');
     exit;
 }
 
@@ -43,7 +43,7 @@ $stmt->close();
 
 if ($count > 0) {
     $_SESSION['error'] = 'Email already registered.';
-    header('Location: ' . BASE_URL);
+    header('Location: ' . BASE_URL . '/pages/settings.php');
     exit;
 }
 
@@ -55,11 +55,10 @@ $success = $stmt->execute();
 $stmt->close();
 
 if ($success) {
-    // Redirect to dashboard
-    header('Location: ' . BASE_URL . '/');
+    header('Location: ' . BASE_URL . '/pages/settings.php');
     exit;
 } else {
     $_SESSION['error'] = 'Failed to create account.';
-    header('Location: ' . BASE_URL);
+    header('Location: ' . BASE_URL . '/pages/settings.php');
     exit;
 }
