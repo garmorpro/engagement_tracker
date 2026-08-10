@@ -281,11 +281,19 @@ if (!empty($_SESSION['name'])) {
 
         .register { border-top: 1px solid var(--line); }
         .reg-row { display: flex; align-items: center; gap: 1.25rem; padding: 13px 8px 13px 4px; border-bottom: 1px solid var(--line); cursor: pointer; position: relative; transition: background-color 0.1s ease; }
-        .reg-row:hover { background: color-mix(in srgb, var(--ink) 6%, var(--paper)); }
-        .reg-row:hover .row-actions { opacity: 1; }
         .reg-row.is-critical { background: var(--critical-tint); }
-        .reg-row.is-critical:hover { background: var(--critical-tint-strong); }
         .reg-row.is-archived { opacity: 0.62; }
+        /* :hover rules gated to actual mouse/trackpad devices — on a touch
+           screen, an element with :hover styling makes iOS/Android browsers
+           spend the first tap entering the hover state (revealing
+           row-actions here) instead of firing click, so opening a row took
+           two taps. Touch devices never match this query, so :hover simply
+           never engages and the very first tap opens the drawer. */
+        @media (hover: hover) and (pointer: fine) {
+            .reg-row:hover { background: color-mix(in srgb, var(--ink) 6%, var(--paper)); }
+            .reg-row:hover .row-actions { opacity: 1; }
+            .reg-row.is-critical:hover { background: var(--critical-tint-strong); }
+        }
 
         .reg-tick { width: 3px; align-self: stretch; border-radius: 2px; flex-shrink: 0; }
         .reg-id { font-size: 11.5px; color: var(--text-muted); width: 90px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -470,6 +478,21 @@ if (!empty($_SESSION['name'])) {
                 position: fixed; top: 64px; left: 0.75rem; right: 0.75rem;
                 width: auto; max-height: calc(100vh - 80px);
             }
+
+            /* Each row was cramming a fixed 90px ID column, a fixed 96px
+               due-date column, and a 56px-wide (invisible but still
+               occupying space) actions column onto one line — leaving the
+               client name almost no room, so it collapsed to a single
+               letter before the ellipsis kicked in. Reflow into a 2-line
+               card instead: client name + manager get the full width on
+               their own line, ID and due date wrap to a second line below. */
+            .list-head { display: none; }
+            .reg-row { flex-wrap: wrap; row-gap: 4px; column-gap: 0.6rem; padding: 12px 6px; }
+            .reg-tick { order: 1; }
+            .reg-main { order: 2; flex: 1 1 calc(100% - 14px); min-width: 0; }
+            .reg-id { order: 3; width: auto; }
+            .reg-due { order: 4; width: auto; margin-left: auto; }
+            .row-actions { display: none; }
         }
 
         /* ========== SWEETALERT2 STYLING ==========
