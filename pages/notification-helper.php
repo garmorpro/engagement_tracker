@@ -92,8 +92,8 @@ function resolveKeyDateNotification($engagement_idno, $completedField) {
         'irl_due_date' => 'irl_completed_at',
         'client_planning_call_date' => 'client_planning_call_completed_at',
         'fieldwork_date' => 'fieldwork_completed_at',
-        'fieldwork_client_calls_date' => 'fieldwork_client_calls_completed_at',
-        'fieldwork_documentation_date' => 'fieldwork_documentation_completed_at',
+        'fieldwork_client_calls_end_date' => 'fieldwork_client_calls_completed_at',
+        'fieldwork_documentation_end_date' => 'fieldwork_documentation_completed_at',
         'leadsheet_date' => 'leadsheet_completed_at',
         'conclusion_memo_date' => 'conclusion_memo_completed_at',
         'draft_report_due_date' => 'draft_report_completed_at',
@@ -181,8 +181,8 @@ function checkUpcomingKeyDates() {
         'irl_due_date' => 'irl_completed_at',
         'client_planning_call_date' => 'client_planning_call_completed_at',
         'fieldwork_date' => 'fieldwork_completed_at',
-        'fieldwork_client_calls_date' => 'fieldwork_client_calls_completed_at',
-        'fieldwork_documentation_date' => 'fieldwork_documentation_completed_at',
+        'fieldwork_client_calls_end_date' => 'fieldwork_client_calls_completed_at',
+        'fieldwork_documentation_end_date' => 'fieldwork_documentation_completed_at',
         'leadsheet_date' => 'leadsheet_completed_at',
         'conclusion_memo_date' => 'conclusion_memo_completed_at',
         'draft_report_due_date' => 'draft_report_completed_at',
@@ -196,13 +196,23 @@ function checkUpcomingKeyDates() {
         'irl_due_date' => 'IRL Due Date',
         'client_planning_call_date' => 'Client Planning Call',
         'fieldwork_date' => 'Fieldwork',
-        'fieldwork_client_calls_date' => 'Fieldwork - Client Calls',
-        'fieldwork_documentation_date' => 'Fieldwork - Documentation',
+        'fieldwork_client_calls_end_date' => 'Fieldwork - Client Calls',
+        'fieldwork_documentation_end_date' => 'Fieldwork - Documentation',
         'leadsheet_date' => 'Leadsheet',
         'conclusion_memo_date' => 'Conclusion Memo',
         'draft_report_due_date' => 'Draft Report Due',
         'final_report_date' => 'Final Report',
         'archive_date' => 'Archive'
+    ];
+
+    // fieldwork_client_calls/documentation are due-date-driven off their
+    // *_end_date (the key above), but display as a range when a start date
+    // is also on file — maps each such "due" column to its paired start
+    // column so the notification message can read "Jul 6, 2026 - Jul 10,
+    // 2026" instead of just the end date.
+    $rangeStartFields = [
+        'fieldwork_client_calls_end_date' => 'fieldwork_client_calls_start_date',
+        'fieldwork_documentation_end_date' => 'fieldwork_documentation_start_date',
     ];
 
     // (engagement_idno|field) pairs already notified on — checked against
@@ -237,10 +247,15 @@ function checkUpcomingKeyDates() {
                 if ($dateValue && !$completedValue) {
                     $daysUntilDate = round((strtotime($dateValue) - time()) / 86400);
                     if ($daysUntilDate >= 1 && $daysUntilDate <= 7 && !isset($already[$engagement_idno . '|' . $dateCol])) {
+                        $dateLabel = formatKeyDate($dateValue);
+                        $startCol = $rangeStartFields[$dateCol] ?? null;
+                        if ($startCol && !empty($timeline[$startCol])) {
+                            $dateLabel = formatKeyDate($timeline[$startCol]) . ' - ' . $dateLabel;
+                        }
                         $dueItems[] = [
                             'field' => $dateCol,
                             'title' => $titleMap[$dateCol],
-                            'date' => $dateValue,
+                            'dateLabel' => $dateLabel,
                             'daysUntil' => $daysUntilDate,
                         ];
                     }
@@ -254,11 +269,11 @@ function checkUpcomingKeyDates() {
             if (count($dueItems) === 1) {
                 $item = $dueItems[0];
                 $title = 'Upcoming Key Date';
-                $message = $eng_name . ' - ' . $item['title'] . ' is due ' . formatKeyDate($item['date']) . ' (' . formatDaysAway($item['daysUntil']) . ')';
+                $message = $eng_name . ' - ' . $item['title'] . ' is due ' . $item['dateLabel'] . ' (' . formatDaysAway($item['daysUntil']) . ')';
             } else {
                 $title = 'Upcoming Key Dates';
                 $lines = array_map(
-                    fn($item) => '• ' . $item['title'] . ' — ' . formatKeyDate($item['date']) . ' (' . formatDaysAway($item['daysUntil']) . ')',
+                    fn($item) => '• ' . $item['title'] . ' — ' . $item['dateLabel'] . ' (' . formatDaysAway($item['daysUntil']) . ')',
                     $dueItems
                 );
                 $message = $eng_name . ' has ' . count($dueItems) . ' upcoming key dates:' . "\n" . implode("\n", $lines);

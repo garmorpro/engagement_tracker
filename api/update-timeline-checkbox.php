@@ -25,14 +25,18 @@ if (!$engagement_id || !$date_field || !$completed_field) {
 
 try {
     // Validate field names to prevent SQL injection
+    // fieldwork_client_calls/documentation now key off their *_end_date
+    // column here — that's the "due" date the completion checkbox and
+    // notification system care about; the *_start_date is display-only
+    // (renders the range in the drawer, never drives overdue/complete logic).
     $validDateFields = [
         'internal_planning_call_date',
         'planning_memo_date',
         'irl_due_date',
         'client_planning_call_date',
         'fieldwork_date',
-        'fieldwork_client_calls_date',
-        'fieldwork_documentation_date',
+        'fieldwork_client_calls_end_date',
+        'fieldwork_documentation_end_date',
         'leadsheet_date',
         'conclusion_memo_date',
         'draft_report_due_date',

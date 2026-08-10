@@ -1475,8 +1475,8 @@ if (!empty($_SESSION['name'])) {
         { label: 'Planning Memo',          date: 'planning_memo_date',          completed: 'planning_memo_completed_at' },
         { label: 'IRL Due',                date: 'irl_due_date',                completed: 'irl_completed_at' },
         { label: 'Client Planning Call',   date: 'client_planning_call_date',   completed: 'client_planning_call_completed_at' },
-        { label: 'Fieldwork - Client Calls',    date: 'fieldwork_client_calls_date',    completed: 'fieldwork_client_calls_completed_at' },
-        { label: 'Fieldwork - Documentation',   date: 'fieldwork_documentation_date',   completed: 'fieldwork_documentation_completed_at' },
+        { label: 'Fieldwork - Client Calls',    date: 'fieldwork_client_calls_end_date',    startDate: 'fieldwork_client_calls_start_date',    completed: 'fieldwork_client_calls_completed_at' },
+        { label: 'Fieldwork - Documentation',   date: 'fieldwork_documentation_end_date',   startDate: 'fieldwork_documentation_start_date',   completed: 'fieldwork_documentation_completed_at' },
         { label: 'Leadsheet Due',          date: 'leadsheet_date',              completed: 'leadsheet_completed_at' },
         { label: 'Conclusion Memo',        date: 'conclusion_memo_date',        completed: 'conclusion_memo_completed_at' },
         { label: 'Draft Report Due',       date: 'draft_report_due_date',       completed: 'draft_report_completed_at' },
@@ -1838,6 +1838,13 @@ if (!empty($_SESSION['name'])) {
 
             if (rawDate) {
                 dateLabel = fmtDate(rawDate) || 'Not set';
+                // Steps with a startDate (currently the two fieldwork phases)
+                // show as a range once both ends are on file — the end date
+                // still drives overdue/complete, the start is display-only.
+                if (step.startDate) {
+                    const startLabel = fmtDate(timeline[step.startDate]);
+                    if (startLabel) dateLabel = `${startLabel} - ${dateLabel}`;
+                }
                 const due = new Date(rawDate + 'T00:00:00');
                 if (completedAt) {
                     dotClass = 'done';
@@ -2363,8 +2370,10 @@ if (!empty($_SESSION['name'])) {
             planning_memo_date:            (overrides && overrides.planning_memo_date) || timeline.planning_memo_date || '',
             irl_due_date:                  (overrides && overrides.irl_due_date) || timeline.irl_due_date || '',
             client_planning_call_date:     (overrides && overrides.client_planning_call_date) || timeline.client_planning_call_date || '',
-            fieldwork_client_calls_date:   (overrides && overrides.fieldwork_client_calls_date) || timeline.fieldwork_client_calls_date || '',
-            fieldwork_documentation_date:  (overrides && overrides.fieldwork_documentation_date) || timeline.fieldwork_documentation_date || '',
+            fieldwork_client_calls_start_date:   (overrides && overrides.fieldwork_client_calls_start_date) || timeline.fieldwork_client_calls_start_date || '',
+            fieldwork_client_calls_end_date:     (overrides && overrides.fieldwork_client_calls_end_date) || timeline.fieldwork_client_calls_end_date || '',
+            fieldwork_documentation_start_date:  (overrides && overrides.fieldwork_documentation_start_date) || timeline.fieldwork_documentation_start_date || '',
+            fieldwork_documentation_end_date:    (overrides && overrides.fieldwork_documentation_end_date) || timeline.fieldwork_documentation_end_date || '',
             leadsheet_date:                (overrides && overrides.leadsheet_date) || timeline.leadsheet_date || '',
             conclusion_memo_date:          (overrides && overrides.conclusion_memo_date) || timeline.conclusion_memo_date || '',
             draft_report_due_date:         (overrides && overrides.draft_report_due_date) || timeline.draft_report_due_date || '',
@@ -2402,13 +2411,31 @@ if (!empty($_SESSION['name'])) {
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Client Planning Call</label>
                         <input type="date" id="client_planning_call_date" class="swal2-input" value="${timelineData.client_planning_call_date}">
                     </div>
-                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                    <div style="grid-column: span 2; width: 100%; box-sizing: border-box; min-width: 0;">
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Fieldwork - Client Calls</label>
-                        <input type="date" id="fieldwork_client_calls_date" class="swal2-input" value="${timelineData.fieldwork_client_calls_date}">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.25rem; font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px;">Start</label>
+                                <input type="date" id="fieldwork_client_calls_start_date" class="swal2-input" value="${timelineData.fieldwork_client_calls_start_date}">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.25rem; font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px;">End</label>
+                                <input type="date" id="fieldwork_client_calls_end_date" class="swal2-input" value="${timelineData.fieldwork_client_calls_end_date}">
+                            </div>
+                        </div>
                     </div>
-                    <div style="width: 100%; box-sizing: border-box; min-width: 0;">
+                    <div style="grid-column: span 2; width: 100%; box-sizing: border-box; min-width: 0;">
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Fieldwork - Documentation</label>
-                        <input type="date" id="fieldwork_documentation_date" class="swal2-input" value="${timelineData.fieldwork_documentation_date}">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.25rem; font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px;">Start</label>
+                                <input type="date" id="fieldwork_documentation_start_date" class="swal2-input" value="${timelineData.fieldwork_documentation_start_date}">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.25rem; font-size: 9px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.4px;">End</label>
+                                <input type="date" id="fieldwork_documentation_end_date" class="swal2-input" value="${timelineData.fieldwork_documentation_end_date}">
+                            </div>
+                        </div>
                     </div>
                     <div style="width: 100%; box-sizing: border-box; min-width: 0;">
                         <label style="display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 10px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Leadsheet Due</label>
@@ -2447,8 +2474,10 @@ if (!empty($_SESSION['name'])) {
                     planning_memo_date:          document.getElementById('planning_memo_date').value,
                     irl_due_date:                document.getElementById('irl_due_date').value,
                     client_planning_call_date:   document.getElementById('client_planning_call_date').value,
-                    fieldwork_client_calls_date:  document.getElementById('fieldwork_client_calls_date').value,
-                    fieldwork_documentation_date: document.getElementById('fieldwork_documentation_date').value,
+                    fieldwork_client_calls_start_date:   document.getElementById('fieldwork_client_calls_start_date').value,
+                    fieldwork_client_calls_end_date:     document.getElementById('fieldwork_client_calls_end_date').value,
+                    fieldwork_documentation_start_date:  document.getElementById('fieldwork_documentation_start_date').value,
+                    fieldwork_documentation_end_date:    document.getElementById('fieldwork_documentation_end_date').value,
                     leadsheet_date:              document.getElementById('leadsheet_date').value,
                     conclusion_memo_date:        document.getElementById('conclusion_memo_date').value,
                     draft_report_due_date:       document.getElementById('draft_report_due_date').value,
@@ -2708,13 +2737,18 @@ if (!empty($_SESSION['name'])) {
     // Report" before "Draft Report Due" just because it appears earlier in
     // the sheet. Always routes into the Edit Timeline modal for review rather
     // than saving directly, and reports any of the 11 fields it couldn't find.
+    // The two fieldwork phases map to their *_start_date here — a spreadsheet
+    // only ever gives one date per task, and "when this phase starts" is the
+    // more sensible read of that; the end date is always a manual fill-in
+    // reviewed (along with everything else) in the Edit Timeline modal
+    // before saving.
     const TIMELINE_FIELD_LABELS = {
         internal_planning_call_date:  'Internal Planning Call',
         planning_memo_date:           'Planning Memo',
         irl_due_date:                 'IRL Due',
         client_planning_call_date:    'Client Planning Call',
-        fieldwork_client_calls_date:  'Fieldwork - Client Calls',
-        fieldwork_documentation_date: 'Fieldwork - Documentation',
+        fieldwork_client_calls_start_date:  'Fieldwork - Client Calls (Start)',
+        fieldwork_documentation_start_date: 'Fieldwork - Documentation (Start)',
         leadsheet_date:               'Leadsheet Due',
         conclusion_memo_date:         'Conclusion Memo',
         draft_report_due_date:        'Draft Report Due',
@@ -2726,8 +2760,8 @@ if (!empty($_SESSION['name'])) {
         planning_memo_date:           { exact: 'Compose Planning Memo',                  fallback: [/\bplanning memo\b/i] },
         irl_due_date:                 { exact: 'Send Information Request List (IRL)',    fallback: [/\birl\b/i, /information request list/i] },
         client_planning_call_date:    { exact: 'Client Planning Call',                   fallback: [/client.*planning.*call/i] },
-        fieldwork_client_calls_date:  { exact: 'Fieldwork - Client Calls',                fallback: [/fieldwork.*client.*call/i] },
-        fieldwork_documentation_date: { exact: 'Fieldwork - Documentation',               fallback: [/fieldwork.*document/i] },
+        fieldwork_client_calls_start_date:  { exact: 'Fieldwork - Client Calls',          fallback: [/fieldwork.*client.*call/i] },
+        fieldwork_documentation_start_date: { exact: 'Fieldwork - Documentation',         fallback: [/fieldwork.*document/i] },
         leadsheet_date:                { exact: 'Lead Sheets Due',                        fallback: [/lead\s*sheet/i] },
         conclusion_memo_date:          { exact: 'Compose Conclusion Memo',                fallback: [/conclusion memo/i] },
         draft_report_due_date:         { exact: 'Draft Report Due',                       fallback: [/draft report.*due/i] },
