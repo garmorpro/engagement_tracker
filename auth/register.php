@@ -52,9 +52,11 @@ $hashedPasscode = password_hash($passcode, PASSWORD_DEFAULT);
 $stmt = $conn->prepare("INSERT INTO service_accounts (name, email, passcode, role, status, account_created, account_updated) VALUES (?, ?, ?, ?, 'active', NOW(), NOW())");
 $stmt->bind_param('ssss', $name, $email, $hashedPasscode, $role);
 $success = $stmt->execute();
+$newUserId = $conn->insert_id;
 $stmt->close();
 
 if ($success) {
+    logActivity($conn, 'account_created', 'account', (string) $newUserId, "Created account for {$name} ({$email}), role '{$role}'");
     header('Location: ' . BASE_URL . '/pages/settings.php');
     exit;
 } else {

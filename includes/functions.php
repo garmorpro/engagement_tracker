@@ -677,3 +677,33 @@ function getDueItemsSummary(mysqli $conn, int $daysAhead): array
 
     return ['overdue' => $overdue, 'upcoming' => $upcoming];
 }
+
+// ACTIVITY LOG
+// Records who did what, for the actions that matter for accountability:
+// engagement status changes, account create/update/delete/role-change, and
+// DOL edits. Actor is always the current session's user — never throws (a
+// logging failure should never break the action it's logging), just
+// error_log()s and moves on.
+function logActivity(mysqli $conn, string $eventType, ?string $targetType, ?string $targetId, string $description): void
+{
+    $tableCheck = $conn->query("SHOW TABLES LIKE 'activity_log'");
+    if (!$tableCheck || $tableCheck->num_rows === 0) {
+        return; // Migration not run yet — don't break the calling action over it.
+    }
+
+    $actorUserId = $_SESSION['user_id'] ?? null;
+    $actorName = $_SESSION['name'] ?? 'Unknown';
+
+    $stmt = $conn->prepare("INSERT INTO activity_log
+        (event_type, actor_user_id, actor_name, target_type, target_id, description)
+        VALUES (?, ?, ?, ?, ?, ?)");
+    if (!$stmt) {
+        error_log('logActivity prepare failed: ' . $conn->error);
+        return;
+    }
+    $stmt->bind_param('sisss', $eventType, $actorUserId, $actorName, $targetType, $targetId, $description);
+    if (!$stmt->execute()) {
+        error_log('logActivity insert failed: ' . $stmt->error);
+    }
+    $stmt->close();
+}

@@ -24,14 +24,13 @@ if (!$user_id) {
 }
 
 // Prevent deleting super_admin accounts
-$stmt = $conn->prepare("SELECT role FROM service_accounts WHERE user_id = ?");
+$stmt = $conn->prepare("SELECT name, email, role FROM service_accounts WHERE user_id = ?");
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
-$stmt->bind_result($role);
-$stmt->fetch();
+$account = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if ($role === 'super_admin') {
+if (($account['role'] ?? null) === 'super_admin') {
     echo json_encode(['success' => false, 'message' => 'Cannot delete super admin account']);
     exit;
 }
@@ -43,6 +42,9 @@ $success = $stmt->execute();
 $stmt->close();
 
 if ($success) {
+    if ($account) {
+        logActivity($conn, 'account_deleted', 'account', (string) $user_id, "Deleted account {$account['name']} ({$account['email']})");
+    }
     echo json_encode(['success' => true, 'message' => 'Account deleted']);
 } else {
     echo json_encode(['success' => false, 'message' => 'Error deleting account']);

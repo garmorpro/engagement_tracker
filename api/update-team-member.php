@@ -31,6 +31,20 @@ try {
     $empHitrustDol = $input['emp_hitrust_dol'] ?? '';
     $empFismaDol = $input['emp_fisma_dol'] ?? '';
 
+    // Snapshot the pre-update DOL so the log can note only what actually
+    // changed — this endpoint always overwrites all 5 DOL columns on every
+    // call, so comparing before/after is the only way to tell.
+    $dolLabels = [
+        'emp_soc1_dol' => 'SOC 1', 'emp_soc2_dol' => 'SOC 2', 'emp_hipaa_dol' => 'HIPAA',
+        'emp_hitrust_dol' => 'HITRUST', 'emp_fisma_dol' => 'FISMA',
+    ];
+    $before = $conn->prepare("SELECT emp_soc1_dol, emp_soc2_dol, emp_hipaa_dol, emp_hitrust_dol, emp_fisma_dol
+                               FROM engagement_team WHERE emp_id = ? AND engagement_idno = ?");
+    $before->bind_param('ss', $empId, $engagementIdno);
+    $before->execute();
+    $beforeRow = $before->get_result()->fetch_assoc();
+    $before->close();
+
     // Update the team member
     $query = "UPDATE engagement_team 
               SET emp_name = ?, 
@@ -73,7 +87,29 @@ try {
             'emp_hitrust_dol' => $empHitrustDol,
             'emp_fisma_dol' => $empFismaDol
         ];
-        
+
+        $newValues = [
+            'emp_soc1_dol' => $empSoc1Dol, 'emp_soc2_dol' => $empSoc2Dol, 'emp_hipaa_dol' => $empHipaaDol,
+            'emp_hitrust_dol' => $empHitrustDol, 'emp_fisma_dol' => $empFismaDol,
+        ];
+        $changes = [];
+        foreach ($dolLabels as $col => $label) {
+            $oldVal = $beforeRow[$col] ?? '';
+            $newVal = $newValues[$col];
+            if ($oldVal !== $newVal) {
+                $changes[] = "{$label}: '{$oldVal}' -> '{$newVal}'";
+            }
+        }
+        if ($changes) {
+            logActivity(
+                $conn,
+                'dol_updated',
+                'engagement',
+                $engagementIdno,
+                "Updated DOL for {$empName} on {$engagementIdno} (" . implode('; ', $changes) . ')'
+            );
+        }
+
         echo json_encode([
             'success' => true,
             'message' => 'Team member updated successfully',

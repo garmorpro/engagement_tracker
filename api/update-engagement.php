@@ -20,6 +20,18 @@ if (!$engagement_id) {
 }
 
 try {
+    // Fetch the current status (if this update touches it) so we can log
+    // an old -> new transition rather than just "status was set."
+    $oldStatus = null;
+    if (isset($data['eng_status'])) {
+        $stmt = $conn->prepare("SELECT eng_status FROM engagements WHERE eng_idno = ?");
+        $stmt->bind_param('s', $engagement_id);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        $oldStatus = $row['eng_status'] ?? null;
+    }
+
     // Build the update query dynamically based on provided fields
     $updateFields = [];
     $params = [];
@@ -77,6 +89,15 @@ try {
     $stmt->bind_param($types, ...$params);
 
     if ($stmt->execute()) {
+        if ($oldStatus !== null && $data['eng_status'] !== $oldStatus) {
+            logActivity(
+                $conn,
+                'engagement_status_change',
+                'engagement',
+                $engagement_id,
+                "Changed status of {$engagement_id} from '{$oldStatus}' to '{$data['eng_status']}'"
+            );
+        }
         echo json_encode(['success' => true, 'message' => 'Engagement updated successfully']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Database update failed: ' . $stmt->error]);

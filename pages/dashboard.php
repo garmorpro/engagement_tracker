@@ -792,7 +792,7 @@ if (!empty($_SESSION['name'])) {
             $critical = !$showArchived && $dueState === 'overdue';
             $tickVar = $showArchived ? '--text-muted' : ($statusMeta[$eng['eng_status']]['var'] ?? '--text-muted');
             $attention = in_array($dueState, ['overdue', 'soon'], true) ? '1' : '0';
-            $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? ''));
+            $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? '') . ' ' . $eng['eng_idno'] . ' ' . ($eng['eng_poc'] ?? '') . ' ' . ($eng['eng_audit_type'] ?? ''));
 
             $dueHtml = '<div class="reg-due">&mdash;</div>';
             if ($due) {

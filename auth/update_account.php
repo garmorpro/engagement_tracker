@@ -61,6 +61,12 @@ try {
         die(json_encode(['success' => false, 'message' => 'Database connection not available']));
     }
 
+    $beforeStmt = $conn->prepare("SELECT name, role FROM service_accounts WHERE user_id = ?");
+    $beforeStmt->bind_param('i', $userId);
+    $beforeStmt->execute();
+    $before = $beforeStmt->get_result()->fetch_assoc();
+    $beforeStmt->close();
+
     if ($passcode !== '') {
         $hashedPasscode = password_hash($passcode, PASSWORD_DEFAULT);
         $query = "
@@ -97,6 +103,15 @@ try {
         http_response_code(500);
         die(json_encode(['success' => false, 'message' => 'Execute error: ' . $stmt->error]));
     }
+
+    $descParts = ["Updated account {$name} ({$email})"];
+    if ($before && $before['role'] !== $role) {
+        $descParts[] = "role changed from '{$before['role']}' to '{$role}'";
+    }
+    if ($passcode !== '') {
+        $descParts[] = 'PIN reset';
+    }
+    logActivity($conn, 'account_updated', 'account', (string) $userId, implode(' — ', $descParts));
 
     http_response_code(200);
     echo json_encode(['success' => true, 'message' => 'Account updated successfully']);
