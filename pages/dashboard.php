@@ -451,6 +451,27 @@ if (!empty($_SESSION['name'])) {
             .reg-type, .list-head .lh-type { display: none; }
         }
 
+        /* Phone-width header: the full wordmark plus the dark-mode/bell/
+           profile icons don't fit in a ~375-430px viewport at the desktop
+           padding/gap, which was pushing header-right off the right edge
+           entirely (invisible without scrolling). Drop to icon-only
+           branding and tighten spacing so everything stays on screen. The
+           notification dropdown also switches to a fixed, edge-inset panel
+           instead of a fixed 360px width positioned off the bell button —
+           at desktop sizes that's fine, but on a narrow phone it either
+           overflowed the viewport or ran edge-to-edge with no margin. */
+        @media (max-width: 480px) {
+            .top-header { padding: 0 1rem; }
+            .header-inner { gap: 0.6rem; }
+            .brand-mark { display: none; }
+            .header-right { gap: 0.35rem; }
+            .profile-section { padding-left: 0.5rem; margin-left: 0.2rem; }
+            .notification-dropdown {
+                position: fixed; top: 64px; left: 0.75rem; right: 0.75rem;
+                width: auto; max-height: calc(100vh - 80px);
+            }
+        }
+
         /* ========== SWEETALERT2 STYLING ==========
            Hardcoded per-mode (not var()-indirected) on purpose: SweetAlert2 renders
            its popup as a direct child of <body>, appended dynamically after load,
@@ -643,7 +664,7 @@ if (!empty($_SESSION['name'])) {
 <!-- ========== HEADER ========== -->
 <div class="top-header">
     <div class="header-inner">
-        <a href="dashboard.php" class="brand">
+        <a href="dashboard.php" class="brand" title="Engagement Tracker">
             <span class="brand-icon">ET</span>
             <span class="brand-mark">Engagement Tracker</span>
         </a>
