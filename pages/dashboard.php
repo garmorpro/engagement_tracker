@@ -2737,18 +2737,20 @@ if (!empty($_SESSION['name'])) {
     // Report" before "Draft Report Due" just because it appears earlier in
     // the sheet. Always routes into the Edit Timeline modal for review rather
     // than saving directly, and reports any of the 11 fields it couldn't find.
-    // The two fieldwork phases map to their *_start_date here — a spreadsheet
-    // only ever gives one date per task, and "when this phase starts" is the
-    // more sensible read of that; the end date is always a manual fill-in
-    // reviewed (along with everything else) in the Edit Timeline modal
-    // before saving.
+    // The two fieldwork phases match against the "finish/due" column exactly
+    // like every other field (into their *_end_date), then RANGE_FIELD_PAIRS
+    // below additionally pulls a start date for that same matched row from
+    // whatever start-ish column the sheet has, if any — so both ends of the
+    // range get filled from one import when the sheet has both columns, with
+    // the end date always still reviewable/fillable by hand in the Edit
+    // Timeline modal if the sheet doesn't have a start column.
     const TIMELINE_FIELD_LABELS = {
         internal_planning_call_date:  'Internal Planning Call',
         planning_memo_date:           'Planning Memo',
         irl_due_date:                 'IRL Due',
         client_planning_call_date:    'Client Planning Call',
-        fieldwork_client_calls_start_date:  'Fieldwork - Client Calls (Start)',
-        fieldwork_documentation_start_date: 'Fieldwork - Documentation (Start)',
+        fieldwork_client_calls_end_date:    'Fieldwork - Client Calls',
+        fieldwork_documentation_end_date:   'Fieldwork - Documentation',
         leadsheet_date:               'Leadsheet Due',
         conclusion_memo_date:         'Conclusion Memo',
         draft_report_due_date:        'Draft Report Due',
@@ -2760,13 +2762,19 @@ if (!empty($_SESSION['name'])) {
         planning_memo_date:           { exact: 'Compose Planning Memo',                  fallback: [/\bplanning memo\b/i] },
         irl_due_date:                 { exact: 'Send Information Request List (IRL)',    fallback: [/\birl\b/i, /information request list/i] },
         client_planning_call_date:    { exact: 'Client Planning Call',                   fallback: [/client.*planning.*call/i] },
-        fieldwork_client_calls_start_date:  { exact: 'Fieldwork - Client Calls',          fallback: [/fieldwork.*client.*call/i] },
-        fieldwork_documentation_start_date: { exact: 'Fieldwork - Documentation',         fallback: [/fieldwork.*document/i] },
+        fieldwork_client_calls_end_date:    { exact: 'Fieldwork - Client Calls',          fallback: [/fieldwork.*client.*call/i] },
+        fieldwork_documentation_end_date:   { exact: 'Fieldwork - Documentation',         fallback: [/fieldwork.*document/i] },
         leadsheet_date:                { exact: 'Lead Sheets Due',                        fallback: [/lead\s*sheet/i] },
         conclusion_memo_date:          { exact: 'Compose Conclusion Memo',                fallback: [/conclusion memo/i] },
         draft_report_due_date:         { exact: 'Draft Report Due',                       fallback: [/draft report.*due/i] },
         final_report_date:             { exact: 'Final Report Due',                       fallback: [/final report/i] },
         archive_date:                  { exact: 'Alek Archive',                           fallback: [/\barchive\b/i] }
+    };
+    // end-date field -> paired start-date field, both filled from the same
+    // matched spreadsheet row when the sheet has a start-ish column.
+    const RANGE_FIELD_PAIRS = {
+        fieldwork_client_calls_end_date:  'fieldwork_client_calls_start_date',
+        fieldwork_documentation_end_date: 'fieldwork_documentation_start_date',
     };
 
     function parseSpreadsheetRows(file) {
@@ -2818,6 +2826,12 @@ if (!empty($_SESSION['name'])) {
         const dateKey = keys.find(k => /planned/i.test(k) && /finish/i.test(k))
             || keys.find(k => /finish/i.test(k))
             || keys.find(k => /due/i.test(k));
+        // Only used to additionally fill the start half of the two fieldwork
+        // ranges (RANGE_FIELD_PAIRS) — every other field only ever reads
+        // dateKey above, same as before.
+        const startDateKey = keys.find(k => /planned/i.test(k) && /start/i.test(k))
+            || keys.find(k => /^start/i.test(k.trim()))
+            || keys.find(k => /start/i.test(k));
 
         const matched = {};
         const unmatched = [];
@@ -2831,8 +2845,16 @@ if (!empty($_SESSION['name'])) {
                 }
             }
             const parsedDate = row ? parseDateCell(row[dateKey]) : null;
-            if (parsedDate) matched[field] = parsedDate;
-            else unmatched.push(field);
+            if (parsedDate) {
+                matched[field] = parsedDate;
+                const startField = RANGE_FIELD_PAIRS[field];
+                if (startField && startDateKey) {
+                    const parsedStart = parseDateCell(row[startDateKey]);
+                    if (parsedStart) matched[startField] = parsedStart;
+                }
+            } else {
+                unmatched.push(field);
+            }
         });
         return { matched, unmatched };
     }
