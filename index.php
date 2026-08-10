@@ -776,9 +776,15 @@ function setupPinMasking(inputId, maxLength = 4) {
     // software keypad (some report "Unidentified"), but 'input' always
     // fires with the real inserted text — covers typed digits, paste,
     // autofill, and IME/voice input the same way on every platform.
+    // The field is invisible (opacity: 0, dots do the actual display), so
+    // there's no need to blank it after every keystroke — trim it to size
+    // instead of wiping it so digits accumulate across keystrokes, and so
+    // native Backspace/Delete just work without a separate handler.
     input.addEventListener('input', function() {
         const digits = input.value.replace(/\D/g, '').slice(0, maxLength);
-        input.value = ''; // never let the raw value show or linger
+        if (input.value !== digits) {
+            input.value = digits;
+        }
         pinInputs[inputId] = digits;
         updatePinDots(inputId, digits.length);
 
@@ -794,15 +800,6 @@ function setupPinMasking(inputId, maxLength = 4) {
         // Auto-verify admin PIN when 6 digits entered
         if (inputId === 'adminVerifyPinInput' && digits.length === maxLength) {
             verifyAdminPin(digits);
-        }
-    });
-
-    // Backspace on an already-cleared input doesn't produce another 'input'
-    // event, so it needs its own handler to pop the last tracked digit.
-    input.addEventListener('keydown', function(e) {
-        if (e.key === 'Backspace' && input.value === '' && pinInputs[inputId].length > 0) {
-            pinInputs[inputId] = pinInputs[inputId].slice(0, -1);
-            updatePinDots(inputId, pinInputs[inputId].length);
         }
     });
 }
