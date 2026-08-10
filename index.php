@@ -682,6 +682,17 @@ body {
             </div>
             <p id="ntfyStatusMsg" style="font-size: 11.5px; margin: 0.6rem 0 0; display: none;"></p>
         </div>
+
+        <div style="margin: 1.5rem 0 0.6rem; padding-top: 1.25rem; border-top: 1px solid var(--line);">
+            <h6 style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 0.6rem;">"What's Due" Popup</h6>
+            <label class="form-label">Days Ahead</label>
+            <input type="number" class="form-control" id="duePopupDaysInput" min="1" max="90" placeholder="7" style="max-width: 140px;">
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0.5rem 0 0;">Everyone sees this same window when they log in: everything overdue, plus anything due within this many days.</p>
+            <div class="button-group">
+                <button type="button" class="btn btn-primary" id="duePopupSaveBtn">Save</button>
+            </div>
+            <p id="duePopupStatusMsg" style="font-size: 11.5px; margin: 0.6rem 0 0; display: none;"></p>
+        </div>
     </div>
 </div>
 
@@ -886,6 +897,7 @@ function openAdminDashboard() {
     loadAccountsList();
     loadSlackSettings();
     loadNtfySettings();
+    loadDuePopupSettings();
 }
 
 function showSlackStatus(message, isError) {
@@ -1009,6 +1021,36 @@ document.getElementById('ntfyEnabledToggle').addEventListener('change', (ev) => 
         .then(res => res.json())
         .then(data => showNtfyStatus(enabled ? 'Push notifications on' : 'Push notifications off', !data.success))
         .catch(() => showNtfyStatus('Failed to update push toggle', true));
+});
+
+function showDuePopupStatus(message, isError) {
+    const el = document.getElementById('duePopupStatusMsg');
+    el.textContent = message;
+    el.style.color = isError ? 'var(--critical)' : 'var(--good, #1F7A54)';
+    el.style.display = 'block';
+}
+
+function loadDuePopupSettings() {
+    fetch(getApiUrl('get_due_popup_settings.php'))
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('duePopupDaysInput').value = data.days_ahead;
+            }
+        })
+        .catch(() => {});
+}
+
+document.getElementById('duePopupSaveBtn').addEventListener('click', () => {
+    const daysAhead = document.getElementById('duePopupDaysInput').value.trim();
+    fetch(getApiUrl('update_due_popup_settings.php'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ days_ahead: daysAhead })
+    })
+        .then(res => res.json())
+        .then(data => showDuePopupStatus(data.message, !data.success))
+        .catch(() => showDuePopupStatus('Failed to save due items window', true));
 });
 
 function closeAdminDashboard() {

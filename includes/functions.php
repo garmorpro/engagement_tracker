@@ -562,3 +562,96 @@ function sendNtfyNotification(mysqli $conn, string $title, string $message): voi
     }
     curl_close($ch);
 }
+
+// DUE ITEMS SUMMARY (login popup)
+// Live, read-only snapshot of everything overdue or due soon — deliberately
+// NOT sourced from engagement_notifications (that table is a one-time-fired
+// log feeding Slack/ntfy with its own "already notified" dedup, so a resolved
+// or long-since-alerted item would never show there again). This always
+// reflects current reality: run it twice in a row and you get the same
+// answer both times, until something actually changes.
+function getDueItemsSummary(mysqli $conn, int $daysAhead): array
+{
+    $dateFields = [
+        'internal_planning_call_date' => ['internal_planning_call_completed_at', 'Internal Planning Call'],
+        'planning_memo_date' => ['planning_memo_completed_at', 'Planning Memo'],
+        'irl_due_date' => ['irl_completed_at', 'IRL Due Date'],
+        'client_planning_call_date' => ['client_planning_call_completed_at', 'Client Planning Call'],
+        'fieldwork_date' => ['fieldwork_completed_at', 'Fieldwork'],
+        'fieldwork_client_calls_end_date' => ['fieldwork_client_calls_completed_at', 'Fieldwork - Client Calls'],
+        'fieldwork_documentation_end_date' => ['fieldwork_documentation_completed_at', 'Fieldwork - Documentation'],
+        'leadsheet_date' => ['leadsheet_completed_at', 'Leadsheet'],
+        'conclusion_memo_date' => ['conclusion_memo_completed_at', 'Conclusion Memo'],
+        'draft_report_due_date' => ['draft_report_completed_at', 'Draft Report Due'],
+        'final_report_date' => ['final_report_completed_at', 'Final Report'],
+        'archive_date' => ['archive_completed_at', 'Archive'],
+    ];
+    // end-date field -> its paired start-date field, purely for display —
+    // lets the popup show "Jul 6 - Jul 10" instead of just the end date.
+    $rangeStartFields = [
+        'fieldwork_client_calls_end_date' => 'fieldwork_client_calls_start_date',
+        'fieldwork_documentation_end_date' => 'fieldwork_documentation_start_date',
+    ];
+
+    $overdue = [];
+    $upcoming = [];
+
+    $tlQuery = "SELECT t.*, e.eng_name
+                FROM engagement_timeline t
+                JOIN engagements e ON t.engagement_idno = e.eng_idno
+                WHERE e.eng_status NOT IN ('archived', 'complete')";
+    $tlResult = $conn->query($tlQuery);
+    if ($tlResult) {
+        while ($timeline = $tlResult->fetch_assoc()) {
+            foreach ($dateFields as $dateCol => [$completedCol, $title]) {
+                $dateValue = $timeline[$dateCol] ?? null;
+                if (!$dateValue || !empty($timeline[$completedCol])) continue;
+
+                $daysUntil = (int) round((strtotime($dateValue) - time()) / 86400);
+                if ($daysUntil > $daysAhead) continue;
+
+                $startCol = $rangeStartFields[$dateCol] ?? null;
+                $item = [
+                    'engagement_idno' => $timeline['engagement_idno'],
+                    'eng_name' => $timeline['eng_name'],
+                    'title' => $title,
+                    'due_date' => $dateValue,
+                    'start_date' => ($startCol && !empty($timeline[$startCol])) ? $timeline[$startCol] : null,
+                    'days_until' => $daysUntil,
+                    'type' => 'key_date',
+                ];
+                if ($daysUntil < 0) $overdue[] = $item; else $upcoming[] = $item;
+            }
+        }
+    }
+
+    $msQuery = "SELECT m.milestone_type, m.due_date, m.engagement_idno, e.eng_name
+                FROM engagement_milestones m
+                JOIN engagements e ON m.engagement_idno = e.eng_idno
+                WHERE m.is_completed = 'N' AND m.due_date IS NOT NULL
+                AND e.eng_status NOT IN ('archived', 'complete')";
+    $msResult = $conn->query($msQuery);
+    if ($msResult) {
+        while ($row = $msResult->fetch_assoc()) {
+            $daysUntil = (int) round((strtotime($row['due_date']) - time()) / 86400);
+            if ($daysUntil > $daysAhead) continue;
+
+            $item = [
+                'engagement_idno' => $row['engagement_idno'],
+                'eng_name' => $row['eng_name'],
+                'title' => implode(' ', array_map('ucfirst', explode('_', strtolower($row['milestone_type'])))),
+                'due_date' => $row['due_date'],
+                'start_date' => null,
+                'days_until' => $daysUntil,
+                'type' => 'milestone',
+            ];
+            if ($daysUntil < 0) $overdue[] = $item; else $upcoming[] = $item;
+        }
+    }
+
+    // Most overdue first, then soonest-due first.
+    usort($overdue, fn($a, $b) => $a['days_until'] <=> $b['days_until']);
+    usort($upcoming, fn($a, $b) => $a['days_until'] <=> $b['days_until']);
+
+    return ['overdue' => $overdue, 'upcoming' => $upcoming];
+}

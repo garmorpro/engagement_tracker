@@ -80,35 +80,11 @@ foreach ($activeEngagements as $e) {
     if (in_array($state, ['overdue', 'soon'], true)) $attentionCount++;
 }
 
-// Get unread notifications
-$notifications = [];
-$unreadNotificationCount = 0;
-
-$tableCheckQuery = "SHOW TABLES LIKE 'engagement_notifications'";
-$tableCheckResult = $conn->query($tableCheckQuery);
-
-if ($tableCheckResult && $tableCheckResult->num_rows > 0) {
-    $notificationQuery = "SELECT * FROM engagement_notifications WHERE is_read = 'N' ORDER BY notif_timestamp DESC LIMIT 10";
-    $notificationResult = $conn->query($notificationQuery);
-    $notifications = $notificationResult ? $notificationResult->fetch_all(MYSQLI_ASSOC) : [];
-    $unreadNotificationCount = count($notifications);
-}
-
-function getTimeAgo($datetime) {
-    $now = new DateTime();
-    $created = new DateTime($datetime);
-    $diff = $now->diff($created);
-
-    if ($diff->days > 0) {
-        return $diff->days . ' day' . ($diff->days > 1 ? 's' : '') . ' ago';
-    } elseif ($diff->h > 0) {
-        return $diff->h . ' hour' . ($diff->h > 1 ? 's' : '') . ' ago';
-    } elseif ($diff->i > 0) {
-        return $diff->i . ' minute' . ($diff->i > 1 ? 's' : '') . ' ago';
-    } else {
-        return 'Just now';
-    }
-}
+// One-shot: true only on the page load immediately after a successful
+// login (set by auth/login.php), so the "what's due" popup fires exactly
+// once per login instead of on every reload/navigation back to this page.
+$showDuePopupOnLoad = !empty($_SESSION['show_due_popup']);
+unset($_SESSION['show_due_popup']);
 
 $initials = '';
 if (!empty($_SESSION['name'])) {
@@ -200,28 +176,39 @@ if (!empty($_SESSION['name'])) {
         .icon-btn { width: 32px; height: 32px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 15px; }
         .icon-btn:hover { background: color-mix(in srgb, var(--ink) 8%, var(--paper)); color: var(--text); }
 
-        .notification-badge { position: absolute; top: 3px; right: 3px; min-width: 15px; height: 15px; padding: 0 3px; border-radius: 8px; background: var(--critical); color: #fff; font-size: 9.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card); }
-
-        .notification-dropdown {
-            position: absolute; top: calc(100% + 8px); right: -10px; width: 360px; max-height: 420px; overflow-y: auto;
-            background: var(--card); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,0.14);
-            display: none; z-index: 60;
+        /* ---------- "what's due" popup (replaces the old notification bell) ---------- */
+        .due-popup-scrim {
+            position: fixed; inset: 0; background: rgba(10, 14, 20, 0.5); z-index: 300;
+            display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+            opacity: 0; pointer-events: none; transition: opacity 0.15s ease;
         }
-        .notification-dropdown.active { display: block; }
-        .notification-header { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1rem; border-bottom: 1px solid var(--line); }
-        .notification-header h3 { font-size: 13px; font-weight: 700; margin: 0; }
-        .notification-item { display: flex; gap: 10px; padding: 0.75rem 1rem; border-bottom: 1px solid var(--line); cursor: pointer; }
-        .notification-item:last-child { border-bottom: none; }
-        .notification-item:hover { background: var(--paper); }
-        .notification-item.unread { background: color-mix(in srgb, var(--ink) 5%, var(--card)); }
-        .notification-icon { width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
-        .notification-icon.upcoming { background: color-mix(in srgb, var(--ink) 14%, transparent); color: var(--ink); }
-        .notification-icon.milestone { background: color-mix(in srgb, var(--good) 14%, transparent); color: var(--good); }
-        .notification-icon.archive { background: color-mix(in srgb, var(--text-muted) 14%, transparent); color: var(--text-muted); }
-        .notification-title { font-size: 12.5px; font-weight: 700; }
-        .notification-message { font-size: 12px; color: var(--text-muted); margin-top: 2px; white-space: pre-line; }
-        .notification-time { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
-        .notification-empty { padding: 2rem 1rem; text-align: center; color: var(--text-muted); font-size: 12.5px; }
+        .due-popup-scrim.open { opacity: 1; pointer-events: auto; }
+        .due-popup {
+            background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+            width: 100%; max-width: 560px; max-height: 82vh; display: flex; flex-direction: column;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.28); transform: translateY(8px); transition: transform 0.15s ease;
+        }
+        .due-popup-scrim.open .due-popup { transform: translateY(0); }
+        .due-popup-header { display: flex; align-items: flex-start; justify-content: space-between; padding: 1.25rem 1.4rem 1rem; border-bottom: 1px solid var(--line); }
+        .due-popup-header h3 { font-size: 16px; font-weight: 700; margin: 0; }
+        .due-popup-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+        .due-popup-close { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 18px; padding: 2px; line-height: 1; }
+        .due-popup-close:hover { color: var(--text); }
+        .due-popup-body { overflow-y: auto; padding: 0.5rem 0; }
+        .due-popup-section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); padding: 0.85rem 1.4rem 0.4rem; }
+        .due-popup-item { display: flex; align-items: center; gap: 10px; padding: 0.65rem 1.4rem; cursor: pointer; border-bottom: 1px solid var(--line); }
+        .due-popup-item:hover { background: var(--paper); }
+        .due-popup-item:last-child { border-bottom: none; }
+        .due-popup-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--caution); }
+        .due-popup-dot.overdue { background: var(--critical); }
+        .due-popup-info { min-width: 0; flex: 1; }
+        .due-popup-name { font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .due-popup-item-title { font-size: 11.5px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .due-popup-when { font-size: 11.5px; font-weight: 700; text-align: right; flex-shrink: 0; white-space: nowrap; }
+        .due-popup-when.overdue { color: var(--critical); }
+        .due-popup-when.upcoming { color: var(--caution); }
+        .due-popup-empty { padding: 2.5rem 1.4rem; text-align: center; color: var(--text-muted); font-size: 13px; }
+        .due-popup-footer { padding: 0.9rem 1.4rem; border-top: 1px solid var(--line); text-align: right; }
 
         .profile-section { position: relative; margin-left: 0.4rem; padding-left: 0.75rem; border-left: 1px solid var(--line); }
         .profile-wrapper { display: flex; align-items: center; gap: 6px; cursor: pointer; }
@@ -459,25 +446,17 @@ if (!empty($_SESSION['name'])) {
             .reg-type, .list-head .lh-type { display: none; }
         }
 
-        /* Phone-width header: the full wordmark plus the dark-mode/bell/
-           profile icons don't fit in a ~375-430px viewport at the desktop
+        /* Phone-width header: the full wordmark plus the dark-mode/profile
+           icons don't fit in a ~375-430px viewport at the desktop
            padding/gap, which was pushing header-right off the right edge
            entirely (invisible without scrolling). Drop to icon-only
-           branding and tighten spacing so everything stays on screen. The
-           notification dropdown also switches to a fixed, edge-inset panel
-           instead of a fixed 360px width positioned off the bell button —
-           at desktop sizes that's fine, but on a narrow phone it either
-           overflowed the viewport or ran edge-to-edge with no margin. */
+           branding and tighten spacing so everything stays on screen. */
         @media (max-width: 480px) {
             .top-header { padding: 0 1rem; }
             .header-inner { gap: 0.6rem; }
             .brand-mark { display: none; }
             .header-right { gap: 0.35rem; }
             .profile-section { padding-left: 0.5rem; margin-left: 0.2rem; }
-            .notification-dropdown {
-                position: fixed; top: 64px; left: 0.75rem; right: 0.75rem;
-                width: auto; max-height: calc(100vh - 80px);
-            }
 
             /* Each row was cramming a fixed 90px ID column, a fixed 96px
                due-date column, and a 56px-wide (invisible but still
@@ -699,94 +678,9 @@ if (!empty($_SESSION['name'])) {
             <button class="icon-btn" title="Dark mode">
                 <i class="bi bi-moon"></i>
             </button>
-            <div style="position: relative;">
-                <button class="icon-btn" title="Notifications" onclick="event.stopPropagation(); document.getElementById('notificationDropdown')?.classList.toggle('active')">
-                    <i class="bi bi-bell"></i>
-                    <?php if ($unreadNotificationCount > 0): ?>
-                    <div class="notification-badge"><?php echo $unreadNotificationCount; ?></div>
-                    <?php endif; ?>
-                </button>
-                <div class="notification-dropdown" id="notificationDropdown">
-                    <div class="notification-header">
-                        <h3>Notifications</h3>
-                        <button class="icon-btn" style="font-size: 14px;" onclick="document.getElementById('notificationDropdown').classList.remove('active')">
-                            <i class="bi bi-x"></i>
-                        </button>
-                    </div>
-                    <?php if (!empty($notifications)): ?>
-                        <?php foreach ($notifications as $notif): ?>
-                            <?php
-                                $iconClass = 'upcoming';
-                                $icon = 'bi-calendar-event';
-                                if ($notif['notif_type'] === 'upcoming_milestone') {
-                                    $iconClass = 'milestone';
-                                    $icon = 'bi-check-circle';
-                                } elseif ($notif['notif_type'] === 'ready_to_archive') {
-                                    $iconClass = 'archive';
-                                    $icon = 'bi-archive';
-                                }
-
-                                $timeAgo = getTimeAgo($notif['notif_timestamp']);
-                                // upcoming_key_date messages are fully formatted (client name, exact
-                                // date, days-away, and — when more than one date on the same
-                                // engagement qualifies at once — every one of them bundled into a
-                                // single message) at creation time now, and the notification resolves
-                                // itself when the item(s) it's about get marked complete. No need to
-                                // live-recompute it here the way upcoming_milestone still does below.
-                                $displayMessage = $notif['notif_message'];
-
-                                if ($notif['notif_type'] === 'upcoming_milestone') {
-                                    $milestone = null;
-                                    if (!empty($notif['notif_field']) && ctype_digit((string) $notif['notif_field'])) {
-                                        $msId = (int) $notif['notif_field'];
-                                        $milestoneQuery = "SELECT m.milestone_type, m.due_date, e.eng_name
-                                            FROM engagement_milestones m
-                                            JOIN engagements e ON m.engagement_idno = e.eng_idno
-                                            WHERE m.ms_id = ?";
-                                        $stmt = $conn->prepare($milestoneQuery);
-                                        $stmt->bind_param('i', $msId);
-                                    } else {
-                                        // Fallback for notifications created before notif_field existed.
-                                        $engIdno = $notif['engagement_idno'];
-                                        $milestoneQuery = "SELECT m.milestone_type, m.due_date, e.eng_name
-                                            FROM engagement_milestones m
-                                            JOIN engagements e ON m.engagement_idno = e.eng_idno
-                                            WHERE m.engagement_idno = ? AND m.is_completed = 'N' AND m.due_date IS NOT NULL
-                                            ORDER BY m.due_date ASC LIMIT 1";
-                                        $stmt = $conn->prepare($milestoneQuery);
-                                        $stmt->bind_param('s', $engIdno);
-                                    }
-                                    $stmt->execute();
-                                    $mResult = $stmt->get_result();
-                                    $milestone = $mResult->fetch_assoc();
-                                    $stmt->close();
-
-                                    if ($milestone) {
-                                        $daysAway = round((strtotime($milestone['due_date']) - time()) / 86400);
-                                        $milestoneTitle = implode(' ', array_map('ucfirst', explode('_', strtolower($milestone['milestone_type']))));
-                                        $displayMessage = $milestone['eng_name'] . ' - ' . $milestoneTitle . ' due in ' . max(0, $daysAway) . ' days';
-                                    }
-                                }
-                            ?>
-                            <div class="notification-item <?php echo $notif['is_read'] === 'N' ? 'unread' : ''; ?>" onclick="markNotificationAsRead(<?php echo $notif['notif_id']; ?>)">
-                                <div class="notification-icon <?php echo $iconClass; ?>">
-                                    <i class="bi <?php echo $icon; ?>"></i>
-                                </div>
-                                <div>
-                                    <div class="notification-title"><?php echo htmlspecialchars($notif['notif_title']); ?></div>
-                                    <div class="notification-message"><?php echo htmlspecialchars($displayMessage); ?></div>
-                                    <div class="notification-time"><?php echo $timeAgo; ?></div>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div class="notification-empty">
-                            <i class="bi bi-bell-slash" style="font-size: 32px; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
-                            No notifications
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
+            <button class="icon-btn" title="What's Due" onclick="openDuePopup()">
+                <i class="bi bi-list-check"></i>
+            </button>
 
             <div class="profile-section">
                 <div class="profile-wrapper" id="profileToggle">
@@ -968,6 +862,22 @@ if (!empty($_SESSION['name'])) {
 
 </div>
 
+<!-- ========== WHAT'S DUE POPUP ========== -->
+<div class="due-popup-scrim" id="duePopupScrim">
+    <div class="due-popup">
+        <div class="due-popup-header">
+            <div>
+                <h3>What's Due</h3>
+                <div class="due-popup-sub" id="duePopupSub"></div>
+            </div>
+            <button class="due-popup-close" onclick="closeDuePopup()">&times;</button>
+        </div>
+        <div class="due-popup-body" id="duePopupBody">
+            <div class="due-popup-empty">Loading&hellip;</div>
+        </div>
+    </div>
+</div>
+
 <!-- ========== ENGAGEMENT DRAWER ========== -->
 <div class="drawer-scrim hidden" id="drawerScrim"></div>
 <div class="drawer closed" id="drawer">
@@ -1137,28 +1047,82 @@ if (!empty($_SESSION['name'])) {
         }
     }
 
-    async function markNotificationAsRead(notifId) {
+    // ---------- "What's Due" popup ----------
+    function duePopupWhenLabel(item) {
+        if (item.days_until < 0) {
+            const n = Math.abs(item.days_until);
+            return { cls: 'overdue', text: n + ' day' + (n === 1 ? '' : 's') + ' overdue' };
+        }
+        if (item.days_until === 0) return { cls: 'upcoming', text: 'Due today' };
+        return { cls: 'upcoming', text: 'Due in ' + item.days_until + ' day' + (item.days_until === 1 ? '' : 's') };
+    }
+
+    function duePopupItemRow(item) {
+        const when = duePopupWhenLabel(item);
+        let dateLabel = fmtDate(item.due_date) || '';
+        if (item.start_date) {
+            const startLabel = fmtDate(item.start_date);
+            if (startLabel) dateLabel = `${startLabel} - ${dateLabel}`;
+        }
+        return `
+            <div class="due-popup-item" onclick="closeDuePopup(); openDrawer('${escAttr(item.engagement_idno)}');">
+                <span class="due-popup-dot ${when.cls === 'overdue' ? 'overdue' : ''}"></span>
+                <div class="due-popup-info">
+                    <div class="due-popup-name">${escapeHtml(item.eng_name)}</div>
+                    <div class="due-popup-item-title">${escapeHtml(item.title)} &middot; ${escapeHtml(dateLabel)}</div>
+                </div>
+                <div class="due-popup-when ${when.cls}">${when.text}</div>
+            </div>
+        `;
+    }
+
+    async function renderDuePopup() {
+        const bodyEl = document.getElementById('duePopupBody');
+        const subEl = document.getElementById('duePopupSub');
+        bodyEl.innerHTML = '<div class="due-popup-empty">Loading&hellip;</div>';
         try {
-            const response = await fetch('../api/mark-notification-read.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ notif_id: notifId })
-            });
-            const data = await response.json();
-            if (data.success) location.reload();
+            const res = await fetch('../api/get-due-items.php');
+            const data = await res.json();
+            if (!data.success) {
+                bodyEl.innerHTML = '<div class="due-popup-empty">Couldn\'t load due items.</div>';
+                return;
+            }
+            const { overdue, upcoming, days_ahead } = data;
+            subEl.textContent = `Overdue items, plus anything due in the next ${days_ahead} day${days_ahead === 1 ? '' : 's'}`;
+
+            if (!overdue.length && !upcoming.length) {
+                bodyEl.innerHTML = '<div class="due-popup-empty">Nothing overdue or coming up &mdash; you\'re all caught up.</div>';
+                return;
+            }
+
+            let html = '';
+            if (overdue.length) {
+                html += `<div class="due-popup-section-label">Overdue (${overdue.length})</div>` + overdue.map(duePopupItemRow).join('');
+            }
+            if (upcoming.length) {
+                html += `<div class="due-popup-section-label">Upcoming (${upcoming.length})</div>` + upcoming.map(duePopupItemRow).join('');
+            }
+            bodyEl.innerHTML = html;
         } catch (error) {
             console.error('Error:', error);
+            bodyEl.innerHTML = '<div class="due-popup-empty">Couldn\'t load due items.</div>';
         }
     }
 
-    // Close notification dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        const notificationDropdown = document.getElementById('notificationDropdown');
-        const notificationBtn = document.querySelector('.icon-btn[title="Notifications"]');
-        if (notificationDropdown && !notificationDropdown.contains(e.target) && !notificationBtn.contains(e.target)) {
-            notificationDropdown.classList.remove('active');
-        }
+    function openDuePopup() {
+        document.getElementById('duePopupScrim').classList.add('open');
+        renderDuePopup();
+    }
+    function closeDuePopup() {
+        document.getElementById('duePopupScrim').classList.remove('open');
+    }
+    document.getElementById('duePopupScrim').addEventListener('click', (ev) => {
+        if (ev.target.id === 'duePopupScrim') closeDuePopup();
     });
+
+    <?php if ($showDuePopupOnLoad): ?>
+    openDuePopup();
+    <?php endif; ?>
 
     // Row click -> quick-view drawer (active list) or full page (archived list, not yet converted)
     const IS_ARCHIVED_VIEW = <?php echo $showArchived ? 'true' : 'false'; ?>;

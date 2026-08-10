@@ -74,6 +74,11 @@ $_SESSION['name'] = $user['name'];
 $_SESSION['email'] = $user['email'] ?? '';
 $_SESSION['role'] = $user['role'];
 $_SESSION['last_activity'] = time(); // Track session activity
+// One-shot flag: dashboard.php checks and clears this on the very next page
+// load, so the "what's due" popup shows right after this login and never
+// again until the next one (a reload/navigation within the same session
+// won't re-trigger it).
+$_SESSION['show_due_popup'] = true;
 
 // Update logged_in and last_active in DB
 $stmt = $conn->prepare("
