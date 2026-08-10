@@ -237,6 +237,42 @@ body {
 
 .form-control::placeholder { color: var(--text-muted); }
 
+.channel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin: 0 0 0.6rem;
+}
+
+.channel-toggle {
+    position: relative; display: inline-block;
+    width: 36px; height: 20px; flex-shrink: 0;
+}
+
+.channel-toggle input { opacity: 0; width: 0; height: 0; }
+
+.channel-toggle-track {
+    position: absolute; cursor: pointer; inset: 0;
+    background: var(--line-strong, #ccc);
+    border-radius: 20px; transition: background 0.15s ease;
+}
+
+.channel-toggle-track::before {
+    content: ""; position: absolute;
+    height: 14px; width: 14px; left: 3px; bottom: 3px;
+    background: #fff; border-radius: 50%; transition: transform 0.15s ease;
+}
+
+.channel-toggle input:checked + .channel-toggle-track {
+    background: var(--good, #1F7A54);
+}
+
+.channel-toggle input:checked + .channel-toggle-track::before {
+    transform: translateX(16px);
+}
+
+.channel-toggle input:disabled + .channel-toggle-track {
+    opacity: 0.5; cursor: not-allowed;
+}
+
 .form-control:focus {
     background: var(--paper);
     border-color: var(--ink);
@@ -598,10 +634,16 @@ body {
         </div>
 
         <div style="margin: 1.5rem 0 0.6rem; padding-top: 1.25rem; border-top: 1px solid var(--line);">
-            <h6 style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 0.6rem;">Slack Notifications</h6>
+            <div class="channel-header">
+                <h6 style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0;">Slack Notifications</h6>
+                <label class="channel-toggle">
+                    <input type="checkbox" id="slackEnabledToggle">
+                    <span class="channel-toggle-track"></span>
+                </label>
+            </div>
             <label class="form-label">Incoming Webhook URL</label>
             <input type="text" class="form-control" id="slackWebhookInput" placeholder="https://hooks.slack.com/services/...">
-            <p style="font-size: 11px; color: var(--text-muted); margin: 0.5rem 0 0;">Leave blank to turn Slack notifications off. Applies to upcoming key dates, upcoming milestones, and ready-to-archive alerts.</p>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0.5rem 0 0;">Use the toggle above to pause Slack without losing the saved webhook. Applies to upcoming key dates, upcoming milestones, and ready-to-archive alerts.</p>
             <div class="button-group">
                 <button type="button" class="btn btn-secondary" id="slackTestBtn">Send Test</button>
                 <button type="button" class="btn btn-primary" id="slackSaveBtn">Save</button>
@@ -610,10 +652,16 @@ body {
         </div>
 
         <div style="margin: 1.5rem 0 0.6rem; padding-top: 1.25rem; border-top: 1px solid var(--line);">
-            <h6 style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 0.6rem;">Push Notifications (ntfy)</h6>
+            <div class="channel-header">
+                <h6 style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0;">Push Notifications (ntfy)</h6>
+                <label class="channel-toggle">
+                    <input type="checkbox" id="ntfyEnabledToggle">
+                    <span class="channel-toggle-track"></span>
+                </label>
+            </div>
             <label class="form-label">Topic URL</label>
             <input type="text" class="form-control" id="ntfyTopicInput" placeholder="https://ntfy.sh/your-private-topic-name">
-            <p style="font-size: 11px; color: var(--text-muted); margin: 0.5rem 0 0;">Install the free ntfy app on your phone and subscribe to this same topic name to get push notifications. Pick something private/hard-to-guess — anyone who knows the topic name can subscribe to it. Leave blank to turn push notifications off. Runs alongside Slack, not instead of it.</p>
+            <p style="font-size: 11px; color: var(--text-muted); margin: 0.5rem 0 0;">Install the free ntfy app on your phone and subscribe to this same topic name to get push notifications. Pick something private/hard-to-guess — anyone who knows the topic name can subscribe to it. Use the toggle above to pause push without losing the saved topic.</p>
             <div class="button-group">
                 <button type="button" class="btn btn-secondary" id="ntfyTestBtn">Send Test</button>
                 <button type="button" class="btn btn-primary" id="ntfySaveBtn">Save</button>
@@ -847,6 +895,7 @@ function loadSlackSettings() {
         .then(data => {
             if (data.success) {
                 document.getElementById('slackWebhookInput').value = data.webhook_url || '';
+                document.getElementById('slackEnabledToggle').checked = !!data.enabled;
             }
         })
         .catch(() => {});
@@ -854,14 +903,15 @@ function loadSlackSettings() {
 
 document.getElementById('slackSaveBtn').addEventListener('click', () => {
     const webhookUrl = document.getElementById('slackWebhookInput').value.trim();
+    const enabled = document.getElementById('slackEnabledToggle').checked;
     fetch(getApiUrl('update_slack_webhook.php'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ webhook_url: webhookUrl })
+        body: JSON.stringify({ webhook_url: webhookUrl, enabled })
     })
         .then(res => res.json())
         .then(data => showSlackStatus(data.message, !data.success))
-        .catch(() => showSlackStatus('Failed to save Slack webhook', true));
+        .catch(() => showSlackStatus('Failed to save Slack settings', true));
 });
 
 document.getElementById('slackTestBtn').addEventListener('click', () => {
@@ -877,6 +927,24 @@ document.getElementById('slackTestBtn').addEventListener('click', () => {
         .catch(() => showSlackStatus('Failed to send test message', true));
 });
 
+// The toggle saves itself immediately (no need to hit Save just to flip
+// Slack on/off) — it reuses the same update endpoint, sending only the
+// enabled flag plus whatever webhook URL is currently saved, not whatever's
+// sitting unsaved in the input field.
+document.getElementById('slackEnabledToggle').addEventListener('change', (ev) => {
+    const enabled = ev.target.checked;
+    fetch(getApiUrl('get_slack_webhook.php'))
+        .then(res => res.json())
+        .then(data => fetch(getApiUrl('update_slack_webhook.php'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ webhook_url: data.webhook_url || '', enabled })
+        }))
+        .then(res => res.json())
+        .then(data => showSlackStatus(enabled ? 'Slack notifications on' : 'Slack notifications off', !data.success))
+        .catch(() => showSlackStatus('Failed to update Slack toggle', true));
+});
+
 function showNtfyStatus(message, isError) {
     const el = document.getElementById('ntfyStatusMsg');
     el.textContent = message;
@@ -890,6 +958,7 @@ function loadNtfySettings() {
         .then(data => {
             if (data.success) {
                 document.getElementById('ntfyTopicInput').value = data.topic_url || '';
+                document.getElementById('ntfyEnabledToggle').checked = !!data.enabled;
             }
         })
         .catch(() => {});
@@ -897,10 +966,11 @@ function loadNtfySettings() {
 
 document.getElementById('ntfySaveBtn').addEventListener('click', () => {
     const topicUrl = document.getElementById('ntfyTopicInput').value.trim();
+    const enabled = document.getElementById('ntfyEnabledToggle').checked;
     fetch(getApiUrl('update_ntfy_settings.php'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic_url: topicUrl })
+        body: JSON.stringify({ topic_url: topicUrl, enabled })
     })
         .then(res => res.json())
         .then(data => showNtfyStatus(data.message, !data.success))
@@ -918,6 +988,21 @@ document.getElementById('ntfyTestBtn').addEventListener('click', () => {
         .then(res => res.json())
         .then(data => showNtfyStatus(data.message, !data.success))
         .catch(() => showNtfyStatus('Failed to send test push', true));
+});
+
+// Same immediate-save pattern as the Slack toggle above.
+document.getElementById('ntfyEnabledToggle').addEventListener('change', (ev) => {
+    const enabled = ev.target.checked;
+    fetch(getApiUrl('get_ntfy_settings.php'))
+        .then(res => res.json())
+        .then(data => fetch(getApiUrl('update_ntfy_settings.php'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic_url: data.topic_url || '', enabled })
+        }))
+        .then(res => res.json())
+        .then(data => showNtfyStatus(enabled ? 'Push notifications on' : 'Push notifications off', !data.success))
+        .catch(() => showNtfyStatus('Failed to update push toggle', true));
 });
 
 function closeAdminDashboard() {

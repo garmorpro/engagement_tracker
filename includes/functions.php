@@ -501,6 +501,13 @@ function setAppSetting(mysqli $conn, string $key, string $value): bool
 // way around.
 function sendSlackNotification(mysqli $conn, string $message): void
 {
+    // Missing setting = enabled, so installs from before this toggle existed
+    // keep working until someone explicitly flips it off from the Admin
+    // Dashboard.
+    if (getAppSetting($conn, 'slack_enabled') === '0') {
+        return;
+    }
+
     $webhookUrl = getAppSetting($conn, 'slack_webhook_url');
     if (empty($webhookUrl)) {
         return;
@@ -527,6 +534,13 @@ function sendSlackNotification(mysqli $conn, string $message): void
 // it, so a missing or failing ntfy config must never block anything else.
 function sendNtfyNotification(mysqli $conn, string $title, string $message): void
 {
+    // Missing setting = enabled, so installs from before this toggle existed
+    // keep working until someone explicitly flips it off from the Admin
+    // Dashboard.
+    if (getAppSetting($conn, 'ntfy_enabled') === '0') {
+        return;
+    }
+
     $topicUrl = getAppSetting($conn, 'ntfy_topic_url');
     if (empty($topicUrl)) {
         return;
