@@ -686,24 +686,34 @@ function getDueItemsSummary(mysqli $conn, int $daysAhead): array
 // error_log()s and moves on.
 function logActivity(mysqli $conn, string $eventType, ?string $targetType, ?string $targetId, string $description): void
 {
-    $tableCheck = $conn->query("SHOW TABLES LIKE 'activity_log'");
-    if (!$tableCheck || $tableCheck->num_rows === 0) {
-        return; // Migration not run yet — don't break the calling action over it.
-    }
+    // Wrapped in try/catch(Throwable) — not just Exception — so a mistake
+    // in here (a bind_param mismatch previously slipped through exactly
+    // this way) can never escape as an uncaught fatal and take down the
+    // action being logged; PHP's Error hierarchy isn't caught by
+    // catch (Exception $e) in the callers.
+    try {
+        $tableCheck = $conn->query("SHOW TABLES LIKE 'activity_log'");
+        if (!$tableCheck || $tableCheck->num_rows === 0) {
+            return; // Migration not run yet — don't break the calling action over it.
+        }
 
-    $actorUserId = $_SESSION['user_id'] ?? null;
-    $actorName = $_SESSION['name'] ?? 'Unknown';
+        $actorUserId = $_SESSION['user_id'] ?? null;
+        $actorName = $_SESSION['name'] ?? 'Unknown';
 
-    $stmt = $conn->prepare("INSERT INTO activity_log
-        (event_type, actor_user_id, actor_name, target_type, target_id, description)
-        VALUES (?, ?, ?, ?, ?, ?)");
-    if (!$stmt) {
-        error_log('logActivity prepare failed: ' . $conn->error);
-        return;
+        $stmt = $conn->prepare("INSERT INTO activity_log
+            (event_type, actor_user_id, actor_name, target_type, target_id, description)
+            VALUES (?, ?, ?, ?, ?, ?)");
+        if (!$stmt) {
+            error_log('logActivity prepare failed: ' . $conn->error);
+            return;
+        }
+        // 6 columns -> 6 type chars: event_type(s) actor_user_id(i) actor_name(s) target_type(s) target_id(s) description(s)
+        $stmt->bind_param('sissss', $eventType, $actorUserId, $actorName, $targetType, $targetId, $description);
+        if (!$stmt->execute()) {
+            error_log('logActivity insert failed: ' . $stmt->error);
+        }
+        $stmt->close();
+    } catch (\Throwable $e) {
+        error_log('logActivity failed: ' . $e->getMessage());
     }
-    $stmt->bind_param('sisss', $eventType, $actorUserId, $actorName, $targetType, $targetId, $description);
-    if (!$stmt->execute()) {
-        error_log('logActivity insert failed: ' . $stmt->error);
-    }
-    $stmt->close();
 }
