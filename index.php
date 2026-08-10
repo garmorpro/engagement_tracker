@@ -293,11 +293,21 @@ body {
    PINs. The real <input> stays focused/typable but visually hidden; JS toggles
    .filled on these dots as digits are entered. Account-creation/edit PIN
    fields keep the plain .pin-field text input above — you're setting a new
-   PIN there, not authenticating with one you already know. */
+   PIN there, not authenticating with one you already know.
+   The input is layered directly on top of the dots (not tucked off-screen)
+   so it's a real tap target — on mobile, an off-screen/pointer-events:none
+   input can never be focused by touch, and JS-triggered .focus() alone
+   isn't enough to raise the on-screen keypad on most mobile browsers unless
+   it happens synchronously inside a genuine tap. Tapping the dots directly
+   focuses this input and reliably opens the numeric keypad. */
+.pin-entry { position: relative; display: flex; justify-content: center; margin: 1.6rem 0 0.5rem; }
 .pin-hidden-input {
-    position: absolute; opacity: 0; pointer-events: none; height: 1px; width: 1px;
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; border: 0; background: transparent; margin: 0; padding: 0;
+    font-size: 16px; /* 16px+ stops iOS Safari auto-zooming in on focus */
+    cursor: pointer; z-index: 1;
 }
-.pin-dots { display: flex; gap: 0.85rem; justify-content: center; margin: 1.6rem 0 0.5rem; }
+.pin-dots { display: flex; gap: 0.85rem; justify-content: center; }
 .pin-dot {
     width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--line-strong);
     transition: all 0.15s;
@@ -563,14 +573,16 @@ body {
         <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
             <input type="hidden" name="user_id" id="pinUserId">
             <input type="hidden" name="passcode" id="pinFormPasscode">
-            <input type="text" class="pin-hidden-input" id="pinInput" inputmode="numeric" autocomplete="off" required autofocus>
-            <div class="pin-dots" id="pinDots">
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
-                <div class="pin-dot"></div>
+            <div class="pin-entry">
+                <input type="text" class="pin-hidden-input" id="pinInput" inputmode="numeric" autocomplete="off" required autofocus>
+                <div class="pin-dots" id="pinDots">
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                    <div class="pin-dot"></div>
+                </div>
             </div>
-            <div class="pin-hint">Type your PIN — it submits automatically</div>
+            <div class="pin-hint">Tap the dots, then type your PIN — it submits automatically</div>
         </form>
     </div>
 </div>
@@ -589,16 +601,18 @@ body {
             </div>
         </div>
 
-        <input type="text" class="pin-hidden-input" id="adminVerifyPinInput" inputmode="numeric" autocomplete="off" required autofocus>
-        <div class="pin-dots" id="adminPinDots">
-            <div class="pin-dot"></div>
-            <div class="pin-dot"></div>
-            <div class="pin-dot"></div>
-            <div class="pin-dot"></div>
-            <div class="pin-dot"></div>
-            <div class="pin-dot"></div>
+        <div class="pin-entry">
+            <input type="text" class="pin-hidden-input" id="adminVerifyPinInput" inputmode="numeric" autocomplete="off" required autofocus>
+            <div class="pin-dots" id="adminPinDots">
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+            </div>
         </div>
-        <div class="pin-hint">Enter your 6-digit super-admin PIN</div>
+        <div class="pin-hint">Tap the dots, then enter your 6-digit super-admin PIN</div>
         <p class="admin-note">
             This unlocks the account management screen. It is not part of everyday sign-in.
         </p>
@@ -757,47 +771,38 @@ function setupPinMasking(inputId, maxLength = 4) {
     pinInputs[inputId] = '';
     updatePinDots(inputId, 0);
 
-    input.addEventListener('keydown', function(e) {
-        const key = e.key;
-
-        // Allow backspace
-        if (key === 'Backspace') {
-            e.preventDefault();
-            pinInputs[inputId] = pinInputs[inputId].slice(0, -1);
-            updatePinDots(inputId, pinInputs[inputId].length);
-            return;
-        }
-
-        // Only allow numbers
-        if (!/\d/.test(key)) {
-            e.preventDefault();
-            return;
-        }
-
-        // Don't exceed max length
-        if (pinInputs[inputId].length >= maxLength) {
-            e.preventDefault();
-            return;
-        }
-
-        e.preventDefault();
-
-        // Add the digit
-        pinInputs[inputId] += key;
-        updatePinDots(inputId, pinInputs[inputId].length);
+    // Driven off the 'input' event rather than keydown: mobile/virtual
+    // keyboards don't reliably fire keydown with a usable e.key for every
+    // software keypad (some report "Unidentified"), but 'input' always
+    // fires with the real inserted text — covers typed digits, paste,
+    // autofill, and IME/voice input the same way on every platform.
+    input.addEventListener('input', function() {
+        const digits = input.value.replace(/\D/g, '').slice(0, maxLength);
+        input.value = ''; // never let the raw value show or linger
+        pinInputs[inputId] = digits;
+        updatePinDots(inputId, digits.length);
 
         // Auto-submit PIN form when 4 digits entered
-        if (inputId === 'pinInput' && pinInputs[inputId].length === 4) {
+        if (inputId === 'pinInput' && digits.length === maxLength) {
             const passcodeField = document.getElementById('pinFormPasscode');
-            passcodeField.value = pinInputs[inputId];
+            passcodeField.value = digits;
             setTimeout(() => {
                 document.getElementById('pinForm').submit();
             }, 150);
         }
 
         // Auto-verify admin PIN when 6 digits entered
-        if (inputId === 'adminVerifyPinInput' && pinInputs[inputId].length === 6) {
-            verifyAdminPin(pinInputs[inputId]);
+        if (inputId === 'adminVerifyPinInput' && digits.length === maxLength) {
+            verifyAdminPin(digits);
+        }
+    });
+
+    // Backspace on an already-cleared input doesn't produce another 'input'
+    // event, so it needs its own handler to pop the last tracked digit.
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Backspace' && input.value === '' && pinInputs[inputId].length > 0) {
+            pinInputs[inputId] = pinInputs[inputId].slice(0, -1);
+            updatePinDots(inputId, pinInputs[inputId].length);
         }
     });
 }
@@ -811,7 +816,11 @@ function openPinModal(btn) {
     pinInputs['pinInput'] = '';
     updatePinDots('pinInput', 0);
     document.getElementById('pinModal').classList.add('active');
-    setTimeout(() => document.getElementById('pinInput').focus(), 100);
+    // Focused synchronously (not via setTimeout) so it stays inside the same
+    // user-gesture call stack as the tap that opened this modal — that's
+    // what most mobile browsers require before they'll raise the on-screen
+    // keypad for a JS-triggered focus.
+    document.getElementById('pinInput').focus();
 }
 
 function closePinModal() {
@@ -827,7 +836,7 @@ function openAdminVerification() {
     pinInputs['adminVerifyPinInput'] = '';
     updatePinDots('adminVerifyPinInput', 0);
     setupPinMasking('adminVerifyPinInput', 6);
-    setTimeout(() => document.getElementById('adminVerifyPinInput').focus(), 100);
+    document.getElementById('adminVerifyPinInput').focus();
 }
 
 function closeAdminVerify() {
