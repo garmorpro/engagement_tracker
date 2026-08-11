@@ -385,12 +385,33 @@ async function loadCalendar() {
                 const rangeDiff = isRangeItem(b) - isRangeItem(a);
                 return rangeDiff !== 0 ? rangeDiff : a.completed - b.completed;
             });
+            // Weekly status calls linked to the same call_group collapse
+            // into one chip ("LP Conversational Cloud & LP Tenfold") so a
+            // shared call doesn't eat multiple of the grid's 3 visible
+            // slots with near-identical entries. Only affects what's shown
+            // in the cell itself — the day popover still reads from the
+            // untouched byDate[iso], so every linked engagement is still
+            // individually listed and clickable there.
+            const displayItems = [];
+            const seenGroups = new Set();
+            dayItems.forEach(item => {
+                if (item.type === 'weekly_call' && item.call_group) {
+                    if (seenGroups.has(item.call_group)) return;
+                    seenGroups.add(item.call_group);
+                    const linked = dayItems.filter(i => i.type === 'weekly_call' && i.call_group === item.call_group);
+                    const names = linked.map(i => i.eng_name);
+                    const label = names.length > 2 ? `${names[0]} +${names.length - 1}` : names.join(' & ');
+                    displayItems.push(Object.assign({}, item, { eng_name: label }));
+                } else {
+                    displayItems.push(item);
+                }
+            });
             const isToday = iso === todayIso;
             const isOutside = cellDate.getMonth() !== (viewMonth - 1);
             const dow = cellDate.getDay();
 
             let chipsHtml = '';
-            dayItems.slice(0, 3).forEach(item => {
+            displayItems.slice(0, 3).forEach(item => {
                 const status = itemStatusClass(item);
                 const ranged = isRangeItem(item);
                 let spanClass = '';
@@ -411,8 +432,8 @@ async function loadCalendar() {
                     </div>
                 `;
             });
-            if (dayItems.length > 3) {
-                chipsHtml += `<div class="cal-more" data-date="${iso}">+${dayItems.length - 3} more</div>`;
+            if (displayItems.length > 3) {
+                chipsHtml += `<div class="cal-more" data-date="${iso}">+${displayItems.length - 3} more</div>`;
             }
 
             html += `

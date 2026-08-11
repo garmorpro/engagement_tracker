@@ -56,18 +56,21 @@ try {
     // (0-6, Sunday-Saturday), not a date, and 0 (Sunday) is a valid value
     // that the `?: null` falsy-check above would incorrectly wipe out —
     // PHP treats the string "0" as falsy.
+    $weeklyDayChanged = false;
+    $weeklyDayValue = null;
     if (isset($data['weekly_status_call_day'])) {
         $rawDay = $data['weekly_status_call_day'];
         if ($rawDay === '' || $rawDay === null) {
-            $value = null;
+            $weeklyDayValue = null;
         } elseif (ctype_digit((string) $rawDay) && (int) $rawDay >= 0 && (int) $rawDay <= 6) {
-            $value = (string) (int) $rawDay;
+            $weeklyDayValue = (int) $rawDay;
         } else {
             echo json_encode(['success' => false, 'message' => 'Invalid weekly status call day']);
             exit;
         }
+        $weeklyDayChanged = true;
         $updates[] = 'weekly_status_call_day = ?';
-        $params[] = $value;
+        $params[] = $weeklyDayValue;
         $types .= 's';
     }
 
@@ -94,6 +97,26 @@ try {
     $stmt->bind_param($types, ...$params);
 
     if ($stmt->execute()) {
+        // A shared weekly status call only makes sense on one day — if this
+        // engagement is linked to others (via weekly_status_call_group),
+        // changing its day carries the same change to everyone else in the
+        // group, so they never drift apart.
+        if ($weeklyDayChanged) {
+            $groupStmt = $conn->prepare("SELECT weekly_status_call_group FROM engagement_timeline WHERE engagement_idno = ?");
+            $groupStmt->bind_param('s', $engagement_id);
+            $groupStmt->execute();
+            $groupRow = $groupStmt->get_result()->fetch_assoc();
+            $groupStmt->close();
+
+            if (!empty($groupRow['weekly_status_call_group'])) {
+                $groupId = $groupRow['weekly_status_call_group'];
+                $syncStmt = $conn->prepare("UPDATE engagement_timeline SET weekly_status_call_day = ?
+                                             WHERE weekly_status_call_group = ? AND engagement_idno != ?");
+                $syncStmt->bind_param('sss', $weeklyDayValue, $groupId, $engagement_id);
+                $syncStmt->execute();
+                $syncStmt->close();
+            }
+        }
         echo json_encode(['success' => true, 'message' => 'Timeline updated successfully']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Database update failed: ' . $stmt->error]);
