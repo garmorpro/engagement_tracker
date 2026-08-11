@@ -740,6 +740,13 @@ function getCalendarItemsForMonth(mysqli $conn, int $year, int $month): array
         'final_report_date' => ['final_report_completed_at', 'Final Report'],
         'archive_date' => ['archive_completed_at', 'Archive'],
     ];
+    // end-date field -> paired start-date field — these two render as a
+    // spanning bar across the whole range on the calendar, not just a dot
+    // on the end date.
+    $rangeStartFields = [
+        'fieldwork_client_calls_end_date' => 'fieldwork_client_calls_start_date',
+        'fieldwork_documentation_end_date' => 'fieldwork_documentation_start_date',
+    ];
 
     $monthStart = sprintf('%04d-%02d-01', $year, $month);
     $monthEnd = date('Y-m-t', strtotime($monthStart));
@@ -755,13 +762,24 @@ function getCalendarItemsForMonth(mysqli $conn, int $year, int $month): array
         while ($timeline = $tlResult->fetch_assoc()) {
             foreach ($dateFields as $dateCol => [$completedCol, $title]) {
                 $dateValue = $timeline[$dateCol] ?? null;
-                if (!$dateValue || $dateValue < $monthStart || $dateValue > $monthEnd) continue;
+                if (!$dateValue) continue;
+
+                $startCol = $rangeStartFields[$dateCol] ?? null;
+                $startValue = ($startCol && !empty($timeline[$startCol])) ? $timeline[$startCol] : null;
+
+                // Overlap test against the requested month, not just "is
+                // the end date in this month" — a range that starts last
+                // month and ends this month (or vice versa) still needs to
+                // show up so the bar doesn't appear to start/end mid-air.
+                $rangeStart = $startValue ?? $dateValue;
+                if ($dateValue < $monthStart || $rangeStart > $monthEnd) continue;
 
                 $items[] = [
                     'engagement_idno' => $timeline['engagement_idno'],
                     'eng_name' => $timeline['eng_name'],
                     'title' => $title,
                     'date' => $dateValue,
+                    'start_date' => $startValue,
                     'completed' => !empty($timeline[$completedCol]),
                     'type' => 'key_date',
                 ];
@@ -785,6 +803,7 @@ function getCalendarItemsForMonth(mysqli $conn, int $year, int $month): array
                 'eng_name' => $row['eng_name'],
                 'title' => implode(' ', array_map('ucfirst', explode('_', strtolower($row['milestone_type'])))),
                 'date' => $dateValue,
+                'start_date' => null,
                 'completed' => $row['is_completed'] === 'Y',
                 'type' => 'milestone',
             ];

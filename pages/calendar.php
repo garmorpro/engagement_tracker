@@ -96,6 +96,20 @@ $isAdmin = in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'], true);
         .cal-chip.overdue { background: var(--critical-tint); }
         .cal-chip.completed { opacity: 0.55; }
         .cal-chip-label { overflow: hidden; text-overflow: ellipsis; }
+        /* Fieldwork - Client Calls / Documentation render as a continuous
+           bar across their date range instead of a dot per day: solid
+           background regardless of light/dark, square edges on days the
+           bar continues through, bleeding into the cell's own padding
+           (matches .cal-day's 6px) so adjoining days read as one band —
+           only rounded (and labeled) at the true start/end of the range or
+           where a week row breaks the bar. */
+        .cal-chip-span { background: color-mix(in srgb, var(--ink) 22%, transparent); border-radius: 0; }
+        .cal-chip-span:hover { background: color-mix(in srgb, var(--ink) 32%, transparent); }
+        .cal-chip-span.overdue { background: color-mix(in srgb, var(--critical) 26%, transparent); }
+        .cal-chip-span.seg-start { border-top-left-radius: 4px; border-bottom-left-radius: 4px; }
+        .cal-chip-span.seg-end { border-top-right-radius: 4px; border-bottom-right-radius: 4px; }
+        .cal-chip-span:not(.seg-start) { margin-left: -6px; padding-left: 6px; }
+        .cal-chip-span:not(.seg-end) { margin-right: -6px; padding-right: 6px; }
         .cal-more { font-size: 10.5px; color: var(--text-muted); font-weight: 600; cursor: pointer; padding: 2px 5px; }
         .cal-more:hover { color: var(--ink); }
 
@@ -258,6 +272,13 @@ function escAttr(str) {
     return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+function isRangeItem(item) {
+    return !!(item.start_date && item.start_date !== item.date);
+}
+function fmtDateShort(iso) {
+    return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
 function itemStatusClass(item) {
     if (item.completed) return 'completed';
     if (item.date < todayIso) return 'overdue';
@@ -280,12 +301,15 @@ function openDayPopover(dateIso, items) {
     const body = document.getElementById('dayPopoverBody');
     body.innerHTML = items.map(item => {
         const status = itemStatusClass(item);
+        const titleLine = isRangeItem(item)
+            ? `${escapeHtml(item.title)} (${fmtDateShort(item.start_date)} - ${fmtDateShort(item.date)})`
+            : escapeHtml(item.title);
         return `
             <div class="day-popover-item" onclick="goToEngagement('${escAttr(item.engagement_idno)}')">
                 <span class="day-popover-dot" style="background:${statusColorVar(status)}"></span>
                 <div class="day-popover-info">
                     <div class="day-popover-name">${escapeHtml(item.eng_name)}</div>
-                    <div class="day-popover-title">${escapeHtml(item.title)}</div>
+                    <div class="day-popover-title">${titleLine}</div>
                 </div>
             </div>
         `;
@@ -315,7 +339,21 @@ async function loadCalendar() {
 
     const byDate = {};
     items.forEach(item => {
-        (byDate[item.date] = byDate[item.date] || []).push(item);
+        if (isRangeItem(item)) {
+            // Fieldwork - Client Calls / Documentation: give it an
+            // occurrence on every day of its range, not just the end date,
+            // so it renders as a bar spanning the whole week rather than a
+            // dot on one day.
+            const cur = new Date(item.start_date + 'T00:00:00');
+            const end = new Date(item.date + 'T00:00:00');
+            while (cur <= end) {
+                const iso = cur.toISOString().slice(0, 10);
+                (byDate[iso] = byDate[iso] || []).push(item);
+                cur.setDate(cur.getDate() + 1);
+            }
+        } else {
+            (byDate[item.date] = byDate[item.date] || []).push(item);
+        }
     });
 
     const firstOfMonth = new Date(viewYear, viewMonth - 1, 1);
@@ -330,17 +368,38 @@ async function loadCalendar() {
             const cellDate = new Date(viewYear, viewMonth - 1, 1);
             cellDate.setDate(cellDate.getDate() - startDow + (w * 7 + d));
             const iso = cellDate.toISOString().slice(0, 10);
-            const dayItems = (byDate[iso] || []).slice().sort((a, b) => a.completed - b.completed);
+            // Range (spanning) items sorted first so their bar segments line
+            // up in the same row position from one day to the next — an
+            // approximation (there's no fixed per-item "lane" tracking
+            // across the week), but holds up well for the common case of a
+            // handful of items per day.
+            const dayItems = (byDate[iso] || []).slice().sort((a, b) => {
+                const rangeDiff = isRangeItem(b) - isRangeItem(a);
+                return rangeDiff !== 0 ? rangeDiff : a.completed - b.completed;
+            });
             const isToday = iso === todayIso;
             const isOutside = cellDate.getMonth() !== (viewMonth - 1);
+            const dow = cellDate.getDay();
 
             let chipsHtml = '';
             dayItems.slice(0, 3).forEach(item => {
                 const status = itemStatusClass(item);
+                const ranged = isRangeItem(item);
+                let spanClass = '';
+                let showLabel = true;
+                if (ranged) {
+                    const segStart = iso === item.start_date || dow === 0;
+                    const segEnd = iso === item.date || dow === 6;
+                    spanClass = 'cal-chip-span' + (segStart ? ' seg-start' : '') + (segEnd ? ' seg-end' : '');
+                    // Only label the chip where the bar segment actually
+                    // begins — repeating the client name on every day of a
+                    // week-long bar just clutters a ~100px-tall cell.
+                    showLabel = segStart;
+                }
                 chipsHtml += `
-                    <div class="cal-chip ${status}" data-date="${iso}" title="${escAttr(item.eng_name + ' — ' + item.title)}">
-                        <span class="dot" style="background:${statusColorVar(status)}"></span>
-                        <span class="cal-chip-label">${escapeHtml(item.eng_name)}</span>
+                    <div class="cal-chip ${status} ${spanClass}" data-date="${iso}" title="${escAttr(item.eng_name + ' — ' + item.title + (ranged ? ` (${fmtDateShort(item.start_date)} - ${fmtDateShort(item.date)})` : ''))}">
+                        ${(!ranged || showLabel) ? `<span class="dot" style="background:${statusColorVar(status)}"></span>` : ''}
+                        ${showLabel ? `<span class="cal-chip-label">${escapeHtml(item.eng_name)}</span>` : ''}
                     </div>
                 `;
             });
