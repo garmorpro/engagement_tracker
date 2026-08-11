@@ -52,6 +52,25 @@ try {
         }
     }
 
+    // Handled separately from $dateFields above: it's a day-of-week index
+    // (0-6, Sunday-Saturday), not a date, and 0 (Sunday) is a valid value
+    // that the `?: null` falsy-check above would incorrectly wipe out —
+    // PHP treats the string "0" as falsy.
+    if (isset($data['weekly_status_call_day'])) {
+        $rawDay = $data['weekly_status_call_day'];
+        if ($rawDay === '' || $rawDay === null) {
+            $value = null;
+        } elseif (ctype_digit((string) $rawDay) && (int) $rawDay >= 0 && (int) $rawDay <= 6) {
+            $value = (string) (int) $rawDay;
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Invalid weekly status call day']);
+            exit;
+        }
+        $updates[] = 'weekly_status_call_day = ?';
+        $params[] = $value;
+        $types .= 's';
+    }
+
     if (empty($updates)) {
         echo json_encode(['success' => false, 'message' => 'No data to update']);
         exit;

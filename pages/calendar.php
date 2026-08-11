@@ -24,11 +24,13 @@ $isAdmin = in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'], true);
             --ink: #1B3A5C; --ink-soft: #4A6483; --paper: #F4F6F8; --card: #FFFFFF;
             --line: #DCE1E7; --line-strong: #C2CAD3; --text: #16202B; --text-muted: #5B6B7C;
             --critical: #B3261E; --critical-tint: rgba(179, 38, 30, 0.07); --caution: #A66A00; --good: #1F7A54;
+            --meeting: #7A4FB0;
         }
         body.dark-mode {
             --ink: #6E9FCB; --ink-soft: #7C93AA; --paper: #10161D; --card: #171F28;
             --line: #2A343E; --line-strong: #3C4854; --text: #E7ECF1; --text-muted: #93A1AF;
             --critical: #E5766F; --critical-tint: rgba(229, 118, 111, 0.1); --caution: #D3A44E; --good: #5FB98A;
+            --meeting: #B79AE0;
         }
         * { box-sizing: border-box; }
         body { background: var(--paper); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; font-variant-numeric: tabular-nums; transition: background-color 0.2s ease, color 0.2s ease; }
@@ -95,6 +97,7 @@ $isAdmin = in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'], true);
         .cal-chip .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
         .cal-chip.overdue { background: var(--critical-tint); }
         .cal-chip.completed { opacity: 0.55; }
+        .cal-chip.call { background: color-mix(in srgb, var(--meeting) 12%, transparent); }
         .cal-chip-label { overflow: hidden; text-overflow: ellipsis; }
         /* Fieldwork - Client Calls / Documentation render as a continuous
            bar across their date range instead of a dot per day: solid
@@ -207,6 +210,7 @@ $isAdmin = in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'], true);
             <div class="cal-legend-item"><span class="dot" style="background:var(--caution)"></span> This week</div>
             <div class="cal-legend-item"><span class="dot" style="background:var(--ink)"></span> Upcoming</div>
             <div class="cal-legend-item"><span class="dot" style="background:var(--good)"></span> Completed</div>
+            <div class="cal-legend-item"><span class="dot" style="background:var(--meeting)"></span> Weekly Call</div>
         </div>
     </div>
 
@@ -280,6 +284,10 @@ function fmtDateShort(iso) {
 }
 
 function itemStatusClass(item) {
+    // A standing weekly meeting isn't a deadline — a past occurrence isn't
+    // "overdue," it just already happened. Always its own neutral color,
+    // never the overdue/soon/upcoming/completed due-date states.
+    if (item.type === 'weekly_call') return 'call';
     if (item.completed) return 'completed';
     if (item.date < todayIso) return 'overdue';
     const daysUntil = Math.round((new Date(item.date + 'T00:00:00') - today) / 86400000);
@@ -287,7 +295,7 @@ function itemStatusClass(item) {
     return 'upcoming';
 }
 function statusColorVar(status) {
-    return { overdue: 'var(--critical)', soon: 'var(--caution)', upcoming: 'var(--ink)', completed: 'var(--good)' }[status];
+    return { overdue: 'var(--critical)', soon: 'var(--caution)', upcoming: 'var(--ink)', completed: 'var(--good)', call: 'var(--meeting)' }[status];
 }
 
 function goToEngagement(id) {

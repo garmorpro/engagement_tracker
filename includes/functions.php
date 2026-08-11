@@ -784,6 +784,29 @@ function getCalendarItemsForMonth(mysqli $conn, int $year, int $month): array
                     'type' => 'key_date',
                 ];
             }
+
+            // Weekly status call: not a one-time date, recurs every week on
+            // the chosen weekday for as long as the engagement is active
+            // (already guaranteed by the query's WHERE clause) — expand
+            // every occurrence that falls in the requested month.
+            if ($timeline['weekly_status_call_day'] !== null && $timeline['weekly_status_call_day'] !== '') {
+                $targetDow = (int) $timeline['weekly_status_call_day'];
+                $cursor = new DateTime($monthStart);
+                $daysToAdd = ($targetDow - (int) $cursor->format('w') + 7) % 7;
+                $cursor->modify("+{$daysToAdd} days");
+                while ($cursor->format('Y-m-d') <= $monthEnd) {
+                    $items[] = [
+                        'engagement_idno' => $timeline['engagement_idno'],
+                        'eng_name' => $timeline['eng_name'],
+                        'title' => 'Weekly Status Call',
+                        'date' => $cursor->format('Y-m-d'),
+                        'start_date' => null,
+                        'completed' => false,
+                        'type' => 'weekly_call',
+                    ];
+                    $cursor->modify('+7 days');
+                }
+            }
         }
     }
 

@@ -666,6 +666,10 @@ if (!empty($_SESSION['name'])) {
         .drawer-tl-date.overdue { color: var(--critical); }
         .drawer-tl-date.empty { color: var(--text-muted); font-weight: 500; }
         .drawer-tl-hint { font-size: 10.5px; color: var(--text-muted); margin-top: 0.75rem; }
+        .drawer-weekly-call-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid var(--line); }
+        .drawer-weekly-call-row label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+        .drawer-weekly-call-row select { font-size: 12.5px; font-weight: 600; color: var(--text); background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; cursor: pointer; }
+        .drawer-weekly-call-row select:focus { outline: none; border-color: var(--ink); }
 
         .drawer-loading { padding: 3rem 1rem; text-align: center; color: var(--text-muted); font-size: 13px; }
 
@@ -1659,17 +1663,59 @@ if (!empty($_SESSION['name'])) {
                 <div id="drawerPlanningDocRow" class="drawer-planning-doc-row"></div>
                 <div id="drawerTimelineContent"></div>
                 <div class="drawer-tl-hint">Click a date to mark it complete or incomplete.</div>
+                <div class="drawer-weekly-call-row">
+                    <label for="drawerWeeklyCallSelect"><i class="bi bi-arrow-repeat"></i> Weekly Status Call</label>
+                    <select id="drawerWeeklyCallSelect">
+                        <option value="">Not set</option>
+                        <option value="0">Sunday</option>
+                        <option value="1">Monday</option>
+                        <option value="2">Tuesday</option>
+                        <option value="3">Wednesday</option>
+                        <option value="4">Thursday</option>
+                        <option value="5">Friday</option>
+                        <option value="6">Saturday</option>
+                    </select>
+                </div>
             </div>
         `;
 
         renderDrawerTeam(team, auditTypes);
         renderDrawerTimeline(timeline, eng.eng_idno);
         renderPlanningDocRow(eng);
+        renderWeeklyStatusCallControl(timeline, eng.eng_idno);
 
         document.getElementById('drawerManageTeamBtn').addEventListener('click', openManageTeamModal);
         document.getElementById('drawerEditTimelineBtn').addEventListener('click', () => openEditTimelineModal());
         document.getElementById('drawerImportTimelineBtn').addEventListener('click', () => {
             document.getElementById('timelineImportFileInput').click();
+        });
+    }
+
+    // Recurring, not a one-time date — no completed_at, no due/overdue
+    // state, just "does this engagement have a standing weekly call, and on
+    // what day." Saves immediately on change (matches the settings-page
+    // toggle pattern) rather than needing the full Edit Timeline modal for
+    // a single field.
+    function renderWeeklyStatusCallControl(timeline, engagementId) {
+        const select = document.getElementById('drawerWeeklyCallSelect');
+        const day = timeline.weekly_status_call_day;
+        select.value = (day === null || day === undefined) ? '' : String(day);
+        select.addEventListener('change', async () => {
+            const value = select.value;
+            try {
+                const response = await fetch('../api/update-timeline.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ engagement_id: engagementId, weekly_status_call_day: value })
+                });
+                const data = await response.json();
+                if (!data.success) {
+                    Swal.fire('Error', data.message || 'Failed to save weekly status call', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to save weekly status call', 'error');
+            }
         });
     }
 
