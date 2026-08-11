@@ -1878,7 +1878,13 @@ if (!empty($_SESSION['name'])) {
                     });
                     const data = await response.json();
                     if (data.success) {
-                        refreshDrawer();
+                        // Reload (rather than just refreshing the drawer in
+                        // place) because completing a date — especially the
+                        // final report — can change the row's due state,
+                        // highlighting, and sort position in the list behind
+                        // the drawer, same reasoning as the status popover.
+                        reopenDrawerAfterReload(engagementId);
+                        location.reload();
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
                     }
