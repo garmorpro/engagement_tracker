@@ -672,6 +672,7 @@ if (!empty($_SESSION['name'])) {
         </a>
         <nav class="main-nav">
             <a class="active" href="dashboard.php">Engagements</a>
+            <a href="calendar.php">Calendar</a>
             <a href="tools.php">Tools</a>
         </nav>
         <div class="header-right">

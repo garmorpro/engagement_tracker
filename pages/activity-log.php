@@ -130,6 +130,7 @@ function timeAgoLabel(string $datetime): string {
         </a>
         <nav class="main-nav">
             <a href="dashboard.php">Engagements</a>
+            <a href="calendar.php">Calendar</a>
             <a href="tools.php">Tools</a>
         </nav>
         <div class="header-right">

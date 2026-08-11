@@ -717,3 +717,81 @@ function logActivity(mysqli $conn, string $eventType, ?string $targetType, ?stri
         error_log('logActivity failed: ' . $e->getMessage());
     }
 }
+
+// CALENDAR VIEW
+// All dated items (timeline key dates + milestones) falling within a given
+// month, across every active (non-archived) engagement — for the month
+// calendar view. Unlike getDueItemsSummary(), this has no "due soon"
+// window: it returns everything in the requested month regardless of how
+// far off it is, completed or not, so a full month can be browsed.
+function getCalendarItemsForMonth(mysqli $conn, int $year, int $month): array
+{
+    $dateFields = [
+        'internal_planning_call_date' => ['internal_planning_call_completed_at', 'Internal Planning Call'],
+        'planning_memo_date' => ['planning_memo_completed_at', 'Planning Memo'],
+        'irl_due_date' => ['irl_completed_at', 'IRL Due Date'],
+        'client_planning_call_date' => ['client_planning_call_completed_at', 'Client Planning Call'],
+        'fieldwork_date' => ['fieldwork_completed_at', 'Fieldwork'],
+        'fieldwork_client_calls_end_date' => ['fieldwork_client_calls_completed_at', 'Fieldwork - Client Calls'],
+        'fieldwork_documentation_end_date' => ['fieldwork_documentation_completed_at', 'Fieldwork - Documentation'],
+        'leadsheet_date' => ['leadsheet_completed_at', 'Leadsheet'],
+        'conclusion_memo_date' => ['conclusion_memo_completed_at', 'Conclusion Memo'],
+        'draft_report_due_date' => ['draft_report_completed_at', 'Draft Report Due'],
+        'final_report_date' => ['final_report_completed_at', 'Final Report'],
+        'archive_date' => ['archive_completed_at', 'Archive'],
+    ];
+
+    $monthStart = sprintf('%04d-%02d-01', $year, $month);
+    $monthEnd = date('Y-m-t', strtotime($monthStart));
+
+    $items = [];
+
+    $tlQuery = "SELECT t.*, e.eng_name
+                FROM engagement_timeline t
+                JOIN engagements e ON t.engagement_idno = e.eng_idno
+                WHERE e.eng_status NOT IN ('archived', 'complete')";
+    $tlResult = $conn->query($tlQuery);
+    if ($tlResult) {
+        while ($timeline = $tlResult->fetch_assoc()) {
+            foreach ($dateFields as $dateCol => [$completedCol, $title]) {
+                $dateValue = $timeline[$dateCol] ?? null;
+                if (!$dateValue || $dateValue < $monthStart || $dateValue > $monthEnd) continue;
+
+                $items[] = [
+                    'engagement_idno' => $timeline['engagement_idno'],
+                    'eng_name' => $timeline['eng_name'],
+                    'title' => $title,
+                    'date' => $dateValue,
+                    'completed' => !empty($timeline[$completedCol]),
+                    'type' => 'key_date',
+                ];
+            }
+        }
+    }
+
+    $msQuery = "SELECT m.milestone_type, m.due_date, m.is_completed, m.engagement_idno, e.eng_name
+                FROM engagement_milestones m
+                JOIN engagements e ON m.engagement_idno = e.eng_idno
+                WHERE m.due_date IS NOT NULL
+                AND e.eng_status NOT IN ('archived', 'complete')";
+    $msResult = $conn->query($msQuery);
+    if ($msResult) {
+        while ($row = $msResult->fetch_assoc()) {
+            $dateValue = $row['due_date'];
+            if (!$dateValue || $dateValue < $monthStart || $dateValue > $monthEnd) continue;
+
+            $items[] = [
+                'engagement_idno' => $row['engagement_idno'],
+                'eng_name' => $row['eng_name'],
+                'title' => implode(' ', array_map('ucfirst', explode('_', strtolower($row['milestone_type'])))),
+                'date' => $dateValue,
+                'completed' => $row['is_completed'] === 'Y',
+                'type' => 'milestone',
+            ];
+        }
+    }
+
+    usort($items, fn($a, $b) => $a['date'] <=> $b['date']);
+
+    return $items;
+}

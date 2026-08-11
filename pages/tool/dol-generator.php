@@ -154,6 +154,7 @@ if (!empty($_SESSION['name'])) {
         </a>
         <nav class="main-nav">
             <a href="../dashboard.php">Engagements</a>
+            <a href="../calendar.php">Calendar</a>
             <a class="active" href="../tools.php">Tools</a>
         </nav>
         <div class="header-right">
