@@ -92,13 +92,13 @@ $isAdmin = in_array($_SESSION['role'] ?? '', ['admin', 'super_admin'], true);
         .cal-day.today { background: color-mix(in srgb, var(--ink) 6%, var(--card)); }
         .cal-day-num { font-size: 12px; font-weight: 700; color: var(--text); }
         .cal-day.today .cal-day-num { color: var(--ink); }
-        .cal-chip { display: flex; align-items: center; gap: 4px; font-size: 10.5px; padding: 2px 5px; border-radius: 4px; cursor: pointer; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; background: color-mix(in srgb, var(--ink) 8%, transparent); }
+        .cal-chip { display: flex; align-items: center; gap: 4px; font-size: 10.5px; padding: 2px 5px; border-radius: 4px; cursor: pointer; overflow: hidden; min-width: 0; background: color-mix(in srgb, var(--ink) 8%, transparent); }
         .cal-chip:hover { background: color-mix(in srgb, var(--ink) 16%, transparent); }
         .cal-chip .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
         .cal-chip.overdue { background: var(--critical-tint); }
         .cal-chip.completed { opacity: 0.55; }
         .cal-chip.call { background: color-mix(in srgb, var(--meeting) 12%, transparent); }
-        .cal-chip-label { overflow: hidden; text-overflow: ellipsis; }
+        .cal-chip-label { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         /* Fieldwork - Client Calls / Documentation render as a continuous
            bar across their date range instead of a dot per day: solid
            background regardless of light/dark, square edges on days the
@@ -386,21 +386,21 @@ async function loadCalendar() {
                 return rangeDiff !== 0 ? rangeDiff : a.completed - b.completed;
             });
             // Weekly status calls linked to the same call_group collapse
-            // into one chip ("LP Conversational Cloud & LP Tenfold") so a
-            // shared call doesn't eat multiple of the grid's 3 visible
-            // slots with near-identical entries. Only affects what's shown
-            // in the cell itself — the day popover still reads from the
-            // untouched byDate[iso], so every linked engagement is still
-            // individually listed and clickable there.
+            // into one chip, using the chosen call name (e.g. "LP Status
+            // Call") rather than concatenating every linked engagement's
+            // full name — that combined text doesn't reliably truncate in
+            // a ~100px cell and was spelling out the full pairing every
+            // time. Only affects what's shown in the cell itself — the day
+            // popover still reads from the untouched byDate[iso], so every
+            // linked engagement is still individually listed and clickable
+            // there.
             const displayItems = [];
             const seenGroups = new Set();
             dayItems.forEach(item => {
                 if (item.type === 'weekly_call' && item.call_group) {
                     if (seenGroups.has(item.call_group)) return;
                     seenGroups.add(item.call_group);
-                    const linked = dayItems.filter(i => i.type === 'weekly_call' && i.call_group === item.call_group);
-                    const names = linked.map(i => i.eng_name);
-                    const label = names.length > 2 ? `${names[0]} +${names.length - 1}` : names.join(' & ');
+                    const label = item.call_group_name || item.eng_name;
                     displayItems.push(Object.assign({}, item, { eng_name: label }));
                 } else {
                     displayItems.push(item);

@@ -808,6 +808,7 @@ function getCalendarItemsForMonth(mysqli $conn, int $year, int $month): array
                         // calendar combine linked engagements into one entry
                         // instead of showing duplicate chips for the same call.
                         'call_group' => $timeline['weekly_status_call_group'] ?? null,
+                        'call_group_name' => $timeline['weekly_status_call_group_name'] ?? null,
                     ];
                     $cursor->modify('+7 days');
                 }

@@ -672,6 +672,9 @@ if (!empty($_SESSION['name'])) {
         .drawer-weekly-call-row select:focus { outline: none; border-color: var(--ink); }
         .wcall-linked-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 0.6rem; position: relative; }
         .wcall-linked-label { font-size: 11px; color: var(--text-muted); }
+        .wcall-name-row { width: 100%; font-size: 12px; font-weight: 600; color: var(--text); font-style: italic; display: flex; align-items: center; gap: 6px; }
+        .wcall-rename-btn { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 11px; padding: 2px; display: inline-flex; }
+        .wcall-rename-btn:hover { color: var(--ink); }
         .wcall-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 600; color: var(--ink); background: color-mix(in srgb, var(--ink) 12%, transparent); padding: 3px 6px 3px 9px; border-radius: 12px; }
         .wcall-unlink { border: none; background: transparent; color: var(--ink); cursor: pointer; font-size: 13px; padding: 0 2px; line-height: 1; opacity: 0.7; }
         .wcall-unlink:hover { opacity: 1; }
@@ -1699,7 +1702,7 @@ if (!empty($_SESSION['name'])) {
         renderDrawerTeam(team, auditTypes);
         renderDrawerTimeline(timeline, eng.eng_idno);
         renderPlanningDocRow(eng);
-        renderWeeklyStatusCallControl(timeline, eng.eng_idno, data.linked_calls || []);
+        renderWeeklyStatusCallControl(timeline, eng.eng_idno, eng.eng_name, data.linked_calls || []);
 
         document.getElementById('drawerManageTeamBtn').addEventListener('click', openManageTeamModal);
         document.getElementById('drawerEditTimelineBtn').addEventListener('click', () => openEditTimelineModal());
@@ -1716,7 +1719,7 @@ if (!empty($_SESSION['name'])) {
     // this one's call (from api/get-engagement-details.php), if any — two
     // or more engagements can share the same call so the calendar shows
     // one combined entry instead of duplicate chips.
-    function renderWeeklyStatusCallControl(timeline, engagementId, linkedCalls) {
+    function renderWeeklyStatusCallControl(timeline, engagementId, engagementName, linkedCalls) {
         const select = document.getElementById('drawerWeeklyCallSelect');
         const day = timeline.weekly_status_call_day;
         select.value = (day === null || day === undefined) ? '' : String(day);
@@ -1738,10 +1741,10 @@ if (!empty($_SESSION['name'])) {
             }
         });
 
-        renderWeeklyCallLinks(engagementId, linkedCalls, day !== null && day !== undefined);
+        renderWeeklyCallLinks(engagementId, engagementName, linkedCalls, timeline.weekly_status_call_group_name, day !== null && day !== undefined);
     }
 
-    function renderWeeklyCallLinks(engagementId, linkedCalls, hasDay) {
+    function renderWeeklyCallLinks(engagementId, engagementName, linkedCalls, groupName, hasDay) {
         const container = document.getElementById('drawerWeeklyCallLinks');
         const chips = linkedCalls.map(l => `
             <span class="wcall-chip">${escapeHtml(l.eng_name)}<button class="wcall-unlink" data-idno="${escAttr(l.engagement_idno)}" title="Unlink">&times;</button></span>
@@ -1749,8 +1752,12 @@ if (!empty($_SESSION['name'])) {
         const linkBtn = hasDay
             ? `<button class="wcall-link-btn" id="wcallLinkBtn">+ Link engagement</button>`
             : `<span class="wcall-link-hint">Set a day to link another engagement</span>`;
+        const nameRow = linkedCalls.length
+            ? `<div class="wcall-name-row">"${escapeHtml(groupName || '')}" <button class="wcall-rename-btn" id="wcallRenameBtn" title="Rename"><i class="bi bi-pencil"></i></button></div>`
+            : '';
 
         container.innerHTML = `
+            ${nameRow}
             ${linkedCalls.length ? `<span class="wcall-linked-label">Linked with:</span>${chips}` : ''}
             ${linkBtn}
             <div class="wcall-ac-wrap" id="wcallAcWrap" style="display:none;">
@@ -1777,6 +1784,32 @@ if (!empty($_SESSION['name'])) {
             });
         });
 
+        document.getElementById('wcallRenameBtn')?.addEventListener('click', async () => {
+            const result = await Swal.fire({
+                title: 'Rename weekly status call',
+                input: 'text',
+                inputValue: groupName || '',
+                inputAttributes: { maxlength: 100 },
+                showCancelButton: true,
+                confirmButtonText: 'Save',
+                inputValidator: (v) => !v.trim() ? 'Enter a name' : undefined
+            });
+            if (!result.isConfirmed) return;
+            try {
+                const response = await fetch('../api/rename-weekly-status-call.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ engagement_idno: engagementId, name: result.value.trim() })
+                });
+                const resData = await response.json();
+                if (resData.success) refreshDrawer();
+                else Swal.fire('Error', resData.message || 'Failed to rename', 'error');
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to rename', 'error');
+            }
+        });
+
         const linkBtnEl = document.getElementById('wcallLinkBtn');
         const acWrap = document.getElementById('wcallAcWrap');
         const acInput = document.getElementById('wcallAcInput');
@@ -1794,6 +1827,39 @@ if (!empty($_SESSION['name'])) {
             }
         });
 
+        async function linkTo(idno) {
+            // Only the first link needs a name — once a group exists, the
+            // name already carries over to whoever else joins it.
+            let callName = '';
+            if (!groupName) {
+                const result = await Swal.fire({
+                    title: 'Name this weekly status call',
+                    text: 'Shown on the calendar for every engagement linked to it.',
+                    input: 'text',
+                    inputValue: `${engagementName} Call`,
+                    inputAttributes: { maxlength: 100 },
+                    showCancelButton: true,
+                    confirmButtonText: 'Link',
+                    inputValidator: (v) => !v.trim() ? 'Enter a name' : undefined
+                });
+                if (!result.isConfirmed) return;
+                callName = result.value.trim();
+            }
+            try {
+                const linkRes = await fetch('../api/link-weekly-status-call.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ engagement_idno: engagementId, link_to_idno: idno, call_name: callName })
+                });
+                const linkData = await linkRes.json();
+                if (linkData.success) refreshDrawer();
+                else Swal.fire('Error', linkData.message || 'Failed to link engagement', 'error');
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to link engagement', 'error');
+            }
+        }
+
         let debounceTimer = null;
         acInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
@@ -1808,21 +1874,7 @@ if (!empty($_SESSION['name'])) {
                         ? matches.map(e => `<div class="wcall-ac-item" data-idno="${escAttr(e.eng_idno)}">${escapeHtml(e.eng_name)} <span class="wcall-ac-id">${escapeHtml(e.eng_idno)}</span></div>`).join('')
                         : `<div class="wcall-ac-empty">No matching engagements.</div>`;
                     acList.querySelectorAll('.wcall-ac-item').forEach(item => {
-                        item.addEventListener('click', async () => {
-                            try {
-                                const linkRes = await fetch('../api/link-weekly-status-call.php', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ engagement_idno: engagementId, link_to_idno: item.dataset.idno })
-                                });
-                                const linkData = await linkRes.json();
-                                if (linkData.success) refreshDrawer();
-                                else Swal.fire('Error', linkData.message || 'Failed to link engagement', 'error');
-                            } catch (error) {
-                                console.error('Error:', error);
-                                Swal.fire('Error', 'Failed to link engagement', 'error');
-                            }
-                        });
+                        item.addEventListener('click', () => linkTo(item.dataset.idno));
                     });
                 } catch (error) {
                     console.error('Error:', error);

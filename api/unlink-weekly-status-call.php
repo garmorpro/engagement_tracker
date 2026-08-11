@@ -30,7 +30,7 @@ try {
         exit;
     }
 
-    $upd = $conn->prepare("UPDATE engagement_timeline SET weekly_status_call_group = NULL WHERE engagement_idno = ?");
+    $upd = $conn->prepare("UPDATE engagement_timeline SET weekly_status_call_group = NULL, weekly_status_call_group_name = NULL WHERE engagement_idno = ?");
     $upd->bind_param('s', $engagementIdno);
     $upd->execute();
     $upd->close();
@@ -43,7 +43,7 @@ try {
 
     if (count($rows) === 1) {
         $lastIdno = $rows[0]['engagement_idno'];
-        $clearLast = $conn->prepare("UPDATE engagement_timeline SET weekly_status_call_group = NULL WHERE engagement_idno = ?");
+        $clearLast = $conn->prepare("UPDATE engagement_timeline SET weekly_status_call_group = NULL, weekly_status_call_group_name = NULL WHERE engagement_idno = ?");
         $clearLast->bind_param('s', $lastIdno);
         $clearLast->execute();
         $clearLast->close();
