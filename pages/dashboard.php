@@ -42,12 +42,25 @@ foreach ($sectionOrder as $status) {
     }
 }
 
-// Due date state for an engagement: [dateObj|null, 'overdue'|'soon'|'ok'|'none']
+// Due date state for an engagement: [dateObj|null, 'overdue'|'soon'|'ok'|'archive_ready'|'none']
 function getDueInfo($engIdno, $timelineLookup) {
-    if (!isset($timelineLookup[$engIdno]) || empty($timelineLookup[$engIdno]['final_report_date'])) {
+    if (!isset($timelineLookup[$engIdno])) {
         return [null, 'none'];
     }
-    $due = new DateTime($timelineLookup[$engIdno]['final_report_date']);
+    $tl = $timelineLookup[$engIdno];
+
+    // Final report is done and the engagement hasn't been archived yet —
+    // there's nothing left to be "late" on, the old final-report due date
+    // is no longer meaningful. Surface it as ready-to-archive instead of
+    // red/overdue against a date that's already been hit.
+    if (!empty($tl['final_report_completed_at']) && empty($tl['archive_completed_at'])) {
+        return [null, 'archive_ready'];
+    }
+
+    if (empty($tl['final_report_date'])) {
+        return [null, 'none'];
+    }
+    $due = new DateTime($tl['final_report_date']);
     $today = new DateTime('today');
     $diffDays = (int) $today->diff($due)->format('%r%a');
     if ($diffDays < 0) return [$due, 'overdue'];
@@ -77,7 +90,7 @@ function renderTypeBadges($rawTypes) {
 $attentionCount = 0;
 foreach ($activeEngagements as $e) {
     [, $state] = getDueInfo($e['eng_idno'], $timelineLookup);
-    if (in_array($state, ['overdue', 'soon'], true)) $attentionCount++;
+    if (in_array($state, ['overdue', 'soon', 'archive_ready'], true)) $attentionCount++;
 }
 
 // One-shot: true only on the page load immediately after a successful
@@ -296,6 +309,7 @@ if (!empty($_SESSION['name'])) {
         .reg-due .tag { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
         .reg-due.overdue, .reg-due.overdue .tag { color: var(--critical); }
         .reg-due.soon .tag { color: var(--caution); }
+        .reg-due.archive-ready { color: var(--good); font-size: 11.5px; }
 
         .row-actions { display: flex; gap: 2px; opacity: 0; transition: opacity 0.12s ease; width: 56px; justify-content: flex-end; flex-shrink: 0; }
         .row-actions button { width: 26px; height: 26px; border: none; background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; }
@@ -792,11 +806,13 @@ if (!empty($_SESSION['name'])) {
             [$due, $dueState] = getDueInfo($eng['eng_idno'], $timelineLookup);
             $critical = !$showArchived && $dueState === 'overdue';
             $tickVar = $showArchived ? '--text-muted' : ($statusMeta[$eng['eng_status']]['var'] ?? '--text-muted');
-            $attention = in_array($dueState, ['overdue', 'soon'], true) ? '1' : '0';
+            $attention = in_array($dueState, ['overdue', 'soon', 'archive_ready'], true) ? '1' : '0';
             $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? '') . ' ' . $eng['eng_idno'] . ' ' . ($eng['eng_poc'] ?? '') . ' ' . ($eng['eng_audit_type'] ?? ''));
 
             $dueHtml = '<div class="reg-due">&mdash;</div>';
-            if ($due) {
+            if (!$showArchived && $dueState === 'archive_ready') {
+                $dueHtml = '<div class="reg-due archive-ready"><i class="bi bi-archive"></i> Archive Ready</div>';
+            } elseif ($due) {
                 $fmt = $due->format('M j, Y');
                 if ($showArchived) {
                     $dueHtml = '<div class="reg-due">' . $fmt . '</div>';
@@ -841,8 +857,14 @@ if (!empty($_SESSION['name'])) {
                 <?php
                     $items = array_filter($engagements, fn($e) => $e['eng_status'] === $status);
                     usort($items, function ($a, $b) use ($timelineLookup) {
-                        [$dueA] = getDueInfo($a['eng_idno'], $timelineLookup);
-                        [$dueB] = getDueInfo($b['eng_idno'], $timelineLookup);
+                        [$dueA, $stateA] = getDueInfo($a['eng_idno'], $timelineLookup);
+                        [$dueB, $stateB] = getDueInfo($b['eng_idno'], $timelineLookup);
+                        // Ready-to-archive engagements float to the top of their
+                        // section — there's nothing left to do but archive them,
+                        // so they're the most actionable thing in the list.
+                        $readyA = $stateA === 'archive_ready';
+                        $readyB = $stateB === 'archive_ready';
+                        if ($readyA !== $readyB) return $readyA ? -1 : 1;
                         if (!$dueA && !$dueB) return 0;
                         if (!$dueA) return 1;
                         if (!$dueB) return -1;
