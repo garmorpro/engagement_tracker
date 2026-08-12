@@ -2070,9 +2070,10 @@ if (!empty($_SESSION['name'])) {
     // themed buttons. A radio list keeps everything on the one styled
     // Confirm/Cancel pair.
     async function openIndependenceMenu(empIds, empName, current) {
+        const clientName = drawerData?.engagement?.eng_name || 'this client';
         const result = await Swal.fire({
             title: `Independence — ${empName}`,
-            text: 'Confirmed independent from the client on this engagement?',
+            text: `Confirmed independent from ${clientName}?`,
             input: 'radio',
             inputValue: current || 'unset',
             inputOptions: { Y: 'Yes, independent', N: 'No, not independent', unset: 'Not answered yet' },
