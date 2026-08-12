@@ -257,12 +257,24 @@ function escAttr(str) {
     return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+const ROLE_SORT_ORDER = { manager: 0, senior: 1, staff: 2, intern: 3 };
+function firstName(fullName) {
+    return (fullName || '').trim().split(/\s+/)[0] || '';
+}
+function sortRoster(employees) {
+    return [...employees].sort((a, b) => {
+        const roleDiff = (ROLE_SORT_ORDER[(a.emp_role || '').toLowerCase()] ?? 99) - (ROLE_SORT_ORDER[(b.emp_role || '').toLowerCase()] ?? 99);
+        if (roleDiff !== 0) return roleDiff;
+        return firstName(a.emp_name).localeCompare(firstName(b.emp_name), undefined, { sensitivity: 'base' });
+    });
+}
+
 async function loadEmployees() {
     const list = document.getElementById('rosterList');
     try {
         const res = await fetch('../api/get-all-employees.php');
         const data = await res.json();
-        allEmployees = data.success ? (data.employees || []) : [];
+        allEmployees = sortRoster(data.success ? (data.employees || []) : []);
         renderRoster(allEmployees);
     } catch (err) {
         console.error('Error:', err);
