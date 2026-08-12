@@ -329,7 +329,7 @@ function openEmployeeModal(empId) {
         document.getElementById('employeeFormId').value = emp.emp_id;
         document.getElementById('employeeFormName').value = emp.emp_name;
         document.getElementById('employeeFormRole').value = (emp.emp_role || '').toLowerCase();
-        note.textContent = "Renaming won't retroactively update this person's name on engagements they're already staffed on — only new assignments and future DOL Generator lookups use the new name.";
+        note.textContent = "Saving updates this person's name/role on every engagement they're already staffed on too, not just new assignments.";
     } else {
         document.getElementById('employeeModalTitle').textContent = 'Add Employee';
         document.getElementById('employeeFormId').value = '';
@@ -366,6 +366,10 @@ document.getElementById('employeeForm').addEventListener('submit', async (ev) =>
         if (data.success) {
             closeEmployeeModal();
             loadEmployees();
+            if (data.engagements_updated) {
+                const n = data.engagements_updated;
+                Swal.fire({ icon: 'success', title: 'Updated', text: `Also updated ${n} engagement team assignment${n === 1 ? '' : 's'} for this person.`, timer: 2200, showConfirmButton: false });
+            }
         } else {
             Swal.fire('Error', data.message || 'Failed to save employee', 'error');
         }
