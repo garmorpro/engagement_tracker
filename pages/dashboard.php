@@ -644,6 +644,10 @@ if (!empty($_SESSION['name'])) {
         .drawer-role-group:first-child .drawer-member-row:first-child { border-top: none; }
         .drawer-member-row .drawer-avatar { width: 26px; height: 26px; font-size: 10.5px; }
         .drawer-member-info { flex: 1; min-width: 0; }
+        .drawer-independence-btn { margin-left: auto; flex-shrink: 0; border: none; background: transparent; cursor: pointer; font-size: 17px; padding: 2px; line-height: 1; color: var(--line-strong); }
+        .drawer-independence-btn:hover { opacity: 0.75; }
+        .drawer-independence-btn.yes { color: var(--good); }
+        .drawer-independence-btn.no { color: var(--critical); }
         .drawer-member-name { font-size: 13px; font-weight: 600; }
         .drawer-dol-lines { margin-top: 0.25rem; }
         .drawer-dol-line { display: flex; align-items: baseline; gap: 0.4rem; font-size: 11.5px; margin-bottom: 0.15rem; flex-wrap: wrap; }
@@ -1972,8 +1976,16 @@ if (!empty($_SESSION['name'])) {
                         dolMap[auditType] = member[field].split(',').map(t => t.trim()).filter(Boolean);
                     }
                 });
-                grouped[key] = { emp_name: member.emp_name, role: (member.role || '').toLowerCase(), audit_types: dolMap };
+                grouped[key] = {
+                    emp_name: member.emp_name, role: (member.role || '').toLowerCase(), audit_types: dolMap,
+                    emp_ids: [], independent: member.emp_independent || null
+                };
             }
+            // Every engagement_team row for this person (one per audit type
+            // they have DOL on) needs to be updated together when the
+            // independence attestation is set — it's a fact about the
+            // person on this engagement, not about one specific row.
+            grouped[key].emp_ids.push(member.emp_id);
         });
 
         let manager = null;
@@ -1994,12 +2006,28 @@ if (!empty($_SESSION['name'])) {
             `).join('') + '</div>';
         }
 
+        // Independence is an audit-conflict-of-interest attestation, per
+        // person per engagement — for now set by whoever manages the team
+        // here (there's no separate employee login yet); the plan is for
+        // each person to eventually self-attest, but it's the same field
+        // either way. Unanswered shows a neutral outline, not a red X — an
+        // X specifically means "confirmed NOT independent," not "hasn't
+        // said yet."
+        function independenceIconHtml(member) {
+            const val = member.independent;
+            const icon = val === 'Y' ? 'bi-check-circle-fill' : val === 'N' ? 'bi-x-circle-fill' : 'bi-question-circle';
+            const cls = val === 'Y' ? 'yes' : val === 'N' ? 'no' : 'unset';
+            const title = val === 'Y' ? 'Independent from client — click to change' : val === 'N' ? 'NOT independent from client — click to change' : 'Independence not confirmed yet — click to set';
+            return `<button type="button" class="drawer-independence-btn ${cls}" data-emp-ids="${member.emp_ids.join(',')}" data-emp-name="${escAttr(member.emp_name)}" data-current="${val || ''}" title="${title}"><i class="bi ${icon}"></i></button>`;
+        }
+
         let html = '';
         if (manager) {
             html += `
                 <div class="drawer-team-lead-row">
                     <div class="drawer-avatar" style="background:var(--manager)">${initials(manager.emp_name)}</div>
                     <div><div class="drawer-lead-name">${escapeHtml(manager.emp_name)}</div><div class="drawer-lead-role">Manager</div></div>
+                    ${independenceIconHtml(manager)}
                 </div>
             `;
         }
@@ -2014,6 +2042,7 @@ if (!empty($_SESSION['name'])) {
                             <div class="drawer-member-name">${escapeHtml(member.emp_name)}</div>
                             ${dolLinesHtml(member)}
                         </div>
+                        ${independenceIconHtml(member)}
                     </div>
                 `;
             });
@@ -2024,6 +2053,54 @@ if (!empty($_SESSION['name'])) {
             html = '<div class="drawer-team-empty">No team assigned yet.</div>';
         }
         el.innerHTML = html;
+
+        el.querySelectorAll('.drawer-independence-btn').forEach(btn => {
+            btn.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                const empIds = btn.dataset.empIds.split(',').map(Number);
+                openIndependenceMenu(empIds, btn.dataset.empName, btn.dataset.current);
+            });
+        });
+    }
+
+    // Radio input rather than a 3-button confirm/deny/cancel Swal — this
+    // app's SweetAlert2 theming only styles .swal2-confirm/.swal2-cancel
+    // (see the CSS block up top), not .swal2-deny, so a deny button would
+    // render with SweetAlert2's unstyled defaults next to two carefully
+    // themed buttons. A radio list keeps everything on the one styled
+    // Confirm/Cancel pair.
+    async function openIndependenceMenu(empIds, empName, current) {
+        const result = await Swal.fire({
+            title: `Independence — ${empName}`,
+            text: 'Confirmed independent from the client on this engagement?',
+            input: 'radio',
+            inputValue: current || 'unset',
+            inputOptions: { Y: 'Yes, independent', N: 'No, not independent', unset: 'Not answered yet' },
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+            inputValidator: (v) => v ? undefined : 'Pick one'
+        });
+        if (!result.isConfirmed) return;
+
+        const value = result.value === 'unset' ? null : result.value;
+        try {
+            const response = await fetch('../api/update-team-independence.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    emp_ids: empIds,
+                    independent: value,
+                    engagement_idno: drawerData.engagement.eng_idno,
+                    emp_name: empName
+                })
+            });
+            const data = await response.json();
+            if (data.success) refreshDrawer();
+            else Swal.fire('Error', data.message || 'Failed to save', 'error');
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire('Error', 'Failed to save', 'error');
+        }
     }
 
     function renderDrawerTimeline(timeline, engagementId) {
