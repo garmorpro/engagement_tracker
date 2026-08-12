@@ -124,9 +124,12 @@ if (!empty($_SESSION['name'])) {
 
         .result-member { background: var(--paper); border: 1px solid var(--line); border-radius: 11px; padding: 1rem 1.1rem; margin-bottom: 0.7rem; }
         .result-member-head { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.7rem; }
-        .result-share { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--card); border: 1px solid var(--line); padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+        .result-share { font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--card); border: 1px solid var(--line); padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+        .swap-btn { margin-left: auto; flex-shrink: 0; border: 1px solid var(--line); background: var(--card); color: var(--text-muted); font-size: 10.5px; font-weight: 700; padding: 4px 9px; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+        .swap-btn:hover { border-color: var(--ink); color: var(--ink); }
         .result-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-        .result-chip { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 6px; background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); }
+        .result-chip { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 6px; background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); cursor: pointer; transition: opacity 0.1s; }
+        .result-chip:hover { opacity: 0.7; }
         .result-chip.restricted { background: color-mix(in srgb, var(--critical) 12%, transparent); color: var(--critical); }
         .unassignable-warning { padding: 0.85rem 1rem; background: color-mix(in srgb, var(--critical) 8%, transparent); border: 1px solid color-mix(in srgb, var(--critical) 30%, var(--line)); border-radius: 10px; margin-bottom: 1.1rem; font-size: 12px; color: var(--text); line-height: 1.5; }
         .unassignable-warning i { color: var(--critical); margin-right: 4px; }
@@ -295,6 +298,7 @@ if (!empty($_SESSION['name'])) {
     let selectedAuditType = null;
     let lastResult = null;     // computed split, kept for the Save step
     let lastUnassignable = []; // bundles nobody was eligible for (everyone restricted) — had to assign anyway
+    let lastTotalHours = 0;    // kept so renderResultMembers() can recompute % share after a manual move/swap
     let criteriaWeights = {};  // name -> weight, editable per engagement
     let restrictionsByName = {}; // emp_name -> [criteria they're not trained on yet], from the roster
 
@@ -723,12 +727,28 @@ if (!empty($_SESSION['name'])) {
             unassignableBox.classList.add('hidden');
         }
 
-        document.getElementById('resultMembers').innerHTML = lastResult.map(m => {
+        lastTotalHours = totalHours;
+        renderResultMembers();
+
+        document.getElementById('saveWarningText').innerHTML =
+            `Saving will replace this engagement's <strong>${escapeHtml(selectedAuditType)}</strong> DOL for these ${lastResult.length} people. Their DOL for any other audit type on this engagement is untouched.`;
+    }
+
+    // Rebuilds just the per-person cards — called after generating, and
+    // again after any manual move/swap, without re-deriving the summary
+    // line or unassignable-warning banner (those don't change from a
+    // manual reassignment).
+    function renderResultMembers() {
+        const totalHours = lastTotalHours;
+        document.getElementById('resultMembers').innerHTML = lastResult.map((m, idx) => {
             const roleKey = (m.role || '').toLowerCase();
             const pct = totalHours > 0 ? Math.round((m.hours / totalHours) * 100) : 0;
             const restricted = m.restricted || [];
             const chips = m.assigned.length
-                ? m.assigned.map(c => `<span class="result-chip ${restricted.includes(c) ? 'restricted' : ''}" ${restricted.includes(c) ? `title="${escAttr(m.emp_name)} isn't trained on this yet"` : ''}>${restricted.includes(c) ? '<i class="bi bi-exclamation-triangle-fill"></i> ' : ''}${escapeHtml(c)}</span>`).join('')
+                ? m.assigned.map(c => {
+                    const isRestricted = restricted.includes(c);
+                    return `<span class="result-chip ${isRestricted ? 'restricted' : ''}" data-member-idx="${idx}" data-criterion="${escAttr(c)}" title="${isRestricted ? escAttr(m.emp_name) + " isn't trained on this yet — " : ''}Click to move to someone else">${isRestricted ? '<i class="bi bi-exclamation-triangle-fill"></i> ' : ''}${escapeHtml(c)}</span>`;
+                }).join('')
                 : '<span class="field-hint">No criteria assigned</span>';
             return `
                 <div class="result-member">
@@ -738,6 +758,7 @@ if (!empty($_SESSION['name'])) {
                             <div class="member-name">${escapeHtml(m.emp_name)}</div>
                             <div class="member-role">${ROLE_LABELS[roleKey] || m.role}</div>
                         </div>
+                        <button type="button" class="swap-btn" data-member-idx="${idx}" title="Swap all criteria with someone else"><i class="bi bi-arrow-left-right"></i> Swap</button>
                         <span class="result-share">${m.hours} hrs &middot; ${pct}% &middot; ${m.assigned.length} criteria (${m.assignedWeight} wt)</span>
                     </div>
                     <div class="result-chips">${chips}</div>
@@ -745,13 +766,74 @@ if (!empty($_SESSION['name'])) {
             `;
         }).join('');
 
-        document.getElementById('saveWarningText').innerHTML =
-            `Saving will replace this engagement's <strong>${escapeHtml(selectedAuditType)}</strong> DOL for these ${lastResult.length} people. Their DOL for any other audit type on this engagement is untouched.`;
+        document.querySelectorAll('.result-chip[data-criterion]').forEach(chip => {
+            chip.addEventListener('click', () => openMoveMenu(parseInt(chip.dataset.memberIdx), chip.dataset.criterion));
+        });
+        document.querySelectorAll('.swap-btn').forEach(btn => {
+            btn.addEventListener('click', () => openSwapMenu(parseInt(btn.dataset.memberIdx)));
+        });
+    }
+
+    // Moves one criterion from one person to another, keeping assignedWeight
+    // in sync using the same weight the split was generated with.
+    function moveCriterion(fromIdx, toIdx, criterion) {
+        const from = lastResult[fromIdx];
+        const to = lastResult[toIdx];
+        const weight = criteriaWeights[criterion] ?? 1;
+        from.assigned = from.assigned.filter(c => c !== criterion);
+        from.assignedWeight -= weight;
+        to.assigned.push(criterion);
+        to.assignedWeight += weight;
+        if (selectedAuditType === 'SOC 2') {
+            from.assigned = sortSoc2Criteria(from.assigned);
+            to.assigned = sortSoc2Criteria(to.assigned);
+        }
+        renderResultMembers();
+    }
+
+    // Swaps two people's entire assigned lists (and assignedWeight) —
+    // covers "give X's whole section to Y and vice versa" in one action
+    // instead of moving each criterion one at a time.
+    function swapAllCriteria(idxA, idxB) {
+        const a = lastResult[idxA];
+        const b = lastResult[idxB];
+        [a.assigned, b.assigned] = [b.assigned, a.assigned];
+        [a.assignedWeight, b.assignedWeight] = [b.assignedWeight, a.assignedWeight];
+        renderResultMembers();
+    }
+
+    async function openMoveMenu(fromIdx, criterion) {
+        const others = lastResult.map((m, i) => ({ m, i })).filter(x => x.i !== fromIdx);
+        if (!others.length) return;
+        const { value: toIdx } = await Swal.fire({
+            title: `Move ${criterion} to…`,
+            input: 'select',
+            inputOptions: Object.fromEntries(others.map(x => [x.i, x.m.emp_name])),
+            showCancelButton: true,
+            confirmButtonText: 'Move'
+        });
+        if (toIdx === undefined || toIdx === '') return;
+        moveCriterion(fromIdx, parseInt(toIdx), criterion);
+    }
+
+    async function openSwapMenu(idxA) {
+        const others = lastResult.map((m, i) => ({ m, i })).filter(x => x.i !== idxA);
+        if (!others.length) return;
+        const { value: idxB } = await Swal.fire({
+            title: `Swap ${lastResult[idxA].emp_name}'s criteria with…`,
+            input: 'select',
+            inputOptions: Object.fromEntries(others.map(x => [x.i, x.m.emp_name])),
+            showCancelButton: true,
+            confirmButtonText: 'Swap'
+        });
+        if (idxB === undefined || idxB === '') return;
+        swapAllCriteria(idxA, parseInt(idxB));
     }
 
     function resetResult() {
         lastResult = null;
         lastUnassignable = [];
+        lastTotalHours = 0;
         document.getElementById('resultSection').classList.add('hidden');
         document.getElementById('genErrorBox').classList.add('hidden');
     }
