@@ -237,9 +237,14 @@ if (!empty($_SESSION['name'])) {
             <h1>Settings</h1>
             <p class="page-sub">Account management and app-wide notification settings. Only admins can see this page.</p>
         </div>
-        <a href="activity-log.php" class="btn btn-secondary" style="text-decoration: none; white-space: nowrap;">
-            <i class="bi bi-clock-history"></i> Activity Log
-        </a>
+        <div style="display: flex; gap: 0.6rem;">
+            <a href="employees.php" class="btn btn-secondary" style="text-decoration: none; white-space: nowrap;">
+                <i class="bi bi-people"></i> Employees
+            </a>
+            <a href="activity-log.php" class="btn btn-secondary" style="text-decoration: none; white-space: nowrap;">
+                <i class="bi bi-clock-history"></i> Activity Log
+            </a>
+        </div>
     </div>
     <hr class="rule">
 
