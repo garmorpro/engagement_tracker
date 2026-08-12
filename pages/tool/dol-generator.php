@@ -109,6 +109,9 @@ if (!empty($_SESSION['name'])) {
         .member-info { flex: 1; min-width: 0; }
         .member-name { font-size: 13px; font-weight: 700; }
         .member-role { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+        .member-restricted-note { font-size: 10.5px; color: var(--caution); font-weight: 600; margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+        .member-restrict-btn { border: 1px solid var(--line); background: var(--card); color: var(--text-muted); width: 28px; height: 28px; border-radius: 7px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+        .member-restrict-btn:hover { border-color: var(--caution); color: var(--caution); }
         .hours-input-wrap { display: flex; align-items: center; gap: 0.4rem; }
         .hours-input { width: 64px; padding: 0.45rem 0.5rem; border: 1px solid var(--line); border-radius: 7px; background: var(--paper); color: var(--text); font-size: 13px; text-align: center; }
         .hours-input:focus { outline: none; border-color: var(--ink); }
@@ -124,6 +127,9 @@ if (!empty($_SESSION['name'])) {
         .result-share { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--card); border: 1px solid var(--line); padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
         .result-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
         .result-chip { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 6px; background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--ink); }
+        .result-chip.restricted { background: color-mix(in srgb, var(--critical) 12%, transparent); color: var(--critical); }
+        .unassignable-warning { padding: 0.85rem 1rem; background: color-mix(in srgb, var(--critical) 8%, transparent); border: 1px solid color-mix(in srgb, var(--critical) 30%, var(--line)); border-radius: 10px; margin-bottom: 1.1rem; font-size: 12px; color: var(--text); line-height: 1.5; }
+        .unassignable-warning i { color: var(--critical); margin-right: 4px; }
 
         .save-warning { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.85rem 1rem; background: color-mix(in srgb, var(--caution) 10%, transparent); border: 1px solid color-mix(in srgb, var(--caution) 30%, var(--line)); border-radius: 10px; margin-bottom: 1rem; font-size: 12px; color: var(--text); line-height: 1.5; }
         .save-warning i { color: var(--caution); font-size: 15px; flex-shrink: 0; margin-top: 1px; }
@@ -234,6 +240,7 @@ if (!empty($_SESSION['name'])) {
     <div id="resultSection" class="hidden">
         <hr class="rule">
         <div id="resultSummary" class="page-sub" style="margin-bottom: 1.25rem;"></div>
+        <div id="unassignableWarning" class="unassignable-warning hidden"></div>
         <div id="resultMembers"></div>
         <div class="save-warning">
             <i class="bi bi-exclamation-triangle-fill"></i>
@@ -287,7 +294,67 @@ if (!empty($_SESSION['name'])) {
     let eligibleMembers = [];  // team members with role senior/staff/intern
     let selectedAuditType = null;
     let lastResult = null;     // computed split, kept for the Save step
+    let lastUnassignable = []; // bundles nobody was eligible for (everyone restricted) — had to assign anyway
     let criteriaWeights = {};  // name -> weight, editable per engagement
+    let restrictionsByName = {}; // emp_name -> [criteria they're not trained on yet], from the roster
+
+    // Restrictions live on the roster (employees, matched by name) rather
+    // than this engagement's team rows, so a restriction set once follows
+    // someone to every engagement they're staffed on afterward.
+    async function loadRestrictions() {
+        try {
+            const names = eligibleMembers.map(m => m.emp_name);
+            const res = await fetch('../../api/get-employee-restrictions.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ names })
+            });
+            const data = await res.json();
+            restrictionsByName = data.success ? (data.restrictions || {}) : {};
+        } catch (err) {
+            console.error('Error:', err);
+            restrictionsByName = {};
+        }
+    }
+
+    async function openRestrictionsEditor(empName, role) {
+        const current = (restrictionsByName[empName] || []).join(', ');
+        const result = await Swal.fire({
+            title: 'Training restrictions',
+            html: `<div style="text-align:left; font-size:12.5px; color:var(--text-muted); margin-bottom:0.75rem;">
+                       Criteria <strong>${escapeHtml(empName)}</strong> hasn't completed training on yet — the DOL Generator will never assign these to them, for any engagement, until this is cleared.
+                   </div>`,
+            input: 'text',
+            inputValue: current,
+            inputPlaceholder: 'e.g. CC6, CC9, Privacy',
+            showCancelButton: true,
+            confirmButtonText: 'Save'
+        });
+        if (!result.isConfirmed) return;
+
+        const restricted = result.value.split(',').map(s => s.trim()).filter(Boolean);
+        try {
+            const res = await fetch('../../api/update-employee-restrictions.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ emp_name: empName, role, restricted })
+            });
+            const data = await res.json();
+            if (!data.success) {
+                Swal.fire('Error', data.message || 'Failed to save restrictions', 'error');
+                return;
+            }
+            restrictionsByName[empName] = restricted;
+            // Patch just this row's restricted-note in place rather than
+            // calling renderTeamHours() again — a full re-render would
+            // reset every hours input back to 0, discarding whatever the
+            // user already typed in for the other rows.
+            updateMemberRestrictedNote(empName);
+        } catch (err) {
+            console.error('Error:', err);
+            Swal.fire('Error', 'Failed to save restrictions', 'error');
+        }
+    }
 
     // Default relative weights for the standard SOC 2 criteria — bigger number
     // means a denser/more involved section. Only used as a starting point; the
@@ -365,6 +432,9 @@ if (!empty($_SESSION['name'])) {
         div.textContent = str;
         return div.innerHTML;
     }
+    function escAttr(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
 
     // Derives the SOC 2 criteria list from the engagement's free-text TSC field.
     // Security is always the 9 Common Criteria; the other four categories are
@@ -433,8 +503,14 @@ if (!empty($_SESSION['name'])) {
     // buildBundles) are combined into a single unit first, so they always
     // land with the same person. Bundles are then assigned one at a time,
     // heaviest first, each going to whoever is currently furthest under
-    // their target weight — this interleaves the assignment instead of
-    // handing out contiguous chunks in list order.
+    // their target weight (among those not restricted from every item in
+    // the bundle) — this interleaves the assignment instead of handing out
+    // contiguous chunks in list order.
+    // Returns { members: state, unassignable } — unassignable lists any
+    // bundle where every member was restricted from at least one item in
+    // it, so it had to fall back to assigning it anyway (best-slack among
+    // everyone) rather than silently giving someone work they're not
+    // trained for without flagging it.
     function computeSplit(members, criteria, groupingEnabled) {
         const totalHours = members.reduce((sum, m) => sum + m.hours, 0);
         const totalWeight = criteria.reduce((sum, c) => sum + c.weight, 0);
@@ -446,12 +522,17 @@ if (!empty($_SESSION['name'])) {
             assigned: []
         }));
 
+        const unassignable = [];
         const bundles = buildBundles(criteria, groupingEnabled);
         const byWeightDesc = [...bundles].sort((a, b) => b.weight - a.weight);
         byWeightDesc.forEach(bundle => {
-            let best = state[0];
+            const eligible = state.filter(s => !bundle.names.some(name => (s.restricted || []).includes(name)));
+            if (!eligible.length) unassignable.push(bundle);
+            const pool = eligible.length ? eligible : state;
+
+            let best = pool[0];
             let bestSlack = -Infinity;
-            state.forEach(s => {
+            pool.forEach(s => {
                 const slack = s.targetWeight - s.assignedWeight;
                 if (slack > bestSlack) { bestSlack = slack; best = s; }
             });
@@ -459,7 +540,7 @@ if (!empty($_SESSION['name'])) {
             best.assignedWeight += bundle.weight;
         });
 
-        return state;
+        return { members: state, unassignable };
     }
 
     // ---------- Engagement selection ----------
@@ -479,6 +560,7 @@ if (!empty($_SESSION['name'])) {
             }
             engagementData = data;
             eligibleMembers = (data.team || []).filter(m => ['senior', 'staff', 'intern'].includes((m.role || '').toLowerCase()));
+            await loadRestrictions();
             renderAuditTypePills();
             renderTeamHours();
             document.getElementById('setupSections').classList.remove('hidden');
@@ -539,12 +621,14 @@ if (!empty($_SESSION['name'])) {
         container.innerHTML = eligibleMembers.map(m => {
             const roleKey = (m.role || '').toLowerCase();
             return `
-                <div class="member-row" data-emp-id="${m.emp_id}">
+                <div class="member-row" data-emp-id="${m.emp_id}" data-emp-name="${escAttr(m.emp_name)}">
                     <div class="member-avatar" style="background:${ROLE_COLOR_VAR[roleKey] || 'var(--ink)'}">${initials(m.emp_name)}</div>
                     <div class="member-info">
                         <div class="member-name">${escapeHtml(m.emp_name)}</div>
                         <div class="member-role">${ROLE_LABELS[roleKey] || m.role}</div>
+                        <div class="member-restricted-note">${restrictedNoteHtml(m.emp_name)}</div>
                     </div>
+                    <button type="button" class="member-restrict-btn" title="Set training restrictions"><i class="bi bi-shield-exclamation"></i></button>
                     <div class="hours-input-wrap">
                         <input type="number" class="hours-input member-hours-input" min="0" step="0.5" value="0">
                         <span class="hours-suffix">hrs</span>
@@ -552,6 +636,24 @@ if (!empty($_SESSION['name'])) {
                 </div>
             `;
         }).join('');
+        container.querySelectorAll('.member-restrict-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const row = btn.closest('.member-row');
+                const member = eligibleMembers.find(m => String(m.emp_id) === String(row.dataset.empId));
+                openRestrictionsEditor(row.dataset.empName, member ? member.role : 'staff');
+            });
+        });
+    }
+
+    function restrictedNoteHtml(empName) {
+        const restricted = restrictionsByName[empName] || [];
+        return restricted.length ? `<i class="bi bi-exclamation-triangle-fill"></i> Not trained: ${escapeHtml(restricted.join(', '))}` : '';
+    }
+
+    function updateMemberRestrictedNote(empName) {
+        const row = document.querySelector(`.member-row[data-emp-name="${CSS.escape(empName)}"]`);
+        const note = row?.querySelector('.member-restricted-note');
+        if (note) note.innerHTML = restrictedNoteHtml(empName);
     }
 
     // ---------- Generate ----------
@@ -575,7 +677,8 @@ if (!empty($_SESSION['name'])) {
             const empId = row.dataset.empId;
             const member = eligibleMembers.find(m => String(m.emp_id) === String(empId));
             const hours = parseFloat(row.querySelector('.member-hours-input').value) || 0;
-            return { ...member, hours };
+            const restricted = restrictionsByName[row.dataset.empName] || [];
+            return { ...member, hours, restricted };
         });
 
         const totalHours = members.reduce((sum, m) => sum + m.hours, 0);
@@ -592,7 +695,9 @@ if (!empty($_SESSION['name'])) {
             return;
         }
 
-        lastResult = computeSplit(members, criteria, selectedAuditType === 'SOC 2');
+        const splitResult = computeSplit(members, criteria, selectedAuditType === 'SOC 2');
+        lastResult = splitResult.members;
+        lastUnassignable = splitResult.unassignable;
         if (selectedAuditType === 'SOC 2') {
             lastResult.forEach(m => { m.assigned = sortSoc2Criteria(m.assigned); });
         }
@@ -609,11 +714,21 @@ if (!empty($_SESSION['name'])) {
         document.getElementById('resultSummary').innerHTML =
             `${engName} &middot; ${escapeHtml(selectedAuditType)} &middot; ${criteriaCount} criteria (${totalWeight} total weight) across ${lastResult.length} people, split by hours (${hoursBreakdown} = ${totalHours} total)`;
 
+        const unassignableBox = document.getElementById('unassignableWarning');
+        if (lastUnassignable.length) {
+            const names = lastUnassignable.flatMap(b => b.names).join(', ');
+            unassignableBox.innerHTML = `<i class="bi bi-exclamation-octagon-fill"></i> No one on this team is trained on <strong>${escapeHtml(names)}</strong> — assigned anyway (marked below), but someone needs to finish training or you should reassign it by hand.`;
+            unassignableBox.classList.remove('hidden');
+        } else {
+            unassignableBox.classList.add('hidden');
+        }
+
         document.getElementById('resultMembers').innerHTML = lastResult.map(m => {
             const roleKey = (m.role || '').toLowerCase();
             const pct = totalHours > 0 ? Math.round((m.hours / totalHours) * 100) : 0;
+            const restricted = m.restricted || [];
             const chips = m.assigned.length
-                ? m.assigned.map(c => `<span class="result-chip">${escapeHtml(c)}</span>`).join('')
+                ? m.assigned.map(c => `<span class="result-chip ${restricted.includes(c) ? 'restricted' : ''}" ${restricted.includes(c) ? `title="${escAttr(m.emp_name)} isn't trained on this yet"` : ''}>${restricted.includes(c) ? '<i class="bi bi-exclamation-triangle-fill"></i> ' : ''}${escapeHtml(c)}</span>`).join('')
                 : '<span class="field-hint">No criteria assigned</span>';
             return `
                 <div class="result-member">
@@ -636,6 +751,7 @@ if (!empty($_SESSION['name'])) {
 
     function resetResult() {
         lastResult = null;
+        lastUnassignable = [];
         document.getElementById('resultSection').classList.add('hidden');
         document.getElementById('genErrorBox').classList.add('hidden');
     }
