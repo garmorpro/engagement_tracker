@@ -84,12 +84,14 @@ body.dark-mode {
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body { height: 100%; }
 body {
     background: var(--paper);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     transition: background-color 0.2s ease, color 0.2s ease;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 2.5rem 1.25rem;
 }
 
 .theme-toggle {
@@ -106,8 +108,16 @@ body {
     .alert-banner { animation: none !important; }
 }
 
-/* ---------- split layout: fixed-dark brand rail + paper sign-in panel ---------- */
-.split { display: grid; grid-template-columns: 38% 62%; min-height: 100vh; }
+/* ---------- split layout: fixed-dark brand rail + paper sign-in panel,
+   framed as a boxed card centered on the page rather than stretched
+   edge-to-edge ---------- */
+.split-frame {
+    width: 100%; max-width: 980px;
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: 0 20px 60px rgba(16, 24, 32, 0.14);
+}
+.split { display: grid; grid-template-columns: 38% 62%; min-height: 560px; }
 
 .brand-panel {
     background: #12283D; color: #E7ECF1;
@@ -182,7 +192,9 @@ body {
 .form-footnote { margin-top: auto; padding-top: 1.6rem; font-size: 11px; color: var(--text-muted); }
 
 @media (max-width: 720px) {
-    .split { grid-template-columns: 1fr; min-height: 0; }
+    body { padding: 0; align-items: stretch; }
+    .split-frame { max-width: none; border-radius: 0; border: none; box-shadow: none; }
+    .split { grid-template-columns: 1fr; min-height: 100vh; }
     .brand-panel { padding: 1.9rem 1.6rem; }
     .brand-tagline { font-size: 20px; margin: 1.6rem 0; }
     .form-panel { padding: 2rem 1.6rem 2.6rem; }
@@ -279,6 +291,7 @@ try {
     <i class="bi bi-moon"></i>
 </button>
 
+<div class="split-frame">
 <div class="split">
     <!-- Brand rail — intentionally always dark, independent of the light/
          dark toggle to the right: a fixed panel, like paper stock that
@@ -339,6 +352,7 @@ try {
             <p class="form-footnote">Locked out or need a PIN reset? Contact your admin.</p>
         </div>
     </div>
+</div>
 </div>
 
 <!-- PIN Entry Modal -->
