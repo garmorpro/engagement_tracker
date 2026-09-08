@@ -90,16 +90,31 @@ const DOL_AUDIT_TYPE_COLUMNS = [
     'FISMA' => 'emp_fisma_dol',
 ];
 
-// Onboarding completeness for one engagement: whether it has any team
-// member at all, and whether every one of its DOL-eligible audit types
-// (see above) has DOL assigned to at least one team member. An engagement
-// with no DOL-eligible audit type (PCI/ISO only, or no audit type set yet)
-// is never flagged for missing DOL — only for a missing team.
-function getSetupInfo($engIdno, $teamLookup, $rawAuditTypes) {
+// engagement_timeline columns that hold an actual date (not a completion
+// timestamp) — presence of any one of these means the timeline has been
+// filled out at all, mirrors TIMELINE_STEPS in this page's JS.
+const TIMELINE_DATE_COLUMNS = [
+    'internal_planning_call_date', 'planning_memo_date', 'irl_due_date', 'client_planning_call_date',
+    'fieldwork_client_calls_start_date', 'fieldwork_client_calls_end_date',
+    'fieldwork_documentation_start_date', 'fieldwork_documentation_end_date',
+    'leadsheet_date', 'conclusion_memo_date', 'draft_report_due_date', 'final_report_date', 'archive_date',
+];
+
+// Onboarding completeness for one engagement: team assigned, DOL assigned
+// for whatever audit types actually need it (see DOL_AUDIT_TYPE_COLUMNS —
+// PCI/ISO have no DOL column at all, so those are never flagged for
+// missing DOL), a timeline that's actually been filled out (no row at all,
+// or a row with every date still blank, both count as not filled out —
+// create-engagement.php doesn't create one automatically), and a planning
+// doc uploaded (eng_planning_doc). Returns every missing piece, in the
+// rough order they'd naturally get done, so callers can show either the
+// first one (a compact row flag) or the full list (the drawer banner).
+function getSetupInfo($eng, $teamLookup, $timelineLookup) {
+    $engIdno = $eng['eng_idno'];
     $members = $teamLookup[$engIdno] ?? [];
     $hasTeam = count($members) > 0;
 
-    $auditTypes = array_filter(array_map('trim', explode(',', (string) $rawAuditTypes)));
+    $auditTypes = array_filter(array_map('trim', explode(',', (string) ($eng['eng_audit_type'] ?? ''))));
     $applicableTypes = array_intersect($auditTypes, array_keys(DOL_AUDIT_TYPE_COLUMNS));
 
     $dolComplete = true;
@@ -115,10 +130,29 @@ function getSetupInfo($engIdno, $teamLookup, $rawAuditTypes) {
     // covered by $hasTeam — don't double-flag by also failing DOL.
     if (!$hasTeam) $dolComplete = true;
 
+    $timeline = $timelineLookup[$engIdno] ?? null;
+    $hasTimeline = false;
+    if ($timeline) {
+        foreach (TIMELINE_DATE_COLUMNS as $col) {
+            if (!empty($timeline[$col])) { $hasTimeline = true; break; }
+        }
+    }
+
+    $hasPlanningDoc = !empty($eng['eng_planning_doc']);
+
+    $missing = [];
+    if (!$hasTeam) $missing[] = 'No team';
+    if (!$hasTimeline) $missing[] = 'No timeline';
+    if (!$hasPlanningDoc) $missing[] = 'No planning doc';
+    if ($hasTeam && !$dolComplete) $missing[] = 'DOL incomplete';
+
     return [
         'has_team' => $hasTeam,
         'dol_complete' => $dolComplete,
-        'needs_setup' => !$hasTeam || !$dolComplete,
+        'has_timeline' => $hasTimeline,
+        'has_planning_doc' => $hasPlanningDoc,
+        'missing' => $missing,
+        'needs_setup' => !empty($missing),
     ];
 }
 
@@ -150,11 +184,11 @@ foreach ($activeEngagements as $e) {
     if (in_array($state, ['overdue', 'soon', 'archive_ready'], true)) $dueSoonCount++;
 }
 
-// "Needs Attention" — onboarding completeness (no team assigned, and/or
-// DOL not fully assigned for whatever audit types actually need it).
+// "Needs Attention" — onboarding completeness: team, DOL, timeline, and
+// planning doc. See getSetupInfo() above for exactly what each means.
 $attentionCount = 0;
 foreach ($activeEngagements as $e) {
-    $setup = getSetupInfo($e['eng_idno'], $teamLookup, $e['eng_audit_type'] ?? '');
+    $setup = getSetupInfo($e, $teamLookup, $timelineLookup);
     if ($setup['needs_setup']) $attentionCount++;
 }
 
@@ -770,7 +804,9 @@ if (!empty($_SESSION['name'])) {
         .drawer-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; }
         .drawer-section-title { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 0.45rem; }
         .drawer-section-title .dot { width: 6px; height: 6px; border-radius: 50%; }
-        .drawer-setup-badge { font-size: 10px; font-weight: 700; text-transform: none; letter-spacing: normal; color: var(--caution); background: color-mix(in srgb, var(--caution) 14%, transparent); padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 4px; }
+        .drawer-setup-banner { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.75rem 0.9rem; margin-bottom: 1.1rem; background: color-mix(in srgb, var(--caution) 10%, transparent); border: 1px solid color-mix(in srgb, var(--caution) 30%, transparent); border-radius: 10px; font-size: 12.5px; color: var(--text); }
+        .drawer-setup-banner i { color: var(--caution); font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+        .drawer-setup-banner b { font-weight: 700; }
         .drawer-link-btn { font-size: 12px; font-weight: 600; color: var(--ink); background: none; border: none; cursor: pointer; padding: 0; }
         .drawer-link-btn:hover { text-decoration: underline; }
         .drawer-link-btn-danger { color: var(--critical); }
@@ -1005,12 +1041,16 @@ if (!empty($_SESSION['name'])) {
             $critical = !$showArchived && $dueState === 'overdue';
             $tickVar = $showArchived ? '--text-muted' : ($statusMeta[$eng['eng_status']]['var'] ?? '--text-muted');
             $dueSoon = in_array($dueState, ['overdue', 'soon', 'archive_ready'], true) ? '1' : '0';
-            $setup = $showArchived ? ['has_team' => true, 'dol_complete' => true, 'needs_setup' => false]
-                                    : getSetupInfo($eng['eng_idno'], $teamLookup, $eng['eng_audit_type'] ?? '');
+            $setup = $showArchived
+                ? ['has_team' => true, 'dol_complete' => true, 'has_timeline' => true, 'has_planning_doc' => true, 'missing' => [], 'needs_setup' => false]
+                : getSetupInfo($eng, $teamLookup, $timelineLookup);
             $setupFlagHtml = '';
             if ($setup['needs_setup']) {
-                $setupReason = !$setup['has_team'] ? 'No team' : 'DOL incomplete';
-                $setupFlagHtml = '<span class="reg-setup-flag"><i class="bi bi-exclamation-triangle-fill"></i> ' . $setupReason . '</span>';
+                // First/most-actionable gap only — the row is a scannable
+                // list, not the place to enumerate everything missing (the
+                // drawer banner does that once you open the engagement).
+                $setupReason = $setup['missing'][0];
+                $setupFlagHtml = '<span class="reg-setup-flag"><i class="bi bi-exclamation-triangle-fill"></i> ' . htmlspecialchars($setupReason) . '</span>';
             }
             $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? '') . ' ' . $eng['eng_idno'] . ' ' . ($eng['eng_poc'] ?? '') . ' ' . ($eng['eng_audit_type'] ?? ''));
 
@@ -2073,6 +2113,7 @@ if (!empty($_SESSION['name'])) {
             : '';
 
         document.getElementById('drawerBody').innerHTML = `
+            <div id="drawerSetupBanner"></div>
             <div class="drawer-section">
                 <div class="drawer-section-head"><div class="drawer-section-title"><span class="dot" style="background:var(--ink)"></span>Overview</div></div>
                 <div class="drawer-info-grid">
@@ -2102,7 +2143,7 @@ if (!empty($_SESSION['name'])) {
 
             <div class="drawer-section">
                 <div class="drawer-section-head">
-                    <div class="drawer-section-title"><span class="dot" style="background:var(--manager)"></span>Team (DOL)<span id="drawerTeamStatusBadge"></span></div>
+                    <div class="drawer-section-title"><span class="dot" style="background:var(--manager)"></span>Team (DOL)</div>
                     <button class="drawer-link-btn" id="drawerManageTeamBtn">Manage Team</button>
                 </div>
                 <div id="drawerTeamContent"></div>
@@ -2136,6 +2177,7 @@ if (!empty($_SESSION['name'])) {
             </div>
         `;
 
+        updateDrawerSetupBanner(eng, team, auditTypes, timeline);
         renderDrawerTeam(team, auditTypes);
         renderDrawerTimeline(timeline, eng.eng_idno);
         renderPlanningDocRow(eng);
@@ -2390,33 +2432,46 @@ if (!empty($_SESSION['name'])) {
         }
     });
 
-    // Same completeness check as PHP's getSetupInfo() (dashboard.php) — no
-    // team at all, or a DOL-eligible audit type nobody on the team has DOL
-    // for. Kept here client-side (rather than a round-trip) since the
-    // drawer already has both the full team and the engagement's audit
-    // types in hand the moment it opens.
-    function drawerSetupStatus(team, auditTypes) {
+    // Same completeness check as PHP's getSetupInfo() (dashboard.php) — team,
+    // DOL for whatever audit types actually need it, a timeline that's
+    // actually been filled out, and a planning doc. Kept here client-side
+    // (rather than a round-trip) since the drawer already has the team,
+    // timeline, and engagement data in hand the moment it opens.
+    function drawerSetupStatus(team, auditTypes, timeline, hasPlanningDoc) {
         const hasTeam = team.length > 0;
         const relevant = auditTypes.filter(t => DOL_AUDIT_TYPES.hasOwnProperty(t));
         const dolComplete = !hasTeam || relevant.every(auditType => {
             const field = DOL_AUDIT_TYPES[auditType];
             return team.some(m => !!m[field]);
         });
-        return { hasTeam, dolComplete, needsSetup: !hasTeam || !dolComplete };
+        const hasTimeline = !!timeline && TIMELINE_STEPS.some(step =>
+            !!timeline[step.date] || (step.startDate && !!timeline[step.startDate])
+        );
+
+        const missing = [];
+        if (!hasTeam) missing.push('No team');
+        if (!hasTimeline) missing.push('No timeline');
+        if (!hasPlanningDoc) missing.push('No planning doc');
+        if (hasTeam && !dolComplete) missing.push('DOL incomplete');
+
+        return { hasTeam, dolComplete, hasTimeline, hasPlanningDoc, missing, needsSetup: missing.length > 0 };
     }
 
-    function updateDrawerTeamStatusBadge(team, auditTypes) {
-        const badge = document.getElementById('drawerTeamStatusBadge');
-        if (!badge) return;
-        const status = drawerSetupStatus(team, auditTypes);
-        if (!status.needsSetup) { badge.innerHTML = ''; return; }
-        const reason = !status.hasTeam ? 'No team' : 'DOL incomplete';
-        badge.innerHTML = `<span class="drawer-setup-badge"><i class="bi bi-exclamation-triangle-fill"></i> ${reason}</span>`;
+    function updateDrawerSetupBanner(eng, team, auditTypes, timeline) {
+        const banner = document.getElementById('drawerSetupBanner');
+        if (!banner) return;
+        const status = drawerSetupStatus(team, auditTypes, timeline, !!eng.eng_planning_doc);
+        if (!status.needsSetup) { banner.innerHTML = ''; return; }
+        banner.innerHTML = `
+            <div class="drawer-setup-banner">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div><b>Onboarding incomplete:</b> ${status.missing.map(escapeHtml).join(' &middot; ')}</div>
+            </div>
+        `;
     }
 
     function renderDrawerTeam(team, auditTypes) {
         const el = document.getElementById('drawerTeamContent');
-        updateDrawerTeamStatusBadge(team, auditTypes);
         if (!team.length) {
             el.innerHTML = '<div class="drawer-team-empty">No team assigned yet.</div>';
             return;
