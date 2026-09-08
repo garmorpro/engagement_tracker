@@ -1,6 +1,8 @@
 # Folding Engagement Tracker into Client Scheduler (AARC-360) — Phased Plan
 
-**Status (2026-08-13):** Phases 0-2 are live in production (schema applied, all 21 engagements migrated, verified). Phase 3 (UI) is done through step 6 (notifications) — only step 5 (restyle, deliberately last/cosmetic) remains. All work sits on branch `audit-tracking-migration` in the Client Scheduler repo (github.com/garmorpro/client-scheduler), pushed but not yet merged to `main`.
+> ⏸️ **PAUSED as of 2026-09-08.** Garrett confirmed he's still working `engagements.morganserver.com` (Engagement Tracker) as his main day-to-day place for engagements — this migration is on hold, not moving forward for now. Nothing below was reversed or undone; Phases 0-2 and most of Phase 3 are still committed and live on the Client Scheduler side exactly as they were left. If/when this resumes, start by re-reading the "Pick up here" section below — it was accurate as of 2026-08-13 and nothing has changed since.
+
+**Status (2026-08-13, last active work — see pause note above):** Phases 0-2 are live in production (schema applied, all 21 engagements migrated, verified). Phase 3 (UI) is done through step 6 (notifications) — only step 5 (restyle, deliberately last/cosmetic) remains. All work sits on branch `audit-tracking-migration` in the Client Scheduler repo (github.com/garmorpro/client-scheduler), pushed but not yet merged to `main`.
 
 ## 📍 Pick up here — loose ends from the last session
 
