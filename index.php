@@ -11,6 +11,30 @@ $result = $conn->query("
     ORDER BY `name`
 ");
 $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+
+// auth/login.php already sets $_SESSION['error'] on a failed PIN or a
+// rate-limit hit and redirects back here — this page used to never read
+// it, so a wrong PIN silently dumped you back at the picker with zero
+// feedback. Read it once, then clear it so a refresh doesn't re-show a
+// stale message.
+$loginError = $_SESSION['error'] ?? null;
+unset($_SESSION['error']);
+
+// Role -> CSS var for each account's avatar + a plain-text role label,
+// matching the color convention already used for role badges/avatars
+// elsewhere (dashboard.php, engagement-details.php).
+$roleColorVar = [
+    'manager' => 'var(--manager)',
+    'senior'  => 'var(--senior)',
+    'staff'   => 'var(--staff)',
+    'intern'  => 'var(--intern)',
+];
+$roleLabel = [
+    'manager' => 'Manager',
+    'senior'  => 'Senior',
+    'staff'   => 'Staff',
+    'intern'  => 'Intern',
+];
 ?>
 
 <!DOCTYPE html>
@@ -18,180 +42,201 @@ $accounts = $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login - Engagement Tracker</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>Sign in - Engagement Tracker</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <style>
 :root {
+    --ink: #1B3A5C;
+    --ink-soft: #4A6483;
+    --paper: #F4F6F8;
+    --card: #FFFFFF;
+    --line: #DCE1E7;
+    --line-strong: #C2CAD3;
+    --text: #16202B;
+    --text-muted: #5B6B7C;
+    --critical: #B3261E;
+    --critical-tint: rgba(179, 38, 30, 0.07);
+    --caution: #A66A00;
+    --caution-tint: rgba(166, 106, 0, 0.08);
+    --good: #1F7A54;
+
+    --manager: var(--ink);
+    --staff: var(--good);
+    --intern: var(--caution);
+    --senior: #7A4FB0;
+}
+body.dark-mode {
     --ink: #6E9FCB;
+    --ink-soft: #7C93AA;
     --paper: #10161D;
     --card: #171F28;
     --line: #2A343E;
     --line-strong: #3C4854;
-    --critical: #E5766F;
     --text: #E7ECF1;
     --text-muted: #93A1AF;
+    --critical: #E5766F;
+    --critical-tint: rgba(229, 118, 111, 0.1);
+    --caution: #D3A44E;
+    --caution-tint: rgba(211, 164, 78, 0.12);
+    --good: #5FB98A;
+    --senior: #B79AE0;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html, body { height: 100%; }
 body {
-    background: linear-gradient(135deg, var(--paper) 0%, var(--card) 100%);
+    background: var(--paper);
+    color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    color: var(--text);
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.login-container { text-align: center; margin-bottom: 2rem; }
-.logo-icon {
-    width: 56px; height: 56px;
-    background: var(--ink);
-    border-radius: 13px;
+.theme-toggle {
+    position: fixed; top: 1.1rem; right: 1.1rem;
+    width: 34px; height: 34px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--card);
+    color: var(--text-muted); font-size: 15px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--paper); font-size: 26px;
-    margin: 0 auto 1.5rem;
-    box-shadow: 0 6px 18px color-mix(in srgb, var(--ink) 35%, transparent);
+    cursor: pointer; z-index: 10;
+}
+.theme-toggle:hover { color: var(--text); border-color: var(--line-strong); }
+
+@media (prefers-reduced-motion: reduce) {
+    .alert-banner { animation: none !important; }
 }
 
-.login-container h1 {
-    font-size: 30px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    margin-bottom: 0.5rem;
-    color: var(--text);
-}
+/* ---------- split layout: fixed-dark brand rail + paper sign-in panel ---------- */
+.split { display: grid; grid-template-columns: 38% 62%; min-height: 100vh; }
 
-.login-container p {
-    font-size: 13.5px; color: var(--text-muted);
+.brand-panel {
+    background: #12283D; color: #E7ECF1;
+    padding: 2.6rem 2.6rem;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
 }
-
-.login-card {
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 1.75rem;
-    width: 100%;
-    max-width: 440px;
-    box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
-    position: relative;
+.brand-panel::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 26px);
+    pointer-events: none;
 }
+.brand-mark { display: flex; align-items: center; gap: 0.55rem; position: relative; }
+.brand-icon { width: 28px; height: 28px; border-radius: 7px; background: #6E9FCB; color: #0E1B27; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+.brand-word { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+.brand-tagline { font-size: 26px; font-weight: 700; line-height: 1.32; letter-spacing: -0.015em; margin: auto 0; max-width: 21ch; position: relative; }
+.brand-tagline span { color: #8EB4D6; }
+.brand-types { position: relative; display: flex; flex-wrap: wrap; gap: 0.5rem 0.9rem; font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #7C93AA; }
 
-.card-header {
-    display: flex; align-items: center; gap: 0.7rem;
-    margin-bottom: 1.4rem;
-    padding-bottom: 1.2rem;
-    border-bottom: 1px solid var(--line);
-}
+/* ---------- sign-in panel ---------- */
+.form-panel { background: var(--paper); padding: 2.6rem 3rem; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.form-inner { width: 100%; max-width: 440px; display: flex; flex-direction: column; }
 
-.card-header-icon {
-    width: 38px; height: 38px;
-    background: color-mix(in srgb, var(--ink) 12%, transparent);
+.alert-banner {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0.7rem 0.9rem;
     border-radius: 9px;
+    font-size: 12.5px; font-weight: 600;
+    margin-bottom: 1.2rem;
+    animation: fadeIn 0.3s ease;
+}
+.alert-banner.error { background: var(--critical-tint); color: var(--critical); border: 1px solid color-mix(in srgb, var(--critical) 35%, transparent); }
+.alert-banner.warn { background: var(--caution-tint); color: var(--caution); border: 1px solid color-mix(in srgb, var(--caution) 35%, transparent); }
+.alert-banner i { font-size: 14px; flex-shrink: 0; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+.form-eyebrow { font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.4rem; }
+.form-inner h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; margin: 0 0 0.3rem; }
+.form-inner > p.form-sub { font-size: 12.5px; color: var(--text-muted); margin: 0 0 1.6rem; }
+
+.account-rows { display: flex; flex-direction: column; }
+.account-row {
+    display: flex; align-items: center; gap: 0.85rem; padding: 0.9rem 0.15rem;
+    border-bottom: 1px solid var(--line); cursor: pointer;
+    background: none; border-left: none; border-right: none; border-top: none;
+    text-align: left; width: 100%; font-family: inherit;
+    transition: padding-left 0.12s ease, background-color 0.12s ease;
+}
+.account-row:hover, .account-row:focus-visible {
+    padding-left: 0.6rem; background: color-mix(in srgb, var(--ink) 4%, transparent); outline: none;
+}
+.account-row:focus-visible { box-shadow: inset 2px 0 0 var(--ink); }
+
+.account-avatar {
+    width: 34px; height: 34px; border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--ink);
-    font-size: 17px;
+    font-size: 12px; font-weight: 700; color: var(--card);
+    flex-shrink: 0;
+}
+.account-info { flex: 1; min-width: 0; }
+.account-name { font-size: 13px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-email { font-size: 11px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.account-role { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); flex-shrink: 0; }
+
+.account-empty {
+    text-align: center; padding: 1.75rem 1rem;
+    color: var(--text-muted); font-size: 12.5px;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.account-empty i { font-size: 20px; display: block; margin-bottom: 0.5rem; opacity: 0.6; }
+
+.form-footnote { margin-top: auto; padding-top: 1.6rem; font-size: 11px; color: var(--text-muted); }
+
+@media (max-width: 720px) {
+    .split { grid-template-columns: 1fr; min-height: 0; }
+    .brand-panel { padding: 1.9rem 1.6rem; }
+    .brand-tagline { font-size: 20px; margin: 1.6rem 0; }
+    .form-panel { padding: 2rem 1.6rem 2.6rem; }
+    .form-footnote { margin-top: 1.6rem; padding-top: 0; }
 }
 
-.card-header h6 {
-    font-size: 15px; font-weight: 700;
-    color: var(--text); margin: 0;
-}
-
-.account-list { display: flex; flex-direction: column; gap: 0.6rem; }
-
-.account-item {
-    background: transparent;
-    border: 1px solid var(--line);
-    border-radius: 11px;
-    padding: 0.85rem 0.9rem;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    display: flex; align-items: center; gap: 0.85rem;
-}
-
-.account-item:hover {
-    background: color-mix(in srgb, var(--ink) 5%, transparent);
-    border-color: var(--ink);
-    transform: translateX(2px);
-}
-
-.account-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 700; flex-shrink: 0;
-}
-
-.account-icon.user {
-    background: var(--ink);
-    color: var(--paper);
-}
-
-.account-info { flex: 1; text-align: left; }
-.account-name { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 0.15rem; }
-.account-email { font-size: 11.5px; color: var(--text-muted); }
-
+/* ---------- PIN modal ---------- */
 .modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(10, 15, 22, 0.55);
+    position: fixed; inset: 0;
+    background: rgba(10, 15, 22, 0.5);
     display: none; align-items: center; justify-content: center;
+    padding: 1.5rem;
     z-index: 1000;
 }
-
 .modal-overlay.active { display: flex; }
 
 .modal-box {
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 1.9rem;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
+    border-radius: 14px;
+    padding: 1.75rem;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.28);
     position: relative;
 }
 
 .modal-close {
-    position: absolute; top: 1rem; right: 1rem;
-    width: 30px; height: 30px;
+    position: absolute; top: 0.9rem; right: 0.9rem;
+    width: 28px; height: 28px;
     border: none; background: transparent;
-    color: var(--text-muted); font-size: 20px;
-    cursor: pointer; transition: all 0.15s;
-    padding: 0; line-height: 1; border-radius: 8px;
+    color: var(--text-muted); font-size: 18px;
+    cursor: pointer; line-height: 1; border-radius: 7px;
     display: flex; align-items: center; justify-content: center;
 }
-
 .modal-close:hover { color: var(--text); background: var(--paper); }
 
 .modal-header {
-    display: flex; align-items: center; gap: 0.75rem;
-    margin-bottom: 1.4rem;
-    padding-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 0.7rem;
+    margin-bottom: 1.3rem;
+    padding-bottom: 1.1rem;
     border-bottom: 1px solid var(--line);
 }
-
 .modal-header-icon {
-    width: 42px; height: 42px;
-    background: color-mix(in srgb, var(--ink) 14%, transparent);
-    border-radius: 10px;
+    width: 38px; height: 38px;
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
+    border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
     color: var(--ink);
-    font-size: 19px;
+    font-size: 16px;
     flex-shrink: 0;
 }
-
-.modal-header h5 {
-    font-size: 15.5px; font-weight: 700;
-    color: var(--text); margin: 0; flex: 1;
-}
-
-.modal-subtext {
-    font-size: 11.5px; color: var(--text-muted); margin-top: 2px;
-}
+.modal-header h5 { font-size: 14.5px; font-weight: 700; color: var(--text); }
+.modal-subtext { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
 
 /* PIN dot entry — replaces bullet-masked text for sign-in. The real <input>
    stays focused/typable but visually hidden; JS toggles .filled on these
@@ -202,7 +247,7 @@ body {
    isn't enough to raise the on-screen keypad on most mobile browsers unless
    it happens synchronously inside a genuine tap. Tapping the dots directly
    focuses this input and reliably opens the numeric keypad. */
-.pin-entry { position: relative; display: flex; justify-content: center; margin: 1.6rem 0 0.5rem; }
+.pin-entry { position: relative; display: flex; justify-content: center; margin: 1.5rem 0 0.6rem; }
 .pin-hidden-input {
     position: absolute; inset: 0; width: 100%; height: 100%;
     opacity: 0; border: 0; background: transparent; margin: 0; padding: 0;
@@ -211,123 +256,102 @@ body {
 }
 .pin-dots { display: flex; gap: 0.85rem; justify-content: center; }
 .pin-dot {
-    width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--line-strong);
+    width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line-strong);
     transition: all 0.15s;
 }
 .pin-dot.filled { background: var(--ink); border-color: var(--ink); transform: scale(1.1); }
-.pin-hint { text-align: center; font-size: 11.5px; color: var(--text-muted); }
-
-.demo-credentials {
-    background: color-mix(in srgb, var(--ink) 6%, var(--card));
-    border: 1px solid var(--line);
-    border-radius: 11px;
-    padding: 1rem 1.15rem;
-    margin-top: 1.5rem;
-    text-align: center;
-    width: 100%;
-    max-width: 440px;
-}
-
-.demo-credentials h6 {
-    color: var(--text);
-    font-size: 12px;
-    font-weight: 700;
-    display: inline;
-}
-
-.demo-credentials p {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin: 0.25rem 0 0;
-}
-
-.timeout-alert {
-    background: color-mix(in srgb, var(--critical) 10%, transparent);
-    border: 1px solid var(--critical);
-    color: var(--critical);
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    font-size: 13px;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    font-weight: 600;
-    animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+.pin-hint { text-align: center; font-size: 11px; color: var(--text-muted); }
 </style>
 </head>
 <body>
+<script>
+// Applied synchronously, as the very first thing in <body>, so the saved
+// theme is set before anything paints — avoids a light-then-dark flash for
+// anyone who left dark mode on while last logged in.
+try {
+    if (localStorage.getItem('darkMode') === 'true') {
+        document.body.classList.add('dark-mode');
+    }
+} catch (e) {}
+</script>
 
-<div class="login-container">
-    <div class="logo-icon">
-        <i class="bi bi-bar-chart-fill"></i>
-    </div>
-    <h1>Engagement Tracker</h1>
-    <p>Select your account to sign in</p>
-    <?php if (isset($_GET['timeout'])): ?>
-    <div class="timeout-alert">
-        You were logged out due to inactivity. Please login again.
-    </div>
-<?php endif; ?>
-</div>
+<button class="theme-toggle" id="themeToggle" title="Dark mode" aria-label="Toggle dark mode">
+    <i class="bi bi-moon"></i>
+</button>
 
-<div class="login-card">
-    <div class="card-header">
-        <div class="card-header-icon">
-            <i class="bi bi-person-circle"></i>
+<div class="split">
+    <!-- Brand rail — intentionally always dark, independent of the light/
+         dark toggle to the right: a fixed panel, like paper stock that
+         doesn't change color when the office lights do. -->
+    <div class="brand-panel">
+        <div class="brand-mark">
+            <div class="brand-icon"><i class="bi bi-bar-chart-fill"></i></div>
+            <div class="brand-word">Engagement Tracker</div>
         </div>
-        <h6>Select Account</h6>
+        <div class="brand-tagline">Every engagement, <span>accounted for.</span></div>
+        <div class="brand-types">SOC 1 &middot; SOC 2 &middot; HIPAA &middot; HITRUST &middot; FISMA</div>
     </div>
 
-    <?php if (!empty($accounts)): ?>
-        <div class="account-list">
-            <?php foreach ($accounts as $account): ?>
-                <?php if ($account['role'] === 'super_admin') continue; ?>
-                <?php
-                    $accountInitials = '';
-                    foreach (explode(' ', trim($account['name'])) as $part) {
-                        if ($part !== '') $accountInitials .= strtoupper($part[0]);
-                    }
-                ?>
-                <div class="account-item"
-                     data-user-id="<?= $account['user_id'] ?>"
-                     data-account-name="<?= htmlspecialchars($account['name']) ?>"
-                     data-role="<?= $account['role'] ?>"
-                     onclick="openPinModal(this)">
-                    <div class="account-icon user"><?= htmlspecialchars($accountInitials) ?></div>
-                    <div class="account-info">
-                        <div class="account-name"><?= htmlspecialchars($account['name']) ?></div>
-                        <div class="account-email"><?= htmlspecialchars($account['email']) ?></div>
-                    </div>
-                    <i class="bi bi-chevron-right" style="color: var(--text-muted); font-size: 13px;"></i>
+    <div class="form-panel">
+        <div class="form-inner">
+            <?php if ($loginError): ?>
+                <div class="alert-banner error"><i class="bi bi-exclamation-triangle-fill"></i> <?= htmlspecialchars($loginError) ?></div>
+            <?php elseif (isset($_GET['timeout'])): ?>
+                <div class="alert-banner warn"><i class="bi bi-clock-history"></i> You were logged out due to inactivity &mdash; please sign in again.</div>
+            <?php endif; ?>
+
+            <div class="form-eyebrow">Sign in</div>
+            <h1>Select your account</h1>
+            <p class="form-sub">Choose your name, then enter your PIN.</p>
+
+            <?php if (!empty($accounts)): ?>
+                <div class="account-rows">
+                    <?php foreach ($accounts as $account): ?>
+                        <?php if ($account['role'] === 'super_admin') continue; ?>
+                        <?php
+                            $accountInitials = '';
+                            foreach (explode(' ', trim($account['name'])) as $part) {
+                                if ($part !== '') $accountInitials .= strtoupper($part[0]);
+                            }
+                            $avatarColor = $roleColorVar[$account['role']] ?? 'var(--ink)';
+                            $roleText = $roleLabel[$account['role']] ?? ucfirst($account['role']);
+                        ?>
+                        <button type="button" class="account-row"
+                             data-user-id="<?= $account['user_id'] ?>"
+                             data-account-name="<?= htmlspecialchars($account['name']) ?>"
+                             onclick="openPinModal(this)">
+                            <div class="account-avatar" style="background:<?= $avatarColor ?>;"><?= htmlspecialchars($accountInitials) ?></div>
+                            <div class="account-info">
+                                <div class="account-name"><?= htmlspecialchars($account['name']) ?></div>
+                                <div class="account-email"><?= htmlspecialchars($account['email']) ?></div>
+                            </div>
+                            <div class="account-role"><?= htmlspecialchars($roleText) ?></div>
+                        </button>
+                    <?php endforeach; ?>
                 </div>
-            <?php endforeach; ?>
-        </div>
-    <?php else: ?>
-        <p style="color: var(--text-muted);">No accounts available</p>
-    <?php endif; ?>
-</div>
+            <?php else: ?>
+                <div class="account-empty">
+                    <i class="bi bi-person-x"></i>
+                    No accounts available
+                </div>
+            <?php endif; ?>
 
-<div class="demo-credentials">
-    <h6>Sign in:</h6>
-    <p>Select your account, then enter your PIN.</p>
+            <p class="form-footnote">Locked out or need a PIN reset? Contact your admin.</p>
+        </div>
+    </div>
 </div>
 
 <!-- PIN Entry Modal -->
 <div class="modal-overlay" id="pinModal">
     <div class="modal-box">
-        <button class="modal-close" onclick="closePinModal()">×</button>
+        <button class="modal-close" onclick="closePinModal()" aria-label="Close">&times;</button>
         <div class="modal-header">
             <div class="modal-header-icon">
                 <i class="bi bi-lock-fill"></i>
             </div>
             <div>
                 <h5 id="modalAccountName">Enter PIN</h5>
-                <div class="modal-subtext">Enter your 4-digit PIN</div>
+                <div class="modal-subtext">4-digit PIN</div>
             </div>
         </div>
         <form id="pinForm" method="POST" action="<?= BASE_URL ?>/auth/login.php">
@@ -420,11 +444,42 @@ function closePinModal() {
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     setupPinMasking('pinInput', 4);
+
+    // If we landed back here right after a failed PIN attempt (the error
+    // banner above is present), give it a beat of visible motion instead of
+    // just sitting there — a plain static banner is easy to miss right
+    // after being bounced back from a modal.
+    const errorBanner = document.querySelector('.alert-banner.error');
+    if (errorBanner) {
+        errorBanner.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
 });
 
-// Close modal when clicking outside
+// Close modal when clicking outside, or on Escape
 window.addEventListener('click', function(e){
-    if(e.target === document.getElementById('pinModal')) closePinModal();
+    if (e.target === document.getElementById('pinModal')) closePinModal();
+});
+window.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && document.getElementById('pinModal').classList.contains('active')) {
+        closePinModal();
+    }
+});
+
+// Dark mode toggle — mirrors the same localStorage key + icon-swap
+// convention used on dashboard.php, so a choice made here carries over
+// once logged in (and vice versa). Only the sign-in panel + modal respond
+// to this; the brand rail on the left stays dark on purpose either way.
+const themeToggle = document.getElementById('themeToggle');
+function updateThemeIcon(isDark) {
+    const icon = themeToggle.querySelector('i');
+    icon.classList.toggle('bi-moon', !isDark);
+    icon.classList.toggle('bi-sun', isDark);
+}
+updateThemeIcon(document.body.classList.contains('dark-mode'));
+themeToggle.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark-mode');
+    try { localStorage.setItem('darkMode', isDark); } catch (e) {}
+    updateThemeIcon(isDark);
 });
 </script>
 
