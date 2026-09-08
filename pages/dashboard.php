@@ -15,6 +15,16 @@ foreach ($allTimelineData as $row) {
     $timelineLookup[$row['engagement_idno']] = $row;
 }
 
+// Get all team rows, grouped by engagement — used to flag engagements that
+// still need a team and/or DOL assigned (see getSetupInfo() below), same
+// "fetch everything once, look it up per engagement" pattern as the
+// timeline lookup above.
+$allTeamData = getAllTeamData($conn);
+$teamLookup = [];
+foreach ($allTeamData as $row) {
+    $teamLookup[$row['engagement_idno']][] = $row;
+}
+
 $activeEngagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
 $archivedEngagements = array_filter($allEngagements, fn($e) => $e['eng_status'] === 'archived');
 $activeCount = count($activeEngagements);
@@ -68,6 +78,50 @@ function getDueInfo($engIdno, $timelineLookup) {
     return [$due, 'ok'];
 }
 
+// Audit types that actually have a DOL column on engagement_team — mirrors
+// DOL_AUDIT_TYPES in this page's JS. PCI and ISO have no DOL column at all,
+// so an engagement whose only audit type is one of those can never be
+// flagged for "missing DOL" — there's nothing to assign.
+const DOL_AUDIT_TYPE_COLUMNS = [
+    'SOC 1' => 'emp_soc1_dol',
+    'SOC 2' => 'emp_soc2_dol',
+    'HIPAA' => 'emp_hipaa_dol',
+    'HITRUST' => 'emp_hitrust_dol',
+    'FISMA' => 'emp_fisma_dol',
+];
+
+// Onboarding completeness for one engagement: whether it has any team
+// member at all, and whether every one of its DOL-eligible audit types
+// (see above) has DOL assigned to at least one team member. An engagement
+// with no DOL-eligible audit type (PCI/ISO only, or no audit type set yet)
+// is never flagged for missing DOL — only for a missing team.
+function getSetupInfo($engIdno, $teamLookup, $rawAuditTypes) {
+    $members = $teamLookup[$engIdno] ?? [];
+    $hasTeam = count($members) > 0;
+
+    $auditTypes = array_filter(array_map('trim', explode(',', (string) $rawAuditTypes)));
+    $applicableTypes = array_intersect($auditTypes, array_keys(DOL_AUDIT_TYPE_COLUMNS));
+
+    $dolComplete = true;
+    foreach ($applicableTypes as $type) {
+        $col = DOL_AUDIT_TYPE_COLUMNS[$type];
+        $covered = false;
+        foreach ($members as $member) {
+            if (!empty($member[$col])) { $covered = true; break; }
+        }
+        if (!$covered) { $dolComplete = false; break; }
+    }
+    // Nothing to assign DOL against yet without a team, but that's already
+    // covered by $hasTeam — don't double-flag by also failing DOL.
+    if (!$hasTeam) $dolComplete = true;
+
+    return [
+        'has_team' => $hasTeam,
+        'dol_complete' => $dolComplete,
+        'needs_setup' => !$hasTeam || !$dolComplete,
+    ];
+}
+
 // Renders the comma-separated eng_audit_type string as compact badges
 // instead of a raw string that truncates mid-word in a fixed-width column.
 function renderTypeBadges($rawTypes) {
@@ -87,10 +141,21 @@ function renderTypeBadges($rawTypes) {
     return $html;
 }
 
-$attentionCount = 0;
+// "Due Soon" — date-driven (overdue / due within 5 days / ready to
+// archive). This used to be called "Needs Attention"; that label now means
+// setup completeness instead (below), so this is split out on its own.
+$dueSoonCount = 0;
 foreach ($activeEngagements as $e) {
     [, $state] = getDueInfo($e['eng_idno'], $timelineLookup);
-    if (in_array($state, ['overdue', 'soon', 'archive_ready'], true)) $attentionCount++;
+    if (in_array($state, ['overdue', 'soon', 'archive_ready'], true)) $dueSoonCount++;
+}
+
+// "Needs Attention" — onboarding completeness (no team assigned, and/or
+// DOL not fully assigned for whatever audit types actually need it).
+$attentionCount = 0;
+foreach ($activeEngagements as $e) {
+    $setup = getSetupInfo($e['eng_idno'], $teamLookup, $e['eng_audit_type'] ?? '');
+    if ($setup['needs_setup']) $attentionCount++;
 }
 
 // One-shot: true only on the page load immediately after a successful
@@ -287,6 +352,12 @@ if (!empty($_SESSION['name'])) {
 
         .eng-soc-box { margin-top: 0.9rem; padding: 1rem 1.1rem; background: color-mix(in srgb, var(--ink) 8%, transparent); border-radius: 8px; border-left: 3px solid var(--ink); }
 
+        .eng-manager-selected { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.6rem; padding: 0.5rem 0.7rem; background: color-mix(in srgb, var(--manager) 8%, transparent); border: 1px solid color-mix(in srgb, var(--manager) 25%, var(--line)); border-radius: 8px; }
+        .eng-manager-selected .avatar { width: 26px; height: 26px; border-radius: 7px; background: var(--manager); color: var(--card); font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .eng-manager-selected .name { font-size: 12.5px; font-weight: 700; color: var(--text); flex: 1; }
+        .eng-manager-selected .clear-btn { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 0 2px; line-height: 1; }
+        .eng-manager-selected .clear-btn:hover { color: var(--critical); }
+
         .eng-review-summary { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 0 0 1.15rem; display: flex; flex-direction: column; gap: 0.6rem; }
         .eng-review-row { display: flex; justify-content: space-between; gap: 1rem; font-size: 12.5px; margin: 0; }
         .eng-review-row dt { color: var(--text-muted); font-weight: 600; }
@@ -353,6 +424,9 @@ if (!empty($_SESSION['name'])) {
         .attention-link { background: none; border: none; padding: 0; font-size: 13px; font-weight: 600; color: var(--critical); cursor: pointer; display: flex; align-items: center; gap: 6px; }
         .attention-link .swatch { width: 8px; height: 8px; border-radius: 1px; background: var(--critical); }
         .attention-link.active { text-decoration: underline; text-underline-offset: 3px; }
+        .attention-link--setup { color: var(--caution); }
+        .attention-link--setup .swatch { background: var(--caution); }
+        .toolbar-flags { display: flex; align-items: center; gap: 1.5rem; }
 
         .result-note { margin-left: auto; font-size: 12px; color: var(--text-muted); }
 
@@ -365,6 +439,7 @@ if (!empty($_SESSION['name'])) {
         .register { border-top: 1px solid var(--line); }
         .reg-row { display: flex; align-items: center; gap: 1.25rem; padding: 13px 8px 13px 4px; border-bottom: 1px solid var(--line); cursor: pointer; position: relative; transition: background-color 0.1s ease; }
         .reg-row.is-critical { background: var(--critical-tint); }
+        .reg-row.is-needs-setup:not(.is-critical) { background: color-mix(in srgb, var(--caution) 7%, transparent); }
         .reg-row.is-archived { opacity: 0.62; }
         /* :hover rules gated to actual mouse/trackpad devices — on a touch
            screen, an element with :hover styling makes iOS/Android browsers
@@ -376,13 +451,17 @@ if (!empty($_SESSION['name'])) {
             .reg-row:hover { background: color-mix(in srgb, var(--ink) 6%, var(--paper)); }
             .reg-row:hover .row-actions { opacity: 1; }
             .reg-row.is-critical:hover { background: var(--critical-tint-strong); }
+            .reg-row.is-needs-setup:not(.is-critical):hover { background: color-mix(in srgb, var(--caution) 12%, transparent); }
         }
 
         .reg-tick { width: 3px; align-self: stretch; border-radius: 2px; flex-shrink: 0; }
         .reg-id { font-size: 11.5px; color: var(--text-muted); width: 90px; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .reg-main { flex: 0 1 420px; min-width: 0; }
         .reg-name { font-weight: 600; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .reg-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .reg-sub-row { display: flex; align-items: center; gap: 6px; min-width: 0; margin-top: 1px; }
+        .reg-sub { font-size: 12px; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .reg-setup-flag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--caution); background: color-mix(in srgb, var(--caution) 14%, transparent); padding: 1px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 3px; }
+        .reg-setup-flag i { font-size: 9px; }
         .reg-type { display: flex; align-items: center; gap: 4px; width: 170px; flex-shrink: 0; overflow: hidden; }
         .type-badge { font-size: 10.5px; font-weight: 700; color: var(--ink); background: color-mix(in srgb, var(--ink) 12%, transparent); padding: 2px 7px; border-radius: 5px; white-space: nowrap; flex-shrink: 0; }
         .type-more { font-size: 11px; color: var(--text-muted); font-weight: 600; flex-shrink: 0; }
@@ -416,6 +495,8 @@ if (!empty($_SESSION['name'])) {
         .stat-card .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); margin-top: 3px; }
         .stat-card--attention { background: var(--critical-tint); border-color: color-mix(in srgb, var(--critical) 30%, var(--line)); }
         .stat-card--attention .value, .stat-card--attention .label { color: var(--critical); }
+        .stat-card--setup { background: color-mix(in srgb, var(--caution) 8%, transparent); border-color: color-mix(in srgb, var(--caution) 30%, var(--line)); }
+        .stat-card--setup .value, .stat-card--setup .label { color: var(--caution); }
 
         .dist-card { background: var(--card); border: 1px solid var(--line); border-radius: 11px; padding: 0.85rem 1.1rem; flex: 1; min-width: 260px; display: flex; flex-direction: column; justify-content: center; gap: 0.5rem; }
         .dist-bar { display: flex; height: 9px; border-radius: 5px; overflow: hidden; background: var(--line); }
@@ -689,6 +770,7 @@ if (!empty($_SESSION['name'])) {
         .drawer-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; }
         .drawer-section-title { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); display: flex; align-items: center; gap: 0.45rem; }
         .drawer-section-title .dot { width: 6px; height: 6px; border-radius: 50%; }
+        .drawer-setup-badge { font-size: 10px; font-weight: 700; text-transform: none; letter-spacing: normal; color: var(--caution); background: color-mix(in srgb, var(--caution) 14%, transparent); padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 4px; }
         .drawer-link-btn { font-size: 12px; font-weight: 600; color: var(--ink); background: none; border: none; cursor: pointer; padding: 0; }
         .drawer-link-btn:hover { text-decoration: underline; }
         .drawer-link-btn-danger { color: var(--critical); }
@@ -861,7 +943,8 @@ if (!empty($_SESSION['name'])) {
     <div class="stat-row">
         <?php if (!$showArchived): ?>
             <div class="stat-card"><div><div class="value"><?php echo $activeCount; ?></div><div class="label">Total Active</div></div></div>
-            <div class="stat-card <?php echo $attentionCount ? 'stat-card--attention' : ''; ?>"><div><div class="value"><?php echo $attentionCount; ?></div><div class="label">Needs Attention</div></div></div>
+            <div class="stat-card <?php echo $attentionCount ? 'stat-card--setup' : ''; ?>"><div><div class="value"><?php echo $attentionCount; ?></div><div class="label">Needs Attention</div></div></div>
+            <div class="stat-card <?php echo $dueSoonCount ? 'stat-card--attention' : ''; ?>"><div><div class="value"><?php echo $dueSoonCount; ?></div><div class="label">Due Soon</div></div></div>
             <?php if (!empty($statusCounts)): ?>
             <div class="dist-card">
                 <div class="dist-bar">
@@ -890,10 +973,16 @@ if (!empty($_SESSION['name'])) {
             <input type="text" class="search-input" id="searchInput" placeholder="Search engagements&hellip;">
         </div>
         <?php if (!$showArchived): ?>
-        <button class="attention-link" id="attentionLink">
-            <span class="swatch"></span>
-            <span><?php echo $attentionCount; ?> need attention</span>
-        </button>
+        <div class="toolbar-flags">
+            <button class="attention-link attention-link--setup" id="attentionLink">
+                <span class="swatch"></span>
+                <span><?php echo $attentionCount; ?> need attention</span>
+            </button>
+            <button class="attention-link" id="dueSoonLink">
+                <span class="swatch"></span>
+                <span><?php echo $dueSoonCount; ?> due soon</span>
+            </button>
+        </div>
         <?php endif; ?>
         <div class="result-note" id="resultNote"></div>
     </div>
@@ -911,11 +1000,18 @@ if (!empty($_SESSION['name'])) {
         </div>
 
         <?php
-        $renderRow = function ($eng) use ($timelineLookup, $showArchived, $statusMeta) {
+        $renderRow = function ($eng) use ($timelineLookup, $teamLookup, $showArchived, $statusMeta) {
             [$due, $dueState] = getDueInfo($eng['eng_idno'], $timelineLookup);
             $critical = !$showArchived && $dueState === 'overdue';
             $tickVar = $showArchived ? '--text-muted' : ($statusMeta[$eng['eng_status']]['var'] ?? '--text-muted');
-            $attention = in_array($dueState, ['overdue', 'soon', 'archive_ready'], true) ? '1' : '0';
+            $dueSoon = in_array($dueState, ['overdue', 'soon', 'archive_ready'], true) ? '1' : '0';
+            $setup = $showArchived ? ['has_team' => true, 'dol_complete' => true, 'needs_setup' => false]
+                                    : getSetupInfo($eng['eng_idno'], $teamLookup, $eng['eng_audit_type'] ?? '');
+            $setupFlagHtml = '';
+            if ($setup['needs_setup']) {
+                $setupReason = !$setup['has_team'] ? 'No team' : 'DOL incomplete';
+                $setupFlagHtml = '<span class="reg-setup-flag"><i class="bi bi-exclamation-triangle-fill"></i> ' . $setupReason . '</span>';
+            }
             $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? '') . ' ' . $eng['eng_idno'] . ' ' . ($eng['eng_poc'] ?? '') . ' ' . ($eng['eng_audit_type'] ?? ''));
 
             $dueHtml = '<div class="reg-due">&mdash;</div>';
@@ -943,16 +1039,17 @@ if (!empty($_SESSION['name'])) {
 
             $detailPage = $showArchived ? 'archived-engagement-details.php' : 'engagement-details.php';
 
-            echo '<div class="reg-row ' . ($critical ? 'is-critical' : '') . ' ' . ($showArchived ? 'is-archived' : '') . '"'
+            echo '<div class="reg-row ' . ($critical ? 'is-critical' : '') . ' ' . ($setup['needs_setup'] ? 'is-needs-setup' : '') . ' ' . ($showArchived ? 'is-archived' : '') . '"'
                 . ' data-id="' . htmlspecialchars($eng['eng_idno']) . '"'
                 . ' data-detail-href="' . $detailPage . '?id=' . urlencode($eng['eng_idno']) . '"'
                 . ' data-search="' . htmlspecialchars($searchBlob) . '"'
-                . ' data-attention="' . $attention . '">'
+                . ' data-due-soon="' . $dueSoon . '"'
+                . ' data-needs-setup="' . ($setup['needs_setup'] ? '1' : '0') . '">'
                 . '<div class="reg-tick" style="background:var(' . $tickVar . ')"></div>'
                 . '<div class="reg-id mono">' . htmlspecialchars($eng['eng_idno']) . '</div>'
                 . '<div class="reg-main">'
                 . '<div class="reg-name">' . htmlspecialchars($eng['eng_name']) . '</div>'
-                . '<div class="reg-sub">' . htmlspecialchars($eng['eng_manager'] ?? 'Unassigned') . '</div>'
+                . '<div class="reg-sub-row"><div class="reg-sub">' . htmlspecialchars($eng['eng_manager'] ?? 'Unassigned') . '</div>' . $setupFlagHtml . '</div>'
                 . '</div>'
                 . '<div class="reg-type">' . renderTypeBadges($eng['eng_audit_type']) . '</div>'
                 . $dueHtml
@@ -1053,6 +1150,14 @@ if (!empty($_SESSION['name'])) {
                 <div class="eng-field">
                     <label>Point of Contact</label>
                     <input type="text" id="new_eng_poc" class="eng-input" placeholder="Enter point of contact">
+                </div>
+                <div class="eng-field">
+                    <label>Manager</label>
+                    <div class="team2-ac-wrap">
+                        <input type="text" id="new_eng_manager_search" class="eng-input" placeholder="Search employees&hellip;" autocomplete="off">
+                        <div class="team2-ac-list" id="new_eng_manager_ac_list" style="display:none;"></div>
+                    </div>
+                    <div class="eng-manager-selected" id="new_eng_manager_selected" style="display:none;"></div>
                 </div>
                 <div class="eng-field" style="margin-bottom: 0;">
                     <label>Status</label>
@@ -1443,15 +1548,22 @@ if (!empty($_SESSION['name'])) {
         }
     });
 
-    // Search + needs-attention filtering
-    let attentionOnly = false;
+    // Search + status filtering. "Needs attention" (setup: no team/DOL) and
+    // "due soon" (dates) are independent toggles now, not one bucket - when
+    // both are active a row shows if it matches EITHER, same as picking two
+    // quick-filter chips normally means "show me anything flagged."
+    let setupOnly = false;
+    let dueSoonOnly = false;
     function applyFilters() {
         const query = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
         let visibleCount = 0;
         document.querySelectorAll('.reg-row').forEach(row => {
             const matchesSearch = !query || row.dataset.search.includes(query);
-            const matchesAttention = !attentionOnly || row.dataset.attention === '1';
-            const show = matchesSearch && matchesAttention;
+            const noStatusFilterActive = !setupOnly && !dueSoonOnly;
+            const matchesStatus = noStatusFilterActive
+                || (setupOnly && row.dataset.needsSetup === '1')
+                || (dueSoonOnly && row.dataset.dueSoon === '1');
+            const show = matchesSearch && matchesStatus;
             row.style.display = show ? '' : 'none';
             if (show) visibleCount++;
         });
@@ -1468,8 +1580,13 @@ if (!empty($_SESSION['name'])) {
     }
     document.getElementById('searchInput')?.addEventListener('input', applyFilters);
     document.getElementById('attentionLink')?.addEventListener('click', () => {
-        attentionOnly = !attentionOnly;
-        document.getElementById('attentionLink').classList.toggle('active', attentionOnly);
+        setupOnly = !setupOnly;
+        document.getElementById('attentionLink').classList.toggle('active', setupOnly);
+        applyFilters();
+    });
+    document.getElementById('dueSoonLink')?.addEventListener('click', () => {
+        dueSoonOnly = !dueSoonOnly;
+        document.getElementById('dueSoonLink').classList.toggle('active', dueSoonOnly);
         applyFilters();
     });
     applyFilters();
@@ -1487,6 +1604,8 @@ if (!empty($_SESSION['name'])) {
         const STATUS_LABELS = { planning: 'Planning', 'in-progress': 'In Progress', 'in-review': 'In Review', complete: 'Complete' };
         let currentStep = 1;
         let maxReached = 1;
+        let selectedManager = null; // { emp_name, isNew } once picked from the roster (or entered as a new employee), null otherwise
+        let clearManagerSelection = () => {}; // replaced once wireManagerSearch() runs
 
         function setSegmented(id, value) {
             document.getElementById(id).querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.value === value));
@@ -1519,6 +1638,84 @@ if (!empty($_SESSION['name'])) {
         }
         document.querySelectorAll('.new-audit-type-checkbox').forEach(cb => cb.addEventListener('change', updateAuditVisibility));
 
+        // Manager picker — same roster autocomplete as the drawer's "Manage
+        // Team" (search-employees.php, falling back to add-employee.php for
+        // a brand-new name), just fixed to role "manager" and scoped to a
+        // single pick instead of a whole team list.
+        function wireManagerSearch() {
+            const input = document.getElementById('new_eng_manager_search');
+            const list = document.getElementById('new_eng_manager_ac_list');
+            const selectedBox = document.getElementById('new_eng_manager_selected');
+            if (!input || !list) return;
+
+            let debounceTimer = null;
+            input.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                const query = input.value.trim();
+                if (!query) { list.style.display = 'none'; return; }
+                debounceTimer = setTimeout(() => searchEmployees(query), 200);
+            });
+            document.addEventListener('click', (ev) => {
+                if (!ev.target.closest('#new_eng_manager_search') && !ev.target.closest('#new_eng_manager_ac_list')) {
+                    list.style.display = 'none';
+                }
+            });
+
+            function searchEmployees(query) {
+                fetch('../api/search-employees.php?q=' + encodeURIComponent(query))
+                    .then(r => r.json())
+                    .then(data => renderResults(query, data.employees || []))
+                    .catch(() => renderResults(query, []));
+            }
+
+            function renderResults(query, matches) {
+                let html = matches.map(e => `
+                    <div class="team2-ac-item" data-emp-name="${escAttr(e.emp_name)}">
+                        <div class="team2-avatar" style="width:22px;height:22px;font-size:9px;background:var(--manager)">${initials(e.emp_name)}</div>
+                        ${escapeHtml(e.emp_name)}
+                        <span class="role">${ROLE_LABELS[e.emp_role] || e.emp_role}</span>
+                    </div>
+                `).join('');
+                if (!matches.length) {
+                    html += `<div class="team2-ac-empty">No employee named "${escapeHtml(query)}" in the roster.</div>`;
+                }
+                html += `<div class="team2-ac-newbtn" id="mgr_ac_new_btn">+ Add "${escapeHtml(query)}" as a new employee&hellip;</div>`;
+
+                list.innerHTML = html;
+                list.style.display = 'block';
+
+                list.querySelectorAll('.team2-ac-item').forEach(item => {
+                    item.addEventListener('click', () => selectManager(item.dataset.empName, false));
+                });
+                document.getElementById('mgr_ac_new_btn')?.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    selectManager(query, true);
+                });
+            }
+
+            function selectManager(name, isNew) {
+                selectedManager = { emp_name: name, isNew };
+                input.value = '';
+                list.style.display = 'none';
+                selectedBox.style.display = 'flex';
+                selectedBox.innerHTML = `
+                    <div class="avatar">${initials(name)}</div>
+                    <div class="name">${escapeHtml(name)}${isNew ? ' <span style="font-weight:400;color:var(--text-muted);">(new)</span>' : ''}</div>
+                    <button type="button" class="clear-btn" id="new_eng_manager_clear" title="Remove">&times;</button>
+                `;
+                document.getElementById('new_eng_manager_clear').addEventListener('click', clearManager);
+            }
+
+            function clearManager() {
+                selectedManager = null;
+                selectedBox.style.display = 'none';
+                selectedBox.innerHTML = '';
+            }
+
+            clearManagerSelection = clearManager;
+        }
+        wireManagerSearch();
+
         function resetWizard() {
             ['new_eng_name', 'new_eng_location', 'new_eng_poc', 'new_eng_tsc', 'new_eng_scope', 'new_eng_notes',
              'new_soc_as_of_date', 'new_soc_start_period', 'new_soc_end_period'].forEach(id => {
@@ -1533,6 +1730,9 @@ if (!empty($_SESSION['name'])) {
             document.getElementById('new_soc_type_section').style.display = 'none';
             document.getElementById('new_soc_type1_dates').style.display = 'none';
             document.getElementById('new_soc_type2_dates').style.display = 'none';
+            document.getElementById('new_eng_manager_search').value = '';
+            document.getElementById('new_eng_manager_ac_list').style.display = 'none';
+            clearManagerSelection();
             nextBtn.disabled = false;
             goToStep(1);
             maxReached = 1;
@@ -1568,8 +1768,10 @@ if (!empty($_SESSION['name'])) {
             const status = getSegmentedValue('new_eng_status_segment') || 'planning';
             const types = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value).join(', ') || 'None selected';
             const tsc = document.getElementById('new_eng_tsc').value.trim() || '\u2014';
+            const managerLabel = selectedManager ? selectedManager.emp_name : 'Unassigned';
             document.getElementById('eng_review_summary').innerHTML = `
                 <div class="eng-review-row"><dt>Name</dt><dd>${escapeHtml(name)}</dd></div>
+                <div class="eng-review-row"><dt>Manager</dt><dd>${escapeHtml(managerLabel)}</dd></div>
                 <div class="eng-review-row"><dt>Status</dt><dd>${escapeHtml(STATUS_LABELS[status] || status)}</dd></div>
                 <div class="eng-review-row"><dt>Audit Types</dt><dd>${escapeHtml(types)}</dd></div>
                 <div class="eng-review-row"><dt>TSC</dt><dd>${escapeHtml(tsc)}</dd></div>
@@ -1636,6 +1838,33 @@ if (!empty($_SESSION['name'])) {
                 nextBtn.textContent = 'Create Engagement';
             }
 
+            // Manager assignment happens as a second call, chained after the
+            // engagement actually exists — engagement_team rows are keyed by
+            // engagement_idno, which only exists once create-engagement.php
+            // returns it. If this secondary step fails for any reason, the
+            // engagement itself was still created successfully, so this
+            // reloads either way rather than stranding the user on an error
+            // for what's ultimately a convenience step (they can always add
+            // the manager from the drawer afterward).
+            function assignManagerThenReload(engagementIdno) {
+                const addMember = () => {
+                    fetch('../api/add-team-member.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ engagement_idno: engagementIdno, emp_name: selectedManager.emp_name, role: 'manager' })
+                    }).finally(() => location.reload());
+                };
+                if (selectedManager.isNew) {
+                    fetch('../api/add-employee.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ emp_name: selectedManager.emp_name, emp_role: 'manager' })
+                    }).finally(addMember);
+                } else {
+                    addMember();
+                }
+            }
+
             fetch('../api/create-engagement.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1643,23 +1872,28 @@ if (!empty($_SESSION['name'])) {
             })
             .then(response => response.text())
             .then(text => {
+                let data;
                 try {
-                    const data = JSON.parse(text);
-                    if (data.success) {
-                        sessionStorage.setItem('showEngagementCreatedToast', 'true');
-                        location.reload();
-                    } else {
-                        resetSubmitButton();
-                        Swal.fire('Error', data.message || 'Failed to create engagement', 'error');
-                    }
+                    data = JSON.parse(text);
                 } catch (parseError) {
                     if (text.includes('"success":true')) {
-                        sessionStorage.setItem('showEngagementCreatedToast', 'true');
-                        location.reload();
+                        data = { success: true };
                     } else {
                         resetSubmitButton();
                         Swal.fire('Error', 'Invalid response from server: ' + text.substring(0, 200), 'error');
+                        return;
                     }
+                }
+                if (!data.success) {
+                    resetSubmitButton();
+                    Swal.fire('Error', data.message || 'Failed to create engagement', 'error');
+                    return;
+                }
+                sessionStorage.setItem('showEngagementCreatedToast', 'true');
+                if (selectedManager && data.engagement_id) {
+                    assignManagerThenReload(data.engagement_id);
+                } else {
+                    location.reload();
                 }
             })
             .catch(error => {
@@ -1868,7 +2102,7 @@ if (!empty($_SESSION['name'])) {
 
             <div class="drawer-section">
                 <div class="drawer-section-head">
-                    <div class="drawer-section-title"><span class="dot" style="background:var(--manager)"></span>Team (DOL)</div>
+                    <div class="drawer-section-title"><span class="dot" style="background:var(--manager)"></span>Team (DOL)<span id="drawerTeamStatusBadge"></span></div>
                     <button class="drawer-link-btn" id="drawerManageTeamBtn">Manage Team</button>
                 </div>
                 <div id="drawerTeamContent"></div>
@@ -2156,8 +2390,33 @@ if (!empty($_SESSION['name'])) {
         }
     });
 
+    // Same completeness check as PHP's getSetupInfo() (dashboard.php) — no
+    // team at all, or a DOL-eligible audit type nobody on the team has DOL
+    // for. Kept here client-side (rather than a round-trip) since the
+    // drawer already has both the full team and the engagement's audit
+    // types in hand the moment it opens.
+    function drawerSetupStatus(team, auditTypes) {
+        const hasTeam = team.length > 0;
+        const relevant = auditTypes.filter(t => DOL_AUDIT_TYPES.hasOwnProperty(t));
+        const dolComplete = !hasTeam || relevant.every(auditType => {
+            const field = DOL_AUDIT_TYPES[auditType];
+            return team.some(m => !!m[field]);
+        });
+        return { hasTeam, dolComplete, needsSetup: !hasTeam || !dolComplete };
+    }
+
+    function updateDrawerTeamStatusBadge(team, auditTypes) {
+        const badge = document.getElementById('drawerTeamStatusBadge');
+        if (!badge) return;
+        const status = drawerSetupStatus(team, auditTypes);
+        if (!status.needsSetup) { badge.innerHTML = ''; return; }
+        const reason = !status.hasTeam ? 'No team' : 'DOL incomplete';
+        badge.innerHTML = `<span class="drawer-setup-badge"><i class="bi bi-exclamation-triangle-fill"></i> ${reason}</span>`;
+    }
+
     function renderDrawerTeam(team, auditTypes) {
         const el = document.getElementById('drawerTeamContent');
+        updateDrawerTeamStatusBadge(team, auditTypes);
         if (!team.length) {
             el.innerHTML = '<div class="drawer-team-empty">No team assigned yet.</div>';
             return;

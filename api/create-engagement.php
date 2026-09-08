@@ -28,6 +28,9 @@ $eng_start_period = $data['eng_start_period'] ?? null;
 $eng_end_period = $data['eng_end_period'] ?? null;
 $eng_as_of_date = $data['eng_as_of_date'] ?? null;
 $eng_status = $data['eng_status'] ?? 'planning';
+// Was never actually read from the request here despite being bound below -
+// notes typed into the Create Engagement form silently never got saved.
+$eng_notes = $data['eng_notes'] ?? null;
 
 if (!$eng_name) {
     echo json_encode(['success' => false, 'message' => 'Engagement name is required']);
@@ -46,7 +49,8 @@ try {
     $eng_start_period = $eng_start_period ?: null;
     $eng_end_period = $eng_end_period ?: null;
     $eng_as_of_date = $eng_as_of_date ?: null;
-    
+    $eng_notes = $eng_notes ?: null;
+
     // Start transaction
     $conn->begin_transaction();
 
