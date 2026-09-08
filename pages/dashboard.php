@@ -223,6 +223,89 @@ if (!empty($_SESSION['name'])) {
         .due-popup-empty { padding: 2.5rem 1.4rem; text-align: center; color: var(--text-muted); font-size: 13px; }
         .due-popup-footer { padding: 0.9rem 1.4rem; border-top: 1px solid var(--line); text-align: right; }
 
+        /* ---------- new-engagement wizard: same card/scrim conventions as
+           the due-popup above, but a 3-step flow instead of one long
+           scrolling SweetAlert2 form ---------- */
+        .eng-wizard-scrim {
+            position: fixed; inset: 0; background: rgba(10, 14, 20, 0.5); z-index: 400;
+            display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+            opacity: 0; pointer-events: none; transition: opacity 0.15s ease;
+        }
+        .eng-wizard-scrim.open { opacity: 1; pointer-events: auto; }
+        .eng-wizard {
+            background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+            width: 100%; max-width: 640px; max-height: 88vh; display: flex; flex-direction: column;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.28); transform: translateY(8px); transition: transform 0.15s ease;
+        }
+        .eng-wizard-scrim.open .eng-wizard { transform: translateY(0); }
+        .eng-wizard-header { padding: 1.25rem 1.4rem 1.1rem; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+        .eng-wizard-header-top { display: flex; align-items: flex-start; justify-content: space-between; }
+        .eng-wizard-header h3 { font-size: 16px; font-weight: 700; margin: 0; }
+        .eng-wizard-close { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 18px; padding: 2px; line-height: 1; }
+        .eng-wizard-close:hover { color: var(--text); }
+
+        .eng-wizard-steps { display: flex; gap: 0.6rem; margin-top: 1.1rem; }
+        .eng-wizard-step { flex: 1; display: flex; flex-direction: column; gap: 6px; background: none; border: none; padding: 0; cursor: default; text-align: left; }
+        .eng-wizard-step.clickable { cursor: pointer; }
+        .eng-wizard-step-bar { height: 3px; border-radius: 2px; background: var(--line); }
+        .eng-wizard-step.active .eng-wizard-step-bar, .eng-wizard-step.done .eng-wizard-step-bar { background: var(--ink); }
+        .eng-wizard-step-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .eng-wizard-step.active .eng-wizard-step-label { color: var(--text); }
+
+        .eng-wizard-body { overflow-y: auto; padding: 1.4rem; flex: 1; }
+        .eng-wizard-panel { display: none; }
+        .eng-wizard-panel.active { display: block; }
+
+        .eng-field { margin-bottom: 1.15rem; }
+        .eng-field label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .eng-field label .req { color: var(--critical); }
+        .eng-input, .eng-textarea, .eng-date {
+            width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--line); border-radius: 8px;
+            background: var(--paper); color: var(--text); font-size: 13.5px; font-family: inherit;
+        }
+        .eng-input:focus, .eng-textarea:focus, .eng-date:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
+        .eng-textarea { resize: vertical; min-height: 80px; }
+
+        .eng-segmented { display: flex; background: var(--paper); border-radius: 8px; padding: 3px; gap: 2px; border: 1px solid var(--line); }
+        .eng-segmented button { flex: 1; border: none; background: transparent; padding: 8px 6px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; }
+        .eng-segmented button.active { background: var(--card); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+
+        .eng-chip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+        .eng-chip { display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.8rem; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text); background: var(--paper); }
+        .eng-chip.checked { border-color: var(--ink); background: color-mix(in srgb, var(--ink) 8%, var(--paper)); color: var(--ink); }
+        .eng-chip input { width: 15px; height: 15px; accent-color: var(--ink); flex-shrink: 0; }
+
+        .eng-switch-row { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+        .eng-switch-label { font-size: 13px; font-weight: 600; color: var(--text); }
+        .eng-switch-hint { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; }
+        .eng-switch { position: relative; width: 38px; height: 22px; flex-shrink: 0; display: inline-block; cursor: pointer; }
+        .eng-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+        .eng-switch-track { position: absolute; inset: 0; background: var(--line-strong); border-radius: 20px; transition: background 0.15s; pointer-events: none; }
+        .eng-switch input:checked + .eng-switch-track { background: var(--ink); }
+        .eng-switch-thumb { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 0.15s; pointer-events: none; }
+        .eng-switch input:checked ~ .eng-switch-thumb { transform: translateX(16px); }
+
+        .eng-soc-box { margin-top: 0.9rem; padding: 1rem 1.1rem; background: color-mix(in srgb, var(--ink) 8%, transparent); border-radius: 8px; border-left: 3px solid var(--ink); }
+
+        .eng-review-summary { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 1rem 1.1rem; margin: 0 0 1.15rem; display: flex; flex-direction: column; gap: 0.6rem; }
+        .eng-review-row { display: flex; justify-content: space-between; gap: 1rem; font-size: 12.5px; margin: 0; }
+        .eng-review-row dt { color: var(--text-muted); font-weight: 600; }
+        .eng-review-row dd { color: var(--text); font-weight: 600; text-align: right; margin: 0; max-width: 60%; }
+
+        .eng-wizard-footer { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.4rem; border-top: 1px solid var(--line); gap: 0.75rem; flex-shrink: 0; }
+        .eng-wizard-footer-right { display: flex; gap: 0.6rem; }
+        .eng-btn { padding: 8px 16px; border-radius: 7px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--text); }
+        .eng-btn:hover { border-color: var(--line-strong); }
+        .eng-btn-primary { background: var(--ink); border-color: var(--ink); color: var(--card); }
+        .eng-btn-primary:hover { opacity: 0.92; }
+        .eng-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @media (max-width: 640px) {
+            .eng-wizard-steps { gap: 0.4rem; }
+            .eng-wizard-step-label { font-size: 9.5px; }
+            .eng-chip-grid { grid-template-columns: 1fr; }
+        }
+
         .profile-section { position: relative; margin-left: 0.4rem; padding-left: 0.75rem; border-left: 1px solid var(--line); }
         .profile-wrapper { display: flex; align-items: center; gap: 6px; cursor: pointer; }
         .profile-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--card); border: none; font-weight: 700; font-size: 11.5px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -933,6 +1016,136 @@ if (!empty($_SESSION['name'])) {
     </div>
 </div>
 
+<!-- ========== NEW ENGAGEMENT WIZARD ========== -->
+<div class="eng-wizard-scrim" id="engWizardScrim">
+    <div class="eng-wizard">
+        <div class="eng-wizard-header">
+            <div class="eng-wizard-header-top">
+                <h3>Create New Engagement</h3>
+                <button class="eng-wizard-close" id="engWizardClose" aria-label="Close">&times;</button>
+            </div>
+            <div class="eng-wizard-steps">
+                <button type="button" class="eng-wizard-step active" data-step="1">
+                    <div class="eng-wizard-step-bar"></div>
+                    <div class="eng-wizard-step-label">1. Basics</div>
+                </button>
+                <button type="button" class="eng-wizard-step" data-step="2">
+                    <div class="eng-wizard-step-bar"></div>
+                    <div class="eng-wizard-step-label">2. Audit Scope</div>
+                </button>
+                <button type="button" class="eng-wizard-step" data-step="3">
+                    <div class="eng-wizard-step-bar"></div>
+                    <div class="eng-wizard-step-label">3. Review</div>
+                </button>
+            </div>
+        </div>
+
+        <div class="eng-wizard-body">
+            <!-- Step 1: Basics -->
+            <div class="eng-wizard-panel active" data-panel="1">
+                <div class="eng-field">
+                    <label>Engagement Name <span class="req">*</span></label>
+                    <input type="text" id="new_eng_name" class="eng-input" placeholder="Enter engagement name">
+                </div>
+                <div class="eng-field">
+                    <label>Location</label>
+                    <input type="text" id="new_eng_location" class="eng-input" placeholder="Enter location">
+                </div>
+                <div class="eng-field">
+                    <label>Point of Contact</label>
+                    <input type="text" id="new_eng_poc" class="eng-input" placeholder="Enter point of contact">
+                </div>
+                <div class="eng-field" style="margin-bottom: 0;">
+                    <label>Status</label>
+                    <div class="eng-segmented" id="new_eng_status_segment">
+                        <button type="button" class="active" data-value="planning">Planning</button>
+                        <button type="button" data-value="in-progress">In Progress</button>
+                        <button type="button" data-value="in-review">In Review</button>
+                        <button type="button" data-value="complete">Complete</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Audit Scope -->
+            <div class="eng-wizard-panel" data-panel="2">
+                <div class="eng-field">
+                    <label>Audit Types (select all that apply)</label>
+                    <div class="eng-chip-grid">
+                        <label class="eng-chip"><input type="checkbox" class="new-audit-type-checkbox" value="SOC 1"> SOC 1</label>
+                        <label class="eng-chip"><input type="checkbox" class="new-audit-type-checkbox" value="SOC 2"> SOC 2</label>
+                        <label class="eng-chip"><input type="checkbox" class="new-audit-type-checkbox" value="PCI"> PCI</label>
+                        <label class="eng-chip"><input type="checkbox" class="new-audit-type-checkbox" value="HITRUST"> HITRUST</label>
+                        <label class="eng-chip"><input type="checkbox" class="new-audit-type-checkbox" value="FISMA"> FISMA</label>
+                        <label class="eng-chip"><input type="checkbox" class="new-audit-type-checkbox" value="ISO"> ISO</label>
+                        <label class="eng-chip"><input type="checkbox" class="new-audit-type-checkbox" value="HIPAA"> HIPAA</label>
+                    </div>
+                </div>
+                <div id="new_soc_type_section" class="eng-soc-box" style="display: none;">
+                    <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">SOC Type</label>
+                    <div class="eng-segmented" id="new_soc_type_segment" style="margin-bottom: 0.9rem;">
+                        <button type="button" data-value="Type 1">Type 1</button>
+                        <button type="button" data-value="Type 2">Type 2</button>
+                    </div>
+                    <div id="new_soc_type1_dates" style="display: none;">
+                        <div class="eng-field" style="margin-bottom: 0;">
+                            <label>As Of Date</label>
+                            <input type="date" id="new_soc_as_of_date" class="eng-date">
+                        </div>
+                    </div>
+                    <div id="new_soc_type2_dates" style="display: none; gap: 0.9rem;">
+                        <div class="eng-field" style="flex: 1; margin-bottom: 0;">
+                            <label>Start Period</label>
+                            <input type="date" id="new_soc_start_period" class="eng-date">
+                        </div>
+                        <div class="eng-field" style="flex: 1; margin-bottom: 0;">
+                            <label>End Period</label>
+                            <input type="date" id="new_soc_end_period" class="eng-date">
+                        </div>
+                    </div>
+                </div>
+                <div class="eng-field" style="margin-top: 1.15rem;">
+                    <label>Trusted Service Criteria</label>
+                    <input type="text" id="new_eng_tsc" class="eng-input" placeholder="Enter TSC">
+                </div>
+                <div class="eng-field" style="margin-bottom: 0;">
+                    <label>Scope</label>
+                    <textarea id="new_eng_scope" class="eng-textarea" placeholder="Enter scope"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 3: Review & Notes -->
+            <div class="eng-wizard-panel" data-panel="3">
+                <dl class="eng-review-summary" id="eng_review_summary"></dl>
+                <div class="eng-field">
+                    <div class="eng-switch-row">
+                        <div>
+                            <div class="eng-switch-label">Repeat Engagement</div>
+                            <div class="eng-switch-hint">Recurs on a regular cadence</div>
+                        </div>
+                        <label class="eng-switch">
+                            <input type="checkbox" id="new_eng_repeat">
+                            <span class="eng-switch-track"></span>
+                            <span class="eng-switch-thumb"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="eng-field" style="margin-bottom: 0;">
+                    <label>Notes</label>
+                    <textarea id="new_eng_notes" class="eng-textarea" placeholder="Enter notes" style="min-height: 100px;"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="eng-wizard-footer">
+            <button type="button" class="eng-btn" id="engWizardBack" style="visibility: hidden;">Back</button>
+            <div class="eng-wizard-footer-right">
+                <button type="button" class="eng-btn" id="engWizardCancel">Cancel</button>
+                <button type="button" class="eng-btn eng-btn-primary" id="engWizardNext">Next</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ========== ENGAGEMENT DRAWER ========== -->
 <div class="drawer-scrim hidden" id="drawerScrim"></div>
 <div class="drawer closed" id="drawer">
@@ -1262,178 +1475,154 @@ if (!empty($_SESSION['name'])) {
     });
     applyFilters();
 
-    // New Engagement
-    document.querySelector('.btn-new-engagement')?.addEventListener('click', () => {
-        const htmlContent = `
-            <div style="text-align: left; max-height: 600px; overflow-y: auto;">
-                <div style="margin-bottom: 2.5rem;">
-                    <h3 style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Basic Information</h3>
-                    <div style="margin-bottom: 1.25rem;">
-                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Engagement Name <span style="color: var(--critical);">*</span></label>
-                        <input type="text" id="new_eng_name" class="swal2-input" placeholder="Enter engagement name" style="width: 100%; padding: 0.75rem;">
-                    </div>
-                    <div style="margin-bottom: 1.25rem;">
-                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Location</label>
-                        <input type="text" id="new_eng_location" class="swal2-input" placeholder="Enter location" style="width: 100%; padding: 0.75rem;">
-                    </div>
-                    <div style="margin-bottom: 1.25rem;">
-                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Point of Contact</label>
-                        <input type="text" id="new_eng_poc" class="swal2-input" placeholder="Enter point of contact" style="width: 100%; padding: 0.75rem;">
-                    </div>
-                    <div style="margin-bottom: 1.25rem;">
-                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Status</label>
-                        <select id="new_eng_status" class="swal2-input" style="width: 100%; padding: 0.75rem;">
-                            <option value="planning" selected>Planning</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="in-review">In Review</option>
-                            <option value="complete">Complete</option>
-                        </select>
-                    </div>
-                    <div style="margin-bottom: 1.25rem;">
-                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Trusted Service Criteria</label>
-                        <input type="text" id="new_eng_tsc" class="swal2-input" placeholder="Enter TSC" style="width: 100%; padding: 0.75rem;">
-                    </div>
-                </div>
+    // New Engagement Wizard
+    (function() {
+        const scrim = document.getElementById('engWizardScrim');
+        const closeBtn = document.getElementById('engWizardClose');
+        const cancelBtn = document.getElementById('engWizardCancel');
+        const backBtn = document.getElementById('engWizardBack');
+        const nextBtn = document.getElementById('engWizardNext');
+        const stepButtons = Array.from(document.querySelectorAll('.eng-wizard-step'));
+        const panels = Array.from(document.querySelectorAll('.eng-wizard-panel'));
+        const TOTAL_STEPS = panels.length;
+        const STATUS_LABELS = { planning: 'Planning', 'in-progress': 'In Progress', 'in-review': 'In Review', complete: 'Complete' };
+        let currentStep = 1;
+        let maxReached = 1;
 
-                <div style="margin-bottom: 2.5rem;">
-                    <h3 style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Audit Details</h3>
-                    <div style="margin-bottom: 1.5rem;">
-                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Audit Types (Select all that apply)</label>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.9rem;">
-                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="new-audit-type-checkbox" value="SOC 1" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px; color: var(--text-primary);">SOC 1</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="new-audit-type-checkbox" value="SOC 2" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px; color: var(--text-primary);">SOC 2</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="new-audit-type-checkbox" value="PCI" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px; color: var(--text-primary);">PCI</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="new-audit-type-checkbox" value="HITRUST" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px; color: var(--text-primary);">HITRUST</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="new-audit-type-checkbox" value="FISMA" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px; color: var(--text-primary);">FISMA</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="new-audit-type-checkbox" value="ISO" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px; color: var(--text-primary);">ISO</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
-                                <input type="checkbox" class="new-audit-type-checkbox" value="HIPAA" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px; color: var(--text-primary);">HIPAA</span>
-                            </label>
-                        </div>
-                    </div>
+        function setSegmented(id, value) {
+            document.getElementById(id).querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.value === value));
+        }
+        function getSegmentedValue(id) {
+            return document.getElementById(id).querySelector('button.active')?.dataset.value || null;
+        }
+        document.querySelectorAll('.eng-segmented').forEach(seg => {
+            seg.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    seg.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    if (seg.id === 'new_soc_type_segment') updateSocDateFields();
+                });
+            });
+        });
 
-                    <div id="new_soc_type_section" style="margin-bottom: 1.5rem; display: none; padding: 1.25rem; background: color-mix(in srgb, var(--ink) 8%, transparent); border-radius: 8px; border-left: 3px solid var(--ink);">
-                        <label style="display: block; margin-bottom: 0.75rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">SOC Type</label>
-                        <div style="display: flex; gap: 1.5rem; margin-bottom: 1rem;">
-                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
-                                <input type="radio" name="new_soc_type" value="Type 1" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px; color: var(--text-primary);">Type 1</span>
-                            </label>
-                            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-weight: 500;">
-                                <input type="radio" name="new_soc_type" value="Type 2" style="width: 18px; height: 18px; cursor: pointer;">
-                                <span style="font-size: 13px; color: var(--text-primary);">Type 2</span>
-                            </label>
-                        </div>
-                        <div id="new_soc_type1_dates" style="display: none;">
-                            <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">As Of Date</label>
-                            <input type="date" id="new_soc_as_of_date" class="swal2-input" style="width: 100%; padding: 0.75rem;">
-                        </div>
-                        <div id="new_soc_type2_dates" style="display: none;">
-                            <div style="margin-bottom: 0.9rem;">
-                                <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Start Period</label>
-                                <input type="date" id="new_soc_start_period" class="swal2-input" style="width: 100%; padding: 0.75rem;">
-                            </div>
-                            <div>
-                                <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">End Period</label>
-                                <input type="date" id="new_soc_end_period" class="swal2-input" style="width: 100%; padding: 0.75rem;">
-                            </div>
-                        </div>
-                    </div>
+        function updateAuditVisibility() {
+            const selected = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value);
+            const hasSOC = selected.includes('SOC 1') || selected.includes('SOC 2');
+            document.getElementById('new_soc_type_section').style.display = hasSOC ? 'block' : 'none';
+            document.querySelectorAll('.eng-chip').forEach(chip => {
+                chip.classList.toggle('checked', chip.querySelector('input').checked);
+            });
+        }
+        function updateSocDateFields() {
+            const val = getSegmentedValue('new_soc_type_segment');
+            document.getElementById('new_soc_type1_dates').style.display = val === 'Type 1' ? 'block' : 'none';
+            document.getElementById('new_soc_type2_dates').style.display = val === 'Type 2' ? 'flex' : 'none';
+        }
+        document.querySelectorAll('.new-audit-type-checkbox').forEach(cb => cb.addEventListener('change', updateAuditVisibility));
 
-                    <div style="margin-bottom: 1.25rem;">
-                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Scope</label>
-                        <textarea id="new_eng_scope" class="swal2-input" style="width: 100%; min-height: 80px; resize: vertical; padding: 0.75rem;" placeholder="Enter scope"></textarea>
-                    </div>
-                    <div style="margin-bottom: 1.25rem;">
-                        <label style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-weight: 500;">
-                            <input type="checkbox" id="new_eng_repeat" style="width: 18px; height: 18px; cursor: pointer;">
-                            <span style="font-size: 13px; color: var(--text-primary);">Repeat Engagement</span>
-                        </label>
-                    </div>
-                </div>
+        function resetWizard() {
+            ['new_eng_name', 'new_eng_location', 'new_eng_poc', 'new_eng_tsc', 'new_eng_scope', 'new_eng_notes',
+             'new_soc_as_of_date', 'new_soc_start_period', 'new_soc_end_period'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            document.getElementById('new_eng_repeat').checked = false;
+            document.getElementById('new_eng_name').style.borderColor = '';
+            document.querySelectorAll('.new-audit-type-checkbox').forEach(cb => cb.checked = false);
+            document.querySelectorAll('.eng-chip').forEach(chip => chip.classList.remove('checked'));
+            setSegmented('new_eng_status_segment', 'planning');
+            setSegmented('new_soc_type_segment', null);
+            document.getElementById('new_soc_type_section').style.display = 'none';
+            document.getElementById('new_soc_type1_dates').style.display = 'none';
+            document.getElementById('new_soc_type2_dates').style.display = 'none';
+            nextBtn.disabled = false;
+            goToStep(1);
+            maxReached = 1;
+            stepButtons.forEach(b => b.classList.remove('clickable'));
+        }
 
-                <div>
-                    <h3 style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.5px;">Notes</h3>
-                    <div>
-                        <label style="display: block; margin-bottom: 0.6rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px;">Notes</label>
-                        <textarea id="new_eng_notes" class="swal2-input" style="width: 100%; min-height: 100px; resize: vertical; padding: 0.75rem;" placeholder="Enter notes"></textarea>
-                    </div>
-                </div>
-            </div>
-        `;
+        function openWizard() {
+            resetWizard();
+            scrim.classList.add('open');
+            setTimeout(() => document.getElementById('new_eng_name').focus(), 0);
+        }
+        function closeWizard() {
+            scrim.classList.remove('open');
+        }
 
-        Swal.fire({
-            title: 'Create New Engagement',
-            html: htmlContent,
-            confirmButtonText: 'Create Engagement',
-            cancelButtonText: 'Cancel',
-            showCancelButton: true,
-            width: '700px',
-            confirmButtonColor: 'var(--ink)',
-            background: swalColors().background,
-            color: swalColors().color,
-            didOpen: () => {
-                const auditCheckboxes = document.querySelectorAll('.new-audit-type-checkbox');
-                const socTypeSection = document.getElementById('new_soc_type_section');
-                const socTypeRadios = document.querySelectorAll('input[name="new_soc_type"]');
-                const socType1Dates = document.getElementById('new_soc_type1_dates');
-                const socType2Dates = document.getElementById('new_soc_type2_dates');
+        function goToStep(step) {
+            currentStep = step;
+            maxReached = Math.max(maxReached, step);
+            panels.forEach(p => p.classList.toggle('active', Number(p.dataset.panel) === step));
+            stepButtons.forEach(b => {
+                const s = Number(b.dataset.step);
+                b.classList.toggle('active', s === step);
+                b.classList.toggle('done', s < step);
+                b.classList.toggle('clickable', s <= maxReached);
+            });
+            backBtn.style.visibility = step === 1 ? 'hidden' : 'visible';
+            nextBtn.textContent = step === TOTAL_STEPS ? 'Create Engagement' : 'Next';
+            if (step === TOTAL_STEPS) renderReview();
+        }
 
-                function updateFormVisibility() {
-                    const selectedTypes = Array.from(auditCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
-                    const hasSOC = selectedTypes.includes('SOC 1') || selectedTypes.includes('SOC 2');
-                    socTypeSection.style.display = hasSOC ? 'block' : 'none';
-                    updateDateFields();
+        function renderReview() {
+            const name = document.getElementById('new_eng_name').value.trim() || '\u2014';
+            const status = getSegmentedValue('new_eng_status_segment') || 'planning';
+            const types = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value).join(', ') || 'None selected';
+            const tsc = document.getElementById('new_eng_tsc').value.trim() || '\u2014';
+            document.getElementById('eng_review_summary').innerHTML = `
+                <div class="eng-review-row"><dt>Name</dt><dd>${escapeHtml(name)}</dd></div>
+                <div class="eng-review-row"><dt>Status</dt><dd>${escapeHtml(STATUS_LABELS[status] || status)}</dd></div>
+                <div class="eng-review-row"><dt>Audit Types</dt><dd>${escapeHtml(types)}</dd></div>
+                <div class="eng-review-row"><dt>TSC</dt><dd>${escapeHtml(tsc)}</dd></div>
+            `;
+        }
+
+        stepButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const s = Number(btn.dataset.step);
+                if (s <= maxReached) goToStep(s);
+            });
+        });
+        backBtn.addEventListener('click', () => { if (currentStep > 1) goToStep(currentStep - 1); });
+        closeBtn.addEventListener('click', closeWizard);
+        cancelBtn.addEventListener('click', closeWizard);
+        scrim.addEventListener('click', (ev) => { if (ev.target === scrim) closeWizard(); });
+        window.addEventListener('keydown', (ev) => {
+            if (ev.key === 'Escape' && scrim.classList.contains('open')) closeWizard();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStep === 1) {
+                const nameField = document.getElementById('new_eng_name');
+                if (!nameField.value.trim()) {
+                    nameField.focus();
+                    nameField.style.borderColor = 'var(--critical)';
+                    return;
                 }
-                function updateDateFields() {
-                    const selectedSocType = document.querySelector('input[name="new_soc_type"]:checked')?.value;
-                    if (selectedSocType === 'Type 1') {
-                        socType1Dates.style.display = 'block';
-                        socType2Dates.style.display = 'none';
-                    } else if (selectedSocType === 'Type 2') {
-                        socType1Dates.style.display = 'none';
-                        socType2Dates.style.display = 'block';
-                    }
-                }
-                auditCheckboxes.forEach(checkbox => checkbox.addEventListener('change', updateFormVisibility));
-                socTypeRadios.forEach(radio => radio.addEventListener('change', updateDateFields));
-                document.getElementById('new_eng_name').focus();
+                nameField.style.borderColor = '';
             }
-        }).then((result) => {
-            if (!result.isConfirmed) return;
-            const engName = document.getElementById('new_eng_name').value?.trim();
-            if (!engName) {
-                Swal.fire('Error', 'Engagement Name is required', 'error');
+            if (currentStep < TOTAL_STEPS) {
+                goToStep(currentStep + 1);
                 return;
             }
+            submitEngagement();
+        });
+
+        function submitEngagement() {
+            const engName = document.getElementById('new_eng_name').value.trim();
+            if (!engName) { goToStep(1); return; }
+            nextBtn.disabled = true;
+            backBtn.disabled = true;
+            nextBtn.textContent = 'Creating\u2026';
             const selectedAuditTypes = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value).join(', ');
             const newEngagementData = {
                 eng_name: engName,
                 eng_location: document.getElementById('new_eng_location').value || null,
                 eng_poc: document.getElementById('new_eng_poc').value || null,
-                eng_status: document.getElementById('new_eng_status').value || 'planning',
+                eng_status: getSegmentedValue('new_eng_status_segment') || 'planning',
                 eng_tsc: document.getElementById('new_eng_tsc').value || null,
                 eng_audit_type: selectedAuditTypes || null,
-                eng_soc_type: document.querySelector('input[name="new_soc_type"]:checked')?.value || null,
+                eng_soc_type: getSegmentedValue('new_soc_type_segment'),
                 eng_scope: document.getElementById('new_eng_scope').value || null,
                 eng_as_of_date: document.getElementById('new_soc_as_of_date').value || null,
                 eng_start_period: document.getElementById('new_soc_start_period').value || null,
@@ -1441,6 +1630,12 @@ if (!empty($_SESSION['name'])) {
                 eng_repeat: document.getElementById('new_eng_repeat').checked ? 'Y' : 'N',
                 eng_notes: document.getElementById('new_eng_notes').value || null
             };
+
+            function resetSubmitButton() {
+                nextBtn.disabled = false;
+                backBtn.disabled = false;
+                nextBtn.textContent = 'Create Engagement';
+            }
 
             fetch('../api/create-engagement.php', {
                 method: 'POST',
@@ -1455,6 +1650,7 @@ if (!empty($_SESSION['name'])) {
                         sessionStorage.setItem('showEngagementCreatedToast', 'true');
                         location.reload();
                     } else {
+                        resetSubmitButton();
                         Swal.fire('Error', data.message || 'Failed to create engagement', 'error');
                     }
                 } catch (parseError) {
@@ -1462,15 +1658,19 @@ if (!empty($_SESSION['name'])) {
                         sessionStorage.setItem('showEngagementCreatedToast', 'true');
                         location.reload();
                     } else {
+                        resetSubmitButton();
                         Swal.fire('Error', 'Invalid response from server: ' + text.substring(0, 200), 'error');
                     }
                 }
             })
             .catch(error => {
+                resetSubmitButton();
                 Swal.fire('Error', 'Failed to create engagement: ' + error.message, 'error');
             });
-        });
-    });
+        }
+
+        document.querySelector('.btn-new-engagement')?.addEventListener('click', openWizard);
+    })();
 
     // ===================================================================
     // ENGAGEMENT DRAWER
