@@ -2140,7 +2140,7 @@ $engagementData = $engagement;
 <script>
     const BASE_URL = "<?= BASE_URL ?>";
 </script>
-<!-- <script src="../assets/js/activity_counter.js?v=<?php echo time(); ?>"></script> -->
+<script src="../assets/js/activity_counter.js?v=<?php echo time(); ?>"></script>
 <script>
 
     // Check if we should show the engagement deleted toast

@@ -895,5 +895,9 @@ if (!empty($_SESSION['name'])) {
         window.location.href = '../dashboard.php';
     });
 </script>
+<script>
+    const BASE_URL = "<?= BASE_URL ?>";
+</script>
+<script src="../../assets/js/activity_counter.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

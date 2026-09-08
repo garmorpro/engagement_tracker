@@ -713,6 +713,10 @@ window.addEventListener('click', function (e) {
     if (e.target === document.getElementById('editUserModal')) closeEditUserModal();
 });
 </script>
+<script>
+    const BASE_URL = "<?= BASE_URL ?>";
+</script>
+<script src="../assets/js/activity_counter.js?v=<?php echo time(); ?>"></script>
 
 </body>
 </html>

@@ -3244,5 +3244,6 @@ if (!empty($_SESSION['name'])) {
         }, 4500);
     }
 </script>
+<script src="../assets/js/activity_counter.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

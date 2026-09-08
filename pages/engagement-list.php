@@ -772,6 +772,10 @@ function toggleYN(el) {
   }
 }
 </script>
+<script>
+    const BASE_URL = "<?= BASE_URL ?>";
+</script>
+<script src="../assets/js/activity_counter.js?v=<?php echo time(); ?>"></script>
 
 
 </body>
