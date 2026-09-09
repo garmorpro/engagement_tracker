@@ -44,6 +44,32 @@ Started 2026-07-13, after the security review. New pages use a navy/slate/parchm
 - New endpoints: `api/search-employees.php` (autocomplete search) and `api/add-employee.php` (adds a new person to the roster; idempotent — returns the existing row if the name already exists). Both `requireApiAuth()`.
 - DOL (duties, e.g. `CC1, CC2`) is still stored exactly as before — a comma-separated string per audit type (`emp_soc1_dol`, `emp_soc2_dol`, `emp_hipaa_dol`, `emp_hitrust_dol`, `emp_fisma_dol` on `engagement_team`) via the same `api/update-team-member.php` contract. Only the *input UI* changed: a tag input (type a duty, Enter/comma to add, click × or Backspace to remove) instead of a raw text box, joined back into the same comma-separated string on save.
 - The "Manage Team Members" modal keeps its original two-column layout (list + add/stats) — the redesign was palette-only there, since that's the one piece of the old UI that already tested well. The "Edit Team Member" modal and the read-only Team card were both restructured (identity header + segmented role control on Edit; role-grouped compact rows with per-audit-type DOL lines on the card).
+- **Budgeted hours** (`engagement_team.budgeted_hours`, `DECIMAL(6,2)` NULL) — hours a team member is budgeted for on a given engagement. Captured on the Create Engagement wizard's Team step (see below) and editable afterward via "Edit Team Member"; shown as a small badge on the read-only Team card and in "Manage Team Members". Purely informational — not consumed by any calculation. Distinct from the DOL Generator's (`pages/tool/dol-generator.php`) own hours input, which is ad hoc and never persisted, used only to compute that one split. `api/add-team-member.php`/`api/update-team-member.php` both accept/store/return it. Added by `includes/migrate_add_team_budgeted_hours.php` (CLI-only) — **must be run once on the server** after deploying.
+
+## Onboarding completeness ("Needs Attention")
+
+Dashboard-wide check for whether an engagement's setup is actually done, separate from the date-driven "Due Soon" filter (overdue/due-soon/archive-ready). Implemented twice in lockstep — `getSetupInfo()` (PHP, `pages/dashboard.php`) for the initial list-row render, and `drawerSetupStatus()` (JS, same file) for the drawer banner once it already has the team/timeline data client-side — keep both in sync when this logic changes.
+
+Checks, in the order they'd naturally get done:
+
+- **Team** — at least one `engagement_team` row.
+- **Timeline** — an `engagement_timeline` row exists AND at least one date column is actually set (no row at all, or a row with every date still blank, both count as not filled out).
+- **Planning doc** — `eng_planning_doc` is set.
+- **DOL** — every audit type on the engagement that actually has a DOL column (`SOC 1`/`SOC 2`/`HIPAA`/`HITRUST`/`FISMA` — see `DOL_AUDIT_TYPE_COLUMNS`) has DOL assigned to at least one team member. PCI and ISO have no DOL column at all, so an engagement with only those types is never flagged for missing DOL.
+- **PCI-only carve-out**: an engagement whose only audit type is PCI is tracked less formally in practice — per Garrett, some are tracked with a filled timeline, others with just a planning doc — so neither is independently required; it's flagged only if it has NEITHER. Scoped to PCI specifically, not extended to ISO even though ISO shares PCI's no-DOL-column treatment above.
+
+Surfaced in three places: the "Needs Attention" stat card + toolbar filter (amber, independent from the red "Due Soon" filter — a row shows if it matches either when both are active), a compact flag on each list row (first missing item only), and a banner at the top of the drawer listing everything missing.
+
+## Create Engagement wizard
+
+`pages/dashboard.php`'s "New Engagement" button opens a 4-step wizard (`.eng-wizard-*`), submitting against `api/create-engagement.php` plus a chained batch of `api/add-employee.php`/`api/add-team-member.php` calls once the engagement exists:
+
+1. **Basics** — name (required), location, POC, Manager (roster autocomplete via `search-employees.php`, falling back to `add-employee.php` for a brand-new name), status.
+2. **Team** — same roster autocomplete, for adding any number of Senior/Staff/Intern members with a budgeted-hours number each. Manager is filtered out of this step's search results and new-employee role choices — that role stays the dedicated Step 1 field, same reasoning as the DOL Generator excluding Manager from its own hours step. Optional; people can always be added later from the Team card.
+3. **Audit Scope** — audit types, SOC type/dates, TSC, scope.
+4. **Review** — summary of everything above (including Manager and Team), plus Repeat/Notes, then submits.
+
+On submit, `create-engagement.php` returns the new `engagement_id`, then `assignTeamThenReload()` fires the Manager (if picked) and every Team-step member through `add-employee.php` (only for names new to the roster) then `add-team-member.php`, all in parallel via `Promise.allSettled`, before reloading — if any of those secondary calls fail the engagement itself still exists, so it reloads either way rather than blocking on what's ultimately a convenience step.
 
 ## Known issues / backlog
 
