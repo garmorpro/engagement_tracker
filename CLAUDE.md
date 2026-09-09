@@ -37,6 +37,7 @@ Started 2026-07-13, after the security review. New pages use a navy/slate/parchm
 
 - **`dashboard.php`** — merged with `archive.php` into a single page toggled via `?view=archived` (see known issues below); `archive.php` is now just a redirect. Engagements grouped into labeled sections by status, sorted by due date, with search and a "needs attention" filter.
 - **`engagement-details.php`** — only the **Team** section and its two management modals were redesigned (not the rest of the page — Details/Notes/Timeline/Milestones are still on the old palette). See below for what changed functionally.
+- **`tools.php`** and **`pages/tool/dol-generator.php`** — not "converted" so much as built on the new palette from the start: both were written a day after the redesign began and never had an old-palette version.
 
 ### Team / Division of Labor (DOL) rework
 
