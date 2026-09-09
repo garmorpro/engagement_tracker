@@ -109,12 +109,21 @@ const TIMELINE_DATE_COLUMNS = [
 // doc uploaded (eng_planning_doc). Returns every missing piece, in the
 // rough order they'd naturally get done, so callers can show either the
 // first one (a compact row flag) or the full list (the drawer banner).
+//
+// PCI-only engagements (audit type is PCI and nothing else) are tracked
+// less formally in practice — per Garrett, some are tracked with a filled
+// timeline, others with just a planning doc — so neither is independently
+// required for them; only having NEITHER counts as missing. This mirrors
+// how DOL is already never required for PCI. Scoped to PCI specifically
+// (not extended to ISO, even though ISO shares PCI's no-DOL-column
+// treatment above) since that's what was actually asked for.
 function getSetupInfo($eng, $teamLookup, $timelineLookup) {
     $engIdno = $eng['eng_idno'];
     $members = $teamLookup[$engIdno] ?? [];
     $hasTeam = count($members) > 0;
 
-    $auditTypes = array_filter(array_map('trim', explode(',', (string) ($eng['eng_audit_type'] ?? ''))));
+    $auditTypes = array_values(array_filter(array_map('trim', explode(',', (string) ($eng['eng_audit_type'] ?? '')))));
+    $isPciOnly = count($auditTypes) === 1 && $auditTypes[0] === 'PCI';
     $applicableTypes = array_intersect($auditTypes, array_keys(DOL_AUDIT_TYPE_COLUMNS));
 
     $dolComplete = true;
@@ -142,8 +151,12 @@ function getSetupInfo($eng, $teamLookup, $timelineLookup) {
 
     $missing = [];
     if (!$hasTeam) $missing[] = 'No team';
-    if (!$hasTimeline) $missing[] = 'No timeline';
-    if (!$hasPlanningDoc) $missing[] = 'No planning doc';
+    if ($isPciOnly) {
+        if (!$hasTimeline && !$hasPlanningDoc) $missing[] = 'No timeline or planning doc';
+    } else {
+        if (!$hasTimeline) $missing[] = 'No timeline';
+        if (!$hasPlanningDoc) $missing[] = 'No planning doc';
+    }
     if ($hasTeam && !$dolComplete) $missing[] = 'DOL incomplete';
 
     return [
@@ -364,6 +377,18 @@ if (!empty($_SESSION['name'])) {
         }
         .eng-input:focus, .eng-textarea:focus, .eng-date:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
         .eng-textarea { resize: vertical; min-height: 80px; }
+        .eng-field-hint { font-size: 11px; color: var(--text-muted); margin-top: 0.5rem; }
+
+        .eng-team-row { display: flex; align-items: center; gap: 0.65rem; padding: 0.6rem 0.7rem; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; margin-top: 0.6rem; }
+        .eng-team-row .avatar { width: 28px; height: 28px; border-radius: 7px; color: var(--card); font-weight: 700; font-size: 10.5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .eng-team-row .info { flex: 1; min-width: 0; }
+        .eng-team-row .name { font-size: 12.5px; font-weight: 700; color: var(--text); }
+        .eng-team-row .role { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+        .eng-team-row .hours-input { width: 60px; padding: 0.4rem 0.5rem; border: 1px solid var(--line); border-radius: 7px; background: var(--card); color: var(--text); font-size: 13px; text-align: center; flex-shrink: 0; }
+        .eng-team-row .hours-input:focus { outline: none; border-color: var(--ink); }
+        .eng-team-row .hours-suffix { font-size: 11px; color: var(--text-muted); font-weight: 600; flex-shrink: 0; }
+        .eng-team-row .remove-btn { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 0 2px; line-height: 1; flex-shrink: 0; }
+        .eng-team-row .remove-btn:hover { color: var(--critical); }
 
         .eng-segmented { display: flex; background: var(--paper); border-radius: 8px; padding: 3px; gap: 2px; border: 1px solid var(--line); }
         .eng-segmented button { flex: 1; border: none; background: transparent; padding: 8px 6px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; }
@@ -839,6 +864,7 @@ if (!empty($_SESSION['name'])) {
         .drawer-avatar { width: 30px; height: 30px; border-radius: 8px; color: #fff; font-weight: 700; font-size: 11.5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .drawer-lead-name { font-size: 13.5px; font-weight: 700; }
         .drawer-lead-role { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--manager); }
+        .drawer-hours-badge { font-size: 10px; font-weight: 700; color: var(--text-muted); background: var(--paper); border: 1px solid var(--line); padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
 
         .drawer-role-group-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 0.5rem 0 0.35rem; }
         .drawer-member-row { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.4rem 0.2rem; border-top: 1px solid var(--line); }
@@ -1167,11 +1193,15 @@ if (!empty($_SESSION['name'])) {
                 </button>
                 <button type="button" class="eng-wizard-step" data-step="2">
                     <div class="eng-wizard-step-bar"></div>
-                    <div class="eng-wizard-step-label">2. Audit Scope</div>
+                    <div class="eng-wizard-step-label">2. Team</div>
                 </button>
                 <button type="button" class="eng-wizard-step" data-step="3">
                     <div class="eng-wizard-step-bar"></div>
-                    <div class="eng-wizard-step-label">3. Review</div>
+                    <div class="eng-wizard-step-label">3. Audit Scope</div>
+                </button>
+                <button type="button" class="eng-wizard-step" data-step="4">
+                    <div class="eng-wizard-step-bar"></div>
+                    <div class="eng-wizard-step-label">4. Review</div>
                 </button>
             </div>
         </div>
@@ -1210,8 +1240,21 @@ if (!empty($_SESSION['name'])) {
                 </div>
             </div>
 
-            <!-- Step 2: Audit Scope -->
+            <!-- Step 2: Team -->
             <div class="eng-wizard-panel" data-panel="2">
+                <div class="eng-field">
+                    <label>Add Team Members</label>
+                    <div class="team2-ac-wrap">
+                        <input type="text" id="new_eng_team_search" class="eng-input" placeholder="Search employees&hellip;" autocomplete="off">
+                        <div class="team2-ac-list" id="new_eng_team_ac_list" style="display:none;"></div>
+                    </div>
+                    <div class="eng-field-hint">Manager is set in Step 1 &mdash; add Senior/Staff/Intern here, with budgeted hours for each. Optional; you can always add people later from the Team card.</div>
+                </div>
+                <div id="new_eng_team_list"></div>
+            </div>
+
+            <!-- Step 3: Audit Scope -->
+            <div class="eng-wizard-panel" data-panel="3">
                 <div class="eng-field">
                     <label>Audit Types (select all that apply)</label>
                     <div class="eng-chip-grid">
@@ -1257,8 +1300,8 @@ if (!empty($_SESSION['name'])) {
                 </div>
             </div>
 
-            <!-- Step 3: Review & Notes -->
-            <div class="eng-wizard-panel" data-panel="3">
+            <!-- Step 4: Review & Notes -->
+            <div class="eng-wizard-panel" data-panel="4">
                 <dl class="eng-review-summary" id="eng_review_summary"></dl>
                 <div class="eng-field">
                     <div class="eng-switch-row">
@@ -1646,6 +1689,7 @@ if (!empty($_SESSION['name'])) {
         let maxReached = 1;
         let selectedManager = null; // { emp_name, isNew } once picked from the roster (or entered as a new employee), null otherwise
         let clearManagerSelection = () => {}; // replaced once wireManagerSearch() runs
+        let wizardTeamMembers = []; // [{ emp_name, role, isNew, hours }] — Senior/Staff/Intern only, Manager stays the Step 1 field above
 
         function setSegmented(id, value) {
             document.getElementById(id).querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.value === value));
@@ -1756,6 +1800,121 @@ if (!empty($_SESSION['name'])) {
         }
         wireManagerSearch();
 
+        // Team-members picker (Step 2) — same roster autocomplete as the
+        // manager picker and the drawer's "Manage Team" modal, but supports
+        // adding more than one person plus an hours-per-person input.
+        // Manager is filtered out of both the search results and the
+        // new-employee role choices — that role stays the dedicated Step 1
+        // field, same reasoning as the DOL Generator excluding Manager from
+        // its own hours step.
+        function wireTeamSearch() {
+            const input = document.getElementById('new_eng_team_search');
+            const list = document.getElementById('new_eng_team_ac_list');
+            if (!input || !list) return;
+
+            let debounceTimer = null;
+            input.addEventListener('input', () => {
+                clearTimeout(debounceTimer);
+                const query = input.value.trim();
+                if (!query) { list.style.display = 'none'; return; }
+                debounceTimer = setTimeout(() => searchEmployees(query), 200);
+            });
+            document.addEventListener('click', (ev) => {
+                if (!ev.target.closest('#new_eng_team_search') && !ev.target.closest('#new_eng_team_ac_list')) {
+                    list.style.display = 'none';
+                }
+            });
+
+            function searchEmployees(query) {
+                fetch('../api/search-employees.php?q=' + encodeURIComponent(query))
+                    .then(r => r.json())
+                    .then(data => renderResults(query, data.employees || []))
+                    .catch(() => renderResults(query, []));
+            }
+
+            function renderResults(query, allMatches) {
+                const addedNames = wizardTeamMembers.map(m => m.emp_name.toLowerCase());
+                const matches = allMatches.filter(e => e.emp_role !== 'manager' && !addedNames.includes(e.emp_name.toLowerCase()));
+
+                let html = matches.map(e => `
+                    <div class="team2-ac-item" data-emp-name="${escAttr(e.emp_name)}" data-emp-role="${escAttr(e.emp_role)}">
+                        <div class="team2-avatar" style="width:22px;height:22px;font-size:9px;background:${ROLE_COLOR_VAR[e.emp_role] || 'var(--ink)'}">${initials(e.emp_name)}</div>
+                        ${escapeHtml(e.emp_name)}
+                        <span class="role">${ROLE_LABELS[e.emp_role] || e.emp_role}</span>
+                    </div>
+                `).join('');
+                if (!matches.length) {
+                    html += `<div class="team2-ac-empty">No matching employee in the roster.</div>`;
+                }
+                html += `<div class="team2-ac-newbtn" id="team_ac_new_btn">+ Add "${escapeHtml(query)}" as a new employee&hellip;</div>`;
+
+                list.innerHTML = html;
+                list.style.display = 'block';
+
+                list.querySelectorAll('.team2-ac-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        addWizardTeamMember(item.dataset.empName, item.dataset.empRole, false);
+                        input.value = '';
+                        list.style.display = 'none';
+                    });
+                });
+                document.getElementById('team_ac_new_btn')?.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    renderNewEmployeeRolePicker(query);
+                });
+            }
+
+            function renderNewEmployeeRolePicker(name) {
+                list.innerHTML = `
+                    <div class="team2-ac-empty" style="padding-bottom:4px;">Role for "${escapeHtml(name)}"?</div>
+                    ${['senior', 'staff', 'intern'].map(role => `<div class="team2-ac-item" data-role="${role}">${ROLE_LABELS[role]}</div>`).join('')}
+                `;
+                list.querySelectorAll('.team2-ac-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        addWizardTeamMember(name, item.dataset.role, true);
+                        input.value = '';
+                        list.style.display = 'none';
+                    });
+                });
+            }
+        }
+        wireTeamSearch();
+
+        function addWizardTeamMember(empName, role, isNew) {
+            wizardTeamMembers.push({ emp_name: empName, role, isNew, hours: null });
+            renderWizardTeamList();
+        }
+
+        function renderWizardTeamList() {
+            const el = document.getElementById('new_eng_team_list');
+            if (!el) return;
+            if (!wizardTeamMembers.length) { el.innerHTML = ''; return; }
+            el.innerHTML = wizardTeamMembers.map((m, i) => `
+                <div class="eng-team-row">
+                    <div class="avatar" style="background:${ROLE_COLOR_VAR[m.role] || 'var(--ink)'}">${initials(m.emp_name)}</div>
+                    <div class="info">
+                        <div class="name">${escapeHtml(m.emp_name)}${m.isNew ? ' <span style="font-weight:400;color:var(--text-muted);">(new)</span>' : ''}</div>
+                        <div class="role">${ROLE_LABELS[m.role] || m.role}</div>
+                    </div>
+                    <input type="number" class="hours-input" min="0" step="0.5" value="${m.hours ?? ''}" placeholder="0" data-index="${i}" title="Budgeted hours">
+                    <span class="hours-suffix">hrs</span>
+                    <button type="button" class="remove-btn" data-index="${i}" title="Remove">&times;</button>
+                </div>
+            `).join('');
+
+            el.querySelectorAll('.hours-input').forEach(inp => {
+                inp.addEventListener('input', () => {
+                    wizardTeamMembers[Number(inp.dataset.index)].hours = inp.value === '' ? null : inp.value;
+                });
+            });
+            el.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    wizardTeamMembers.splice(Number(btn.dataset.index), 1);
+                    renderWizardTeamList();
+                });
+            });
+        }
+
         function resetWizard() {
             ['new_eng_name', 'new_eng_location', 'new_eng_poc', 'new_eng_tsc', 'new_eng_scope', 'new_eng_notes',
              'new_soc_as_of_date', 'new_soc_start_period', 'new_soc_end_period'].forEach(id => {
@@ -1773,6 +1932,10 @@ if (!empty($_SESSION['name'])) {
             document.getElementById('new_eng_manager_search').value = '';
             document.getElementById('new_eng_manager_ac_list').style.display = 'none';
             clearManagerSelection();
+            document.getElementById('new_eng_team_search').value = '';
+            document.getElementById('new_eng_team_ac_list').style.display = 'none';
+            wizardTeamMembers = [];
+            renderWizardTeamList();
             nextBtn.disabled = false;
             goToStep(1);
             maxReached = 1;
@@ -1809,9 +1972,13 @@ if (!empty($_SESSION['name'])) {
             const types = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value).join(', ') || 'None selected';
             const tsc = document.getElementById('new_eng_tsc').value.trim() || '\u2014';
             const managerLabel = selectedManager ? selectedManager.emp_name : 'Unassigned';
+            const teamLabel = wizardTeamMembers.length
+                ? wizardTeamMembers.map(m => `${m.emp_name} (${ROLE_LABELS[m.role] || m.role}${m.hours ? ', ' + m.hours + ' hrs' : ''})`).join(', ')
+                : 'None added';
             document.getElementById('eng_review_summary').innerHTML = `
                 <div class="eng-review-row"><dt>Name</dt><dd>${escapeHtml(name)}</dd></div>
                 <div class="eng-review-row"><dt>Manager</dt><dd>${escapeHtml(managerLabel)}</dd></div>
+                <div class="eng-review-row"><dt>Team</dt><dd>${escapeHtml(teamLabel)}</dd></div>
                 <div class="eng-review-row"><dt>Status</dt><dd>${escapeHtml(STATUS_LABELS[status] || status)}</dd></div>
                 <div class="eng-review-row"><dt>Audit Types</dt><dd>${escapeHtml(types)}</dd></div>
                 <div class="eng-review-row"><dt>TSC</dt><dd>${escapeHtml(tsc)}</dd></div>
@@ -1878,31 +2045,40 @@ if (!empty($_SESSION['name'])) {
                 nextBtn.textContent = 'Create Engagement';
             }
 
-            // Manager assignment happens as a second call, chained after the
-            // engagement actually exists — engagement_team rows are keyed by
-            // engagement_idno, which only exists once create-engagement.php
-            // returns it. If this secondary step fails for any reason, the
-            // engagement itself was still created successfully, so this
-            // reloads either way rather than stranding the user on an error
-            // for what's ultimately a convenience step (they can always add
-            // the manager from the drawer afterward).
-            function assignManagerThenReload(engagementIdno) {
-                const addMember = () => {
-                    fetch('../api/add-team-member.php', {
+            // Manager + team assignment happen as a second batch of calls,
+            // chained after the engagement actually exists — engagement_team
+            // rows are keyed by engagement_idno, which only exists once
+            // create-engagement.php returns it. If any of these secondary
+            // calls fail, the engagement itself was still created
+            // successfully, so this reloads either way rather than
+            // stranding the user on an error for what's ultimately a
+            // convenience step (they can always add people from the Team
+            // card afterward).
+            function addPersonToTeam(engagementIdno, empName, role, isNew, hours) {
+                const addMember = () => fetch('../api/add-team-member.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ engagement_idno: engagementIdno, emp_name: empName, role, budgeted_hours: hours })
+                });
+                if (isNew) {
+                    return fetch('../api/add-employee.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ engagement_idno: engagementIdno, emp_name: selectedManager.emp_name, role: 'manager' })
-                    }).finally(() => location.reload());
-                };
-                if (selectedManager.isNew) {
-                    fetch('../api/add-employee.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ emp_name: selectedManager.emp_name, emp_role: 'manager' })
-                    }).finally(addMember);
-                } else {
-                    addMember();
+                        body: JSON.stringify({ emp_name: empName, emp_role: role })
+                    }).then(addMember);
                 }
+                return addMember();
+            }
+
+            function assignTeamThenReload(engagementIdno) {
+                const tasks = [];
+                if (selectedManager) {
+                    tasks.push(addPersonToTeam(engagementIdno, selectedManager.emp_name, 'manager', selectedManager.isNew, null));
+                }
+                wizardTeamMembers.forEach(m => {
+                    tasks.push(addPersonToTeam(engagementIdno, m.emp_name, m.role, m.isNew, m.hours));
+                });
+                Promise.allSettled(tasks).finally(() => location.reload());
             }
 
             fetch('../api/create-engagement.php', {
@@ -1930,8 +2106,8 @@ if (!empty($_SESSION['name'])) {
                     return;
                 }
                 sessionStorage.setItem('showEngagementCreatedToast', 'true');
-                if (selectedManager && data.engagement_id) {
-                    assignManagerThenReload(data.engagement_id);
+                if ((selectedManager || wizardTeamMembers.length) && data.engagement_id) {
+                    assignTeamThenReload(data.engagement_id);
                 } else {
                     location.reload();
                 }
@@ -1990,6 +2166,14 @@ if (!empty($_SESSION['name'])) {
     }
     function escAttr(str) {
         return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+    // Trims a whole-number ".00" but keeps a half-hour like ".5" — mirrors
+    // the same formatting on the read-only Team card (engagement-details.php).
+    function fmtHours(hours) {
+        if (hours === null || hours === undefined || hours === '') return null;
+        const n = parseFloat(hours);
+        if (isNaN(n)) return null;
+        return n.toFixed(2).replace(/\.?0+$/, '');
     }
     function fmtDate(raw) {
         if (!raw || raw === '0000-00-00') return null;
@@ -2437,8 +2621,13 @@ if (!empty($_SESSION['name'])) {
     // actually been filled out, and a planning doc. Kept here client-side
     // (rather than a round-trip) since the drawer already has the team,
     // timeline, and engagement data in hand the moment it opens.
+    //
+    // PCI-only engagements: see the matching comment on PHP's getSetupInfo()
+    // — neither timeline nor planning doc is independently required, only
+    // having neither counts as missing.
     function drawerSetupStatus(team, auditTypes, timeline, hasPlanningDoc) {
         const hasTeam = team.length > 0;
+        const isPciOnly = auditTypes.length === 1 && auditTypes[0] === 'PCI';
         const relevant = auditTypes.filter(t => DOL_AUDIT_TYPES.hasOwnProperty(t));
         const dolComplete = !hasTeam || relevant.every(auditType => {
             const field = DOL_AUDIT_TYPES[auditType];
@@ -2450,8 +2639,12 @@ if (!empty($_SESSION['name'])) {
 
         const missing = [];
         if (!hasTeam) missing.push('No team');
-        if (!hasTimeline) missing.push('No timeline');
-        if (!hasPlanningDoc) missing.push('No planning doc');
+        if (isPciOnly) {
+            if (!hasTimeline && !hasPlanningDoc) missing.push('No timeline or planning doc');
+        } else {
+            if (!hasTimeline) missing.push('No timeline');
+            if (!hasPlanningDoc) missing.push('No planning doc');
+        }
         if (hasTeam && !dolComplete) missing.push('DOL incomplete');
 
         return { hasTeam, dolComplete, hasTimeline, hasPlanningDoc, missing, needsSetup: missing.length > 0 };
@@ -2491,7 +2684,7 @@ if (!empty($_SESSION['name'])) {
                 });
                 grouped[key] = {
                     emp_name: member.emp_name, role: (member.role || '').toLowerCase(), audit_types: dolMap,
-                    emp_ids: [], independent: member.emp_independent || null
+                    emp_ids: [], independent: member.emp_independent || null, budgeted_hours: member.budgeted_hours
                 };
             }
             // Every engagement_team row for this person (one per audit type
@@ -2534,12 +2727,18 @@ if (!empty($_SESSION['name'])) {
             return `<button type="button" class="drawer-independence-btn ${cls}" data-emp-ids="${member.emp_ids.join(',')}" data-emp-name="${escAttr(member.emp_name)}" data-current="${val || ''}" title="${title}"><i class="bi ${icon}"></i></button>`;
         }
 
+        function hoursBadgeHtml(member) {
+            const h = fmtHours(member.budgeted_hours);
+            return h !== null ? `<span class="drawer-hours-badge">${h} hrs budgeted</span>` : '';
+        }
+
         let html = '';
         if (manager) {
             html += `
                 <div class="drawer-team-lead-row">
                     <div class="drawer-avatar" style="background:var(--manager)">${initials(manager.emp_name)}</div>
                     <div><div class="drawer-lead-name">${escapeHtml(manager.emp_name)}</div><div class="drawer-lead-role">Manager</div></div>
+                    ${hoursBadgeHtml(manager)}
                     ${independenceIconHtml(manager)}
                 </div>
             `;
@@ -2552,7 +2751,7 @@ if (!empty($_SESSION['name'])) {
                     <div class="drawer-member-row">
                         <div class="drawer-avatar" style="background:var(--${roleKey})">${initials(member.emp_name)}</div>
                         <div class="drawer-member-info">
-                            <div class="drawer-member-name">${escapeHtml(member.emp_name)}</div>
+                            <div class="drawer-member-name">${escapeHtml(member.emp_name)} ${hoursBadgeHtml(member)}</div>
                             ${dolLinesHtml(member)}
                         </div>
                         ${independenceIconHtml(member)}
@@ -2780,7 +2979,7 @@ if (!empty($_SESSION['name'])) {
                             <div class="team2-avatar" style="background:${ROLE_COLOR_VAR[roleKey] || 'var(--ink)'}">${memberInitials}</div>
                             <div style="flex:1; min-width:0;">
                                 <div class="team2-name">${member.emp_name}</div>
-                                <div class="team2-role-label">${ROLE_LABELS[roleKey] || member.role}</div>
+                                <div class="team2-role-label">${ROLE_LABELS[roleKey] || member.role}${fmtHours(member.budgeted_hours) !== null ? ` &middot; ${fmtHours(member.budgeted_hours)} hrs budgeted` : ''}</div>
                             </div>
                             <div class="team2-icon-btns">
                                 <button class="edit-team-btn" data-emp-id="${member.emp_id}" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -3029,6 +3228,12 @@ if (!empty($_SESSION['name'])) {
                                 ).join('')}
                             </div>
                         </div>
+                        <div class="team2-field">
+                            <label class="team2-edit-label">Budgeted Hours</label>
+                            <input type="number" id="edit_budgeted_hours" class="swal2-input" min="0" step="0.5"
+                                   placeholder="Not set" value="${fmtHours(member.budgeted_hours) ?? ''}"
+                                   style="margin: 0; width: 140px; font-size: 13px;">
+                        </div>
                         <div class="team2-field" id="edit_dol_section" style="display:${roleKey === 'manager' ? 'none' : 'block'};">
                             <label class="team2-edit-label">Duties &amp; Responsibilities</label>
                             <div class="team2-dol-columns">${dolColumnsHtml}</div>
@@ -3094,7 +3299,8 @@ if (!empty($_SESSION['name'])) {
                         engagement_idno: engagementId,
                         emp_id: member.emp_id,
                         emp_name: member.emp_name,
-                        role: selectedRole
+                        role: selectedRole,
+                        budgeted_hours: document.getElementById('edit_budgeted_hours').value
                     };
                     relevantAuditTypes.forEach(auditType => {
                         const fieldName = DOL_AUDIT_TYPES[auditType];

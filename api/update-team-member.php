@@ -30,6 +30,10 @@ try {
     $empHipaaDol = $input['emp_hipaa_dol'] ?? '';
     $empHitrustDol = $input['emp_hitrust_dol'] ?? '';
     $empFismaDol = $input['emp_fisma_dol'] ?? '';
+    // Budgeted hours is optional and separate from DOL — not required, and
+    // clearing the field (empty string) means "unset", not zero.
+    $budgetedHours = isset($input['budgeted_hours']) && $input['budgeted_hours'] !== ''
+        ? (float) $input['budgeted_hours'] : null;
 
     // Snapshot the pre-update DOL so the log can note only what actually
     // changed — this endpoint always overwrites all 5 DOL columns on every
@@ -46,35 +50,36 @@ try {
     $before->close();
 
     // Update the team member
-    $query = "UPDATE engagement_team 
-              SET emp_name = ?, 
-                  role = ?, 
-                  emp_soc1_dol = ?, 
-                  emp_soc2_dol = ?, 
-                  emp_hipaa_dol = ?, 
-                  emp_hitrust_dol = ?, 
-                  emp_fisma_dol = ?, 
+    $query = "UPDATE engagement_team
+              SET emp_name = ?,
+                  role = ?,
+                  emp_soc1_dol = ?,
+                  emp_soc2_dol = ?,
+                  emp_hipaa_dol = ?,
+                  emp_hitrust_dol = ?,
+                  emp_fisma_dol = ?,
+                  budgeted_hours = ?,
                   emp_updated = NOW()
               WHERE emp_id = ? AND engagement_idno = ?";
     $stmt = $conn->prepare($query);
-    
+
     if (!$stmt) {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
-    
-    // All parameters are strings (s)
-    $stmt->bind_param('sssssssss', 
-        $empName, 
-        $role, 
-        $empSoc1Dol, 
-        $empSoc2Dol, 
-        $empHipaaDol, 
-        $empHitrustDol, 
-        $empFismaDol, 
-        $empId, 
+
+    $stmt->bind_param('sssssssdss',
+        $empName,
+        $role,
+        $empSoc1Dol,
+        $empSoc2Dol,
+        $empHipaaDol,
+        $empHitrustDol,
+        $empFismaDol,
+        $budgetedHours,
+        $empId,
         $engagementIdno
     );
-    
+
     if ($stmt->execute()) {
         $member = [
             'emp_id' => $empId,
@@ -85,7 +90,8 @@ try {
             'emp_soc2_dol' => $empSoc2Dol,
             'emp_hipaa_dol' => $empHipaaDol,
             'emp_hitrust_dol' => $empHitrustDol,
-            'emp_fisma_dol' => $empFismaDol
+            'emp_fisma_dol' => $empFismaDol,
+            'budgeted_hours' => $budgetedHours
         ];
 
         $newValues = [

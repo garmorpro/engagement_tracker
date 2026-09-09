@@ -790,6 +790,7 @@ $engagementData = $engagement;
         .team2-name { font-weight: 600; font-size: 13.5px; color: var(--text-primary); }
         .team2-lead-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.9rem; background: color-mix(in srgb, var(--manager) 6%, var(--card)); border-bottom: 1px solid var(--line); }
         .team2-lead-tag { margin-left: auto; font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--manager); background: color-mix(in srgb, var(--manager) 14%, transparent); padding: 3px 8px; border-radius: 20px; }
+        .team2-hours-badge { font-size: 10px; font-weight: 700; color: var(--text-secondary); background: var(--paper); border: 1px solid var(--line); padding: 2px 7px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; }
         .team2-role-group-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); padding: 0.8rem 0.9rem 0.4rem; }
         .team2-compact-member { display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
         .team2-compact-member:last-child { border-bottom: none; }
@@ -1769,9 +1770,10 @@ $engagementData = $engagement;
                                 }
                             }
                             $groupedTeam[$key] = [
-                                'emp_name'    => $member['emp_name'],
-                                'role'        => strtolower($member['role'] ?? ''),
-                                'audit_types' => $dolMap
+                                'emp_name'       => $member['emp_name'],
+                                'role'           => strtolower($member['role'] ?? ''),
+                                'audit_types'    => $dolMap,
+                                'budgeted_hours' => $member['budgeted_hours'] ?? null
                             ];
                         }
                     }
@@ -1792,12 +1794,22 @@ $engagementData = $engagement;
                         }
                         return $initials;
                     };
+                    // Budgeted hours: trim a whole-number ".00" but keep a
+                    // half-hour like ".5" — same "don't show noise" idea as
+                    // the DOL Generator's hours display.
+                    $fmtHours = function ($hours) {
+                        if ($hours === null || $hours === '') return null;
+                        return rtrim(rtrim(number_format((float) $hours, 2, '.', ''), '0'), '.');
+                    };
                     ?>
 
                     <?php if ($manager): ?>
                         <div class="team2-lead-row">
                             <div class="team2-avatar" style="background:var(--manager)"><?php echo htmlspecialchars($initialsOf($manager['emp_name'])); ?></div>
                             <div class="team2-name"><?php echo htmlspecialchars($manager['emp_name']); ?></div>
+                            <?php if ($fmtHours($manager['budgeted_hours']) !== null): ?>
+                                <span class="team2-hours-badge"><?php echo htmlspecialchars($fmtHours($manager['budgeted_hours'])); ?> hrs budgeted</span>
+                            <?php endif; ?>
                             <span class="team2-lead-tag">Manager</span>
                         </div>
                     <?php endif; ?>
@@ -1809,6 +1821,9 @@ $engagementData = $engagement;
                             <div class="team2-compact-member">
                                 <div class="team2-avatar" style="background:var(--<?php echo $roleKey; ?>)"><?php echo htmlspecialchars($initialsOf($member['emp_name'])); ?></div>
                                 <div class="team2-name"><?php echo htmlspecialchars($member['emp_name']); ?></div>
+                                <?php if ($fmtHours($member['budgeted_hours']) !== null): ?>
+                                    <span class="team2-hours-badge"><?php echo htmlspecialchars($fmtHours($member['budgeted_hours'])); ?> hrs budgeted</span>
+                                <?php endif; ?>
                                 <div class="team2-compact-dol">
                                     <?php
                                         $dolGroups = array_filter($member['audit_types'], fn($tags) => !empty($tags));
@@ -3011,6 +3026,14 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
     const relevantAuditTypes = auditTypesArray.filter(type => supportedAuditTypes.hasOwnProperty(type));
     const roleColorVar = { manager: 'var(--manager)', senior: 'var(--senior)', staff: 'var(--staff)', intern: 'var(--intern)' };
     const roleLabels = { manager: 'Manager', senior: 'Senior', staff: 'Staff', intern: 'Intern' };
+    // Trims a whole-number ".00" but keeps a half-hour like ".5" — same
+    // formatting the read-only Team card uses.
+    function fmtHours(hours) {
+        if (hours === null || hours === undefined || hours === '') return null;
+        const n = parseFloat(hours);
+        if (isNaN(n)) return null;
+        return n.toFixed(2).replace(/\.?0+$/, '');
+    }
 
     const teamHTML = `
         <div class="team2-manage-body">
@@ -3080,7 +3103,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                         <div class="team2-avatar" style="background:${roleColorVar[roleKey] || 'var(--ink)'}">${initials}</div>
                         <div style="flex:1; min-width:0;">
                             <div class="team2-name">${member.emp_name}</div>
-                            <div class="team2-role-label">${roleLabels[roleKey] || member.role}</div>
+                            <div class="team2-role-label">${roleLabels[roleKey] || member.role}${fmtHours(member.budgeted_hours) !== null ? ` &middot; ${fmtHours(member.budgeted_hours)} hrs budgeted` : ''}</div>
                         </div>
                         <div class="team2-icon-btns">
                             <button class="edit-team-btn" data-emp-id="${member.emp_id}" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -3302,6 +3325,12 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                             ).join('')}
                         </div>
                     </div>
+                    <div class="team2-field">
+                        <label class="team2-edit-label">Budgeted Hours</label>
+                        <input type="number" id="edit_budgeted_hours" class="swal2-input" min="0" step="0.5"
+                               placeholder="Not set" value="${fmtHours(member.budgeted_hours) ?? ''}"
+                               style="margin: 0; width: 140px; font-size: 13px;">
+                    </div>
                     <div class="team2-field" id="edit_dol_section" style="display:${roleKey === 'manager' ? 'none' : 'block'};">
                         <label class="team2-edit-label">Duties &amp; Responsibilities</label>
                         <div class="team2-dol-columns">${dolColumnsHtml}</div>
@@ -3368,7 +3397,8 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     engagement_idno: engagementId,
                     emp_id: member.emp_id,
                     emp_name: member.emp_name,
-                    role: selectedRole
+                    role: selectedRole,
+                    budgeted_hours: document.getElementById('edit_budgeted_hours').value
                 };
                 relevantAuditTypes.forEach(auditType => {
                     const fieldName = supportedAuditTypes[auditType];

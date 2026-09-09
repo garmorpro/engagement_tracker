@@ -27,10 +27,12 @@ try {
     $empHipaaDol   = !empty($input['emp_hipaa_dol'])   ? $input['emp_hipaa_dol']   : null;
     $empHitrustDol = !empty($input['emp_hitrust_dol']) ? $input['emp_hitrust_dol'] : null;
     $empFismaDol   = !empty($input['emp_fisma_dol'])   ? $input['emp_fisma_dol']   : null;
+    $budgetedHours = isset($input['budgeted_hours']) && $input['budgeted_hours'] !== ''
+        ? (float) $input['budgeted_hours'] : null;
 
-    $query = "INSERT INTO engagement_team 
-                (engagement_idno, emp_name, role, emp_soc1_dol, emp_soc2_dol, emp_hipaa_dol, emp_hitrust_dol, emp_fisma_dol, emp_created, emp_updated)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+    $query = "INSERT INTO engagement_team
+                (engagement_idno, emp_name, role, emp_soc1_dol, emp_soc2_dol, emp_hipaa_dol, emp_hitrust_dol, emp_fisma_dol, budgeted_hours, emp_created, emp_updated)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
 
     $stmt = $conn->prepare($query);
 
@@ -38,7 +40,7 @@ try {
         throw new Exception('Prepare failed: ' . $conn->error);
     }
 
-    $stmt->bind_param('ssssssss',
+    $stmt->bind_param('ssssssssd',
         $engagementIdno,
         $empName,
         $role,
@@ -46,7 +48,8 @@ try {
         $empSoc2Dol,
         $empHipaaDol,
         $empHitrustDol,
-        $empFismaDol
+        $empFismaDol,
+        $budgetedHours
     );
 
     if ($stmt->execute()) {
@@ -61,7 +64,8 @@ try {
             'emp_soc2_dol'    => $empSoc2Dol,
             'emp_hipaa_dol'   => $empHipaaDol,
             'emp_hitrust_dol' => $empHitrustDol,
-            'emp_fisma_dol'   => $empFismaDol
+            'emp_fisma_dol'   => $empFismaDol,
+            'budgeted_hours'  => $budgetedHours
         ];
 
         echo json_encode([
