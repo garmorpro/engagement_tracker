@@ -932,16 +932,35 @@ $engagementData = $engagement;
            rather than a pill badge — matches how the read-only Team card
            shows a member's role. Color is set inline per-role. */
         .team3-detail-role-text { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 3px; }
-        .team3-field { margin-bottom: 1.1rem; max-width: 420px; }
+        .team3-field { margin-bottom: 1.1rem; }
+        /* Role + hours sit side by side, each sized to its own content —
+           stacked full-width fields (the old layout) left a giant stretched
+           4-way toggle and a narrow orphaned number box that didn't relate
+           to anything above or below it. */
+        .team3-field-row { display: flex; align-items: flex-start; gap: 1.6rem; margin-bottom: 1.1rem; }
+        .team3-field-row .team3-field { margin-bottom: 0; }
         /* Flatter role toggle: a hairline-bordered row instead of a filled
            bar with a raised white pill — the active option is marked by a
-           tinted background + bold text, not a shadowed chip. */
-        .team3-role-toggle { display: flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
-        .team3-role-toggle button { flex: 1; border: none; border-right: 1px solid var(--line); background: transparent; padding: 7px 4px; font-size: 11.5px; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+           tinted background + bold text, not a shadowed chip. Sized to its
+           own labels now, not stretched to fill the field column. */
+        .team3-role-toggle { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+        .team3-role-toggle button { border: none; border-right: 1px solid var(--line); background: transparent; padding: 7px 13px; font-size: 11.5px; font-weight: 600; color: var(--text-secondary); cursor: pointer; white-space: nowrap; }
         .team3-role-toggle button:last-child { border-right: none; }
         .team3-role-toggle button.active { background: var(--paper); color: var(--text-primary); font-weight: 700; }
-        .team3-dol-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 0.9rem; max-width: 640px; }
-        .team3-detail-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--line); max-width: 640px; }
+        /* Matches the filter input's styling instead of the generic
+           swal2-input look (which also meant a raw browser number spinner
+           sitting next to a hairline-flat toggle — visibly two different
+           input languages side by side). */
+        .team3-number-input {
+            width: 110px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px;
+            background: var(--paper); color: var(--text-primary); font-size: 13px; font-family: inherit;
+        }
+        .team3-number-input:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 12%, transparent); }
+        .team3-number-input::-webkit-outer-spin-button,
+        .team3-number-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .team3-number-input[type=number] { -moz-appearance: textfield; }
+        .team3-dol-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 0.9rem; max-width: 560px; }
+        .team3-detail-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--line); max-width: 560px; }
         .team3-remove-confirm { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-primary); background: var(--critical-tint); border-radius: 7px; padding: 8px 10px; }
         .team3-remove-confirm b { color: var(--critical); }
         /* Pill-shaped, not the app's default rectangular button, so Save/
@@ -951,7 +970,7 @@ $engagementData = $engagement;
 
         .team3-add-panel { max-width: 420px; }
         .team3-search-results { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-        .team3-saved-flash { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; color: var(--staff); opacity: 0; transition: opacity 0.2s; }
+        .team3-saved-flash { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; color: var(--staff); opacity: 0; transition: opacity 0.2s; white-space: nowrap; }
         .team3-saved-flash.show { opacity: 1; }
 
         /* ========== TIMELINE SECTION ========== */
@@ -3386,21 +3405,22 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                     <div class="team3-detail-role-text" id="team3_detail_role_badge" style="color:${roleColorVar[roleKey] || 'var(--ink)'}">${roleLabels[roleKey] || member.role}</div>
                 </div>
             </div>
-            <div class="team3-field">
-                <label class="team2-edit-label">Role on this Engagement</label>
-                <div class="team3-role-toggle" id="team3_role_segment">
-                    ${roleOrder.map(role =>
-                        `<button type="button" data-role="${role}" class="${role === roleKey ? 'active' : ''}">${roleLabels[role]}</button>`
-                    ).join('')}
+            <div class="team3-field-row">
+                <div class="team3-field">
+                    <label class="team2-edit-label">Role on this Engagement</label>
+                    <div class="team3-role-toggle" id="team3_role_segment">
+                        ${roleOrder.map(role =>
+                            `<button type="button" data-role="${role}" class="${role === roleKey ? 'active' : ''}">${roleLabels[role]}</button>`
+                        ).join('')}
+                    </div>
+                </div>
+                <div class="team3-field">
+                    <label class="team2-edit-label">Budgeted hours</label>
+                    <input type="number" id="team3_hours_input" class="team3-number-input" min="0" step="0.5"
+                           placeholder="Not set" value="${fmtHours(member.budgeted_hours) ?? ''}">
                 </div>
             </div>
-            <div class="team3-field hours-field">
-                <label class="team2-edit-label">Budgeted Hours</label>
-                <input type="number" id="team3_hours_input" class="swal2-input" min="0" step="0.5"
-                       placeholder="Not set" value="${fmtHours(member.budgeted_hours) ?? ''}"
-                       style="margin: 0; width: 140px; font-size: 13px;">
-            </div>
-            <div class="team3-field" id="team3_dol_section" style="display:${roleKey === 'manager' ? 'none' : 'block'}; max-width:640px;">
+            <div class="team3-field" id="team3_dol_section" style="display:${roleKey === 'manager' ? 'none' : 'block'};">
                 <label class="team2-edit-label">Duties &amp; Responsibilities</label>
                 <div class="team3-dol-columns">${dolColumnsHtml}</div>
                 <div class="team2-tag-hint">e.g. CC1, CC2 — press Enter or comma to add a duty</div>
