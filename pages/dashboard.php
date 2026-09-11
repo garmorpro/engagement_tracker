@@ -2293,6 +2293,41 @@ if (!empty($_SESSION['name'])) {
         'FISMA':   'emp_fisma_dol'
     };
     const DOL_TYPE_CLASS = { 'SOC 1': '', 'SOC 2': 't-soc2', 'HIPAA': '', 'HITRUST': 't-soc2', 'FISMA': '' };
+    // SOC 2's fixed criteria order: the 9 Common Criteria numerically, then
+    // the 4 additional Trust Services Categories. Anything not on this list
+    // (shouldn't normally happen, but a stray freeform duty is still
+    // possible) sorts after it, alphabetically, rather than disappearing.
+    const SOC2_DOL_ORDER = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'];
+    // Always shows duties in this canonical order rather than whatever
+    // order they were typed in — SOC 2 uses the fixed list above; SOC 1
+    // (CO1, CO2, ...) and anything else just sorts numerically by whatever
+    // digits are in the tag, falling back to alphabetical for non-numeric
+    // ones. Used both for the read-only Team card and the tag input in
+    // "Edit Team Member" (which re-sorts on every render, not just once,
+    // so removing a tag doesn't leave a stale order behind either).
+    function sortDolTags(tags, auditType) {
+        const sorted = [...tags];
+        if (auditType === 'SOC 2') {
+            sorted.sort((a, b) => {
+                const ia = SOC2_DOL_ORDER.indexOf(a);
+                const ib = SOC2_DOL_ORDER.indexOf(b);
+                if (ia !== -1 && ib !== -1) return ia - ib;
+                if (ia !== -1) return -1;
+                if (ib !== -1) return 1;
+                return a.localeCompare(b);
+            });
+        } else {
+            sorted.sort((a, b) => {
+                const na = parseInt(a.replace(/\D/g, ''), 10);
+                const nb = parseInt(b.replace(/\D/g, ''), 10);
+                if (!isNaN(na) && !isNaN(nb)) return na - nb;
+                if (!isNaN(na)) return -1;
+                if (!isNaN(nb)) return 1;
+                return a.localeCompare(b);
+            });
+        }
+        return sorted;
+    }
     const ROLE_COLOR_VAR = { manager: 'var(--manager)', senior: 'var(--senior)', staff: 'var(--staff)', intern: 'var(--intern)' };
     const ROLE_LABELS = { manager: 'Manager', senior: 'Senior', staff: 'Staff', intern: 'Intern' };
     const TIMELINE_STEPS = [
@@ -2896,7 +2931,7 @@ if (!empty($_SESSION['name'])) {
             return '<div class="drawer-dol-lines">' + groups.map(([auditType, tags]) => `
                 <div class="drawer-dol-line">
                     <span class="drawer-dol-audit-label">${escapeHtml(auditType)}</span>
-                    <span class="drawer-dol-chips-wrap">${tags.map(t => `<span class="drawer-dol-chip ${DOL_TYPE_CLASS[auditType] || ''}">${escapeHtml(t)}</span>`).join('')}</span>
+                    <span class="drawer-dol-chips-wrap">${sortDolTags(tags, auditType).map(t => `<span class="drawer-dol-chip ${DOL_TYPE_CLASS[auditType] || ''}">${escapeHtml(t)}</span>`).join('')}</span>
                 </div>
             `).join('') + '</div>';
         }
@@ -3547,7 +3582,7 @@ if (!empty($_SESSION['name'])) {
             const dolColumnsHtml = relevantAuditTypes.map(auditType => `
                 <div>
                     <div class="team2-dol-col-label">${auditType}</div>
-                    <div class="team2-tag-input-box" data-field="${DOL_AUDIT_TYPES[auditType]}">
+                    <div class="team2-tag-input-box" data-field="${DOL_AUDIT_TYPES[auditType]}" data-audit-type="${escAttr(auditType)}">
                         <div class="tags"></div>
                         <input type="text" placeholder="Add duty…">
                     </div>
@@ -3592,10 +3627,17 @@ if (!empty($_SESSION['name'])) {
                 didOpen: () => {
                     document.querySelectorAll('.team2-tag-input-box').forEach(box => {
                         const fieldName = box.dataset.field;
+                        const auditType = box.dataset.auditType;
                         const tagsEl = box.querySelector('.tags');
                         const input = box.querySelector('input');
 
+                        // Re-sorts into canonical order every render (not
+                        // just on add) so removing a tag can't leave a
+                        // stale order behind either — reassigns tagState
+                        // itself, not just a display copy, so the delete
+                        // button's index-based splice below stays correct.
                         function render() {
+                            tagState[fieldName] = sortDolTags(tagState[fieldName], auditType);
                             tagsEl.innerHTML = tagState[fieldName].map((t, i) =>
                                 `<span class="team2-tag-chip">${t}<button type="button" data-i="${i}">&times;</button></span>`
                             ).join('');

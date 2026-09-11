@@ -1801,6 +1801,39 @@ $engagementData = $engagement;
                         if ($hours === null || $hours === '') return null;
                         return rtrim(rtrim(number_format((float) $hours, 2, '.', ''), '0'), '.');
                     };
+                    // Always shows duties in canonical order rather than
+                    // whatever order they were typed in — SOC 2 uses this
+                    // fixed list (9 Common Criteria numerically, then the 4
+                    // additional Trust Services Categories); SOC 1 (CO1,
+                    // CO2, ...) and anything else sorts numerically by
+                    // whatever digits are in the tag, alphabetical as a
+                    // fallback. Mirrors sortDolTags() in dashboard.php —
+                    // same logic, PHP here since this page's Team card
+                    // renders server-side instead of via drawerData.
+                    $soc2DolOrder = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'];
+                    $sortDolTags = function ($tags, $auditType) use ($soc2DolOrder) {
+                        $tags = array_values($tags);
+                        if ($auditType === 'SOC 2') {
+                            usort($tags, function ($a, $b) use ($soc2DolOrder) {
+                                $ia = array_search($a, $soc2DolOrder);
+                                $ib = array_search($b, $soc2DolOrder);
+                                if ($ia !== false && $ib !== false) return $ia <=> $ib;
+                                if ($ia !== false) return -1;
+                                if ($ib !== false) return 1;
+                                return strcasecmp($a, $b);
+                            });
+                        } else {
+                            usort($tags, function ($a, $b) {
+                                $na = preg_replace('/\D/', '', $a);
+                                $nb = preg_replace('/\D/', '', $b);
+                                if ($na !== '' && $nb !== '') return ((int) $na) <=> ((int) $nb);
+                                if ($na !== '') return -1;
+                                if ($nb !== '') return 1;
+                                return strcasecmp($a, $b);
+                            });
+                        }
+                        return $tags;
+                    };
                     ?>
 
                     <?php if ($manager): ?>
@@ -1833,6 +1866,7 @@ $engagementData = $engagement;
                                     <?php else: ?>
                                         <div class="team2-dol-lines">
                                             <?php foreach ($dolGroups as $auditType => $tags): ?>
+                                                <?php $tags = $sortDolTags($tags, $auditType); ?>
                                                 <div class="team2-dol-line">
                                                     <span class="team2-dol-type-tag"><?php echo htmlspecialchars($auditType); ?></span>
                                                     <div class="team2-chip-row">
@@ -3024,6 +3058,37 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         'FISMA':   'emp_fisma_dol'
     };
     const relevantAuditTypes = auditTypesArray.filter(type => supportedAuditTypes.hasOwnProperty(type));
+    // Always shows duties in canonical order rather than whatever order
+    // they were typed in — mirrors sortDolTags() in dashboard.php and the
+    // $sortDolTags closure above (this page renders its Team card
+    // server-side, but this modal's own list is JS-rendered, so it needs
+    // its own copy). SOC 2 uses the fixed list below; SOC 1 (CO1, CO2, ...)
+    // and anything else sorts numerically by whatever digits are in the
+    // tag, alphabetical as a fallback.
+    const SOC2_DOL_ORDER = ['CC1', 'CC2', 'CC3', 'CC4', 'CC5', 'CC6', 'CC7', 'CC8', 'CC9', 'Availability', 'Confidentiality', 'Processing Integrity', 'Privacy'];
+    function sortDolTags(tags, auditType) {
+        const sorted = [...tags];
+        if (auditType === 'SOC 2') {
+            sorted.sort((a, b) => {
+                const ia = SOC2_DOL_ORDER.indexOf(a);
+                const ib = SOC2_DOL_ORDER.indexOf(b);
+                if (ia !== -1 && ib !== -1) return ia - ib;
+                if (ia !== -1) return -1;
+                if (ib !== -1) return 1;
+                return a.localeCompare(b);
+            });
+        } else {
+            sorted.sort((a, b) => {
+                const na = parseInt(a.replace(/\D/g, ''), 10);
+                const nb = parseInt(b.replace(/\D/g, ''), 10);
+                if (!isNaN(na) && !isNaN(nb)) return na - nb;
+                if (!isNaN(na)) return -1;
+                if (!isNaN(nb)) return 1;
+                return a.localeCompare(b);
+            });
+        }
+        return sorted;
+    }
     const roleColorVar = { manager: 'var(--manager)', senior: 'var(--senior)', staff: 'var(--staff)', intern: 'var(--intern)' };
     const roleLabels = { manager: 'Manager', senior: 'Senior', staff: 'Staff', intern: 'Intern' };
     // Trims a whole-number ".00" but keeps a half-hour like ".5" — same
@@ -3143,7 +3208,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             const fieldName = supportedAuditTypes[auditType];
             const dolValue = member[fieldName];
             if (dolValue) {
-                const duties = dolValue.split(',').map(d => d.trim()).filter(d => d);
+                const duties = sortDolTags(dolValue.split(',').map(d => d.trim()).filter(d => d), auditType);
                 const typeClass = auditType === 'SOC 2' || auditType === 'HITRUST' ? 't-soc2' : '';
                 const pillsHTML = duties.map(duty => `<span class="team2-chip ${typeClass}">${duty}</span>`).join('');
                 dolSections.push(`
@@ -3300,7 +3365,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         const dolColumnsHtml = relevantAuditTypes.map(auditType => `
             <div>
                 <div class="team2-dol-col-label">${auditType}</div>
-                <div class="team2-tag-input-box" data-field="${supportedAuditTypes[auditType]}">
+                <div class="team2-tag-input-box" data-field="${supportedAuditTypes[auditType]}" data-audit-type="${auditType}">
                     <div class="tags"></div>
                     <input type="text" placeholder="Add duty…">
                 </div>
@@ -3345,10 +3410,17 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             didOpen: () => {
                 document.querySelectorAll('.team2-tag-input-box').forEach(box => {
                     const fieldName = box.dataset.field;
+                    const auditType = box.dataset.auditType;
                     const tagsEl = box.querySelector('.tags');
                     const input = box.querySelector('input');
 
+                    // Re-sorts into canonical order every render (not just
+                    // on add) so removing a tag can't leave a stale order
+                    // behind either — reassigns tagState itself, not just a
+                    // display copy, so the delete button's index-based
+                    // splice below stays correct.
                     function render() {
+                        tagState[fieldName] = sortDolTags(tagState[fieldName], auditType);
                         tagsEl.innerHTML = tagState[fieldName].map((t, i) =>
                             `<span class="team2-tag-chip">${t}<button type="button" data-i="${i}">&times;</button></span>`
                         ).join('');
