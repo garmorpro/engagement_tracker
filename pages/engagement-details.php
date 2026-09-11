@@ -897,17 +897,25 @@ $engagementData = $engagement;
         .team3-left-head { padding: 0.9rem 0.9rem 0.7rem; display: flex; flex-direction: column; gap: 0.6rem; }
         .team3-left-head input[type="text"] { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--card); color: var(--text-primary); font-size: 12.5px; }
         .team3-left-head input:focus { outline: none; border-color: var(--ink); }
-        .team3-add-btn {
-            display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
-            padding: 8px; border-radius: 7px; border: 1px dashed var(--line-strong); background: transparent;
-            color: var(--ink); font-size: 12px; font-weight: 700; cursor: pointer;
-        }
-        .team3-add-btn:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+        /* Plain text-link buttons (Add Team Member, Remove from engagement)
+           instead of bordered/filled boxes — flatter, lower-chrome, closer
+           to how the server-rendered Team card above reads. */
+        .team3-link-btn { font-size: 12px; font-weight: 700; color: var(--ink); background: none; border: none; cursor: pointer; padding: 4px; border-radius: 6px; }
+        .team3-link-btn:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+        .team3-link-btn-danger { color: var(--critical); }
+        .team3-link-btn-danger:hover { background: color-mix(in srgb, var(--critical) 8%, transparent); }
+        .team3-add-btn { display: flex; align-items: center; gap: 6px; width: 100%; padding: 6px 4px; justify-content: flex-start; }
         .team3-list { flex: 1; overflow-y: auto; padding: 0 0.5rem 0.75rem; }
         .team3-item { display: flex; align-items: flex-start; gap: 9px; padding: 8px; border-radius: 8px; cursor: pointer; }
         .team3-item:hover { background: var(--card); }
         .team3-item.selected { background: color-mix(in srgb, var(--ink) 10%, var(--card)); }
         .team3-item-info { flex: 1; min-width: 0; }
+        /* Circular initials, not the app's usual rounded-square avatar —
+           matches the read-only Team card's avatars more closely than the
+           other team2-avatar spots (search dropdowns, etc.), which keep
+           the standard shape. */
+        .team3-item .team2-avatar,
+        .team3-detail-head .team2-avatar-lg { border-radius: 50%; }
         .team3-item-name { font-weight: 700; font-size: 12.5px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .team3-item-sub { font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; }
         .team3-item-dols { margin-top: 5px; }
@@ -921,11 +929,26 @@ $engagementData = $engagement;
         .team3-right-empty i { font-size: 34px; opacity: 0.35; }
 
         .team3-detail-head { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.3rem; }
+        /* Plain small-caps role text (colored by role) under the name,
+           rather than a pill badge — matches how the read-only Team card
+           shows a member's role. Color is set inline per-role. */
+        .team3-detail-role-text { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 3px; }
         .team3-field { margin-bottom: 1.1rem; max-width: 420px; }
+        /* Flatter role toggle: a hairline-bordered row instead of a filled
+           bar with a raised white pill — the active option is marked by a
+           tinted background + bold text, not a shadowed chip. */
+        .team3-role-toggle { display: flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+        .team3-role-toggle button { flex: 1; border: none; border-right: 1px solid var(--line); background: transparent; padding: 7px 4px; font-size: 11.5px; font-weight: 600; color: var(--text-secondary); cursor: pointer; }
+        .team3-role-toggle button:last-child { border-right: none; }
+        .team3-role-toggle button.active { background: var(--paper); color: var(--text-primary); font-weight: 700; }
         .team3-dol-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 0.9rem; max-width: 640px; }
         .team3-detail-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--line); max-width: 640px; }
         .team3-remove-confirm { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-primary); background: var(--critical-tint); border-radius: 7px; padding: 8px 10px; }
         .team3-remove-confirm b { color: var(--critical); }
+        /* Pill-shaped, not the app's default rectangular button, so Save/
+           Cancel/Remove read as lighter-weight than a typical form submit. */
+        .team3-detail-actions .team2-btn,
+        .team3-remove-confirm .team2-btn { border-radius: 20px; padding: 7px 16px; font-size: 12px; }
 
         .team3-add-panel { max-width: 420px; }
         .team3-search-results { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
@@ -3178,7 +3201,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             <div class="team3-left">
                 <div class="team3-left-head">
                     <input type="text" id="team3_filter" placeholder="Filter roster…" autocomplete="off">
-                    <button type="button" class="team3-add-btn" id="team3_add_btn"><i class="bi bi-plus"></i> Add Team Member</button>
+                    <button type="button" class="team3-link-btn team3-add-btn" id="team3_add_btn"><i class="bi bi-plus"></i> Add Team Member</button>
                 </div>
                 <div class="team3-list" id="team3_list"></div>
             </div>
@@ -3327,12 +3350,12 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 <div class="team2-avatar-lg" id="team3_detail_avatar" style="background:${roleColorVar[roleKey] || 'var(--ink)'}">${memberInitials}</div>
                 <div>
                     <div class="team2-edit-name">${member.emp_name}</div>
-                    <div class="team2-edit-role-badge ${roleKey}" id="team3_detail_role_badge">${roleLabels[roleKey] || member.role}</div>
+                    <div class="team3-detail-role-text" id="team3_detail_role_badge" style="color:${roleColorVar[roleKey] || 'var(--ink)'}">${roleLabels[roleKey] || member.role}</div>
                 </div>
             </div>
             <div class="team3-field">
                 <label class="team2-edit-label">Role on this Engagement</label>
-                <div class="team2-segmented" id="team3_role_segment">
+                <div class="team3-role-toggle" id="team3_role_segment">
                     ${roleOrder.map(role =>
                         `<button type="button" data-role="${role}" class="${role === roleKey ? 'active' : ''}">${roleLabels[role]}</button>`
                     ).join('')}
@@ -3356,7 +3379,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                         <button type="button" class="team2-btn team2-btn-secondary" id="team3_cancel_remove" style="padding:5px 10px;">Cancel</button>
                         <button type="button" class="team2-btn" id="team3_confirm_remove" style="padding:5px 10px; background:var(--critical); color:#fff;">Remove</button>
                     </div>
-                ` : `<button type="button" class="team2-btn team2-btn-secondary" id="team3_remove_btn" style="color:var(--critical); border-color:var(--critical);">Remove from engagement</button>`}
+                ` : `<button type="button" class="team3-link-btn team3-link-btn-danger" id="team3_remove_btn">Remove from engagement</button>`}
                 <span style="display:flex; align-items:center; gap:10px;">
                     <span class="team3-saved-flash" id="team3_saved_flash"><i class="bi bi-check-circle-fill"></i> Saved</span>
                     <button type="button" class="team2-btn team2-btn-primary" id="team3_save_btn">Save Changes</button>
@@ -3421,7 +3444,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 selectedRole = btn.dataset.role;
                 document.getElementById('team3_detail_avatar').style.background = roleColorVar[selectedRole] || 'var(--ink)';
                 const badge = document.getElementById('team3_detail_role_badge');
-                badge.className = 'team2-edit-role-badge ' + selectedRole;
+                badge.style.color = roleColorVar[selectedRole] || 'var(--ink)';
                 badge.textContent = roleLabels[selectedRole];
                 document.getElementById('team3_dol_section').style.display = selectedRole === 'manager' ? 'none' : 'block';
             });
