@@ -869,10 +869,6 @@ if (!empty($_SESSION['name'])) {
         .mtg-action-btn.t-weekly { color: var(--staff); }
         .mtg-action-btn.t-general { color: var(--text-muted); }
 
-        .mtg-legacy-note { display: flex; gap: 0.6rem; padding: 0.7rem 0.8rem; margin-bottom: 1rem; background: var(--paper); border: 1px solid var(--line); border-radius: 9px; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-        .mtg-legacy-note i { margin-top: 1px; flex-shrink: 0; }
-        .mtg-legacy-note b { color: var(--text); }
-
         .note-log { display: flex; flex-direction: column; }
         .note-entry { display: flex; gap: 0.75rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
         .note-entry:last-child { border-bottom: none; padding-bottom: 0; }
@@ -2504,7 +2500,6 @@ if (!empty($_SESSION['name'])) {
                     <button class="mtg-action-btn t-weekly" id="mtgOpenWeekly" type="button"><i class="bi bi-arrow-repeat"></i> Weekly Status</button>
                     <button class="mtg-action-btn t-general" id="mtgOpenGeneral" type="button"><i class="bi bi-pencil"></i> Note</button>
                 </div>
-                ${eng.eng_notes ? `<div class="mtg-legacy-note"><i class="bi bi-archive"></i><div><b>From before this log existed:</b> ${escapeHtml(eng.eng_notes)}</div></div>` : ''}
                 <div class="note-log" id="drawerNoteLog"></div>
             </div>
 
