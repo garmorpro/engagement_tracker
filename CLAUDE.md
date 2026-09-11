@@ -72,6 +72,23 @@ Surfaced in three places: the "Needs Attention" stat card + toolbar filter (ambe
 
 On submit, `create-engagement.php` returns the new `engagement_id`, then `assignTeamThenReload()` fires the Manager (if picked) and every Team-step member through `add-employee.php` (only for names new to the roster) then `add-team-member.php`, all in parallel via `Promise.allSettled`, before reloading — if any of those secondary calls fail the engagement itself still exists, so it reloads either way rather than blocking on what's ultimately a convenience step.
 
+## Notes & Meetings
+
+Replaces two things that used to live directly on the drawer: the single `engagements.eng_notes` text field (one field, silently overwritten every edit, no author/timestamp) and the per-person independence popup (`api/update-team-independence.php`, one SweetAlert2 at a time, no notes attached — that endpoint still exists but the drawer no longer calls it). Mocked up first as a Claude Artifact before building, per Garrett.
+
+A running, timestamped log in a new `engagement_notes` table (`includes/migrate_create_engagement_notes_table.php` — **must be run once on the server**), fed by four buttons in the drawer's "Notes & Meetings" section (`.mtg-*` in `pages/dashboard.php`, all wired in one IIFE reading `drawerData` at open-time rather than being rebuilt on every drawer render):
+
+- **Planning Meeting** — notes, plus independence for every team member inline in the same modal (a segmented Yes/No/— per person, seeded from `engagement_team.emp_independent`) instead of a separate popup per person. Marks Internal Planning Call complete on the timeline.
+- **Client Planning** — notes only. Marks Client Planning Call complete on the timeline.
+- **Weekly Status** — notes only. Doesn't touch the timeline (distinct from the existing weekly-status-call *day-of-week scheduling* feature already on the timeline section, which this doesn't change).
+- **Note** — notes only, for anything else.
+
+All four post to `api/add-engagement-note.php`, one transaction rather than chained client-side calls so a "log this meeting" action can't end up half-saved: insert the `engagement_notes` row; for Planning only, write each person's independence answer through to `engagement_team.emp_independent` (the live value the Team card's now-read-only badge reads — `independenceIconHtml()` lost its click handler and `openIndependenceMenu()` was deleted) *and* capture the same answers as an `independence_snapshot` JSON column on the note itself (what was confirmed *at that meeting*, which stays fixed even as the live answer keeps changing after); for Planning/Client, mark the matching `engagement_timeline` `*_completed_at` column complete the same way the timeline's own click-to-complete checkbox does, including resolving any pending notification via the same `resolveKeyDateNotification()` `update-timeline-checkbox.php` calls. Saving always calls `refreshDrawer()` rather than patching the DOM in place, so the log, the Team card's independence badges, and the timeline's checkmarks all land in sync from one re-fetch.
+
+`getSetupInfo()`'s timeline/DOL checks (see "Onboarding completeness" above) look at the timeline's *date* columns, not its `*_completed_at` columns — logging a Planning/Client note doesn't by itself satisfy "Needs Attention" unless a due date was also entered separately. That's intentional: "filled out" and "step completed" are different questions.
+
+Any pre-existing `eng_notes` content isn't migrated automatically (no reliable author/timestamp to attribute it to) — the drawer shows it read-only in a "From before this log existed" callout above the log instead of silently dropping it.
+
 ## Known issues / backlog
 
 Found during a 2026-07-13 security review — see conversation history for full detail. Fixed same day unless noted:

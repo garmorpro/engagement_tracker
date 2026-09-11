@@ -858,7 +858,80 @@ if (!empty($_SESSION['name'])) {
         .drawer-detail-scope { grid-column: 1 / -1; }
         .drawer-detail-scope .drawer-info-value { line-height: 1.5; font-weight: 500; font-size: 13px; color: var(--text-muted); white-space: pre-line; }
 
-        .drawer-notes-text { font-size: 13px; line-height: 1.6; color: var(--text-muted); white-space: pre-line; }
+        /* ---------- Notes & Meetings: a running log fed by 4 buttons,
+           replacing the old single eng_notes textarea + the old per-person
+           independence popup. Ported from the mockup Garrett approved. ---------- */
+        .mtg-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .mtg-action-btn { display: flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 20px; border: 1px solid var(--line); background: var(--paper); color: var(--text); font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .mtg-action-btn:hover { border-color: var(--line-strong); }
+        .mtg-action-btn.t-planning { color: var(--manager); }
+        .mtg-action-btn.t-client { color: var(--senior); }
+        .mtg-action-btn.t-weekly { color: var(--staff); }
+        .mtg-action-btn.t-general { color: var(--text-muted); }
+
+        .mtg-legacy-note { display: flex; gap: 0.6rem; padding: 0.7rem 0.8rem; margin-bottom: 1rem; background: var(--paper); border: 1px solid var(--line); border-radius: 9px; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+        .mtg-legacy-note i { margin-top: 1px; flex-shrink: 0; }
+        .mtg-legacy-note b { color: var(--text); }
+
+        .note-log { display: flex; flex-direction: column; }
+        .note-entry { display: flex; gap: 0.75rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line); }
+        .note-entry:last-child { border-bottom: none; padding-bottom: 0; }
+        .note-entry:first-child { padding-top: 0; }
+        .note-type-rail { width: 3px; align-self: stretch; border-radius: 2px; flex-shrink: 0; }
+        .note-entry.t-planning .note-type-rail { background: var(--manager); }
+        .note-entry.t-client .note-type-rail { background: var(--senior); }
+        .note-entry.t-weekly .note-type-rail { background: var(--staff); }
+        .note-entry.t-general .note-type-rail { background: var(--line-strong); }
+        .note-entry-body { flex: 1; min-width: 0; }
+        .note-entry-head { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.3rem; flex-wrap: wrap; }
+        .note-type-label { font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+        .note-entry.t-planning .note-type-label { color: var(--manager); }
+        .note-entry.t-client .note-type-label { color: var(--senior); }
+        .note-entry.t-weekly .note-type-label { color: var(--staff); }
+        .note-entry.t-general .note-type-label { color: var(--text-muted); }
+        .note-meta { font-size: 11px; color: var(--text-muted); }
+        .note-text { font-size: 13px; line-height: 1.55; color: var(--text); white-space: pre-line; }
+        .note-indep-summary { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.55rem; }
+        .note-indep-chip { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 20px; background: var(--paper); border: 1px solid var(--line); color: var(--text-muted); }
+        .note-indep-chip.yes { color: var(--good); border-color: color-mix(in srgb, var(--good) 35%, var(--line)); }
+        .note-indep-chip.no { color: var(--critical); border-color: color-mix(in srgb, var(--critical) 35%, var(--line)); }
+        .note-empty { text-align: center; padding: 1.4rem 1rem; color: var(--text-muted); font-size: 12.5px; }
+
+        /* ---------- meeting-note modals: same scrim/card conventions as
+           the new-engagement wizard, namespaced separately since these
+           live inside the drawer rather than on the page body ---------- */
+        .mtg-modal-scrim { position: fixed; inset: 0; background: rgba(10,14,20,0.5); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 1.5rem; opacity: 0; pointer-events: none; transition: opacity 0.15s ease; }
+        .mtg-modal-scrim.open { opacity: 1; pointer-events: auto; }
+        .mtg-modal-box { background: var(--card); border: 1px solid var(--line); border-radius: 14px; width: 100%; max-width: 520px; max-height: 86vh; display: flex; flex-direction: column; box-shadow: 0 24px 64px rgba(0,0,0,0.28); transform: translateY(8px); transition: transform 0.15s ease; }
+        .mtg-modal-scrim.open .mtg-modal-box { transform: translateY(0); }
+        .mtg-modal-header { display: flex; align-items: flex-start; gap: 0.75rem; padding: 1.2rem 1.4rem 1rem; border-bottom: 1px solid var(--line); }
+        .mtg-modal-header-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+        .mtg-modal-header-text h3 { font-size: 15px; font-weight: 700; margin: 0; }
+        .mtg-modal-header-text p { font-size: 11.5px; color: var(--text-muted); margin: 2px 0 0; }
+        .mtg-modal-close { margin-left: auto; border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 18px; padding: 2px; line-height: 1; flex-shrink: 0; }
+        .mtg-modal-close:hover { color: var(--text); }
+        .mtg-modal-body { overflow-y: auto; padding: 1.2rem 1.4rem; }
+        .mtg-modal-footer { display: flex; justify-content: flex-end; gap: 0.6rem; padding: 1rem 1.4rem; border-top: 1px solid var(--line); }
+        .mtg-textarea { width: 100%; min-height: 110px; padding: 0.7rem 0.8rem; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--text); font-size: 13.5px; font-family: inherit; resize: vertical; }
+        .mtg-textarea:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
+        .mtg-field-label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.3px; }
+        .mtg-indep-section { margin-top: 1.3rem; }
+        .mtg-indep-list { display: flex; flex-direction: column; gap: 0.5rem; }
+        .mtg-indep-row { display: flex; align-items: center; gap: 0.7rem; padding: 0.55rem 0.6rem; border: 1px solid var(--line); border-radius: 9px; }
+        .mtg-indep-avatar { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--card); flex-shrink: 0; }
+        .mtg-indep-name-wrap { flex: 1; min-width: 0; }
+        .mtg-indep-name { font-size: 12.5px; font-weight: 700; }
+        .mtg-indep-role { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.03em; }
+        .mtg-indep-segmented { display: flex; background: var(--paper); border-radius: 7px; padding: 2px; gap: 2px; border: 1px solid var(--line); flex-shrink: 0; }
+        .mtg-indep-segmented button { border: none; background: transparent; padding: 5px 9px; border-radius: 5px; font-size: 10.5px; font-weight: 700; color: var(--text-muted); cursor: pointer; font-family: inherit; }
+        .mtg-indep-segmented button.active.yes { background: color-mix(in srgb, var(--good) 16%, transparent); color: var(--good); }
+        .mtg-indep-segmented button.active.no { background: color-mix(in srgb, var(--critical) 16%, transparent); color: var(--critical); }
+        .mtg-indep-segmented button.active.unset { background: var(--card); color: var(--text); }
+        .mtg-btn { padding: 8px 16px; border-radius: 7px; font-size: 12.5px; font-weight: 600; cursor: pointer; border: 1px solid var(--line); background: var(--card); color: var(--text); font-family: inherit; }
+        .mtg-btn:hover { border-color: var(--line-strong); }
+        .mtg-btn-primary { background: var(--ink); border-color: var(--ink); color: var(--card); }
+        .mtg-btn-primary:hover { opacity: 0.92; }
+        .mtg-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .drawer-team-lead-row { display: flex; align-items: center; gap: 0.65rem; padding: 0.5rem 0.6rem; background: color-mix(in srgb, var(--manager) 7%, transparent); border-radius: 8px; margin-bottom: 0.6rem; }
         .drawer-avatar { width: 30px; height: 30px; border-radius: 8px; color: #fff; font-weight: 700; font-size: 11.5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -871,10 +944,9 @@ if (!empty($_SESSION['name'])) {
         .drawer-role-group:first-child .drawer-member-row:first-child { border-top: none; }
         .drawer-member-row .drawer-avatar { width: 26px; height: 26px; font-size: 10.5px; }
         .drawer-member-info { flex: 1; min-width: 0; }
-        .drawer-independence-btn { margin-left: auto; flex-shrink: 0; border: none; background: transparent; cursor: pointer; font-size: 17px; padding: 2px; line-height: 1; color: var(--line-strong); }
-        .drawer-independence-btn:hover { opacity: 0.75; }
-        .drawer-independence-btn.yes { color: var(--good); }
-        .drawer-independence-btn.no { color: var(--critical); }
+        .drawer-independence-badge { margin-left: auto; flex-shrink: 0; display: flex; font-size: 17px; line-height: 1; color: var(--line-strong); }
+        .drawer-independence-badge.yes { color: var(--good); }
+        .drawer-independence-badge.no { color: var(--critical); }
         .drawer-member-name { font-size: 13px; font-weight: 600; }
         .drawer-dol-lines { margin-top: 0.25rem; }
         .drawer-dol-line { display: flex; align-items: baseline; gap: 0.4rem; font-size: 11.5px; margin-bottom: 0.15rem; flex-wrap: wrap; }
@@ -1356,6 +1428,95 @@ if (!empty($_SESSION['name'])) {
     </div>
     <input type="file" id="timelineImportFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
     <input type="file" id="planningDocFileInput" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none;">
+</div>
+
+<!-- ========== NOTES & MEETINGS MODALS ========== -->
+<div class="mtg-modal-scrim" id="mtgModalPlanning">
+    <div class="mtg-modal-box">
+        <div class="mtg-modal-header">
+            <div class="mtg-modal-header-icon" style="background:color-mix(in srgb, var(--manager) 14%, transparent); color:var(--manager);"><i class="bi bi-clipboard2-check"></i></div>
+            <div class="mtg-modal-header-text">
+                <h3>Planning Meeting</h3>
+                <p>Notes, plus independence for the whole team in one pass. Marks Internal Planning Call complete on the timeline.</p>
+            </div>
+            <button class="mtg-modal-close" data-mtg-close type="button"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="mtg-modal-body">
+            <label class="mtg-field-label">What was discussed?</label>
+            <textarea class="mtg-textarea" id="mtgPlanningText" placeholder="Scope, timing, open questions&hellip;"></textarea>
+            <div class="mtg-indep-section">
+                <label class="mtg-field-label" id="mtgIndepLabel">Independence</label>
+                <div class="mtg-indep-list" id="mtgIndepList"></div>
+            </div>
+        </div>
+        <div class="mtg-modal-footer">
+            <button class="mtg-btn" data-mtg-close type="button">Cancel</button>
+            <button class="mtg-btn mtg-btn-primary" id="mtgSavePlanning" type="button">Save Planning Meeting</button>
+        </div>
+    </div>
+</div>
+
+<div class="mtg-modal-scrim" id="mtgModalClient">
+    <div class="mtg-modal-box">
+        <div class="mtg-modal-header">
+            <div class="mtg-modal-header-icon" style="background:color-mix(in srgb, var(--senior) 14%, transparent); color:var(--senior);"><i class="bi bi-camera-video"></i></div>
+            <div class="mtg-modal-header-text">
+                <h3>Client Planning Meeting</h3>
+                <p>Notes from the call with the client. Marks Client Planning Call complete on the timeline.</p>
+            </div>
+            <button class="mtg-modal-close" data-mtg-close type="button"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="mtg-modal-body">
+            <label class="mtg-field-label">Notes</label>
+            <textarea class="mtg-textarea" id="mtgClientText" placeholder="What the client said, decisions made&hellip;"></textarea>
+        </div>
+        <div class="mtg-modal-footer">
+            <button class="mtg-btn" data-mtg-close type="button">Cancel</button>
+            <button class="mtg-btn mtg-btn-primary" id="mtgSaveClient" type="button">Save Notes</button>
+        </div>
+    </div>
+</div>
+
+<div class="mtg-modal-scrim" id="mtgModalWeekly">
+    <div class="mtg-modal-box">
+        <div class="mtg-modal-header">
+            <div class="mtg-modal-header-icon" style="background:color-mix(in srgb, var(--staff) 14%, transparent); color:var(--staff);"><i class="bi bi-arrow-repeat"></i></div>
+            <div class="mtg-modal-header-text">
+                <h3>Weekly Status Call</h3>
+                <p>Notes from this week's check-in.</p>
+            </div>
+            <button class="mtg-modal-close" data-mtg-close type="button"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="mtg-modal-body">
+            <label class="mtg-field-label">Notes</label>
+            <textarea class="mtg-textarea" id="mtgWeeklyText" placeholder="Progress, blockers, next steps&hellip;"></textarea>
+        </div>
+        <div class="mtg-modal-footer">
+            <button class="mtg-btn" data-mtg-close type="button">Cancel</button>
+            <button class="mtg-btn mtg-btn-primary" id="mtgSaveWeekly" type="button">Save Notes</button>
+        </div>
+    </div>
+</div>
+
+<div class="mtg-modal-scrim" id="mtgModalGeneral">
+    <div class="mtg-modal-box">
+        <div class="mtg-modal-header">
+            <div class="mtg-modal-header-icon" style="background:color-mix(in srgb, var(--text-muted) 14%, transparent); color:var(--text-muted);"><i class="bi bi-pencil"></i></div>
+            <div class="mtg-modal-header-text">
+                <h3>Add a Note</h3>
+                <p>Anything that doesn't fit the other three.</p>
+            </div>
+            <button class="mtg-modal-close" data-mtg-close type="button"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="mtg-modal-body">
+            <label class="mtg-field-label">Notes</label>
+            <textarea class="mtg-textarea" id="mtgGeneralText" placeholder="Enter notes&hellip;"></textarea>
+        </div>
+        <div class="mtg-modal-footer">
+            <button class="mtg-btn" data-mtg-close type="button">Cancel</button>
+            <button class="mtg-btn mtg-btn-primary" id="mtgSaveGeneral" type="button">Save Note</button>
+        </div>
+    </div>
 </div>
 
 <div class="doc-lightbox-scrim" id="docLightboxScrim">
@@ -2181,6 +2342,19 @@ if (!empty($_SESSION['name'])) {
         if (isNaN(d.getTime())) return null;
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
+    // Date + time, for note/meeting timestamps (fmtDate above is date-only).
+    // Built from two separate toLocaleString calls rather than one combined
+    // string with a comma-replace — combining date and time options in one
+    // call produces two commas ("Sep 11, 2026, 10:23 AM"), and replacing
+    // "the first comma" silently grabs the wrong one.
+    function fmtDateTime(raw) {
+        if (!raw) return null;
+        const d = new Date(raw.replace(' ', 'T'));
+        if (isNaN(d.getTime())) return null;
+        const datePart = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const timePart = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        return datePart + ' · ' + timePart;
+    }
 
     async function fetchEngagementData(id) {
         const res = await fetch('../api/get-engagement-details.php?id=' + encodeURIComponent(id));
@@ -2321,8 +2495,17 @@ if (!empty($_SESSION['name'])) {
             </div>
 
             <div class="drawer-section">
-                <div class="drawer-section-head"><div class="drawer-section-title"><span class="dot" style="background:var(--senior)"></span>Notes</div></div>
-                <div class="drawer-notes-text">${eng.eng_notes ? escapeHtml(eng.eng_notes) : '<span style="font-style:italic;color:var(--text-muted);">No notes added yet.</span>'}</div>
+                <div class="drawer-section-head">
+                    <div class="drawer-section-title"><span class="dot" style="background:var(--senior)"></span>Notes &amp; Meetings</div>
+                </div>
+                <div class="mtg-actions">
+                    <button class="mtg-action-btn t-planning" id="mtgOpenPlanning" type="button"><i class="bi bi-clipboard2-check"></i> Planning Meeting</button>
+                    <button class="mtg-action-btn t-client" id="mtgOpenClient" type="button"><i class="bi bi-camera-video"></i> Client Planning</button>
+                    <button class="mtg-action-btn t-weekly" id="mtgOpenWeekly" type="button"><i class="bi bi-arrow-repeat"></i> Weekly Status</button>
+                    <button class="mtg-action-btn t-general" id="mtgOpenGeneral" type="button"><i class="bi bi-pencil"></i> Note</button>
+                </div>
+                ${eng.eng_notes ? `<div class="mtg-legacy-note"><i class="bi bi-archive"></i><div><b>From before this log existed:</b> ${escapeHtml(eng.eng_notes)}</div></div>` : ''}
+                <div class="note-log" id="drawerNoteLog"></div>
             </div>
 
             <div class="drawer-section">
@@ -2363,6 +2546,7 @@ if (!empty($_SESSION['name'])) {
 
         updateDrawerSetupBanner(eng, team, auditTypes, timeline);
         renderDrawerTeam(team, auditTypes);
+        renderNoteLog(data.notes || []);
         renderDrawerTimeline(timeline, eng.eng_idno);
         renderPlanningDocRow(eng);
         renderWeeklyStatusCallControl(timeline, eng.eng_idno, eng.eng_name, data.linked_calls || []);
@@ -2663,13 +2847,13 @@ if (!empty($_SESSION['name'])) {
         `;
     }
 
-    function renderDrawerTeam(team, auditTypes) {
-        const el = document.getElementById('drawerTeamContent');
-        if (!team.length) {
-            el.innerHTML = '<div class="drawer-team-empty">No team assigned yet.</div>';
-            return;
-        }
-
+    // One row per distinct person on the team, merging their (possibly
+    // several — one per audit type they have DOL on) engagement_team rows
+    // into a single record with an emp_ids array. Shared by the read-only
+    // Team card below and the Planning Meeting note's independence list,
+    // which both need "every unique person on this team," just laid out
+    // differently.
+    function groupTeamMembers(team, auditTypes) {
         const relevantAuditTypes = auditTypes.filter(t => DOL_AUDIT_TYPES.hasOwnProperty(t));
         const grouped = {};
         team.forEach(member => {
@@ -2693,10 +2877,19 @@ if (!empty($_SESSION['name'])) {
             // person on this engagement, not about one specific row.
             grouped[key].emp_ids.push(member.emp_id);
         });
+        return Object.values(grouped);
+    }
+
+    function renderDrawerTeam(team, auditTypes) {
+        const el = document.getElementById('drawerTeamContent');
+        if (!team.length) {
+            el.innerHTML = '<div class="drawer-team-empty">No team assigned yet.</div>';
+            return;
+        }
 
         let manager = null;
         const bucketed = { senior: [], staff: [], intern: [] };
-        Object.values(grouped).forEach(m => {
+        groupTeamMembers(team, auditTypes).forEach(m => {
             if (m.role === 'manager') { manager = manager || m; }
             else if (bucketed[m.role]) { bucketed[m.role].push(m); }
         });
@@ -2713,18 +2906,18 @@ if (!empty($_SESSION['name'])) {
         }
 
         // Independence is an audit-conflict-of-interest attestation, per
-        // person per engagement — for now set by whoever manages the team
-        // here (there's no separate employee login yet); the plan is for
-        // each person to eventually self-attest, but it's the same field
-        // either way. Unanswered shows a neutral outline, not a red X — an
-        // X specifically means "confirmed NOT independent," not "hasn't
-        // said yet."
+        // person per engagement. Read-only here now — it's set for the
+        // whole team in one pass from the Planning Meeting note instead of
+        // a separate popup per person (see openMeetingModal('planning')
+        // below). Unanswered shows a neutral outline, not a red X — an X
+        // specifically means "confirmed NOT independent," not "hasn't said
+        // yet."
         function independenceIconHtml(member) {
             const val = member.independent;
             const icon = val === 'Y' ? 'bi-check-circle-fill' : val === 'N' ? 'bi-x-circle-fill' : 'bi-question-circle';
             const cls = val === 'Y' ? 'yes' : val === 'N' ? 'no' : 'unset';
-            const title = val === 'Y' ? 'Independent from client — click to change' : val === 'N' ? 'NOT independent from client — click to change' : 'Independence not confirmed yet — click to set';
-            return `<button type="button" class="drawer-independence-btn ${cls}" data-emp-ids="${member.emp_ids.join(',')}" data-emp-name="${escAttr(member.emp_name)}" data-current="${val || ''}" title="${title}"><i class="bi ${icon}"></i></button>`;
+            const title = val === 'Y' ? 'Confirmed independent from client' : val === 'N' ? 'Confirmed NOT independent from client' : 'Independence not confirmed yet — set during a Planning Meeting note';
+            return `<span class="drawer-independence-badge ${cls}" title="${title}"><i class="bi ${icon}"></i></span>`;
         }
 
         function hoursBadgeHtml(member) {
@@ -2765,56 +2958,198 @@ if (!empty($_SESSION['name'])) {
             html = '<div class="drawer-team-empty">No team assigned yet.</div>';
         }
         el.innerHTML = html;
-
-        el.querySelectorAll('.drawer-independence-btn').forEach(btn => {
-            btn.addEventListener('click', (ev) => {
-                ev.stopPropagation();
-                const empIds = btn.dataset.empIds.split(',').map(Number);
-                openIndependenceMenu(empIds, btn.dataset.empName, btn.dataset.current);
-            });
-        });
     }
 
-    // Radio input rather than a 3-button confirm/deny/cancel Swal — this
-    // app's SweetAlert2 theming only styles .swal2-confirm/.swal2-cancel
-    // (see the CSS block up top), not .swal2-deny, so a deny button would
-    // render with SweetAlert2's unstyled defaults next to two carefully
-    // themed buttons. A radio list keeps everything on the one styled
-    // Confirm/Cancel pair.
-    async function openIndependenceMenu(empIds, empName, current) {
-        const clientName = drawerData?.engagement?.eng_name || 'this client';
-        const result = await Swal.fire({
-            title: `Independence — ${empName}`,
-            text: `Confirmed independent from ${clientName}?`,
-            input: 'radio',
-            inputValue: current || 'unset',
-            inputOptions: { Y: 'Yes, independent', N: 'No, not independent', unset: 'Not answered yet' },
-            showCancelButton: true,
-            confirmButtonText: 'Save',
-            inputValidator: (v) => v ? undefined : 'Pick one'
-        });
-        if (!result.isConfirmed) return;
+    const NOTE_TYPE_META = {
+        planning: { label: 'Planning Meeting', icon: 'bi-clipboard2-check' },
+        client:   { label: 'Client Planning',  icon: 'bi-camera-video' },
+        weekly:   { label: 'Weekly Status',    icon: 'bi-arrow-repeat' },
+        general:  { label: 'Note',             icon: 'bi-pencil' },
+    };
 
-        const value = result.value === 'unset' ? null : result.value;
-        try {
-            const response = await fetch('../api/update-team-independence.php', {
+    function renderNoteLog(notes) {
+        const el = document.getElementById('drawerNoteLog');
+        if (!el) return;
+        if (!notes || !notes.length) {
+            el.innerHTML = '<div class="note-empty">No notes logged yet.</div>';
+            return;
+        }
+        el.innerHTML = notes.map(note => {
+            const meta = NOTE_TYPE_META[note.note_type] || NOTE_TYPE_META.general;
+            let indepHtml = '';
+            if (note.independence_snapshot) {
+                let snapshot = null;
+                try { snapshot = JSON.parse(note.independence_snapshot); } catch (e) { snapshot = null; }
+                if (snapshot) {
+                    indepHtml = '<div class="note-indep-summary">' + Object.entries(snapshot).map(([name, val]) => {
+                        const cls = val === 'Y' ? 'yes' : val === 'N' ? 'no' : '';
+                        const icon = val === 'Y' ? 'bi-check-circle-fill' : val === 'N' ? 'bi-x-circle-fill' : 'bi-question-circle';
+                        return `<span class="note-indep-chip ${cls}"><i class="bi ${icon}"></i> ${escapeHtml(name)}</span>`;
+                    }).join('') + '</div>';
+                }
+            }
+            return `
+                <div class="note-entry t-${escAttr(note.note_type)}">
+                    <div class="note-type-rail"></div>
+                    <div class="note-entry-body">
+                        <div class="note-entry-head">
+                            <span class="note-type-label"><i class="bi ${meta.icon}"></i> ${meta.label}</span>
+                            <span class="note-meta">${escapeHtml(note.author_name || 'Unknown')} &middot; ${fmtDateTime(note.created_at) || ''}</span>
+                        </div>
+                        <div class="note-text">${escapeHtml(note.note_text)}</div>
+                        ${indepHtml}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ===================================================================
+    // NOTES & MEETINGS MODALS
+    // Four buttons feeding one log (engagement_notes via
+    // api/add-engagement-note.php) instead of the old single eng_notes
+    // field and the old per-person independence popup. Wired once here,
+    // like the New Engagement wizard — reads drawerData at open-time
+    // rather than being rebuilt on every drawer render.
+    // ===================================================================
+    (function() {
+        const CONFIG = {
+            planning: { scrim: 'mtgModalPlanning', text: 'mtgPlanningText', save: 'mtgSavePlanning', savingLabel: 'Saving…', savedLabel: 'Save Planning Meeting' },
+            client:   { scrim: 'mtgModalClient',   text: 'mtgClientText',   save: 'mtgSaveClient',   savingLabel: 'Saving…', savedLabel: 'Save Notes' },
+            weekly:   { scrim: 'mtgModalWeekly',    text: 'mtgWeeklyText',   save: 'mtgSaveWeekly',   savingLabel: 'Saving…', savedLabel: 'Save Notes' },
+            general:  { scrim: 'mtgModalGeneral',   text: 'mtgGeneralText',  save: 'mtgSaveGeneral',  savingLabel: 'Saving…', savedLabel: 'Save Note' },
+        };
+
+        // { emp_name: 'Y'|'N'|null } — current picks in the open Planning
+        // Meeting modal, seeded from each member's live emp_independent
+        // and edited in place via the segmented control before saving.
+        let planningIndepState = {};
+        let planningIndepMembers = []; // grouped team members currently shown, incl. their emp_ids — set together with planningIndepState so save doesn't have to re-derive it
+
+        function renderPlanningIndepList() {
+            const team = drawerData?.team || [];
+            const auditTypes = (drawerData?.engagement?.eng_audit_type || '').split(',').map(t => t.trim()).filter(Boolean);
+            const members = groupTeamMembers(team, auditTypes);
+            const clientName = drawerData?.engagement?.eng_name || 'this client';
+            document.getElementById('mtgIndepLabel').textContent = `Independence — confirmed independent from ${clientName}?`;
+
+            planningIndepMembers = members;
+            const list = document.getElementById('mtgIndepList');
+            if (!members.length) {
+                list.innerHTML = '<div class="note-empty">No team assigned yet — add a team before logging independence.</div>';
+                planningIndepState = {};
+                return;
+            }
+            planningIndepState = {};
+            members.forEach(m => { planningIndepState[m.emp_name] = m.independent || null; });
+
+            function paint() {
+                list.innerHTML = members.map(m => {
+                    const val = planningIndepState[m.emp_name];
+                    return `
+                        <div class="mtg-indep-row" data-emp-name="${escAttr(m.emp_name)}">
+                            <div class="mtg-indep-avatar" style="background:var(--${m.role === 'manager' ? 'manager' : m.role})">${initials(m.emp_name)}</div>
+                            <div class="mtg-indep-name-wrap">
+                                <div class="mtg-indep-name">${escapeHtml(m.emp_name)}</div>
+                                <div class="mtg-indep-role">${ROLE_LABELS[m.role] || m.role}</div>
+                            </div>
+                            <div class="mtg-indep-segmented">
+                                <button type="button" data-val="Y" class="${val === 'Y' ? 'active yes' : ''}">Yes</button>
+                                <button type="button" data-val="N" class="${val === 'N' ? 'active no' : ''}">No</button>
+                                <button type="button" data-val="" class="${!val ? 'active unset' : ''}">&mdash;</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                list.querySelectorAll('.mtg-indep-row').forEach(row => {
+                    const empName = row.dataset.empName;
+                    row.querySelectorAll('.mtg-indep-segmented button').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            planningIndepState[empName] = btn.dataset.val || null;
+                            paint();
+                        });
+                    });
+                });
+            }
+            paint();
+        }
+
+        function openMeetingModal(type) {
+            if (type === 'planning') renderPlanningIndepList();
+            document.getElementById(CONFIG[type].scrim).classList.add('open');
+        }
+        function closeMeetingModal(scrimEl) {
+            scrimEl.classList.remove('open');
+        }
+
+        document.getElementById('mtgOpenPlanning')?.addEventListener('click', () => openMeetingModal('planning'));
+        document.getElementById('mtgOpenClient')?.addEventListener('click', () => openMeetingModal('client'));
+        document.getElementById('mtgOpenWeekly')?.addEventListener('click', () => openMeetingModal('weekly'));
+        document.getElementById('mtgOpenGeneral')?.addEventListener('click', () => openMeetingModal('general'));
+
+        document.querySelectorAll('.mtg-modal-scrim').forEach(scrimEl => {
+            scrimEl.addEventListener('click', (ev) => { if (ev.target === scrimEl) closeMeetingModal(scrimEl); });
+            scrimEl.querySelectorAll('[data-mtg-close]').forEach(btn => btn.addEventListener('click', () => closeMeetingModal(scrimEl)));
+        });
+        window.addEventListener('keydown', (ev) => {
+            if (ev.key !== 'Escape') return;
+            document.querySelectorAll('.mtg-modal-scrim.open').forEach(closeMeetingModal);
+        });
+
+        function saveMeetingNote(type) {
+            const cfg = CONFIG[type];
+            const textEl = document.getElementById(cfg.text);
+            const text = textEl.value.trim();
+            if (!text) { textEl.style.borderColor = 'var(--critical)'; textEl.focus(); return; }
+            textEl.style.borderColor = '';
+
+            const saveBtn = document.getElementById(cfg.save);
+            saveBtn.disabled = true;
+            saveBtn.textContent = cfg.savingLabel;
+
+            const payload = {
+                engagement_idno: drawerData.engagement.eng_idno,
+                note_type: type,
+                note_text: text,
+            };
+            if (type === 'planning') {
+                payload.independence = planningIndepMembers.map(m => ({
+                    emp_ids: m.emp_ids,
+                    emp_name: m.emp_name,
+                    value: planningIndepState[m.emp_name] || null,
+                }));
+            }
+
+            fetch('../api/add-engagement-note.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    emp_ids: empIds,
-                    independent: value,
-                    engagement_idno: drawerData.engagement.eng_idno,
-                    emp_name: empName
-                })
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                saveBtn.disabled = false;
+                saveBtn.textContent = cfg.savedLabel;
+                if (!data.success) {
+                    Swal.fire('Error', data.message || 'Failed to save', 'error');
+                    return;
+                }
+                textEl.value = '';
+                closeMeetingModal(document.getElementById(cfg.scrim));
+                refreshDrawer();
+            })
+            .catch(error => {
+                saveBtn.disabled = false;
+                saveBtn.textContent = cfg.savedLabel;
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to save: ' + error.message, 'error');
             });
-            const data = await response.json();
-            if (data.success) refreshDrawer();
-            else Swal.fire('Error', data.message || 'Failed to save', 'error');
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Error', 'Failed to save', 'error');
         }
-    }
+
+        document.getElementById('mtgSavePlanning')?.addEventListener('click', () => saveMeetingNote('planning'));
+        document.getElementById('mtgSaveClient')?.addEventListener('click', () => saveMeetingNote('client'));
+        document.getElementById('mtgSaveWeekly')?.addEventListener('click', () => saveMeetingNote('weekly'));
+        document.getElementById('mtgSaveGeneral')?.addEventListener('click', () => saveMeetingNote('general'));
+    })();
 
     function renderDrawerTimeline(timeline, engagementId) {
         const el = document.getElementById('drawerTimelineContent');

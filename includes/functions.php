@@ -718,3 +718,21 @@ function logActivity(mysqli $conn, string $eventType, ?string $targetType, ?stri
     }
 }
 
+// Every logged note/meeting for one engagement, newest first. Scoped by a
+// WHERE clause (unlike getAllTeamData()/getAllTimelineData(), which fetch
+// their whole table and let callers filter in PHP) since this table only
+// grows over an engagement's lifetime and has no natural per-engagement
+// cap the way team membership does.
+function getEngagementNotes(mysqli $conn, string $engagementIdno): array
+{
+    $stmt = $conn->prepare("SELECT * FROM engagement_notes WHERE engagement_idno = ? ORDER BY created_at DESC, note_id DESC");
+    if (!$stmt) {
+        return [];
+    }
+    $stmt->bind_param('s', $engagementIdno);
+    $stmt->execute();
+    $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+    return $rows;
+}
+

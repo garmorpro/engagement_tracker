@@ -43,6 +43,8 @@ try {
         }
     }
 
+    $notes = getEngagementNotes($conn, $engagementId);
+
     // Other engagements sharing this one's weekly status call, if any —
     // lets the drawer show "Linked with: X, Y" and offer to unlink.
     $linkedCalls = [];
@@ -62,6 +64,7 @@ try {
         'engagement' => $engagement,
         'timeline' => $timeline,
         'team' => $team,
+        'notes' => $notes,
         'linked_calls' => $linkedCalls,
     ]);
 } catch (Exception $e) {
