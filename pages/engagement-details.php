@@ -910,8 +910,10 @@ $engagementData = $engagement;
         .team3-item-info { flex: 1; min-width: 0; }
         .team3-item-name { font-weight: 700; font-size: 12.5px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .team3-item-sub { font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; }
-        .team3-item-dols { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; }
-        .team3-item-dols .team2-chip { font-size: 9px; padding: 1px 5px; border-left-width: 2px; }
+        .team3-item-dols { margin-top: 5px; }
+        .team3-item-dols .team2-dol-line { margin-bottom: 2px; }
+        .team3-item-dols .team2-dol-type-tag { width: 38px; font-size: 9px; }
+        .team3-item-dols .team2-chip { font-size: 9.5px; padding: 1px 5px; border-left-width: 2px; }
         .team3-empty-list { padding: 2rem 1rem; text-align: center; color: var(--text-secondary); font-size: 12.5px; }
 
         .team3-right { flex: 1; overflow-y: auto; padding: 1.4rem 1.6rem; }
@@ -3249,11 +3251,17 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         const roleKey = (member.role || '').toLowerCase();
         const memberInitials = member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
         const isSelected = mode === 'detail' && String(selectedEmpId) === String(member.emp_id);
-        const dolChips = roleKey === 'manager' ? '' : relevantAuditTypes.map(auditType => {
+        // One line per audit type, each with its own label — matches the
+        // server-rendered read-only Team card above rather than flowing
+        // every type's chips into one row, which made it hard to tell a
+        // SOC 1 duty from a SOC 2 one at a glance (per Garrett).
+        const dolLines = roleKey === 'manager' ? '' : relevantAuditTypes.map(auditType => {
             const fieldName = supportedAuditTypes[auditType];
             const duties = (member[fieldName] || '').split(',').map(d => d.trim()).filter(Boolean);
+            if (!duties.length) return '';
             const typeClass = auditType === 'SOC 2' || auditType === 'HITRUST' ? 't-soc2' : '';
-            return sortDolTags(duties, auditType).map(d => `<span class="team2-chip ${typeClass}">${d}</span>`).join('');
+            const chipsHtml = sortDolTags(duties, auditType).map(d => `<span class="team2-chip ${typeClass}">${d}</span>`).join('');
+            return `<div class="team2-dol-line"><span class="team2-dol-type-tag">${auditType}</span><div class="team2-chip-row">${chipsHtml}</div></div>`;
         }).join('');
 
         return `
@@ -3262,7 +3270,7 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
                 <div class="team3-item-info">
                     <div class="team3-item-name">${member.emp_name}</div>
                     <div class="team3-item-sub">${roleLabels[roleKey] || member.role}${fmtHours(member.budgeted_hours) !== null ? ` &middot; ${fmtHours(member.budgeted_hours)} hrs` : ''}</div>
-                    ${dolChips ? `<div class="team3-item-dols">${dolChips}</div>` : ''}
+                    ${dolLines ? `<div class="team3-item-dols">${dolLines}</div>` : ''}
                 </div>
             </div>
         `;
