@@ -33,12 +33,17 @@ $archivedCount = count($archivedEngagements);
 $engagements = $showArchived ? $archivedEngagements : $activeEngagements;
 
 $statusMeta = [
-    'in-progress' => ['label' => 'In Progress', 'var' => '--ink'],
     'in-review'   => ['label' => 'In Review',   'var' => '--ink-soft'],
+    'in-progress' => ['label' => 'In Progress', 'var' => '--ink'],
     'planning'    => ['label' => 'Planning',    'var' => '--caution'],
     'complete'    => ['label' => 'Complete',    'var' => '--good'],
 ];
-$sectionOrder = ['in-progress', 'in-review', 'planning', 'complete'];
+// Per Garrett: In Review surfaces first since it's the most time-sensitive
+// (client's waiting on us to finish reviewing, not the other way around),
+// then In Progress, then Planning, then Complete — same order drives the
+// distribution card above (also keyed off $sectionOrder) and the drawer's
+// status-change popover (keyed off $statusMeta, which now matches).
+$sectionOrder = ['in-review', 'in-progress', 'planning', 'complete'];
 
 // Status mix for the active-portfolio distribution card — only statuses that
 // actually have an active engagement show up, in $sectionOrder's order, so a
