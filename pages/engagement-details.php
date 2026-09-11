@@ -872,6 +872,64 @@ $engagementData = $engagement;
         .team2-tag-input-box input { border: none; background: none; outline: none; font-size: 13px; color: var(--text-primary); flex: 1; min-width: 90px; padding: 3px 2px; }
         .team2-tag-hint { font-size: 11px; color: var(--text-secondary); margin-top: 5px; }
 
+        /* ========== MANAGE TEAM — SPLIT WORKSPACE (roster + detail panel) ========== */
+        .team3-modal-popup {
+            max-height: 640px !important;
+            height: 640px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            width: 980px !important;
+            max-width: 980px !important;
+            padding: 0 !important;
+        }
+        .team3-modal-popup .swal2-title { padding: 1.1rem 1.3rem 0.9rem; margin: 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+        .team3-modal-popup .swal2-html-container {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+        .team3-body { display: flex; flex: 1; overflow: hidden; text-align: left; }
+        .team3-left { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: var(--paper); }
+        .team3-left-head { padding: 0.9rem 0.9rem 0.7rem; display: flex; flex-direction: column; gap: 0.6rem; }
+        .team3-left-head input[type="text"] { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--card); color: var(--text-primary); font-size: 12.5px; }
+        .team3-left-head input:focus { outline: none; border-color: var(--ink); }
+        .team3-add-btn {
+            display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
+            padding: 8px; border-radius: 7px; border: 1px dashed var(--line-strong); background: transparent;
+            color: var(--ink); font-size: 12px; font-weight: 700; cursor: pointer;
+        }
+        .team3-add-btn:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+        .team3-list { flex: 1; overflow-y: auto; padding: 0 0.5rem 0.75rem; }
+        .team3-item { display: flex; align-items: flex-start; gap: 9px; padding: 8px; border-radius: 8px; cursor: pointer; }
+        .team3-item:hover { background: var(--card); }
+        .team3-item.selected { background: color-mix(in srgb, var(--ink) 10%, var(--card)); }
+        .team3-item-info { flex: 1; min-width: 0; }
+        .team3-item-name { font-weight: 700; font-size: 12.5px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .team3-item-sub { font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; }
+        .team3-item-dols { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 5px; }
+        .team3-item-dols .team2-chip { font-size: 9px; padding: 1px 5px; border-left-width: 2px; }
+        .team3-empty-list { padding: 2rem 1rem; text-align: center; color: var(--text-secondary); font-size: 12.5px; }
+
+        .team3-right { flex: 1; overflow-y: auto; padding: 1.4rem 1.6rem; }
+        .team3-right-empty { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary); gap: 10px; }
+        .team3-right-empty i { font-size: 34px; opacity: 0.35; }
+
+        .team3-detail-head { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.3rem; }
+        .team3-field { margin-bottom: 1.1rem; max-width: 420px; }
+        .team3-dol-columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 0.9rem; max-width: 640px; }
+        .team3-detail-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--line); max-width: 640px; }
+        .team3-remove-confirm { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-primary); background: var(--critical-tint); border-radius: 7px; padding: 8px 10px; }
+        .team3-remove-confirm b { color: var(--critical); }
+
+        .team3-add-panel { max-width: 420px; }
+        .team3-search-results { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+        .team3-saved-flash { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 700; color: var(--staff); opacity: 0; transition: opacity 0.2s; }
+        .team3-saved-flash.show { opacity: 1; }
+
         /* ========== TIMELINE SECTION ========== */
         .timeline-grid {
             display: grid;
@@ -3100,153 +3158,358 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         return n.toFixed(2).replace(/\.?0+$/, '');
     }
 
-    const teamHTML = `
-        <div class="team2-manage-body">
-            <div class="team2-manage-left">
-                <h3>Team Members</h3>
-                <div class="team2-list-scroll" id="team-list"></div>
-            </div>
-            <div class="team2-manage-right">
-                <div>
-                    <h4>Add Member</h4>
-                    <div class="team2-field team2-ac-wrap">
-                        <input type="text" id="add_emp_search" class="swal2-input" placeholder="Search employees…" autocomplete="off" style="margin: 0; width: 100%; font-size: 13px;">
-                        <div class="team2-ac-list" id="add_emp_ac_list" style="display:none;"></div>
-                    </div>
+    // Split-workspace redesign (see pages/dashboard.php's openManageTeamModal
+    // for the fuller write-up — this is that same design, ported here with
+    // this page's own local variable names since the two files don't share
+    // a module). Roster stays visible on the left; selecting someone (or
+    // hitting "Add Team Member") opens their editor on the right, in place.
+    // Add/Edit/Remove all patch currentTeam and re-render without a reload —
+    // only closing the modal itself reloads, to refresh the page's Team card.
+    const roleOrder = ['manager', 'senior', 'staff', 'intern'];
+    let selectedEmpId = null;
+    let mode = 'detail'; // 'detail' (right pane bound to selectedEmpId) | 'add' (right pane is the search form)
+    let confirmingRemoveId = null;
+    let filterQuery = '';
+
+    const bodyHTML = `
+        <div class="team3-body">
+            <div class="team3-left">
+                <div class="team3-left-head">
+                    <input type="text" id="team3_filter" placeholder="Filter roster…" autocomplete="off">
+                    <button type="button" class="team3-add-btn" id="team3_add_btn"><i class="bi bi-plus"></i> Add Team Member</button>
                 </div>
-                <div>
-                    <h4>Overview</h4>
-                    <div class="team2-stat-mini"><div class="n" id="manager-count">0</div><div class="l">Managers</div></div>
-                    <div class="team2-stat-mini"><div class="n" id="senior-count">0</div><div class="l">Seniors</div></div>
-                    <div class="team2-stat-mini"><div class="n" id="staff-count">0</div><div class="l">Staff</div></div>
-                    <div class="team2-stat-mini"><div class="n" id="intern-count">0</div><div class="l">Interns</div></div>
-                </div>
+                <div class="team3-list" id="team3_list"></div>
             </div>
+            <div class="team3-right" id="team3_right"></div>
         </div>
     `;
 
     Swal.fire({
         title: 'Manage Team Members',
-        html: teamHTML,
+        html: bodyHTML,
         showConfirmButton: false,
-        cancelButtonText: 'Close',
-        width: '1400px',
+        width: '980px',
         heightAuto: false,
-        customClass: { popup: 'milestone-modal-popup' },
+        customClass: { popup: 'team3-modal-popup' },
         didOpen: () => {
-            renderTeamList();
-            wireAddMemberSearch();
+            renderList();
+            renderRight();
+            document.getElementById('team3_add_btn').addEventListener('click', () => {
+                mode = 'add';
+                selectedEmpId = null;
+                confirmingRemoveId = null;
+                renderList();
+                renderRight();
+            });
+            document.getElementById('team3_filter').addEventListener('input', (e) => {
+                filterQuery = e.target.value.trim().toLowerCase();
+                renderList();
+            });
         },
         willClose: () => {
             location.reload();
         }
     });
 
-    function renderTeamList() {
-        const teamListElement = document.getElementById('team-list');
-        if (!teamListElement) return;
+    function renderList() {
+        const listEl = document.getElementById('team3_list');
+        if (!listEl) return;
 
         if (currentTeam.length === 0) {
-            teamListElement.innerHTML = `
-                <div style="display: flex; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary); padding: 3rem 2rem; flex: 1;">
-                    <div>
-                        <i class="bi bi-people" style="font-size: 48px; display: block; margin-bottom: 1rem; opacity: 0.4;"></i>
-                        <div style="font-size: 14px; font-weight: 600;">No team members yet</div>
-                    </div>
-                </div>
-            `;
-            updateRoleCounts();
+            listEl.innerHTML = `<div class="team3-empty-list">No team members yet.<br>Add someone to get started.</div>`;
             return;
         }
 
-        teamListElement.innerHTML = currentTeam.map(member => {
-            const initials = member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
-            const roleKey = (member.role || '').toLowerCase();
-            return `
-                <div class="team2-card-row" data-emp-id="${member.emp_id}">
-                    <div class="team2-card-row-top">
-                        <div class="team2-avatar" style="background:${roleColorVar[roleKey] || 'var(--ink)'}">${initials}</div>
-                        <div style="flex:1; min-width:0;">
-                            <div class="team2-name">${member.emp_name}</div>
-                            <div class="team2-role-label">${roleLabels[roleKey] || member.role}${fmtHours(member.budgeted_hours) !== null ? ` &middot; ${fmtHours(member.budgeted_hours)} hrs budgeted` : ''}</div>
-                        </div>
-                        <div class="team2-icon-btns">
-                            <button class="edit-team-btn" data-emp-id="${member.emp_id}" title="Edit"><i class="bi bi-pencil"></i></button>
-                            <button class="danger delete-team-btn" data-emp-id="${member.emp_id}" title="Remove"><i class="bi bi-trash3"></i></button>
-                        </div>
-                    </div>
-                    ${roleKey !== 'manager' ? getDOLByAuditType(member) : ''}
-                </div>
-            `;
+        const visible = currentTeam.filter(m => !filterQuery || m.emp_name.toLowerCase().includes(filterQuery));
+        if (visible.length === 0) {
+            listEl.innerHTML = `<div class="team3-empty-list">No one matches "${filterQuery}".</div>`;
+            return;
+        }
+
+        const sortedTeam = visible.slice().sort((a, b) => {
+            const ra = roleOrder.indexOf((a.role || '').toLowerCase());
+            const rb = roleOrder.indexOf((b.role || '').toLowerCase());
+            return (ra === -1 ? 99 : ra) - (rb === -1 ? 99 : rb);
+        });
+
+        listEl.innerHTML = sortedTeam.map(member => renderListItem(member)).join('');
+
+        listEl.querySelectorAll('[data-select]').forEach(el => {
+            el.addEventListener('click', () => {
+                selectedEmpId = el.dataset.select;
+                mode = 'detail';
+                confirmingRemoveId = null;
+                renderList();
+                renderRight();
+            });
+        });
+    }
+
+    function renderListItem(member) {
+        const roleKey = (member.role || '').toLowerCase();
+        const memberInitials = member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
+        const isSelected = mode === 'detail' && String(selectedEmpId) === String(member.emp_id);
+        const dolChips = roleKey === 'manager' ? '' : relevantAuditTypes.map(auditType => {
+            const fieldName = supportedAuditTypes[auditType];
+            const duties = (member[fieldName] || '').split(',').map(d => d.trim()).filter(Boolean);
+            const typeClass = auditType === 'SOC 2' || auditType === 'HITRUST' ? 't-soc2' : '';
+            return sortDolTags(duties, auditType).map(d => `<span class="team2-chip ${typeClass}">${d}</span>`).join('');
         }).join('');
 
-        document.querySelectorAll('.edit-team-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const member = currentTeam.find(m => String(m.emp_id) === String(this.dataset.empId));
-                if (member) editTeamMember(member);
-                else Swal.fire('Error', 'Member not found', 'error');
-            });
-        });
-        document.querySelectorAll('.delete-team-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const member = currentTeam.find(m => String(m.emp_id) === String(this.dataset.empId));
-                if (member) deleteTeamMember(member);
-                else Swal.fire('Error', 'Member not found', 'error');
-            });
-        });
-
-        updateRoleCounts();
+        return `
+            <div class="team3-item ${isSelected ? 'selected' : ''}" data-select="${member.emp_id}">
+                <div class="team2-avatar" style="width:30px;height:30px;font-size:11px;background:${roleColorVar[roleKey] || 'var(--ink)'}">${memberInitials}</div>
+                <div class="team3-item-info">
+                    <div class="team3-item-name">${member.emp_name}</div>
+                    <div class="team3-item-sub">${roleLabels[roleKey] || member.role}${fmtHours(member.budgeted_hours) !== null ? ` &middot; ${fmtHours(member.budgeted_hours)} hrs` : ''}</div>
+                    ${dolChips ? `<div class="team3-item-dols">${dolChips}</div>` : ''}
+                </div>
+            </div>
+        `;
     }
 
-    function getDOLByAuditType(member) {
-        const dolSections = [];
+    function renderRight() {
+        const right = document.getElementById('team3_right');
+        if (!right) return;
+
+        if (mode === 'add') {
+            right.innerHTML = `
+                <div class="team3-add-panel">
+                    <h3 style="font-size:14px; font-weight:700; margin:0 0 1rem; color:var(--text-primary);">Add someone to this engagement</h3>
+                    <div class="team2-field">
+                        <input type="text" id="team3_add_search" class="swal2-input" placeholder="Search employees…" autocomplete="off" style="margin:0; width:100%; font-size:13px;">
+                    </div>
+                    <div id="team3_add_results"></div>
+                </div>
+            `;
+            wireAddPanel();
+            return;
+        }
+
+        const member = currentTeam.find(m => String(m.emp_id) === String(selectedEmpId));
+        if (!member) {
+            right.innerHTML = `
+                <div class="team3-right-empty">
+                    <i class="bi bi-people"></i>
+                    <div>Select a team member on the left,<br>or add someone new to this engagement.</div>
+                </div>
+            `;
+            return;
+        }
+        right.innerHTML = renderDetailPanel(member);
+        wireDetailPanel(member);
+    }
+
+    function renderDetailPanel(member) {
+        const roleKey = (member.role || '').toLowerCase();
+        const memberInitials = member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('');
+        const dolColumnsHtml = relevantAuditTypes.map(auditType => `
+            <div>
+                <div class="team2-dol-col-label">${auditType}</div>
+                <div class="team2-tag-input-box" data-field="${supportedAuditTypes[auditType]}" data-audit-type="${auditType}">
+                    <div class="tags"></div>
+                    <input type="text" placeholder="Add duty…">
+                </div>
+            </div>
+        `).join('');
+        const isConfirmingRemove = confirmingRemoveId !== null && String(confirmingRemoveId) === String(member.emp_id);
+
+        return `
+            <div class="team3-detail-head">
+                <div class="team2-avatar-lg" id="team3_detail_avatar" style="background:${roleColorVar[roleKey] || 'var(--ink)'}">${memberInitials}</div>
+                <div>
+                    <div class="team2-edit-name">${member.emp_name}</div>
+                    <div class="team2-edit-role-badge ${roleKey}" id="team3_detail_role_badge">${roleLabels[roleKey] || member.role}</div>
+                </div>
+            </div>
+            <div class="team3-field">
+                <label class="team2-edit-label">Role on this Engagement</label>
+                <div class="team2-segmented" id="team3_role_segment">
+                    ${roleOrder.map(role =>
+                        `<button type="button" data-role="${role}" class="${role === roleKey ? 'active' : ''}">${roleLabels[role]}</button>`
+                    ).join('')}
+                </div>
+            </div>
+            <div class="team3-field hours-field">
+                <label class="team2-edit-label">Budgeted Hours</label>
+                <input type="number" id="team3_hours_input" class="swal2-input" min="0" step="0.5"
+                       placeholder="Not set" value="${fmtHours(member.budgeted_hours) ?? ''}"
+                       style="margin: 0; width: 140px; font-size: 13px;">
+            </div>
+            <div class="team3-field" id="team3_dol_section" style="display:${roleKey === 'manager' ? 'none' : 'block'}; max-width:640px;">
+                <label class="team2-edit-label">Duties &amp; Responsibilities</label>
+                <div class="team3-dol-columns">${dolColumnsHtml}</div>
+                <div class="team2-tag-hint">e.g. CC1, CC2 — press Enter or comma to add a duty</div>
+            </div>
+            <div class="team3-detail-actions">
+                ${isConfirmingRemove ? `
+                    <div class="team3-remove-confirm">
+                        Remove <b>${member.emp_name}</b> from this engagement?
+                        <button type="button" class="team2-btn team2-btn-secondary" id="team3_cancel_remove" style="padding:5px 10px;">Cancel</button>
+                        <button type="button" class="team2-btn" id="team3_confirm_remove" style="padding:5px 10px; background:var(--critical); color:#fff;">Remove</button>
+                    </div>
+                ` : `<button type="button" class="team2-btn team2-btn-secondary" id="team3_remove_btn" style="color:var(--critical); border-color:var(--critical);">Remove from engagement</button>`}
+                <span style="display:flex; align-items:center; gap:10px;">
+                    <span class="team3-saved-flash" id="team3_saved_flash"><i class="bi bi-check-circle-fill"></i> Saved</span>
+                    <button type="button" class="team2-btn team2-btn-primary" id="team3_save_btn">Save Changes</button>
+                </span>
+            </div>
+        `;
+    }
+
+    function wireDetailPanel(member) {
+        let selectedRole = (member.role || '').toLowerCase();
+        const tagState = {};
         relevantAuditTypes.forEach(auditType => {
             const fieldName = supportedAuditTypes[auditType];
-            const dolValue = member[fieldName];
-            if (dolValue) {
-                const duties = sortDolTags(dolValue.split(',').map(d => d.trim()).filter(d => d), auditType);
-                const typeClass = auditType === 'SOC 2' || auditType === 'HITRUST' ? 't-soc2' : '';
-                const pillsHTML = duties.map(duty => `<span class="team2-chip ${typeClass}">${duty}</span>`).join('');
-                dolSections.push(`
-                    <div class="team2-dol-line" style="margin-top: 0.6rem;">
-                        <span class="team2-dol-type-tag">${auditType}</span>
-                        <div class="team2-chip-row">${pillsHTML}</div>
-                    </div>
-                `);
+            tagState[fieldName] = (member[fieldName] || '').split(',').map(t => t.trim()).filter(Boolean);
+        });
+
+        document.querySelectorAll('#team3_right .team2-tag-input-box').forEach(box => {
+            const fieldName = box.dataset.field;
+            const auditType = box.dataset.auditType;
+            const tagsEl = box.querySelector('.tags');
+            const input = box.querySelector('input');
+
+            // Re-sorts into canonical order every render (not just on add)
+            // so removing a tag can't leave a stale order behind either —
+            // reassigns tagState itself, not just a display copy, so the
+            // delete button's index-based splice below stays correct.
+            function render() {
+                tagState[fieldName] = sortDolTags(tagState[fieldName], auditType);
+                tagsEl.innerHTML = tagState[fieldName].map((t, i) =>
+                    `<span class="team2-tag-chip">${t}<button type="button" data-i="${i}">&times;</button></span>`
+                ).join('');
+                tagsEl.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        tagState[fieldName].splice(Number(btn.dataset.i), 1);
+                        render();
+                    });
+                });
             }
+            render();
+            box.addEventListener('click', () => input.focus());
+            input.addEventListener('keydown', (ev) => {
+                if (ev.key === 'Enter' || ev.key === ',') {
+                    ev.preventDefault();
+                    const val = input.value.trim().replace(/,$/, '');
+                    if (val && !tagState[fieldName].includes(val)) {
+                        tagState[fieldName].push(val);
+                        render();
+                    }
+                    input.value = '';
+                } else if (ev.key === 'Backspace' && !input.value && tagState[fieldName].length) {
+                    tagState[fieldName].pop();
+                    render();
+                }
+            });
         });
-        if (dolSections.length > 0) {
-            return `<div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--line);">${dolSections.join('')}</div>`;
-        }
-        return '<div class="team2-no-dol" style="margin-top: 0.6rem;">No DOL assigned</div>';
+
+        document.querySelectorAll('#team3_role_segment button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#team3_role_segment button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedRole = btn.dataset.role;
+                document.getElementById('team3_detail_avatar').style.background = roleColorVar[selectedRole] || 'var(--ink)';
+                const badge = document.getElementById('team3_detail_role_badge');
+                badge.className = 'team2-edit-role-badge ' + selectedRole;
+                badge.textContent = roleLabels[selectedRole];
+                document.getElementById('team3_dol_section').style.display = selectedRole === 'manager' ? 'none' : 'block';
+            });
+        });
+
+        document.getElementById('team3_remove_btn')?.addEventListener('click', () => {
+            confirmingRemoveId = member.emp_id;
+            renderRight();
+        });
+        document.getElementById('team3_cancel_remove')?.addEventListener('click', () => {
+            confirmingRemoveId = null;
+            renderRight();
+        });
+        document.getElementById('team3_confirm_remove')?.addEventListener('click', () => {
+            fetch('../api/delete-team-member.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ engagement_idno: engagementId, emp_id: member.emp_id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentTeam = currentTeam.filter(m => String(m.emp_id) !== String(member.emp_id));
+                    confirmingRemoveId = null;
+                    selectedEmpId = null;
+                    renderList();
+                    renderRight();
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to remove team member', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to remove team member: ' + error.message, 'error');
+            });
+        });
+
+        document.getElementById('team3_save_btn').addEventListener('click', () => {
+            const saveBtn = document.getElementById('team3_save_btn');
+            const updateData = {
+                engagement_idno: engagementId,
+                emp_id: member.emp_id,
+                emp_name: member.emp_name,
+                role: selectedRole,
+                budgeted_hours: document.getElementById('team3_hours_input').value
+            };
+            relevantAuditTypes.forEach(auditType => {
+                const fieldName = supportedAuditTypes[auditType];
+                updateData[fieldName] = selectedRole === 'manager' ? '' : tagState[fieldName].join(', ');
+            });
+
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Saving…';
+            fetch('../api/update-team-member.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updateData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+                if (data.success) {
+                    const idx = currentTeam.findIndex(m => String(m.emp_id) === String(member.emp_id));
+                    if (idx !== -1) currentTeam[idx] = Object.assign({}, currentTeam[idx], data.member);
+                    renderList();
+                    const flash = document.getElementById('team3_saved_flash');
+                    if (flash) {
+                        flash.classList.add('show');
+                        setTimeout(() => flash.classList.remove('show'), 1800);
+                    }
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to update team member', 'error');
+                }
+            })
+            .catch(error => {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Save Changes';
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to update team member: ' + error.message, 'error');
+            });
+        });
     }
 
-    function updateRoleCounts() {
-        ['manager', 'senior', 'staff', 'intern'].forEach(role => {
-            const el = document.getElementById(role + '-count');
-            if (el) el.textContent = currentTeam.filter(m => (m.role || '').toLowerCase() === role).length;
-        });
-    }
-
-    // ---------- Add Member: employee-roster autocomplete ----------
-    function wireAddMemberSearch() {
-        const input = document.getElementById('add_emp_search');
-        const list = document.getElementById('add_emp_ac_list');
-        if (!input || !list) return;
+    function wireAddPanel() {
+        const input = document.getElementById('team3_add_search');
+        const results = document.getElementById('team3_add_results');
+        if (!input || !results) return;
+        input.focus();
 
         let debounceTimer = null;
         input.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             const query = input.value.trim();
-            if (!query) { list.style.display = 'none'; return; }
+            if (!query) { results.innerHTML = ''; return; }
             debounceTimer = setTimeout(() => searchEmployees(query), 200);
-        });
-        document.addEventListener('click', (ev) => {
-            if (!ev.target.closest('.team2-ac-wrap')) list.style.display = 'none';
         });
 
         function searchEmployees(query) {
@@ -3265,13 +3528,13 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         function renderResults(query, matches, onTeamAlready) {
             let html = '';
             if (matches.length) {
-                html += matches.map(e => `
+                html += `<div class="team3-search-results">` + matches.map(e => `
                     <div class="team2-ac-item" data-emp-name="${e.emp_name}" data-emp-role="${e.emp_role}">
                         <div class="team2-avatar" style="width:22px;height:22px;font-size:9px;background:${roleColorVar[e.emp_role] || 'var(--ink)'}">${e.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('')}</div>
                         ${e.emp_name}
                         <span class="role">${roleLabels[e.emp_role] || e.emp_role}</span>
                     </div>
-                `).join('');
+                `).join('') + `</div>`;
             } else if (onTeamAlready.length) {
                 html += `<div class="team2-ac-empty">${onTeamAlready.map(e => e.emp_name).join(', ')} — already on this team.</div>`;
             } else {
@@ -3280,37 +3543,55 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
             // Only offer "add as new" when nobody by this name exists at all — if they're
             // already in the roster (whether on this team or not), that'd create a confusing duplicate.
             if (!matches.length && !onTeamAlready.length) {
-                html += `<div class="team2-ac-newbtn" id="ac_new_btn">+ Add "${query}" as a new employee…</div>`;
+                html += `<div class="team2-ac-newbtn" id="team3_ac_new_btn">+ Add "${query}" as a new employee…</div>`;
             }
 
-            list.innerHTML = html;
-            list.style.display = 'block';
+            results.innerHTML = html;
 
-            list.querySelectorAll('.team2-ac-item').forEach(item => {
+            results.querySelectorAll('.team2-ac-item').forEach(item => {
                 item.addEventListener('click', () => {
                     addTeamMember(item.dataset.empName, item.dataset.empRole);
-                    input.value = '';
-                    list.style.display = 'none';
                 });
             });
-            document.getElementById('ac_new_btn')?.addEventListener('click', () => {
+            document.getElementById('team3_ac_new_btn')?.addEventListener('click', () => {
                 renderNewEmployeeRolePicker(query);
             });
         }
 
+        // Renders in the same results area rather than a nested Swal — a
+        // second Swal.fire() while "Manage Team Members" is open replaces
+        // the shared popup instance, which would close this whole modal
+        // and reload the page.
         function renderNewEmployeeRolePicker(name) {
-            list.innerHTML = `
-                <div class="team2-ac-empty" style="padding-bottom:4px;">Role for "${name}"?</div>
-                ${['manager', 'senior', 'staff', 'intern'].map(role => `
-                    <div class="team2-ac-item" data-role="${role}">${roleLabels[role]}</div>
-                `).join('')}
+            let selectedRole = 'staff';
+            results.innerHTML = `
+                <div class="team2-new-emp-picker" style="padding:0;">
+                    <div class="team2-ac-empty" style="padding:0 0 8px;">Role for "${name}"?</div>
+                    <div class="role-pick-grid" id="team3_new_emp_role_segment">
+                        ${roleOrder.map(role =>
+                            `<button type="button" data-role="${role}" class="role-pick-btn ${role === selectedRole ? 'active' : ''}">${roleLabels[role]}</button>`
+                        ).join('')}
+                    </div>
+                    <div class="team2-new-emp-actions">
+                        <button type="button" class="team2-btn team2-btn-secondary" id="team3_new_emp_cancel">Cancel</button>
+                        <button type="button" class="team2-btn team2-btn-primary" id="team3_new_emp_confirm">Add Employee</button>
+                    </div>
+                </div>
             `;
-            list.querySelectorAll('.team2-ac-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    createEmployeeThenAdd(name, item.dataset.role);
-                    input.value = '';
-                    list.style.display = 'none';
+
+            document.querySelectorAll('#team3_new_emp_role_segment button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#team3_new_emp_role_segment button').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedRole = btn.dataset.role;
                 });
+            });
+            document.getElementById('team3_new_emp_cancel').addEventListener('click', () => {
+                input.value = '';
+                results.innerHTML = '';
+            });
+            document.getElementById('team3_new_emp_confirm').addEventListener('click', () => {
+                createEmployeeThenAdd(name, selectedRole);
             });
         }
 
@@ -3342,7 +3623,11 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         .then(data => {
             if (data.success) {
                 currentTeam.push(data.member);
-                renderTeamList();
+                selectedEmpId = data.member.emp_id;
+                mode = 'detail';
+                confirmingRemoveId = null;
+                renderList();
+                renderRight();
             } else {
                 Swal.fire('Error', data.message || 'Failed to add team member', 'error');
             }
@@ -3350,188 +3635,6 @@ document.getElementById('manageTeamIconBtn').addEventListener('click', function(
         .catch(error => {
             console.error('Error:', error);
             Swal.fire('Error', 'Failed to add team member: ' + error.message, 'error');
-        });
-    }
-
-    function editTeamMember(member) {
-        const roleKey = (member.role || '').toLowerCase();
-        let selectedRole = roleKey;
-        const tagState = {};
-        relevantAuditTypes.forEach(auditType => {
-            const fieldName = supportedAuditTypes[auditType];
-            tagState[fieldName] = (member[fieldName] || '').split(',').map(t => t.trim()).filter(Boolean);
-        });
-
-        const dolColumnsHtml = relevantAuditTypes.map(auditType => `
-            <div>
-                <div class="team2-dol-col-label">${auditType}</div>
-                <div class="team2-tag-input-box" data-field="${supportedAuditTypes[auditType]}" data-audit-type="${auditType}">
-                    <div class="tags"></div>
-                    <input type="text" placeholder="Add duty…">
-                </div>
-            </div>
-        `).join('');
-
-        Swal.fire({
-            html: `
-                <div style="text-align: left;">
-                    <div class="team2-edit-header">
-                        <div class="team2-avatar-lg" id="edit_avatar" style="background:${roleColorVar[roleKey] || 'var(--ink)'}">${member.emp_name.split(' ').filter(Boolean).map(p => p[0].toUpperCase()).join('')}</div>
-                        <div>
-                            <div class="team2-edit-name">${member.emp_name}</div>
-                            <div class="team2-edit-role-badge ${roleKey}" id="edit_role_badge">${roleLabels[roleKey] || member.role}</div>
-                        </div>
-                    </div>
-                    <div class="team2-field">
-                        <label class="team2-edit-label">Role on this Engagement</label>
-                        <div class="team2-segmented" id="edit_role_segment">
-                            ${['manager', 'senior', 'staff', 'intern'].map(role =>
-                                `<button type="button" data-role="${role}" class="${role === roleKey ? 'active' : ''}">${roleLabels[role]}</button>`
-                            ).join('')}
-                        </div>
-                    </div>
-                    <div class="team2-field">
-                        <label class="team2-edit-label">Budgeted Hours</label>
-                        <input type="number" id="edit_budgeted_hours" class="swal2-input" min="0" step="0.5"
-                               placeholder="Not set" value="${fmtHours(member.budgeted_hours) ?? ''}"
-                               style="margin: 0; width: 140px; font-size: 13px;">
-                    </div>
-                    <div class="team2-field" id="edit_dol_section" style="display:${roleKey === 'manager' ? 'none' : 'block'};">
-                        <label class="team2-edit-label">Duties &amp; Responsibilities</label>
-                        <div class="team2-dol-columns">${dolColumnsHtml}</div>
-                        <div class="team2-tag-hint">e.g. CC1, CC2 — press Enter or comma to add a duty</div>
-                    </div>
-                </div>
-            `,
-            confirmButtonText: 'Save Changes',
-            cancelButtonText: 'Cancel',
-            showCancelButton: true,
-            confirmButtonColor: 'var(--ink)',
-            didOpen: () => {
-                document.querySelectorAll('.team2-tag-input-box').forEach(box => {
-                    const fieldName = box.dataset.field;
-                    const auditType = box.dataset.auditType;
-                    const tagsEl = box.querySelector('.tags');
-                    const input = box.querySelector('input');
-
-                    // Re-sorts into canonical order every render (not just
-                    // on add) so removing a tag can't leave a stale order
-                    // behind either — reassigns tagState itself, not just a
-                    // display copy, so the delete button's index-based
-                    // splice below stays correct.
-                    function render() {
-                        tagState[fieldName] = sortDolTags(tagState[fieldName], auditType);
-                        tagsEl.innerHTML = tagState[fieldName].map((t, i) =>
-                            `<span class="team2-tag-chip">${t}<button type="button" data-i="${i}">&times;</button></span>`
-                        ).join('');
-                        tagsEl.querySelectorAll('button').forEach(btn => {
-                            btn.addEventListener('click', (ev) => {
-                                ev.stopPropagation();
-                                tagState[fieldName].splice(Number(btn.dataset.i), 1);
-                                render();
-                            });
-                        });
-                    }
-                    render();
-                    box.addEventListener('click', () => input.focus());
-                    input.addEventListener('keydown', (ev) => {
-                        if (ev.key === 'Enter' || ev.key === ',') {
-                            ev.preventDefault();
-                            const val = input.value.trim().replace(/,$/, '');
-                            if (val && !tagState[fieldName].includes(val)) {
-                                tagState[fieldName].push(val);
-                                render();
-                            }
-                            input.value = '';
-                        } else if (ev.key === 'Backspace' && !input.value && tagState[fieldName].length) {
-                            tagState[fieldName].pop();
-                            render();
-                        }
-                    });
-                });
-
-                document.querySelectorAll('#edit_role_segment button').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        document.querySelectorAll('#edit_role_segment button').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        selectedRole = btn.dataset.role;
-                        document.getElementById('edit_avatar').style.background = roleColorVar[selectedRole] || 'var(--ink)';
-                        const badge = document.getElementById('edit_role_badge');
-                        badge.className = 'team2-edit-role-badge ' + selectedRole;
-                        badge.textContent = roleLabels[selectedRole];
-                        document.getElementById('edit_dol_section').style.display = selectedRole === 'manager' ? 'none' : 'block';
-                    });
-                });
-
-            },
-            preConfirm: () => {
-                const updateData = {
-                    engagement_idno: engagementId,
-                    emp_id: member.emp_id,
-                    emp_name: member.emp_name,
-                    role: selectedRole,
-                    budgeted_hours: document.getElementById('edit_budgeted_hours').value
-                };
-                relevantAuditTypes.forEach(auditType => {
-                    const fieldName = supportedAuditTypes[auditType];
-                    updateData[fieldName] = selectedRole === 'manager' ? '' : tagState[fieldName].join(', ');
-                });
-                return updateData;
-            }
-        }).then((result) => {
-            if (!result.isConfirmed || !result.value) return;
-
-            fetch('../api/update-team-member.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(result.value)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    sessionStorage.setItem('reopenTeamModal', 'true');
-                    location.reload();
-                } else {
-                    Swal.fire('Error', data.message || 'Failed to update team member', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error', 'Failed to update team member: ' + error.message, 'error');
-            });
-        });
-    }
-
-    function deleteTeamMember(member) {
-        Swal.fire({
-            title: 'Remove Team Member?',
-            text: `Are you sure you want to remove "${member.emp_name}" from the team? This action cannot be undone.`,
-            icon: 'warning',
-            confirmButtonText: 'Remove',
-            cancelButtonText: 'Cancel',
-            showCancelButton: true,
-            confirmButtonColor: 'var(--danger-red)'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                fetch('../api/delete-team-member.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ engagement_idno: engagementId, emp_id: member.emp_id })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        currentTeam = currentTeam.filter(m => String(m.emp_id) !== String(member.emp_id));
-                        renderTeamList();
-                    } else {
-                        Swal.fire('Error', data.message || 'Failed to delete team member', 'error');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire('Error', 'Failed to delete team member: ' + error.message, 'error');
-                });
-            }
         });
     }
 });
