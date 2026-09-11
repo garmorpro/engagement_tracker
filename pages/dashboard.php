@@ -861,8 +861,8 @@ if (!empty($_SESSION['name'])) {
         /* ---------- Notes & Meetings: a running log fed by 4 buttons,
            replacing the old single eng_notes textarea + the old per-person
            independence popup. Ported from the mockup Garrett approved. ---------- */
-        .mtg-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
-        .mtg-action-btn { display: flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 20px; border: 1px solid var(--line); background: var(--paper); color: var(--text); font-size: 11.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .mtg-actions { display: flex; flex-wrap: nowrap; gap: 0.4rem; margin-bottom: 1rem; overflow-x: auto; padding-bottom: 2px; }
+        .mtg-action-btn { display: flex; align-items: center; gap: 5px; padding: 6px 9px; border-radius: 20px; border: 1px solid var(--line); background: var(--paper); color: var(--text); font-size: 11px; font-weight: 600; cursor: pointer; font-family: inherit; white-space: nowrap; flex-shrink: 0; }
         .mtg-action-btn:hover { border-color: var(--line-strong); }
         .mtg-action-btn.t-planning { color: var(--manager); }
         .mtg-action-btn.t-client { color: var(--senior); }
@@ -2547,6 +2547,7 @@ if (!empty($_SESSION['name'])) {
         updateDrawerSetupBanner(eng, team, auditTypes, timeline);
         renderDrawerTeam(team, auditTypes);
         renderNoteLog(data.notes || []);
+        wireMeetingButtons();
         renderDrawerTimeline(timeline, eng.eng_idno);
         renderPlanningDocRow(eng);
         renderWeeklyStatusCallControl(timeline, eng.eng_idno, eng.eng_name, data.linked_calls || []);
@@ -3008,25 +3009,32 @@ if (!empty($_SESSION['name'])) {
     // NOTES & MEETINGS MODALS
     // Four buttons feeding one log (engagement_notes via
     // api/add-engagement-note.php) instead of the old single eng_notes
-    // field and the old per-person independence popup. Wired once here,
-    // like the New Engagement wizard — reads drawerData at open-time
-    // rather than being rebuilt on every drawer render.
+    // field and the old per-person independence popup.
+    //
+    // The 4 *trigger* buttons (mtgOpenPlanning etc.) live inside
+    // drawerBody's innerHTML template, same as everything else in the
+    // drawer — rebuilt from scratch every renderDrawer() call, which means
+    // any listener attached to them only lasts until the next render.
+    // wireMeetingButtons() (bottom of this block) re-attaches them fresh
+    // and is called from renderDrawer() itself, same as renderNoteLog()
+    // and renderDrawerTeam() already are. The 4 *modals* they open are
+    // different: static markup, siblings of .drawer, never rebuilt — so
+    // their own close/save buttons only need wiring once, below.
     // ===================================================================
-    (function() {
-        const CONFIG = {
-            planning: { scrim: 'mtgModalPlanning', text: 'mtgPlanningText', save: 'mtgSavePlanning', savingLabel: 'Saving…', savedLabel: 'Save Planning Meeting' },
-            client:   { scrim: 'mtgModalClient',   text: 'mtgClientText',   save: 'mtgSaveClient',   savingLabel: 'Saving…', savedLabel: 'Save Notes' },
-            weekly:   { scrim: 'mtgModalWeekly',    text: 'mtgWeeklyText',   save: 'mtgSaveWeekly',   savingLabel: 'Saving…', savedLabel: 'Save Notes' },
-            general:  { scrim: 'mtgModalGeneral',   text: 'mtgGeneralText',  save: 'mtgSaveGeneral',  savingLabel: 'Saving…', savedLabel: 'Save Note' },
-        };
+    const MTG_CONFIG = {
+        planning: { scrim: 'mtgModalPlanning', text: 'mtgPlanningText', save: 'mtgSavePlanning', savingLabel: 'Saving…', savedLabel: 'Save Planning Meeting' },
+        client:   { scrim: 'mtgModalClient',   text: 'mtgClientText',   save: 'mtgSaveClient',   savingLabel: 'Saving…', savedLabel: 'Save Notes' },
+        weekly:   { scrim: 'mtgModalWeekly',    text: 'mtgWeeklyText',   save: 'mtgSaveWeekly',   savingLabel: 'Saving…', savedLabel: 'Save Notes' },
+        general:  { scrim: 'mtgModalGeneral',   text: 'mtgGeneralText',  save: 'mtgSaveGeneral',  savingLabel: 'Saving…', savedLabel: 'Save Note' },
+    };
 
-        // { emp_name: 'Y'|'N'|null } — current picks in the open Planning
-        // Meeting modal, seeded from each member's live emp_independent
-        // and edited in place via the segmented control before saving.
-        let planningIndepState = {};
-        let planningIndepMembers = []; // grouped team members currently shown, incl. their emp_ids — set together with planningIndepState so save doesn't have to re-derive it
+    // { emp_name: 'Y'|'N'|null } — current picks in the open Planning
+    // Meeting modal, seeded from each member's live emp_independent and
+    // edited in place via the segmented control before saving.
+    let planningIndepState = {};
+    let planningIndepMembers = []; // grouped team members currently shown, incl. their emp_ids — set together with planningIndepState so save doesn't have to re-derive it
 
-        function renderPlanningIndepList() {
+    function renderPlanningIndepList() {
             const team = drawerData?.team || [];
             const auditTypes = (drawerData?.engagement?.eng_audit_type || '').split(',').map(t => t.trim()).filter(Boolean);
             const members = groupTeamMembers(team, auditTypes);
@@ -3076,16 +3084,23 @@ if (!empty($_SESSION['name'])) {
 
         function openMeetingModal(type) {
             if (type === 'planning') renderPlanningIndepList();
-            document.getElementById(CONFIG[type].scrim).classList.add('open');
+            document.getElementById(MTG_CONFIG[type].scrim).classList.add('open');
         }
         function closeMeetingModal(scrimEl) {
             scrimEl.classList.remove('open');
         }
 
-        document.getElementById('mtgOpenPlanning')?.addEventListener('click', () => openMeetingModal('planning'));
-        document.getElementById('mtgOpenClient')?.addEventListener('click', () => openMeetingModal('client'));
-        document.getElementById('mtgOpenWeekly')?.addEventListener('click', () => openMeetingModal('weekly'));
-        document.getElementById('mtgOpenGeneral')?.addEventListener('click', () => openMeetingModal('general'));
+        // The 4 trigger buttons live inside drawerBody's innerHTML — fresh
+        // elements every renderDrawer() call — so this has to run again
+        // each time too, unlike the modal wiring below it (called once,
+        // since the modals themselves are static markup that never gets
+        // rebuilt).
+        function wireMeetingButtons() {
+            document.getElementById('mtgOpenPlanning')?.addEventListener('click', () => openMeetingModal('planning'));
+            document.getElementById('mtgOpenClient')?.addEventListener('click', () => openMeetingModal('client'));
+            document.getElementById('mtgOpenWeekly')?.addEventListener('click', () => openMeetingModal('weekly'));
+            document.getElementById('mtgOpenGeneral')?.addEventListener('click', () => openMeetingModal('general'));
+        }
 
         document.querySelectorAll('.mtg-modal-scrim').forEach(scrimEl => {
             scrimEl.addEventListener('click', (ev) => { if (ev.target === scrimEl) closeMeetingModal(scrimEl); });
@@ -3097,7 +3112,7 @@ if (!empty($_SESSION['name'])) {
         });
 
         function saveMeetingNote(type) {
-            const cfg = CONFIG[type];
+            const cfg = MTG_CONFIG[type];
             const textEl = document.getElementById(cfg.text);
             const text = textEl.value.trim();
             if (!text) { textEl.style.borderColor = 'var(--critical)'; textEl.focus(); return; }
@@ -3149,7 +3164,6 @@ if (!empty($_SESSION['name'])) {
         document.getElementById('mtgSaveClient')?.addEventListener('click', () => saveMeetingNote('client'));
         document.getElementById('mtgSaveWeekly')?.addEventListener('click', () => saveMeetingNote('weekly'));
         document.getElementById('mtgSaveGeneral')?.addEventListener('click', () => saveMeetingNote('general'));
-    })();
 
     function renderDrawerTimeline(timeline, engagementId) {
         const el = document.getElementById('drawerTimelineContent');
