@@ -885,6 +885,16 @@ if (!empty($_SESSION['name'])) {
            the "*" rule above to actually win here. */
         .swal2-html-container .team2-avatar,
         .swal2-html-container .team2-avatar-lg { color: #fff !important; }
+        /* Same problem, more places than just the avatars: the role text
+           under a name, the DOL chips, "Remove from engagement", and Save
+           Changes (var(--card) text meant to sit on a navy button — forced
+           navy-on-navy is unreadable, not just off-color) were all quietly
+           losing their intended color to the rule above too. Rather than
+           write one more ".swal2-html-container .foo { color: ... !important }"
+           per element (and inevitably miss the next one), anything in this
+           panel that needs its own color sets it via --fg instead of color
+           directly and picks this rule up once. */
+        .swal2-html-container .team3-fg { color: var(--fg) !important; }
         body.dark-mode .swal2-input, body.dark-mode select.swal2-input, body.dark-mode textarea.swal2-input {
             background: #10161D !important; border-color: #2A343E !important; color: #E7ECF1 !important;
         }
@@ -3527,7 +3537,7 @@ if (!empty($_SESSION['name'])) {
                         <div class="team2-avatar" style="width:30px;height:30px;font-size:11.5px;background:${roleColor}">${escapeHtml(initials(member.emp_name))}</div>
                         <div class="team3-item-info">
                             <div class="team3-item-name">${escapeHtml(member.emp_name)}</div>
-                            <div class="team3-lead-role-text" style="color:${roleColor}">${ROLE_LABELS[roleKey] || member.role}</div>
+                            <div class="team3-lead-role-text team3-fg" style="--fg:${roleColor}">${ROLE_LABELS[roleKey] || member.role}</div>
                         </div>
                         ${hoursBadge}
                     </div>
@@ -3545,7 +3555,7 @@ if (!empty($_SESSION['name'])) {
                 const duties = (member[fieldName] || '').split(',').map(d => d.trim()).filter(Boolean);
                 if (!duties.length) return '';
                 const typeClass = DOL_TYPE_CLASS[auditType] || '';
-                const chipsHtml = sortDolTags(duties, auditType).map(d => `<span class="drawer-dol-chip ${typeClass}">${escapeHtml(d)}</span>`).join('');
+                const chipsHtml = sortDolTags(duties, auditType).map(d => `<span class="drawer-dol-chip team3-fg ${typeClass}" style="--fg:${typeClass === 't-soc2' ? 'var(--senior)' : 'var(--ink)'}">${escapeHtml(d)}</span>`).join('');
                 return `<div class="drawer-dol-line"><span class="drawer-dol-audit-label">${escapeHtml(auditType)}</span><span class="drawer-dol-chips-wrap">${chipsHtml}</span></div>`;
             }).join('');
 
@@ -3610,7 +3620,7 @@ if (!empty($_SESSION['name'])) {
                     <div class="team2-avatar-lg" id="team3_detail_avatar" style="background:${ROLE_COLOR_VAR[roleKey] || 'var(--ink)'}">${escapeHtml(initials(member.emp_name))}</div>
                     <div>
                         <div class="team2-edit-name">${escapeHtml(member.emp_name)}</div>
-                        <div class="team3-detail-role-text" id="team3_detail_role_badge" style="color:${ROLE_COLOR_VAR[roleKey] || 'var(--ink)'}">${ROLE_LABELS[roleKey] || member.role}</div>
+                        <div class="team3-detail-role-text team3-fg" id="team3_detail_role_badge" style="--fg:${ROLE_COLOR_VAR[roleKey] || 'var(--ink)'}">${ROLE_LABELS[roleKey] || member.role}</div>
                     </div>
                 </div>
                 <div class="team3-field-row">
@@ -3638,12 +3648,12 @@ if (!empty($_SESSION['name'])) {
                         <div class="team3-remove-confirm">
                             Remove <b>${escapeHtml(member.emp_name)}</b> from this engagement?
                             <button type="button" class="team2-btn team2-btn-secondary" id="team3_cancel_remove" style="padding:5px 10px;">Cancel</button>
-                            <button type="button" class="team2-btn" id="team3_confirm_remove" style="padding:5px 10px; background:var(--critical); color:#fff;">Remove</button>
+                            <button type="button" class="team2-btn team3-fg" id="team3_confirm_remove" style="padding:5px 10px; background:var(--critical); --fg:#fff;">Remove</button>
                         </div>
-                    ` : `<button type="button" class="team3-link-btn team3-link-btn-danger" id="team3_remove_btn">Remove from engagement</button>`}
+                    ` : `<button type="button" class="team3-link-btn team3-link-btn-danger team3-fg" style="--fg:var(--critical)" id="team3_remove_btn">Remove from engagement</button>`}
                     <span style="display:flex; align-items:center; gap:10px;">
                         <span class="team3-saved-flash" id="team3_saved_flash"><i class="bi bi-check-circle-fill"></i> Saved</span>
-                        <button type="button" class="team2-btn team2-btn-primary" id="team3_save_btn">Save Changes</button>
+                        <button type="button" class="team2-btn team2-btn-primary team3-fg" style="--fg:var(--card)" id="team3_save_btn">Save Changes</button>
                     </span>
                 </div>
             `;
@@ -3706,7 +3716,7 @@ if (!empty($_SESSION['name'])) {
                     selectedRole = btn.dataset.role;
                     document.getElementById('team3_detail_avatar').style.background = ROLE_COLOR_VAR[selectedRole] || 'var(--ink)';
                     const badge = document.getElementById('team3_detail_role_badge');
-                    badge.style.color = ROLE_COLOR_VAR[selectedRole] || 'var(--ink)';
+                    badge.style.setProperty('--fg', ROLE_COLOR_VAR[selectedRole] || 'var(--ink)');
                     badge.textContent = ROLE_LABELS[selectedRole];
                     document.getElementById('team3_dol_section').style.display = selectedRole === 'manager' ? 'none' : 'block';
                 });
@@ -3867,7 +3877,7 @@ if (!empty($_SESSION['name'])) {
                         </div>
                         <div class="team2-new-emp-actions">
                             <button type="button" class="team2-btn team2-btn-secondary" id="team3_new_emp_cancel">Cancel</button>
-                            <button type="button" class="team2-btn team2-btn-primary" id="team3_new_emp_confirm">Add Employee</button>
+                            <button type="button" class="team2-btn team2-btn-primary team3-fg" style="--fg:var(--card)" id="team3_new_emp_confirm">Add Employee</button>
                         </div>
                     </div>
                 `;
