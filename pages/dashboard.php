@@ -694,19 +694,30 @@ if (!empty($_SESSION['name'])) {
         .team3-link-btn-danger { color: var(--critical); }
         .team3-link-btn-danger:hover { background: color-mix(in srgb, var(--critical) 8%, transparent); }
         .team3-add-btn { display: flex; align-items: center; gap: 6px; width: 100%; padding: 6px 4px; justify-content: flex-start; }
-        .team3-list { flex: 1; overflow-y: auto; padding: 0 0.5rem 0.75rem; }
-        .team3-item { display: flex; align-items: flex-start; gap: 9px; padding: 8px; border-radius: 8px; cursor: pointer; }
+        .team3-list { flex: 1; overflow-y: auto; padding: 0 0.9rem 0.9rem; }
+        /* Roster list styled to match the drawer's read-only Team card
+           (renderDrawerTeam()) as closely as an interactive/selectable list
+           reasonably can: a manager gets its own tinted "lead row" instead
+           of sitting in the flow, everyone else is grouped under a role
+           label ("SENIOR (2)") and separated by hairline dividers rather
+           than individual rounded cards, and DOL/hours read the same way.
+           Selection/hover are the one addition the read-only card doesn't
+           need — this list is actually clickable. */
+        .team3-role-group-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); margin: 0.7rem 0 0.3rem; }
+        .team3-item { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.45rem 0.2rem; border-top: 1px solid var(--line); cursor: pointer; }
         .team3-item:hover { background: var(--card); }
-        .team3-item.selected { background: color-mix(in srgb, var(--ink) 10%, var(--card)); }
+        .team3-item.selected { background: color-mix(in srgb, var(--ink) 8%, var(--card)); }
+        .team3-item.team3-lead-row {
+            border-top: none; border-radius: 8px; margin-bottom: 0.4rem; padding: 0.5rem 0.6rem;
+            background: color-mix(in srgb, var(--manager) 7%, transparent);
+        }
+        .team3-item.team3-lead-row:hover { background: color-mix(in srgb, var(--manager) 11%, transparent); }
+        .team3-item.team3-lead-row.selected { background: color-mix(in srgb, var(--manager) 16%, transparent); }
         .team3-item-info { flex: 1; min-width: 0; }
-        /* Circular initials, not the app's usual rounded-square avatar —
-           matches the drawer's read-only Team card more closely than the
-           other team2-avatar spots (search dropdowns, etc.), which keep
-           the standard shape. */
-        .team3-item .team2-avatar,
-        .team3-detail-head .team2-avatar-lg { border-radius: 50%; }
-        .team3-item-name { font-weight: 700; font-size: 12.5px; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .team3-item-sub { font-size: 10.5px; color: var(--text-secondary); margin-top: 1px; }
+        .team3-item-name { font-weight: 600; font-size: 13px; color: var(--text-primary); }
+        .team3-lead-row .team3-item-name { font-weight: 700; font-size: 13.5px; }
+        .team3-lead-role-text { font-size: 10px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; }
+        .team3-hours-badge { font-size: 10px; font-weight: 700; color: var(--text-secondary); background: var(--card); border: 1px solid var(--line); padding: 2px 7px; border-radius: 20px; white-space: nowrap; margin-left: 3px; }
         .team3-item-dols { margin-top: 5px; }
         .team3-item-dols .drawer-dol-line { font-size: 10.5px; margin-bottom: 2px; }
         .team3-item-dols .drawer-dol-audit-label { width: 38px; font-size: 9.5px; }
@@ -844,6 +855,17 @@ if (!empty($_SESSION['name'])) {
         body.dark-mode .swal2-popup { background: #171F28 !important; border-color: #2A343E; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); }
         body.dark-mode .swal2-title { color: #E7ECF1 !important; }
         body.dark-mode .swal2-html-container, body.dark-mode .swal2-html-container * { color: #E7ECF1 !important; }
+        /* The two rules above force every swal2-html-container descendant to
+           the theme's text color !important (kept modal copy legible against
+           SweetAlert2's own default gray) — but that also flattens the white
+           avatar-initials text to the same dark navy, making it unreadable
+           against the initials' own colored circle (worst on the manager's
+           navy background, since navy-on-navy is nearly invisible — see
+           Manage Team Members). Both .team2-avatar/-lg already default to
+           white for exactly this reason; just need higher specificity than
+           the "*" rule above to actually win here. */
+        .swal2-html-container .team2-avatar,
+        .swal2-html-container .team2-avatar-lg { color: #fff !important; }
         body.dark-mode .swal2-input, body.dark-mode select.swal2-input, body.dark-mode textarea.swal2-input {
             background: #10161D !important; border-color: #2A343E !important; color: #E7ECF1 !important;
         }
@@ -3441,13 +3463,26 @@ if (!empty($_SESSION['name'])) {
                 return;
             }
 
-            const sortedTeam = visible.slice().sort((a, b) => {
-                const ra = roleOrder.indexOf((a.role || '').toLowerCase());
-                const rb = roleOrder.indexOf((b.role || '').toLowerCase());
-                return (ra === -1 ? 99 : ra) - (rb === -1 ? 99 : rb);
+            // Grouped the same way as the read-only Team card (renderDrawerTeam):
+            // every manager gets its own lead row up top (plural, unlike that
+            // function, which only ever shows the first one it finds — here
+            // that'd silently make a second manager un-editable), everyone
+            // else bucketed by role under a group label.
+            const managers = [];
+            const bucketed = { senior: [], staff: [], intern: [] };
+            visible.forEach(m => {
+                const roleKey = (m.role || '').toLowerCase();
+                if (roleKey === 'manager') managers.push(m);
+                else (bucketed[roleKey] || bucketed.staff).push(m);
             });
 
-            listEl.innerHTML = sortedTeam.map(member => renderListItem(member)).join('');
+            let html = managers.map(m => renderListItem(m, true)).join('');
+            [['senior', 'Senior'], ['staff', 'Staff'], ['intern', 'Intern']].forEach(([roleKey, roleLabel]) => {
+                if (!bucketed[roleKey].length) return;
+                html += `<div class="team3-role-group-label">${roleLabel} (${bucketed[roleKey].length})</div>`;
+                html += bucketed[roleKey].map(m => renderListItem(m, false)).join('');
+            });
+            listEl.innerHTML = html;
 
             listEl.querySelectorAll('[data-select]').forEach(el => {
                 el.addEventListener('click', () => {
@@ -3460,14 +3495,33 @@ if (!empty($_SESSION['name'])) {
             });
         }
 
-        function renderListItem(member) {
+        function renderListItem(member, isLead) {
             const roleKey = (member.role || '').toLowerCase();
             const isSelected = mode === 'detail' && String(selectedEmpId) === String(member.emp_id);
+            const roleColor = ROLE_COLOR_VAR[roleKey] || 'var(--ink)';
+            const hoursBadge = fmtHours(member.budgeted_hours) !== null
+                ? `<span class="team3-hours-badge">${fmtHours(member.budgeted_hours)} hrs budgeted</span>` : '';
+
+            if (isLead) {
+                return `
+                    <div class="team3-item team3-lead-row ${isSelected ? 'selected' : ''}" data-select="${member.emp_id}">
+                        <div class="team2-avatar" style="width:30px;height:30px;font-size:11.5px;background:${roleColor}">${escapeHtml(initials(member.emp_name))}</div>
+                        <div class="team3-item-info">
+                            <div class="team3-item-name">${escapeHtml(member.emp_name)}</div>
+                            <div class="team3-lead-role-text" style="color:${roleColor}">${ROLE_LABELS[roleKey] || member.role}</div>
+                        </div>
+                        ${hoursBadge}
+                    </div>
+                `;
+            }
+
             // One line per audit type, each with its own label — matches the
             // read-only Team card's dolLinesHtml() rather than flowing every
             // type's chips into one row, which made it hard to tell a SOC 1
-            // duty from a SOC 2 one at a glance (per Garrett).
-            const dolLines = roleKey === 'manager' ? '' : relevantAuditTypes.map(auditType => {
+            // duty from a SOC 2 one at a glance (per Garrett). Role itself
+            // isn't repeated per row here, same as the Team card — the group
+            // label above already says it.
+            const dolLines = relevantAuditTypes.map(auditType => {
                 const fieldName = DOL_AUDIT_TYPES[auditType];
                 const duties = (member[fieldName] || '').split(',').map(d => d.trim()).filter(Boolean);
                 if (!duties.length) return '';
@@ -3478,11 +3532,10 @@ if (!empty($_SESSION['name'])) {
 
             return `
                 <div class="team3-item ${isSelected ? 'selected' : ''}" data-select="${member.emp_id}">
-                    <div class="team2-avatar" style="width:30px;height:30px;font-size:11px;background:${ROLE_COLOR_VAR[roleKey] || 'var(--ink)'}">${escapeHtml(initials(member.emp_name))}</div>
+                    <div class="team2-avatar" style="width:26px;height:26px;font-size:10.5px;background:${roleColor}">${escapeHtml(initials(member.emp_name))}</div>
                     <div class="team3-item-info">
-                        <div class="team3-item-name">${escapeHtml(member.emp_name)}</div>
-                        <div class="team3-item-sub">${ROLE_LABELS[roleKey] || member.role}${fmtHours(member.budgeted_hours) !== null ? ` &middot; ${fmtHours(member.budgeted_hours)} hrs` : ''}</div>
-                        ${dolLines ? `<div class="team3-item-dols">${dolLines}</div>` : ''}
+                        <div class="team3-item-name">${escapeHtml(member.emp_name)} ${hoursBadge}</div>
+                        ${dolLines ? `<div class="team3-item-dols">${dolLines}</div>` : `<span class="drawer-no-dol">No DOL assigned</span>`}
                     </div>
                 </div>
             `;
