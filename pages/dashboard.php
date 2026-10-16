@@ -32,46 +32,6 @@ $archivedCount = count($archivedEngagements);
 
 $engagements = $showArchived ? $archivedEngagements : $activeEngagements;
 
-// A "client" is just the name several engagements share (one audit type =
-// one engagement, so a client with SOC and PCI is two lines) — matched
-// ignoring case and spacing, no clients table. Used for the per-line
-// "N more" expander and for the client page (?client=Name).
-function dashboardClientKey($name) {
-    return mb_strtolower(trim(preg_replace('/\s+/', ' ', (string) $name)));
-}
-$clientIndex = [];
-foreach ($allEngagements as $e) {
-    $clientIndex[dashboardClientKey($e['eng_name'])][] = $e;
-}
-$clientView = (isset($_GET['client']) && trim($_GET['client']) !== '') ? dashboardClientKey($_GET['client']) : null;
-$clientEngagements = $clientView !== null ? ($clientIndex[$clientView] ?? []) : [];
-$clientActive = [];
-$clientArchived = [];
-$clientName = '';
-$clientPoc = '';
-$clientLocation = '';
-if ($clientEngagements) {
-    foreach ($clientEngagements as $e) {
-        if ($e['eng_status'] === 'archived') $clientArchived[] = $e; else $clientActive[] = $e;
-    }
-    // Contact/location come from the client's most recent engagement (highest id).
-    usort($clientEngagements, fn($a, $b) => $b['eng_id'] <=> $a['eng_id']);
-    $clientName = trim($clientEngagements[0]['eng_name']);
-    foreach ($clientEngagements as $e) {
-        if (!$clientPoc && !empty($e['eng_poc'])) $clientPoc = $e['eng_poc'];
-        if (!$clientLocation && !empty($e['eng_location'])) $clientLocation = $e['eng_location'];
-    }
-    usort($clientActive, function ($a, $b) use ($timelineLookup) {
-        [$dueA] = getDueInfo($a['eng_idno'], $timelineLookup);
-        [$dueB] = getDueInfo($b['eng_idno'], $timelineLookup);
-        if (!$dueA && !$dueB) return strcmp($a['eng_idno'], $b['eng_idno']);
-        if (!$dueA) return 1;
-        if (!$dueB) return -1;
-        return $dueA <=> $dueB;
-    });
-    usort($clientArchived, fn($a, $b) => strcmp($b['eng_idno'], $a['eng_idno']));
-}
-
 $statusMeta = [
     'in-review'   => ['label' => 'In Review',   'var' => '--ink-soft'],
     'in-progress' => ['label' => 'In Progress', 'var' => '--ink'],
@@ -533,30 +493,6 @@ if (!empty($_SESSION['name'])) {
         .toolbar-flags { display: flex; align-items: center; gap: 1.5rem; }
 
         .result-note { margin-left: auto; font-size: 12px; color: var(--text-muted); }
-        /* Per-line client expander: an engagement line whose client has other
-           engagements (the SOC 2 line of a client that also has a PCI line,
-           or last year's archived one) gets a small "N more" pill that opens
-           a panel listing them, with a link to the client page and a
-           shortcut to add another engagement for that client. */
-        .reg-siblings-btn { display: inline-flex; align-items: center; gap: 4px; background: none; border: 1px solid var(--line); border-radius: 20px; padding: 0 8px 0 6px; height: 18px; font-size: 10.5px; font-weight: 700; color: var(--text-muted); cursor: pointer; font-family: inherit; flex-shrink: 0; white-space: nowrap; }
-        .reg-siblings-btn:hover { border-color: var(--line-strong); color: var(--text); }
-        .reg-siblings-btn i { font-size: 9px; transition: transform 0.15s; }
-        .reg-siblings-btn.open { background: color-mix(in srgb, var(--ink) 10%, transparent); border-color: color-mix(in srgb, var(--ink) 35%, transparent); color: var(--ink); }
-        .reg-siblings-btn.open i { transform: rotate(180deg); }
-        .reg-siblings-panel { background: color-mix(in srgb, var(--ink) 4%, var(--paper)); border-bottom: 1px solid var(--line); padding: 0.6rem 0.8rem 0.75rem 2.4rem; }
-        .reg-siblings-title { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.3rem; }
-        .reg-sibling-item { display: flex; align-items: center; gap: 1rem; padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 12.5px; }
-        .reg-sibling-item:hover { background: color-mix(in srgb, var(--ink) 7%, transparent); }
-        .reg-sibling-item.is-archived { opacity: 0.7; }
-        .reg-sibling-id { font-size: 11.5px; color: var(--text-muted); width: 116px; flex-shrink: 0; }
-        .reg-sibling-type { display: flex; align-items: center; gap: 4px; min-width: 130px; }
-        .reg-sibling-due { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; }
-        .reg-siblings-actions { display: flex; align-items: center; gap: 1.4rem; margin-top: 0.4rem; padding-left: 8px; }
-        .reg-sibling-link, .reg-sibling-add { font-size: 12px; font-weight: 700; color: var(--ink); background: none; border: none; padding: 0; cursor: pointer; text-decoration: none; font-family: inherit; display: inline-flex; align-items: center; gap: 4px; }
-        .reg-sibling-link:hover, .reg-sibling-add:hover { text-decoration: underline; }
-        .reg-status-chip { display: inline-flex; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); border: 1px solid var(--line); padding: 1px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
-        .client-back { display: inline-flex; align-items: center; gap: 5px; margin-bottom: 0.45rem; font-size: 12.5px; font-weight: 600; color: var(--text-muted); text-decoration: none; }
-        .client-back:hover { color: var(--text); }
 
         /* ---------- register list ---------- */
         .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin: 1.6rem 0 0.5rem; display: flex; align-items: center; gap: 8px; }
@@ -995,6 +931,7 @@ if (!empty($_SESSION['name'])) {
 
         .drawer-header { flex-shrink: 0; background: var(--card); border-bottom: 1px solid var(--line); padding: 1.25rem 1.5rem 1.1rem; }
         .drawer-header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+        .drawer-badge.b-type { background: color-mix(in srgb, var(--ink) 12%, transparent); color: var(--ink); }
         .drawer-eng-id { font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted); font-variant-numeric: tabular-nums; margin-bottom: 0.35rem; }
         .drawer-client-name { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.25; margin: 0; overflow-wrap: anywhere; }
         .drawer-close-btn { flex-shrink: 0; width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: var(--card); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
@@ -1255,176 +1192,6 @@ if (!empty($_SESSION['name'])) {
 <!-- ========== MAIN CONTENT ========== -->
 <div class="main-container">
 
-    <?php
-    // Renders one engagement line (+ its client expander panel); shared by the
-    // main list and the client page.
-    $renderRow = function ($eng) use ($timelineLookup, $teamLookup, $statusMeta, $clientIndex, $clientView) {
-            // Archived-ness is per row (the client page mixes active and
-            // archived engagements), not per view.
-            $isArchived = ($eng['eng_status'] === 'archived');
-            [$due, $dueState] = getDueInfo($eng['eng_idno'], $timelineLookup);
-            $critical = !$isArchived && $dueState === 'overdue';
-            $tickVar = $isArchived ? '--text-muted' : ($statusMeta[$eng['eng_status']]['var'] ?? '--text-muted');
-            $dueSoon = in_array($dueState, ['overdue', 'soon', 'archive_ready'], true) ? '1' : '0';
-            $setup = $isArchived
-                ? ['has_team' => true, 'dol_complete' => true, 'has_timeline' => true, 'has_planning_doc' => true, 'missing' => [], 'needs_setup' => false]
-                : getSetupInfo($eng, $teamLookup, $timelineLookup);
-            $setupFlagHtml = '';
-            if ($setup['needs_setup']) {
-                // First/most-actionable gap only — the row is a scannable
-                // list, not the place to enumerate everything missing (the
-                // drawer banner does that once you open the engagement).
-                $setupReason = $setup['missing'][0];
-                $setupFlagHtml = '<span class="reg-setup-flag"><i class="bi bi-exclamation-triangle-fill"></i> ' . htmlspecialchars($setupReason) . '</span>';
-            }
-            $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? '') . ' ' . $eng['eng_idno'] . ' ' . ($eng['eng_poc'] ?? '') . ' ' . ($eng['eng_audit_type'] ?? ''));
-
-            $dueHtml = '<div class="reg-due">&mdash;</div>';
-            if (!$isArchived && $dueState === 'archive_ready') {
-                $dueHtml = '<div class="reg-due archive-ready"><i class="bi bi-archive"></i> Archive Ready</div>';
-            } elseif ($due) {
-                $fmt = $due->format('M j, Y');
-                if ($isArchived) {
-                    $dueHtml = '<div class="reg-due">' . $fmt . '</div>';
-                } elseif ($dueState === 'overdue') {
-                    $daysLate = (new DateTime('today'))->diff($due)->days;
-                    $dueHtml = '<div class="reg-due overdue">' . $fmt . '<span class="tag">' . $daysLate . 'd late</span></div>';
-                } elseif ($dueState === 'soon') {
-                    $dueHtml = '<div class="reg-due soon">' . $fmt . '<span class="tag">Due soon</span></div>';
-                } else {
-                    $dueHtml = '<div class="reg-due">' . $fmt . '</div>';
-                }
-            }
-
-            $actions = $isArchived
-                ? '<button data-action="restore" title="Restore"><i class="bi bi-arrow-counterclockwise"></i></button>
-                   <button class="danger" data-action="delete" title="Delete"><i class="bi bi-trash"></i></button>'
-                : '<button data-action="archive" title="Archive"><i class="bi bi-archive"></i></button>
-                   <button class="danger" data-action="delete" title="Delete"><i class="bi bi-trash"></i></button>';
-
-            $detailPage = $isArchived ? 'archived-engagement-details.php' : 'engagement-details.php';
-
-            // Other engagements for the same client (active and archived) —
-            // not on the client page itself, where they're all right there.
-            $siblings = [];
-            if ($clientView === null) {
-                $siblings = array_values(array_filter(
-                    $clientIndex[dashboardClientKey($eng['eng_name'])] ?? [],
-                    fn($s) => $s['eng_idno'] !== $eng['eng_idno']
-                ));
-                usort($siblings, function ($a, $b) {
-                    $aa = $a['eng_status'] === 'archived' ? 1 : 0;
-                    $bb = $b['eng_status'] === 'archived' ? 1 : 0;
-                    return $aa <=> $bb ?: strcmp($a['eng_idno'], $b['eng_idno']);
-                });
-            }
-            $expanderHtml = $siblings
-                ? '<button type="button" class="reg-siblings-btn" aria-expanded="false" title="This client\'s other engagements"><i class="bi bi-chevron-down"></i> ' . count($siblings) . ' more</button>'
-                : '';
-            $statusChipHtml = $clientView !== null
-                ? '<span class="reg-status-chip">' . htmlspecialchars($isArchived ? 'Archived' : ($statusMeta[$eng['eng_status']]['label'] ?? $eng['eng_status'])) . '</span>'
-                : '';
-
-            echo '<div class="reg-row ' . ($critical ? 'is-critical' : '') . ' ' . ($setup['needs_setup'] ? 'is-needs-setup' : '') . ' ' . ($isArchived ? 'is-archived' : '') . '"'
-                . ' data-id="' . htmlspecialchars($eng['eng_idno']) . '"'
-                . ' data-detail-href="' . $detailPage . '?id=' . urlencode($eng['eng_idno']) . '"'
-                . ' data-search="' . htmlspecialchars($searchBlob) . '"'
-                . ' data-due-soon="' . $dueSoon . '"'
-                . ' data-needs-setup="' . ($setup['needs_setup'] ? '1' : '0') . '">'
-                . '<div class="reg-tick" style="background:var(' . $tickVar . ')"></div>'
-                . '<div class="reg-id mono">' . htmlspecialchars($eng['eng_idno']) . '</div>'
-                . '<div class="reg-main">'
-                . '<div class="reg-name">' . htmlspecialchars($eng['eng_name']) . '</div>'
-                . '<div class="reg-sub-row"><div class="reg-sub">' . htmlspecialchars($eng['eng_manager'] ?? 'Unassigned') . '</div>' . $setupFlagHtml . $statusChipHtml . $expanderHtml . '</div>'
-                . '</div>'
-                . '<div class="reg-type">' . renderTypeBadges($eng['eng_audit_type']) . '</div>'
-                . $dueHtml
-                . '<div class="row-actions">' . $actions . '</div>'
-                . '</div>';
-
-            if ($siblings) {
-                $items = '';
-                foreach ($siblings as $sib) {
-                    $sibArchived = ($sib['eng_status'] === 'archived');
-                    [$sibDue] = getDueInfo($sib['eng_idno'], $timelineLookup);
-                    $sibStatus = $sibArchived ? 'Archived' : ($statusMeta[$sib['eng_status']]['label'] ?? $sib['eng_status']);
-                    $items .= '<div class="reg-sibling-item' . ($sibArchived ? ' is-archived' : '') . '"'
-                        . ' data-id="' . htmlspecialchars($sib['eng_idno']) . '"'
-                        . ' data-detail-href="' . ($sibArchived ? 'archived-engagement-details.php' : 'engagement-details.php') . '?id=' . urlencode($sib['eng_idno']) . '">'
-                        . '<span class="reg-sibling-id mono">' . htmlspecialchars($sib['eng_idno']) . '</span>'
-                        . '<span class="reg-sibling-type">' . renderTypeBadges($sib['eng_audit_type']) . '</span>'
-                        . '<span class="reg-status-chip">' . htmlspecialchars($sibStatus) . '</span>'
-                        . '<span class="reg-sibling-due">' . (($sibDue && !$sibArchived) ? $sibDue->format('M j, Y') : '&mdash;') . '</span>'
-                        . '</div>';
-                }
-                $clientNameTrim = trim($eng['eng_name']);
-                echo '<div class="reg-siblings-panel" style="display:none">'
-                    . '<div class="reg-siblings-title">Other engagements for ' . htmlspecialchars($clientNameTrim) . '</div>'
-                    . $items
-                    . '<div class="reg-siblings-actions">'
-                    . '<a class="reg-sibling-link" href="dashboard.php?client=' . urlencode($clientNameTrim) . '">View client <i class="bi bi-arrow-right"></i></a>'
-                    . '<button type="button" class="reg-sibling-add" data-name="' . htmlspecialchars($clientNameTrim) . '" data-poc="' . htmlspecialchars($eng['eng_poc'] ?? '') . '" data-location="' . htmlspecialchars($eng['eng_location'] ?? '') . '"><i class="bi bi-plus"></i> Add engagement</button>'
-                    . '</div></div>';
-            }
-        };
-        ?>
-
-    <?php if ($clientView !== null): ?>
-        <?php if (!$clientEngagements): ?>
-            <div class="page-head">
-                <div>
-                    <a class="client-back" href="dashboard.php"><i class="bi bi-arrow-left"></i> All engagements</a>
-                    <h1>Client not found</h1>
-                </div>
-            </div>
-            <hr class="rule">
-            <div class="empty-state">No engagements found for that client.</div>
-        <?php else: ?>
-            <div class="page-head">
-                <div>
-                    <a class="client-back" href="dashboard.php"><i class="bi bi-arrow-left"></i> All engagements</a>
-                    <h1><?php echo htmlspecialchars($clientName); ?></h1>
-                    <p class="page-sub"><?php
-                        echo count($clientActive) . ' active &middot; ' . count($clientArchived) . ' archived';
-                        if ($clientPoc) echo ' &middot; ' . htmlspecialchars($clientPoc);
-                        if ($clientLocation) echo ' &middot; ' . htmlspecialchars($clientLocation);
-                    ?></p>
-                </div>
-                <div class="head-actions">
-                    <button class="btn-new-engagement" data-name="<?php echo htmlspecialchars($clientName); ?>" data-poc="<?php echo htmlspecialchars($clientPoc); ?>" data-location="<?php echo htmlspecialchars($clientLocation); ?>">
-                        <i class="bi bi-plus"></i> Add engagement
-                    </button>
-                </div>
-            </div>
-
-            <hr class="rule">
-
-            <div class="list-head">
-                <span class="lh-tick"></span>
-                <span class="lh-id">ID</span>
-                <span class="lh-main">Client</span>
-                <span class="lh-type">Type</span>
-                <span class="lh-due">Due</span>
-                <span class="lh-actions"></span>
-            </div>
-            <?php if ($clientActive): ?>
-                <div class="section-label">
-                    <span class="swatch" style="background:var(--ink)"></span>Active <span class="n">(<?php echo count($clientActive); ?>)</span>
-                </div>
-                <div class="register">
-                    <?php foreach ($clientActive as $eng) $renderRow($eng); ?>
-                </div>
-            <?php endif; ?>
-            <?php if ($clientArchived): ?>
-                <div class="section-label">
-                    <span class="swatch" style="background:var(--text-muted)"></span>Archived <span class="n">(<?php echo count($clientArchived); ?>)</span>
-                </div>
-                <div class="register">
-                    <?php foreach ($clientArchived as $eng) $renderRow($eng); ?>
-                </div>
-            <?php endif; ?>
-        <?php endif; ?>
-    <?php else: ?>
     <div class="page-head">
         <div>
             <h1>Engagements</h1>
@@ -1504,6 +1271,68 @@ if (!empty($_SESSION['name'])) {
             <span class="lh-actions"></span>
         </div>
 
+        <?php
+        $renderRow = function ($eng) use ($timelineLookup, $teamLookup, $showArchived, $statusMeta) {
+            [$due, $dueState] = getDueInfo($eng['eng_idno'], $timelineLookup);
+            $critical = !$showArchived && $dueState === 'overdue';
+            $tickVar = $showArchived ? '--text-muted' : ($statusMeta[$eng['eng_status']]['var'] ?? '--text-muted');
+            $dueSoon = in_array($dueState, ['overdue', 'soon', 'archive_ready'], true) ? '1' : '0';
+            $setup = $showArchived
+                ? ['has_team' => true, 'dol_complete' => true, 'has_timeline' => true, 'has_planning_doc' => true, 'missing' => [], 'needs_setup' => false]
+                : getSetupInfo($eng, $teamLookup, $timelineLookup);
+            $setupFlagHtml = '';
+            if ($setup['needs_setup']) {
+                // First/most-actionable gap only — the row is a scannable
+                // list, not the place to enumerate everything missing (the
+                // drawer banner does that once you open the engagement).
+                $setupReason = $setup['missing'][0];
+                $setupFlagHtml = '<span class="reg-setup-flag"><i class="bi bi-exclamation-triangle-fill"></i> ' . htmlspecialchars($setupReason) . '</span>';
+            }
+            $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? '') . ' ' . $eng['eng_idno'] . ' ' . ($eng['eng_poc'] ?? '') . ' ' . ($eng['eng_audit_type'] ?? ''));
+
+            $dueHtml = '<div class="reg-due">&mdash;</div>';
+            if (!$showArchived && $dueState === 'archive_ready') {
+                $dueHtml = '<div class="reg-due archive-ready"><i class="bi bi-archive"></i> Archive Ready</div>';
+            } elseif ($due) {
+                $fmt = $due->format('M j, Y');
+                if ($showArchived) {
+                    $dueHtml = '<div class="reg-due">' . $fmt . '</div>';
+                } elseif ($dueState === 'overdue') {
+                    $daysLate = (new DateTime('today'))->diff($due)->days;
+                    $dueHtml = '<div class="reg-due overdue">' . $fmt . '<span class="tag">' . $daysLate . 'd late</span></div>';
+                } elseif ($dueState === 'soon') {
+                    $dueHtml = '<div class="reg-due soon">' . $fmt . '<span class="tag">Due soon</span></div>';
+                } else {
+                    $dueHtml = '<div class="reg-due">' . $fmt . '</div>';
+                }
+            }
+
+            $actions = $showArchived
+                ? '<button data-action="restore" title="Restore"><i class="bi bi-arrow-counterclockwise"></i></button>
+                   <button class="danger" data-action="delete" title="Delete"><i class="bi bi-trash"></i></button>'
+                : '<button data-action="archive" title="Archive"><i class="bi bi-archive"></i></button>
+                   <button class="danger" data-action="delete" title="Delete"><i class="bi bi-trash"></i></button>';
+
+            $detailPage = $showArchived ? 'archived-engagement-details.php' : 'engagement-details.php';
+
+            echo '<div class="reg-row ' . ($critical ? 'is-critical' : '') . ' ' . ($setup['needs_setup'] ? 'is-needs-setup' : '') . ' ' . ($showArchived ? 'is-archived' : '') . '"'
+                . ' data-id="' . htmlspecialchars($eng['eng_idno']) . '"'
+                . ' data-detail-href="' . $detailPage . '?id=' . urlencode($eng['eng_idno']) . '"'
+                . ' data-search="' . htmlspecialchars($searchBlob) . '"'
+                . ' data-due-soon="' . $dueSoon . '"'
+                . ' data-needs-setup="' . ($setup['needs_setup'] ? '1' : '0') . '">'
+                . '<div class="reg-tick" style="background:var(' . $tickVar . ')"></div>'
+                . '<div class="reg-id mono">' . htmlspecialchars($eng['eng_idno']) . '</div>'
+                . '<div class="reg-main">'
+                . '<div class="reg-name">' . htmlspecialchars($eng['eng_name']) . '</div>'
+                . '<div class="reg-sub-row"><div class="reg-sub">' . htmlspecialchars($eng['eng_manager'] ?? 'Unassigned') . '</div>' . $setupFlagHtml . '</div>'
+                . '</div>'
+                . '<div class="reg-type">' . renderTypeBadges($eng['eng_audit_type']) . '</div>'
+                . $dueHtml
+                . '<div class="row-actions">' . $actions . '</div>'
+                . '</div>';
+        };
+        ?>
 
         <?php if (!$showArchived): ?>
             <?php foreach ($sectionOrder as $status): ?>
@@ -1539,8 +1368,6 @@ if (!empty($_SESSION['name'])) {
                 <?php foreach ($engagements as $eng) $renderRow($eng); ?>
             </div>
         <?php endif; ?>
-    <?php endif; ?>
-
     <?php endif; ?>
 
 </div>
@@ -2054,41 +1881,15 @@ if (!empty($_SESSION['name'])) {
     openDuePopup();
     <?php endif; ?>
 
-    // Row click -> quick-view drawer (active engagements) or full page (archived ones, not yet converted).
-    // Per row, not per view: the client page lists both kinds together.
+    // Row click -> quick-view drawer (active list) or full page (archived list, not yet converted)
+    const IS_ARCHIVED_VIEW = <?php echo $showArchived ? 'true' : 'false'; ?>;
     document.querySelectorAll('.reg-row').forEach(row => {
         row.addEventListener('click', () => {
-            if (row.classList.contains('is-archived')) {
+            if (IS_ARCHIVED_VIEW) {
                 window.location.href = row.dataset.detailHref;
             } else {
                 openDrawer(row.dataset.id);
             }
-        });
-    });
-
-    // "N more" expander on an engagement line: opens the panel (the row's next
-    // sibling) listing the client's other engagements.
-    document.querySelectorAll('.reg-siblings-btn').forEach(btn => {
-        btn.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            const panel = btn.closest('.reg-row').nextElementSibling;
-            if (!panel || !panel.classList.contains('reg-siblings-panel')) return;
-            const open = !panel.classList.contains('open');
-            panel.classList.toggle('open', open);
-            panel.style.display = open ? '' : 'none';
-            btn.classList.toggle('open', open);
-            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-    });
-    document.querySelectorAll('.reg-sibling-item').forEach(item => {
-        item.addEventListener('click', () => {
-            if (item.classList.contains('is-archived')) window.location.href = item.dataset.detailHref;
-            else openDrawer(item.dataset.id);
-        });
-    });
-    document.querySelectorAll('.reg-sibling-add').forEach(btn => {
-        btn.addEventListener('click', () => {
-            window.openNewEngagementWizard({ name: btn.dataset.name, poc: btn.dataset.poc, location: btn.dataset.location });
         });
     });
     document.querySelectorAll('.row-actions button').forEach(btn => {
@@ -2149,11 +1950,6 @@ if (!empty($_SESSION['name'])) {
                 || (dueSoonOnly && row.dataset.dueSoon === '1');
             const show = matchesSearch && matchesStatus;
             row.style.display = show ? '' : 'none';
-            // The row's "N more" panel (its next sibling) follows the row: gone when the row is filtered out, otherwise as open/closed as the user left it.
-            const panel = row.nextElementSibling;
-            if (panel && panel.classList.contains('reg-siblings-panel')) {
-                panel.style.display = (show && panel.classList.contains('open')) ? '' : 'none';
-            }
             if (show) visibleCount++;
         });
         document.querySelectorAll('.register').forEach(group => {
@@ -2178,7 +1974,6 @@ if (!empty($_SESSION['name'])) {
         document.getElementById('dueSoonLink').classList.toggle('active', dueSoonOnly);
         applyFilters();
     });
-
     applyFilters();
 
     // New Engagement Wizard
@@ -2449,16 +2244,8 @@ if (!empty($_SESSION['name'])) {
             stepButtons.forEach(b => b.classList.remove('clickable'));
         }
 
-        // prefill: { name, poc, location } — used by "Add engagement" on a
-        // client (the client page and the line expander) so the client's name
-        // and contact don't get retyped, and typed slightly differently.
-        function openWizard(prefill) {
+        function openWizard() {
             resetWizard();
-            if (prefill) {
-                if (prefill.name) document.getElementById('new_eng_name').value = prefill.name;
-                if (prefill.poc) document.getElementById('new_eng_poc').value = prefill.poc;
-                if (prefill.location) document.getElementById('new_eng_location').value = prefill.location;
-            }
             scrim.classList.add('open');
             setTimeout(() => document.getElementById('new_eng_name').focus(), 0);
         }
@@ -2542,7 +2329,7 @@ if (!empty($_SESSION['name'])) {
             if (!engName) { goToStep(1); return; }
             nextBtn.disabled = true;
             backBtn.disabled = true;
-            nextBtn.textContent = 'Creating…';
+            nextBtn.textContent = 'Creating\u2026';
 
             // One engagement per audit type picked — SOC 1, SOC 2 and PCI are
             // each their own line (own timeline, team/DOL, due date), and the
@@ -2695,12 +2482,7 @@ if (!empty($_SESSION['name'])) {
             });
         }
 
-        window.openNewEngagementWizard = openWizard;
-        document.querySelectorAll('.btn-new-engagement').forEach(btn => {
-            btn.addEventListener('click', () => {
-                openWizard(btn.dataset.name ? { name: btn.dataset.name, poc: btn.dataset.poc, location: btn.dataset.location } : undefined);
-            });
-        });
+        document.querySelector('.btn-new-engagement')?.addEventListener('click', openWizard);
     })();
 
     // ===================================================================
@@ -2897,6 +2679,9 @@ if (!empty($_SESSION['name'])) {
             </div>
         `;
         const auditTypes = (eng.eng_audit_type || '').split(',').map(t => t.trim()).filter(Boolean);
+        // Each audit type is its own engagement, so say which one this drawer is: the
+        // client name alone is identical across a client's SOC 2 and PCI lines.
+        badgeHtml = auditTypes.map(t => `<span class="drawer-badge b-type">${escapeHtml(t)}</span>`).join('') + badgeHtml;
         if (eng.eng_repeat === 'Y') {
             badgeHtml += `<span class="drawer-badge b-repeat"><i class="bi bi-arrow-repeat"></i> Repeat</span>`;
         }
