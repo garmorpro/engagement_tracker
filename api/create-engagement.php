@@ -1,6 +1,12 @@
 <?php
-// Clean any output buffer to ensure clean JSON response
-ob_clean();
+// Clean any output buffer to ensure clean JSON response. Guarded: with no
+// buffer active (output_buffering=0, as in the Docker image) a bare
+// ob_clean() raises a Notice, and with display_errors on that notice is
+// sent before session_start(), which then fails — every request came back
+// "Not authenticated" even when logged in.
+if (ob_get_level() > 0) {
+    ob_clean();
+}
 
 require_once '../path.php';
 require_once '../includes/functions.php';

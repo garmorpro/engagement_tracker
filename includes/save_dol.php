@@ -46,6 +46,8 @@ foreach ($dol as $emp_id => $audits) {
     }
 }
 
-ob_clean();
+if (ob_get_level() > 0) {
+    ob_clean();
+}
 echo json_encode(['success' => true]);
 exit;
