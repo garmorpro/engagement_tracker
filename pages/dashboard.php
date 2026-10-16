@@ -493,6 +493,17 @@ if (!empty($_SESSION['name'])) {
         .toolbar-flags { display: flex; align-items: center; gap: 1.5rem; }
 
         .result-note { margin-left: auto; font-size: 12px; color: var(--text-muted); }
+        /* Group-by-client view: same rows, regrouped under a client header
+           instead of a status section (see applyGrouping() in the script). */
+        .group-toggle { display: inline-flex; align-items: center; gap: 6px; background: none; border: 1px solid var(--line); border-radius: 20px; padding: 4px 11px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; font-family: inherit; }
+        .group-toggle:hover { border-color: var(--line-strong); color: var(--text); }
+        .group-toggle.active { background: color-mix(in srgb, var(--ink) 10%, transparent); border-color: color-mix(in srgb, var(--ink) 40%, transparent); color: var(--ink); }
+        /* A row doesn't need its status-section header to say what status it is once the sections are gone, so grouped rows carry their own status chip instead. */
+        .reg-status-chip { display: none; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); border: 1px solid var(--line); padding: 1px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+        body.group-by-client .reg-status-chip { display: inline-flex; }
+        /* The client header already carries the name, so a grouped row leads with what makes it different: its audit type, ID and due date. */
+        body.group-by-client .reg-row .reg-name { display: none; }
+        .client-group-label .client-count { color: var(--text-muted); font-weight: 400; }
 
         /* ---------- register list ---------- */
         .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin: 1.6rem 0 0.5rem; display: flex; align-items: center; gap: 8px; }
@@ -1255,6 +1266,7 @@ if (!empty($_SESSION['name'])) {
             </button>
         </div>
         <?php endif; ?>
+        <button type="button" class="group-toggle" id="groupByClientBtn" title="Group engagements under their client"><i class="bi bi-people"></i> Group by client</button>
         <div class="result-note" id="resultNote"></div>
     </div>
 
@@ -1319,12 +1331,17 @@ if (!empty($_SESSION['name'])) {
                 . ' data-detail-href="' . $detailPage . '?id=' . urlencode($eng['eng_idno']) . '"'
                 . ' data-search="' . htmlspecialchars($searchBlob) . '"'
                 . ' data-due-soon="' . $dueSoon . '"'
-                . ' data-needs-setup="' . ($setup['needs_setup'] ? '1' : '0') . '">'
+                . ' data-needs-setup="' . ($setup['needs_setup'] ? '1' : '0') . '"'
+                . ' data-client="' . htmlspecialchars(mb_strtolower(trim(preg_replace('/\s+/', ' ', (string) $eng['eng_name'])))) . '"'
+                . ' data-client-name="' . htmlspecialchars(trim((string) $eng['eng_name'])) . '"'
+                . ' data-due="' . ($due ? $due->format('Y-m-d') : '') . '">'
                 . '<div class="reg-tick" style="background:var(' . $tickVar . ')"></div>'
                 . '<div class="reg-id mono">' . htmlspecialchars($eng['eng_idno']) . '</div>'
                 . '<div class="reg-main">'
                 . '<div class="reg-name">' . htmlspecialchars($eng['eng_name']) . '</div>'
-                . '<div class="reg-sub-row"><div class="reg-sub">' . htmlspecialchars($eng['eng_manager'] ?? 'Unassigned') . '</div>' . $setupFlagHtml . '</div>'
+                . '<div class="reg-sub-row"><div class="reg-sub">' . htmlspecialchars($eng['eng_manager'] ?? 'Unassigned') . '</div>' . $setupFlagHtml
+                . ($showArchived ? '' : '<span class="reg-status-chip">' . htmlspecialchars($statusMeta[$eng['eng_status']]['label'] ?? $eng['eng_status']) . '</span>')
+                . '</div>'
                 . '</div>'
                 . '<div class="reg-type">' . renderTypeBadges($eng['eng_audit_type']) . '</div>'
                 . $dueHtml
@@ -1669,8 +1686,11 @@ if (!empty($_SESSION['name'])) {
 
     // Toast flags set before a reload
     if (sessionStorage.getItem('showEngagementCreatedToast')) {
+        // Value is how many engagements the wizard created (one per audit
+        // type picked); 'true' is the pre-split value, still treated as one.
+        const createdCount = parseInt(sessionStorage.getItem('showEngagementCreatedToast'), 10) || 1;
         sessionStorage.removeItem('showEngagementCreatedToast');
-        showToast('Engagement created successfully');
+        showToast(createdCount > 1 ? `${createdCount} engagements created successfully` : 'Engagement created successfully');
     }
     if (sessionStorage.getItem('showDeletedToast')) {
         sessionStorage.removeItem('showDeletedToast');
@@ -1970,7 +1990,75 @@ if (!empty($_SESSION['name'])) {
         document.getElementById('dueSoonLink').classList.toggle('active', dueSoonOnly);
         applyFilters();
     });
-    applyFilters();
+
+    // Group by client. Every engagement is its own line (one audit type =
+    // one engagement); a client with SOC and PCI is just two lines sharing a
+    // name. This toggle regroups those lines under a client header instead
+    // of the status sections. It MOVES the same .reg-row elements rather
+    // than cloning them, so the click/archive/delete handlers bound above
+    // keep working, and moves them back on toggle-off. applyFilters() already
+    // hides any .register (and its preceding .section-label) with no visible
+    // rows, so the now-empty status sections disappear on their own and
+    // search / needs-attention / due-soon keep working in either view.
+    const groupBtn = document.getElementById('groupByClientBtn');
+    const originalPlacement = [];
+    let clientGroupsEl = null;
+    function applyGrouping(on) {
+        if (!originalPlacement.length) {
+            document.querySelectorAll('.register').forEach(reg => {
+                originalPlacement.push({ register: reg, rows: Array.from(reg.querySelectorAll(':scope > .reg-row')) });
+            });
+        }
+        document.body.classList.toggle('group-by-client', on);
+        groupBtn?.classList.toggle('active', on);
+        if (clientGroupsEl) { clientGroupsEl.remove(); clientGroupsEl = null; }
+
+        if (!on) {
+            originalPlacement.forEach(({ register, rows }) => rows.forEach(r => register.appendChild(r)));
+        } else {
+            const groups = new Map();
+            originalPlacement.flatMap(p => p.rows).forEach(row => {
+                const key = row.dataset.client;
+                if (!groups.has(key)) groups.set(key, { name: row.dataset.clientName, rows: [] });
+                groups.get(key).rows.push(row);
+            });
+            const dueKey = r => r.dataset.due || '9999-12-31';
+            const ordered = Array.from(groups.values());
+            // Soonest-due first, both between clients and between a client's own engagements.
+            ordered.forEach(g => g.rows.sort((a, b) => dueKey(a).localeCompare(dueKey(b)) || a.dataset.id.localeCompare(b.dataset.id)));
+            ordered.sort((a, b) => dueKey(a.rows[0]).localeCompare(dueKey(b.rows[0])) || a.name.localeCompare(b.name));
+
+            clientGroupsEl = document.createElement('div');
+            clientGroupsEl.id = 'clientGroups';
+            ordered.forEach(g => {
+                const label = document.createElement('div');
+                label.className = 'section-label client-group-label';
+                const swatch = document.createElement('span');
+                swatch.className = 'swatch';
+                swatch.style.background = 'var(--ink)';
+                const count = document.createElement('span');
+                count.className = 'n';
+                count.textContent = `(${g.rows.length})`;
+                label.append(swatch, document.createTextNode(g.name + ' '), count);
+                const register = document.createElement('div');
+                register.className = 'register';
+                g.rows.forEach(r => register.appendChild(r));
+                clientGroupsEl.append(label, register);
+            });
+            document.querySelector('.list-head')?.insertAdjacentElement('afterend', clientGroupsEl);
+        }
+        applyFilters();
+    }
+    if (groupBtn && !document.querySelector('.reg-row')) groupBtn.style.display = 'none';
+    groupBtn?.addEventListener('click', () => {
+        const on = !document.body.classList.contains('group-by-client');
+        try { localStorage.setItem('groupByClient', on ? '1' : '0'); } catch (e) {}
+        applyGrouping(on);
+    });
+    let startGrouped = false;
+    try { startGrouped = localStorage.getItem('groupByClient') === '1'; } catch (e) {}
+    if (startGrouped && document.querySelector('.reg-row')) applyGrouping(true);
+    else applyFilters();
 
     // New Engagement Wizard
     (function() {
@@ -2267,7 +2355,12 @@ if (!empty($_SESSION['name'])) {
         function renderReview() {
             const name = document.getElementById('new_eng_name').value.trim() || '\u2014';
             const status = getSegmentedValue('new_eng_status_segment') || 'planning';
-            const types = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value).join(', ') || 'None selected';
+            const pickedTypes = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value);
+            // One engagement per audit type, so say so here: this is the last
+            // chance to see that picking three types makes three lines.
+            const types = pickedTypes.length > 1
+                ? `${pickedTypes.length} engagements: ${pickedTypes.join(', ')}`
+                : (pickedTypes[0] || 'None selected');
             const tsc = document.getElementById('new_eng_tsc').value.trim() || '\u2014';
             const managerLabel = selectedManager ? selectedManager.emp_name : 'Unassigned';
             const teamLabel = wizardTeamMembers.length
@@ -2280,6 +2373,7 @@ if (!empty($_SESSION['name'])) {
                 <div class="eng-review-row"><dt>Status</dt><dd>${escapeHtml(STATUS_LABELS[status] || status)}</dd></div>
                 <div class="eng-review-row"><dt>Audit Types</dt><dd>${escapeHtml(types)}</dd></div>
                 <div class="eng-review-row"><dt>TSC</dt><dd>${escapeHtml(tsc)}</dd></div>
+                ${pickedTypes.length > 1 ? '<div class="eng-review-row"><dt>Note</dt><dd>Manager, team and hours are added to each engagement &mdash; adjust per engagement afterward</dd></div>' : ''}
             `;
         }
 
@@ -2319,23 +2413,45 @@ if (!empty($_SESSION['name'])) {
             if (!engName) { goToStep(1); return; }
             nextBtn.disabled = true;
             backBtn.disabled = true;
-            nextBtn.textContent = 'Creating\u2026';
-            const selectedAuditTypes = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value).join(', ');
-            const newEngagementData = {
+            nextBtn.textContent = 'Creating…';
+
+            // One engagement per audit type picked — SOC 1, SOC 2 and PCI are
+            // each their own line (own timeline, team/DOL, due date), and the
+            // client is just the name they share. Nothing picked still makes
+            // one engagement with no type, same as before.
+            const pickedTypes = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value);
+            const typesToCreate = pickedTypes.length ? pickedTypes : [null];
+
+            const shared = {
                 eng_name: engName,
                 eng_location: document.getElementById('new_eng_location').value || null,
                 eng_poc: document.getElementById('new_eng_poc').value || null,
                 eng_status: getSegmentedValue('new_eng_status_segment') || 'planning',
-                eng_tsc: document.getElementById('new_eng_tsc').value || null,
-                eng_audit_type: selectedAuditTypes || null,
-                eng_soc_type: getSegmentedValue('new_soc_type_segment'),
                 eng_scope: document.getElementById('new_eng_scope').value || null,
+                eng_repeat: document.getElementById('new_eng_repeat').checked ? 'Y' : 'N'
+            };
+            const socFields = {
+                eng_soc_type: getSegmentedValue('new_soc_type_segment'),
                 eng_as_of_date: document.getElementById('new_soc_as_of_date').value || null,
                 eng_start_period: document.getElementById('new_soc_start_period').value || null,
-                eng_end_period: document.getElementById('new_soc_end_period').value || null,
-                eng_repeat: document.getElementById('new_eng_repeat').checked ? 'Y' : 'N',
-                eng_notes: document.getElementById('new_eng_notes').value || null
+                eng_end_period: document.getElementById('new_soc_end_period').value || null
             };
+            const noSocFields = { eng_soc_type: null, eng_as_of_date: null, eng_start_period: null, eng_end_period: null };
+            const tscValue = document.getElementById('new_eng_tsc').value || null;
+            const notesValue = document.getElementById('new_eng_notes').value || null;
+
+            // SOC type/period dates belong to the SOC engagements only, the TSC
+            // to SOC 2 only, and the free-text notes go on the first
+            // engagement so they aren't duplicated N times.
+            function payloadFor(type, index) {
+                const noType = type === null;
+                const isSoc = type === 'SOC 1' || type === 'SOC 2';
+                return Object.assign({}, shared, (noType || isSoc) ? socFields : noSocFields, {
+                    eng_audit_type: type,
+                    eng_tsc: (noType || type === 'SOC 2') ? tscValue : null,
+                    eng_notes: index === 0 ? notesValue : null
+                });
+            }
 
             function resetSubmitButton() {
                 nextBtn.disabled = false;
@@ -2343,76 +2459,110 @@ if (!empty($_SESSION['name'])) {
                 nextBtn.textContent = 'Create Engagement';
             }
 
+            function createOne(payload) {
+                return fetch('../api/create-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => response.text())
+                .then(text => {
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (parseError) {
+                        if (text.includes('"success":true')) {
+                            data = { success: true };
+                        } else {
+                            throw new Error('Invalid response from server: ' + text.substring(0, 200));
+                        }
+                    }
+                    if (!data.success) throw new Error(data.message || 'Failed to create engagement');
+                    return data.engagement_id || null;
+                });
+            }
+
             // Manager + team assignment happen as a second batch of calls,
-            // chained after the engagement actually exists — engagement_team
+            // chained after the engagements actually exist — engagement_team
             // rows are keyed by engagement_idno, which only exists once
             // create-engagement.php returns it. If any of these secondary
-            // calls fail, the engagement itself was still created
+            // calls fail, the engagements themselves were still created
             // successfully, so this reloads either way rather than
             // stranding the user on an error for what's ultimately a
             // convenience step (they can always add people from the Team
-            // card afterward).
-            function addPersonToTeam(engagementIdno, empName, role, isNew, hours) {
-                const addMember = () => fetch('../api/add-team-member.php', {
+            // card afterward). The same manager/team (hours included) goes
+            // on every engagement created — adjust per engagement afterward.
+            function addMemberToEngagement(engagementIdno, empName, role, hours) {
+                return fetch('../api/add-team-member.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ engagement_idno: engagementIdno, emp_name: empName, role, budgeted_hours: hours })
                 });
-                if (isNew) {
-                    return fetch('../api/add-employee.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ emp_name: empName, emp_role: role })
-                    }).then(addMember);
-                }
-                return addMember();
             }
 
-            function assignTeamThenReload(engagementIdno) {
-                const tasks = [];
+            function assignTeamThenReload(engagementIdnos) {
+                const people = [];
                 if (selectedManager) {
-                    tasks.push(addPersonToTeam(engagementIdno, selectedManager.emp_name, 'manager', selectedManager.isNew, null));
+                    people.push({ emp_name: selectedManager.emp_name, role: 'manager', isNew: selectedManager.isNew, hours: null });
                 }
                 wizardTeamMembers.forEach(m => {
-                    tasks.push(addPersonToTeam(engagementIdno, m.emp_name, m.role, m.isNew, m.hours));
+                    people.push({ emp_name: m.emp_name, role: m.role, isNew: m.isNew, hours: m.hours });
                 });
-                Promise.allSettled(tasks).finally(() => location.reload());
+                // Roster entries for brand-new names are created once up
+                // front, not once per engagement: add-employee.php is
+                // idempotent, but parallel calls for the same new name could
+                // still race past its existence check and double-insert.
+                const seen = new Set();
+                const rosterTasks = people
+                    .filter(p => p.isNew && !seen.has(p.emp_name.toLowerCase()) && seen.add(p.emp_name.toLowerCase()))
+                    .map(p => fetch('../api/add-employee.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ emp_name: p.emp_name, emp_role: p.role })
+                    }));
+                Promise.allSettled(rosterTasks)
+                    .then(() => {
+                        const tasks = [];
+                        engagementIdnos.forEach(idno => {
+                            people.forEach(p => tasks.push(addMemberToEngagement(idno, p.emp_name, p.role, p.hours)));
+                        });
+                        return Promise.allSettled(tasks);
+                    })
+                    .finally(() => location.reload());
             }
 
-            fetch('../api/create-engagement.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newEngagementData)
-            })
-            .then(response => response.text())
-            .then(text => {
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (parseError) {
-                    if (text.includes('"success":true')) {
-                        data = { success: true };
-                    } else {
-                        resetSubmitButton();
-                        Swal.fire('Error', 'Invalid response from server: ' + text.substring(0, 200), 'error');
-                        return;
-                    }
-                }
-                if (!data.success) {
-                    resetSubmitButton();
-                    Swal.fire('Error', data.message || 'Failed to create engagement', 'error');
-                    return;
-                }
-                sessionStorage.setItem('showEngagementCreatedToast', 'true');
-                if ((selectedManager || wizardTeamMembers.length) && data.engagement_id) {
-                    assignTeamThenReload(data.engagement_id);
+            // One at a time, not in parallel: eng_idno comes from a
+            // MAX()+1 trigger with no locking, so concurrent inserts could
+            // collide on the unique key.
+            const createdIds = [];
+            let chain = Promise.resolve();
+            typesToCreate.forEach((type, index) => {
+                chain = chain
+                    .then(() => createOne(payloadFor(type, index)))
+                    .then(id => { createdIds.push(id); });
+            });
+
+            chain.then(() => {
+                sessionStorage.setItem('showEngagementCreatedToast', String(createdIds.length));
+                const realIds = createdIds.filter(Boolean);
+                if ((selectedManager || wizardTeamMembers.length) && realIds.length) {
+                    assignTeamThenReload(realIds);
                 } else {
                     location.reload();
                 }
             })
             .catch(error => {
-                resetSubmitButton();
-                Swal.fire('Error', 'Failed to create engagement: ' + error.message, 'error');
+                if (createdIds.length) {
+                    // Earlier ones in the batch already exist — don't leave the
+                    // user staring at a form that would create them twice.
+                    sessionStorage.setItem('showEngagementCreatedToast', String(createdIds.length));
+                    Swal.fire('Partly created',
+                        `${createdIds.length} of ${typesToCreate.length} engagements were created before this failed: ${error.message}. Reloading to show what exists; add the rest from New Engagement.`,
+                        'warning').then(() => location.reload());
+                } else {
+                    resetSubmitButton();
+                    Swal.fire('Error', 'Failed to create engagement: ' + error.message, 'error');
+                }
             });
         }
 
