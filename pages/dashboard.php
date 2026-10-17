@@ -417,6 +417,8 @@ if (!empty($_SESSION['name'])) {
         .eng-assign { display: inline-flex; align-items: center; gap: 0.4rem; }
         .eng-assign-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border: 1px solid var(--line); border-radius: 20px; font-size: 11.5px; font-weight: 700; color: var(--text-muted); background: var(--card); cursor: pointer; user-select: none; }
         .eng-assign-chip input { display: none; }
+        .eng-assign-chip:not(.on) { border-style: dashed; background: transparent; }
+        .eng-assign-chip i { font-size: 10px; }
         .eng-assign-chip.on { background: color-mix(in srgb, var(--ink) 12%, transparent); border-color: color-mix(in srgb, var(--ink) 40%, transparent); color: var(--ink); }
         .eng-assign .hours-input { width: 54px; }
         .eng-team-unassigned { font-size: 11px; color: var(--caution); font-weight: 600; padding-left: 38px; }
@@ -1533,7 +1535,7 @@ if (!empty($_SESSION['name'])) {
                         <input type="text" id="new_eng_team_search" class="eng-input" placeholder="Search employees&hellip;" autocomplete="off">
                         <div class="team2-ac-list" id="new_eng_team_ac_list" style="display:none;"></div>
                     </div>
-                    <div class="eng-field-hint">The Manager from Step 1 is on every engagement. Add Senior/Staff/Intern here and pick which engagements each one is on, with budgeted hours for each. Optional; you can always add people later from the Team card.</div>
+                    <div class="eng-field-hint">The Manager from Step 1 is on every engagement. Add Senior/Staff/Intern here and tick the engagements each one is on (a ticked engagement gets an hours box; leave it blank if they're on it but nothing's budgeted yet). Optional; you can always add people later from the Team card.</div>
                 </div>
                 <div id="new_eng_team_list"></div>
             </div>
@@ -2263,7 +2265,7 @@ if (!empty($_SESSION['name'])) {
                     return `
                         <div class="eng-team-row">
                             ${top}
-                            <input type="number" class="hours-input" min="0" step="0.5" value="${memberHours(m, types[0]) ?? ''}" placeholder="0" data-index="${i}" data-type="${escAttr(types[0])}" title="Budgeted hours">
+                            <input type="number" class="hours-input" min="0" step="0.5" value="${memberHours(m, types[0]) ?? ''}" placeholder="&mdash;" data-index="${i}" data-type="${escAttr(types[0])}" title="Budgeted hours (leave blank if not budgeted yet)">
                             <span class="hours-suffix">hrs</span>
                             ${remove}
                         </div>`;
@@ -2272,8 +2274,8 @@ if (!empty($_SESSION['name'])) {
                     const on = memberOn(m, t);
                     return `
                         <span class="eng-assign">
-                            <label class="eng-assign-chip ${on ? 'on' : ''}"><input type="checkbox" class="assign-check" data-index="${i}" data-type="${escAttr(t)}" ${on ? 'checked' : ''}>${escapeHtml(t)}</label>
-                            ${on ? `<input type="number" class="hours-input" min="0" step="0.5" value="${memberHours(m, t) ?? ''}" placeholder="0" data-index="${i}" data-type="${escAttr(t)}" title="Budgeted hours on ${escAttr(t)}"><span class="hours-suffix">hrs</span>` : ''}
+                            <label class="eng-assign-chip ${on ? 'on' : ''}" title="${on ? 'On this engagement — click to take them off' : 'Not on this engagement — click to add them'}"><input type="checkbox" class="assign-check" data-index="${i}" data-type="${escAttr(t)}" ${on ? 'checked' : ''}><i class="bi bi-${on ? 'check-lg' : 'plus-lg'}"></i>${escapeHtml(t)}</label>
+                            ${on ? `<input type="number" class="hours-input" min="0" step="0.5" value="${memberHours(m, t) ?? ''}" placeholder="&mdash;" data-index="${i}" data-type="${escAttr(t)}" title="Budgeted hours on ${escAttr(t)} (leave blank if not budgeted yet)"><span class="hours-suffix">hrs</span>` : ''}
                         </span>`;
                 }).join('');
                 const none = types.every(t => !memberOn(m, t));
