@@ -371,6 +371,22 @@ if (!empty($_SESSION['name'])) {
 
         .eng-wizard-body { overflow-y: auto; padding: 1.4rem; flex: 1; }
         .eng-wizard-panel { display: none; }
+        /* "Onboard Client" result screen */
+        .onboard-done-head { text-align: center; padding: 0.2rem 0 1.1rem; }
+        .onboard-done-head i { font-size: 30px; color: var(--good); }
+        .onboard-done-head h4 { margin: 0.5rem 0 0.15rem; font-size: 17px; font-weight: 700; }
+        .onboard-done-head p { margin: 0; font-size: 12.5px; color: var(--text-muted); }
+        .onboard-list { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+        .onboard-item { display: flex; align-items: center; gap: 0.8rem; padding: 0.7rem 0.9rem; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+        .onboard-item:last-child { border-bottom: none; }
+        .onboard-id { font-size: 11.5px; color: var(--text-muted); }
+        .onboard-status { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-muted); border: 1px solid var(--line); padding: 1px 6px; border-radius: 4px; }
+        .onboard-open { margin-left: auto; background: none; border: none; padding: 0; font-size: 12px; font-weight: 700; color: var(--ink); cursor: pointer; font-family: inherit; display: inline-flex; align-items: center; gap: 4px; }
+        .onboard-open:hover { text-decoration: underline; }
+        .onboard-team { margin-top: 0.9rem; font-size: 12.5px; color: var(--text-muted); }
+        .onboard-team b { color: var(--text); font-weight: 600; }
+        .onboard-note { margin-top: 0.9rem; font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+        .onboard-warn { background: color-mix(in srgb, var(--caution) 12%, transparent); border: 1px solid color-mix(in srgb, var(--caution) 32%, transparent); border-radius: 8px; padding: 0.6rem 0.8rem; font-size: 12.5px; margin-top: 0.9rem; }
         .eng-wizard-panel.active { display: block; }
 
         .eng-field { margin-bottom: 1.15rem; }
@@ -1204,7 +1220,7 @@ if (!empty($_SESSION['name'])) {
             </div>
             <?php if (!$showArchived): ?>
             <button class="btn-new-engagement">
-                <i class="bi bi-plus"></i> New Engagement
+                <i class="bi bi-plus"></i> Onboard Client
             </button>
             <?php endif; ?>
         </div>
@@ -1260,7 +1276,7 @@ if (!empty($_SESSION['name'])) {
     </div>
 
     <?php if (empty($engagements)): ?>
-        <div class="empty-state" id="emptyState"><?php echo $showArchived ? 'No archived engagements yet.' : 'No engagements found. Create one to get started.'; ?></div>
+        <div class="empty-state" id="emptyState"><?php echo $showArchived ? 'No archived engagements yet.' : 'No engagements found. Onboard a client to get started.'; ?></div>
     <?php else: ?>
         <div class="list-head">
             <span class="lh-tick"></span>
@@ -1393,7 +1409,7 @@ if (!empty($_SESSION['name'])) {
     <div class="eng-wizard">
         <div class="eng-wizard-header">
             <div class="eng-wizard-header-top">
-                <h3>Create New Engagement</h3>
+                <h3 id="engWizardTitle">Onboard Client</h3>
                 <button class="eng-wizard-close" id="engWizardClose" aria-label="Close">&times;</button>
             </div>
             <div class="eng-wizard-steps">
@@ -1466,7 +1482,7 @@ if (!empty($_SESSION['name'])) {
             <!-- Step 3: Audit Scope -->
             <div class="eng-wizard-panel" data-panel="3">
                 <div class="eng-field">
-                    <label>Audit Types (select all that apply)</label>
+                    <label>Audit Types (each one you tick becomes its own engagement)</label>
                     <div class="eng-chip-grid">
                         <label class="eng-chip"><input type="checkbox" class="new-audit-type-checkbox" value="SOC 1"> SOC 1</label>
                         <label class="eng-chip"><input type="checkbox" class="new-audit-type-checkbox" value="SOC 2"> SOC 2</label>
@@ -1530,6 +1546,11 @@ if (!empty($_SESSION['name'])) {
                     <label>Notes</label>
                     <textarea id="new_eng_notes" class="eng-textarea" placeholder="Enter notes" style="min-height: 100px;"></textarea>
                 </div>
+            </div>
+
+            <!-- After submit: what was created -->
+            <div class="eng-wizard-panel" data-panel="done">
+                <div id="engOnboardSummary"></div>
             </div>
         </div>
 
@@ -1670,11 +1691,8 @@ if (!empty($_SESSION['name'])) {
 
     // Toast flags set before a reload
     if (sessionStorage.getItem('showEngagementCreatedToast')) {
-        // Value is how many engagements the wizard created (one per audit
-        // type picked); 'true' is the pre-split value, still treated as one.
-        const createdCount = parseInt(sessionStorage.getItem('showEngagementCreatedToast'), 10) || 1;
         sessionStorage.removeItem('showEngagementCreatedToast');
-        showToast(createdCount > 1 ? `${createdCount} engagements created successfully` : 'Engagement created successfully');
+        showToast('Engagement created successfully');
     }
     if (sessionStorage.getItem('showDeletedToast')) {
         sessionStorage.removeItem('showDeletedToast');
@@ -1976,7 +1994,7 @@ if (!empty($_SESSION['name'])) {
     });
     applyFilters();
 
-    // New Engagement Wizard
+    // Onboard Client wizard (one engagement is created per audit type ticked)
     (function() {
         const scrim = document.getElementById('engWizardScrim');
         const closeBtn = document.getElementById('engWizardClose');
@@ -1985,7 +2003,8 @@ if (!empty($_SESSION['name'])) {
         const nextBtn = document.getElementById('engWizardNext');
         const stepButtons = Array.from(document.querySelectorAll('.eng-wizard-step'));
         const panels = Array.from(document.querySelectorAll('.eng-wizard-panel'));
-        const TOTAL_STEPS = panels.length;
+        // Only the numbered steps — the post-submit "done" summary panel isn't one.
+        const TOTAL_STEPS = panels.filter(p => p.dataset.panel !== 'done').length;
         const STATUS_LABELS = { planning: 'Planning', 'in-progress': 'In Progress', 'in-review': 'In Review', complete: 'Complete' };
         let currentStep = 1;
         let maxReached = 1;
@@ -2239,18 +2258,73 @@ if (!empty($_SESSION['name'])) {
             wizardTeamMembers = [];
             renderWizardTeamList();
             nextBtn.disabled = false;
+            // undo the post-submit summary screen
+            wizardDone = false;
+            document.getElementById('engWizardTitle').textContent = 'Onboard Client';
+            document.querySelector('.eng-wizard-steps').style.display = '';
+            document.getElementById('engOnboardSummary').innerHTML = '';
+            cancelBtn.style.display = '';
+            backBtn.disabled = false;
             goToStep(1);
             maxReached = 1;
             stepButtons.forEach(b => b.classList.remove('clickable'));
         }
 
+        // After "Onboard Client" succeeds the wizard turns into a summary of
+        // what was created; closing it from there reloads so the list shows it.
+        let wizardDone = false;
         function openWizard() {
             resetWizard();
             scrim.classList.add('open');
             setTimeout(() => document.getElementById('new_eng_name').focus(), 0);
         }
         function closeWizard() {
+            if (wizardDone) { location.reload(); return; }
             scrim.classList.remove('open');
+        }
+
+        function showOnboardSummary({ clientName, created, requested, team, errorMessage }) {
+            wizardDone = true;
+            const statusLabel = STATUS_LABELS[getSegmentedValue('new_eng_status_segment') || 'planning'] || 'Planning';
+            document.getElementById('engWizardTitle').textContent = errorMessage ? 'Client partly onboarded' : 'Client onboarded';
+            document.querySelector('.eng-wizard-steps').style.display = 'none';
+            panels.forEach(p => p.classList.toggle('active', p.dataset.panel === 'done'));
+
+            const items = created.map(c => `
+                <div class="onboard-item">
+                    <span class="type-badge">${escapeHtml(c.type || 'No audit type')}</span>
+                    <span class="onboard-id mono">${escapeHtml(c.id || 'ID pending')}</span>
+                    <span class="onboard-status">${escapeHtml(statusLabel)}</span>
+                    ${c.id ? `<button type="button" class="onboard-open" data-id="${escAttr(c.id)}">Open <i class="bi bi-arrow-right"></i></button>` : ''}
+                </div>
+            `).join('');
+            const people = [];
+            if (selectedManager) people.push(`${selectedManager.emp_name} (Manager)`);
+            wizardTeamMembers.forEach(m => people.push(`${m.emp_name} (${ROLE_LABELS[m.role] || m.role})`));
+
+            document.getElementById('engOnboardSummary').innerHTML = `
+                <div class="onboard-done-head">
+                    <i class="bi bi-${errorMessage ? 'exclamation-triangle-fill' : 'check-circle-fill'}" ${errorMessage ? 'style="color:var(--caution)"' : ''}></i>
+                    <h4>${escapeHtml(clientName)}</h4>
+                    <p>${created.length} ${created.length === 1 ? 'engagement' : 'engagements'} created</p>
+                </div>
+                <div class="onboard-list">${items}</div>
+                <div class="onboard-team"><b>Team on each engagement:</b> ${escapeHtml(people.length ? people.join(', ') : 'no one added yet')}</div>
+                ${errorMessage ? `<div class="onboard-warn">Stopped early: ${escapeHtml(errorMessage)}. Only ${created.length} of ${requested} engagements got created. Run Onboard Client again with the remaining audit types and the same client name.</div>` : ''}
+                ${team.failed ? `<div class="onboard-warn">${team.failed} of ${team.total} team assignments didn't save. Add them from each engagement's Team card.</div>` : ''}
+                ${created.length ? '<div class="onboard-note">Each engagement is tracked on its own, so add its planning doc and timeline from its own drawer.</div>' : ''}
+            `;
+            document.querySelectorAll('#engOnboardSummary .onboard-open').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    reopenDrawerAfterReload(btn.dataset.id);
+                    location.reload();
+                });
+            });
+
+            backBtn.style.visibility = 'hidden';
+            cancelBtn.style.display = 'none';
+            nextBtn.disabled = false;
+            nextBtn.textContent = 'Done';
         }
 
         function goToStep(step) {
@@ -2264,7 +2338,7 @@ if (!empty($_SESSION['name'])) {
                 b.classList.toggle('clickable', s <= maxReached);
             });
             backBtn.style.visibility = step === 1 ? 'hidden' : 'visible';
-            nextBtn.textContent = step === TOTAL_STEPS ? 'Create Engagement' : 'Next';
+            nextBtn.textContent = step === TOTAL_STEPS ? 'Onboard Client' : 'Next';
             if (step === TOTAL_STEPS) renderReview();
         }
 
@@ -2308,6 +2382,7 @@ if (!empty($_SESSION['name'])) {
         });
 
         nextBtn.addEventListener('click', () => {
+            if (wizardDone) { location.reload(); return; }
             if (currentStep === 1) {
                 const nameField = document.getElementById('new_eng_name');
                 if (!nameField.value.trim()) {
@@ -2329,7 +2404,7 @@ if (!empty($_SESSION['name'])) {
             if (!engName) { goToStep(1); return; }
             nextBtn.disabled = true;
             backBtn.disabled = true;
-            nextBtn.textContent = 'Creating\u2026';
+            nextBtn.textContent = 'Onboarding\u2026';
 
             // One engagement per audit type picked — SOC 1, SOC 2 and PCI are
             // each their own line (own timeline, team/DOL, due date), and the
@@ -2372,7 +2447,7 @@ if (!empty($_SESSION['name'])) {
             function resetSubmitButton() {
                 nextBtn.disabled = false;
                 backBtn.disabled = false;
-                nextBtn.textContent = 'Create Engagement';
+                nextBtn.textContent = 'Onboard Client';
             }
 
             function createOne(payload) {
@@ -2403,11 +2478,12 @@ if (!empty($_SESSION['name'])) {
             // rows are keyed by engagement_idno, which only exists once
             // create-engagement.php returns it. If any of these secondary
             // calls fail, the engagements themselves were still created
-            // successfully, so this reloads either way rather than
-            // stranding the user on an error for what's ultimately a
-            // convenience step (they can always add people from the Team
-            // card afterward). The same manager/team (hours included) goes
-            // on every engagement created — adjust per engagement afterward.
+            // successfully, so the summary just reports how many assignments
+            // didn't save rather than failing the whole onboarding over what's
+            // ultimately a convenience step (they can always add people from
+            // the Team card afterward). The same manager/team (hours
+            // included) goes on every engagement created — adjust per
+            // engagement afterward.
             function addMemberToEngagement(engagementIdno, empName, role, hours) {
                 return fetch('../api/add-team-member.php', {
                     method: 'POST',
@@ -2416,7 +2492,8 @@ if (!empty($_SESSION['name'])) {
                 });
             }
 
-            function assignTeamThenReload(engagementIdnos) {
+            // Resolves to { total, failed } assignment counts.
+            function assignTeam(engagementIdnos) {
                 const people = [];
                 if (selectedManager) {
                     people.push({ emp_name: selectedManager.emp_name, role: 'manager', isNew: selectedManager.isNew, hours: null });
@@ -2436,49 +2513,46 @@ if (!empty($_SESSION['name'])) {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ emp_name: p.emp_name, emp_role: p.role })
                     }));
-                Promise.allSettled(rosterTasks)
+                return Promise.allSettled(rosterTasks)
                     .then(() => {
                         const tasks = [];
                         engagementIdnos.forEach(idno => {
-                            people.forEach(p => tasks.push(addMemberToEngagement(idno, p.emp_name, p.role, p.hours)));
+                            people.forEach(p => tasks.push(addMemberToEngagement(idno, p.emp_name, p.role, p.hours).then(r => r.ok)));
                         });
                         return Promise.allSettled(tasks);
                     })
-                    .finally(() => location.reload());
+                    .then(results => ({
+                        total: results.length,
+                        failed: results.filter(r => r.status !== 'fulfilled' || r.value === false).length
+                    }));
             }
 
             // One at a time, not in parallel: eng_idno comes from a
             // MAX()+1 trigger with no locking, so concurrent inserts could
             // collide on the unique key.
-            const createdIds = [];
+            const created = []; // { id, type } in creation order
             let chain = Promise.resolve();
             typesToCreate.forEach((type, index) => {
                 chain = chain
                     .then(() => createOne(payloadFor(type, index)))
-                    .then(id => { createdIds.push(id); });
+                    .then(id => { created.push({ id, type }); });
             });
 
-            chain.then(() => {
-                sessionStorage.setItem('showEngagementCreatedToast', String(createdIds.length));
-                const realIds = createdIds.filter(Boolean);
-                if ((selectedManager || wizardTeamMembers.length) && realIds.length) {
-                    assignTeamThenReload(realIds);
-                } else {
-                    location.reload();
-                }
-            })
-            .catch(error => {
-                if (createdIds.length) {
-                    // Earlier ones in the batch already exist — don't leave the
-                    // user staring at a form that would create them twice.
-                    sessionStorage.setItem('showEngagementCreatedToast', String(createdIds.length));
-                    Swal.fire('Partly created',
-                        `${createdIds.length} of ${typesToCreate.length} engagements were created before this failed: ${error.message}. Reloading to show what exists; add the rest from New Engagement.`,
-                        'warning').then(() => location.reload());
-                } else {
+            chain.then(() => null, error => error.message || 'Unknown error').then(errorMessage => {
+                if (errorMessage && !created.length) {
                     resetSubmitButton();
-                    Swal.fire('Error', 'Failed to create engagement: ' + error.message, 'error');
+                    Swal.fire('Error', 'Failed to onboard client: ' + errorMessage, 'error');
+                    return;
                 }
+                // Whatever got created is kept and reported (a mid-batch
+                // failure must not leave a form that would create the earlier
+                // ones twice if retried).
+                const realIds = created.map(c => c.id).filter(Boolean);
+                const hasPeople = selectedManager || wizardTeamMembers.length;
+                const teamStep = (hasPeople && realIds.length) ? assignTeam(realIds) : Promise.resolve({ total: 0, failed: 0 });
+                teamStep.then(team => showOnboardSummary({
+                    clientName: engName, created, requested: typesToCreate.length, team, errorMessage
+                }));
             });
         }
 
