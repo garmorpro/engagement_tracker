@@ -410,6 +410,18 @@ if (!empty($_SESSION['name'])) {
         .eng-team-row .hours-suffix { font-size: 11px; color: var(--text-muted); font-weight: 600; flex-shrink: 0; }
         .eng-team-row .remove-btn { border: none; background: transparent; color: var(--text-muted); cursor: pointer; font-size: 16px; padding: 0 2px; line-height: 1; flex-shrink: 0; }
         .eng-team-row .remove-btn:hover { color: var(--critical); }
+        /* A team member on a multi-engagement onboarding: which engagements they're on, hours for each */
+        .eng-team-row.multi { flex-direction: column; align-items: stretch; gap: 0.55rem; }
+        .eng-team-row-top { display: flex; align-items: center; gap: 0.65rem; }
+        .eng-team-assign { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem 1rem; padding-left: 38px; }
+        .eng-assign { display: inline-flex; align-items: center; gap: 0.4rem; }
+        .eng-assign-chip { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border: 1px solid var(--line); border-radius: 20px; font-size: 11.5px; font-weight: 700; color: var(--text-muted); background: var(--card); cursor: pointer; user-select: none; }
+        .eng-assign-chip input { display: none; }
+        .eng-assign-chip.on { background: color-mix(in srgb, var(--ink) 12%, transparent); border-color: color-mix(in srgb, var(--ink) 40%, transparent); color: var(--ink); }
+        .eng-assign .hours-input { width: 54px; }
+        .eng-team-unassigned { font-size: 11px; color: var(--caution); font-weight: 600; padding-left: 38px; }
+        .onboard-item { flex-wrap: wrap; }
+        .onboard-item-team { flex: 0 0 100%; font-size: 11.5px; color: var(--text-muted); }
 
         .eng-segmented { display: flex; background: var(--paper); border-radius: 8px; padding: 3px; gap: 2px; border: 1px solid var(--line); }
         .eng-segmented button { flex: 1; border: none; background: transparent; padding: 8px 6px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; }
@@ -1419,11 +1431,11 @@ if (!empty($_SESSION['name'])) {
                 </button>
                 <button type="button" class="eng-wizard-step" data-step="2">
                     <div class="eng-wizard-step-bar"></div>
-                    <div class="eng-wizard-step-label">2. Team</div>
+                    <div class="eng-wizard-step-label">2. Audit Scope</div>
                 </button>
                 <button type="button" class="eng-wizard-step" data-step="3">
                     <div class="eng-wizard-step-bar"></div>
-                    <div class="eng-wizard-step-label">3. Audit Scope</div>
+                    <div class="eng-wizard-step-label">3. Team</div>
                 </button>
                 <button type="button" class="eng-wizard-step" data-step="4">
                     <div class="eng-wizard-step-bar"></div>
@@ -1466,21 +1478,8 @@ if (!empty($_SESSION['name'])) {
                 </div>
             </div>
 
-            <!-- Step 2: Team -->
+            <!-- Step 2: Audit Scope -->
             <div class="eng-wizard-panel" data-panel="2">
-                <div class="eng-field">
-                    <label>Add Team Members</label>
-                    <div class="team2-ac-wrap">
-                        <input type="text" id="new_eng_team_search" class="eng-input" placeholder="Search employees&hellip;" autocomplete="off">
-                        <div class="team2-ac-list" id="new_eng_team_ac_list" style="display:none;"></div>
-                    </div>
-                    <div class="eng-field-hint">Manager is set in Step 1 &mdash; add Senior/Staff/Intern here, with budgeted hours for each. Optional; you can always add people later from the Team card.</div>
-                </div>
-                <div id="new_eng_team_list"></div>
-            </div>
-
-            <!-- Step 3: Audit Scope -->
-            <div class="eng-wizard-panel" data-panel="3">
                 <div class="eng-field">
                     <label>Audit Types (each one you tick becomes its own engagement)</label>
                     <div class="eng-chip-grid">
@@ -1524,6 +1523,19 @@ if (!empty($_SESSION['name'])) {
                     <label>Scope</label>
                     <textarea id="new_eng_scope" class="eng-textarea" placeholder="Enter scope"></textarea>
                 </div>
+            </div>
+
+            <!-- Step 3: Team -->
+            <div class="eng-wizard-panel" data-panel="3">
+                <div class="eng-field">
+                    <label>Add Team Members</label>
+                    <div class="team2-ac-wrap">
+                        <input type="text" id="new_eng_team_search" class="eng-input" placeholder="Search employees&hellip;" autocomplete="off">
+                        <div class="team2-ac-list" id="new_eng_team_ac_list" style="display:none;"></div>
+                    </div>
+                    <div class="eng-field-hint">The Manager from Step 1 is on every engagement. Add Senior/Staff/Intern here and pick which engagements each one is on, with budgeted hours for each. Optional; you can always add people later from the Team card.</div>
+                </div>
+                <div id="new_eng_team_list"></div>
             </div>
 
             <!-- Step 4: Review & Notes -->
@@ -2201,8 +2213,31 @@ if (!empty($_SESSION['name'])) {
         }
         wireTeamSearch();
 
+        // Each audit type ticked becomes its own engagement, so a team member
+        // is assigned per engagement: `off` lists the types they are NOT on
+        // (everyone starts on all of them, including types ticked later), and
+        // `hours` is budgeted hours keyed by type. NO_TYPE stands in for the
+        // single type-less engagement when nothing was ticked.
+        const NO_TYPE = '__none__';
+        function wizardTypes() {
+            const t = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value);
+            return t.length ? t : [NO_TYPE];
+        }
+        function memberOn(m, typeKey) { return !m.off.includes(typeKey); }
+        function memberHours(m, typeKey) { const v = m.hours[typeKey]; return (v === undefined || v === '') ? null : v; }
+        // "Name (Role, N hrs)" for everyone on the engagement of this type, manager first.
+        function teamPeopleFor(typeKey) {
+            const people = [];
+            if (selectedManager) people.push(`${selectedManager.emp_name} (Manager)`);
+            wizardTeamMembers.filter(m => memberOn(m, typeKey)).forEach(m => {
+                const h = memberHours(m, typeKey);
+                people.push(`${m.emp_name} (${ROLE_LABELS[m.role] || m.role}${h ? ', ' + h + ' hrs' : ''})`);
+            });
+            return people;
+        }
+
         function addWizardTeamMember(empName, role, isNew) {
-            wizardTeamMembers.push({ emp_name: empName, role, isNew, hours: null });
+            wizardTeamMembers.push({ emp_name: empName, role, isNew, off: [], hours: {} });
             renderWizardTeamList();
         }
 
@@ -2210,22 +2245,57 @@ if (!empty($_SESSION['name'])) {
             const el = document.getElementById('new_eng_team_list');
             if (!el) return;
             if (!wizardTeamMembers.length) { el.innerHTML = ''; return; }
-            el.innerHTML = wizardTeamMembers.map((m, i) => `
-                <div class="eng-team-row">
+            const types = wizardTypes();
+            const multi = types.length > 1;
+            // With a single engagement there's nothing to pick between, so the
+            // member is simply on it (clear any stale "off" from an earlier tick).
+            if (!multi) wizardTeamMembers.forEach(m => { m.off = m.off.filter(t => t !== types[0]); });
+
+            el.innerHTML = wizardTeamMembers.map((m, i) => {
+                const top = `
                     <div class="avatar" style="background:${ROLE_COLOR_VAR[m.role] || 'var(--ink)'}">${initials(m.emp_name)}</div>
                     <div class="info">
                         <div class="name">${escapeHtml(m.emp_name)}${m.isNew ? ' <span style="font-weight:400;color:var(--text-muted);">(new)</span>' : ''}</div>
                         <div class="role">${ROLE_LABELS[m.role] || m.role}</div>
-                    </div>
-                    <input type="number" class="hours-input" min="0" step="0.5" value="${m.hours ?? ''}" placeholder="0" data-index="${i}" title="Budgeted hours">
-                    <span class="hours-suffix">hrs</span>
-                    <button type="button" class="remove-btn" data-index="${i}" title="Remove">&times;</button>
-                </div>
-            `).join('');
+                    </div>`;
+                const remove = `<button type="button" class="remove-btn" data-index="${i}" title="Remove">&times;</button>`;
+                if (!multi) {
+                    return `
+                        <div class="eng-team-row">
+                            ${top}
+                            <input type="number" class="hours-input" min="0" step="0.5" value="${memberHours(m, types[0]) ?? ''}" placeholder="0" data-index="${i}" data-type="${escAttr(types[0])}" title="Budgeted hours">
+                            <span class="hours-suffix">hrs</span>
+                            ${remove}
+                        </div>`;
+                }
+                const assign = types.map(t => {
+                    const on = memberOn(m, t);
+                    return `
+                        <span class="eng-assign">
+                            <label class="eng-assign-chip ${on ? 'on' : ''}"><input type="checkbox" class="assign-check" data-index="${i}" data-type="${escAttr(t)}" ${on ? 'checked' : ''}>${escapeHtml(t)}</label>
+                            ${on ? `<input type="number" class="hours-input" min="0" step="0.5" value="${memberHours(m, t) ?? ''}" placeholder="0" data-index="${i}" data-type="${escAttr(t)}" title="Budgeted hours on ${escAttr(t)}"><span class="hours-suffix">hrs</span>` : ''}
+                        </span>`;
+                }).join('');
+                const none = types.every(t => !memberOn(m, t));
+                return `
+                    <div class="eng-team-row multi">
+                        <div class="eng-team-row-top">${top}${remove}</div>
+                        <div class="eng-team-assign">${assign}</div>
+                        ${none ? '<div class="eng-team-unassigned">Not on any engagement yet &mdash; tick at least one, or remove them.</div>' : ''}
+                    </div>`;
+            }).join('');
 
             el.querySelectorAll('.hours-input').forEach(inp => {
                 inp.addEventListener('input', () => {
-                    wizardTeamMembers[Number(inp.dataset.index)].hours = inp.value === '' ? null : inp.value;
+                    wizardTeamMembers[Number(inp.dataset.index)].hours[inp.dataset.type] = inp.value === '' ? '' : inp.value;
+                });
+            });
+            el.querySelectorAll('.assign-check').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const m = wizardTeamMembers[Number(cb.dataset.index)];
+                    m.off = m.off.filter(t => t !== cb.dataset.type);
+                    if (!cb.checked) m.off.push(cb.dataset.type);
+                    renderWizardTeamList();
                 });
             });
             el.querySelectorAll('.remove-btn').forEach(btn => {
@@ -2296,11 +2366,9 @@ if (!empty($_SESSION['name'])) {
                     <span class="onboard-id mono">${escapeHtml(c.id || 'ID pending')}</span>
                     <span class="onboard-status">${escapeHtml(statusLabel)}</span>
                     ${c.id ? `<button type="button" class="onboard-open" data-id="${escAttr(c.id)}">Open <i class="bi bi-arrow-right"></i></button>` : ''}
+                    <div class="onboard-item-team">${escapeHtml(teamPeopleFor(c.type === null ? NO_TYPE : c.type).join(', ') || 'No team yet')}</div>
                 </div>
             `).join('');
-            const people = [];
-            if (selectedManager) people.push(`${selectedManager.emp_name} (Manager)`);
-            wizardTeamMembers.forEach(m => people.push(`${m.emp_name} (${ROLE_LABELS[m.role] || m.role})`));
 
             document.getElementById('engOnboardSummary').innerHTML = `
                 <div class="onboard-done-head">
@@ -2309,7 +2377,6 @@ if (!empty($_SESSION['name'])) {
                     <p>${created.length} ${created.length === 1 ? 'engagement' : 'engagements'} created</p>
                 </div>
                 <div class="onboard-list">${items}</div>
-                <div class="onboard-team"><b>Team on each engagement:</b> ${escapeHtml(people.length ? people.join(', ') : 'no one added yet')}</div>
                 ${errorMessage ? `<div class="onboard-warn">Stopped early: ${escapeHtml(errorMessage)}. Only ${created.length} of ${requested} engagements got created. Run Onboard Client again with the remaining audit types and the same client name.</div>` : ''}
                 ${team.failed ? `<div class="onboard-warn">${team.failed} of ${team.total} team assignments didn't save. Add them from each engagement's Team card.</div>` : ''}
                 ${created.length ? '<div class="onboard-note">Each engagement is tracked on its own, so add its planning doc and timeline from its own drawer.</div>' : ''}
@@ -2339,6 +2406,7 @@ if (!empty($_SESSION['name'])) {
             });
             backBtn.style.visibility = step === 1 ? 'hidden' : 'visible';
             nextBtn.textContent = step === TOTAL_STEPS ? 'Onboard Client' : 'Next';
+            if (step === 3) renderWizardTeamList(); // audit types (step 2) decide which engagements people can be put on
             if (step === TOTAL_STEPS) renderReview();
         }
 
@@ -2353,17 +2421,23 @@ if (!empty($_SESSION['name'])) {
                 : (pickedTypes[0] || 'None selected');
             const tsc = document.getElementById('new_eng_tsc').value.trim() || '\u2014';
             const managerLabel = selectedManager ? selectedManager.emp_name : 'Unassigned';
-            const teamLabel = wizardTeamMembers.length
-                ? wizardTeamMembers.map(m => `${m.emp_name} (${ROLE_LABELS[m.role] || m.role}${m.hours ? ', ' + m.hours + ' hrs' : ''})`).join(', ')
-                : 'None added';
+            // Who's on each engagement (one line per engagement when several are being created).
+            const reviewTypes = wizardTypes();
+            const teamHtml = reviewTypes.map(t => {
+                const names = wizardTeamMembers.filter(m => memberOn(m, t)).map(m => {
+                    const h = memberHours(m, t);
+                    return `${m.emp_name} (${ROLE_LABELS[m.role] || m.role}${h ? ', ' + h + ' hrs' : ''})`;
+                });
+                const text = names.length ? names.map(escapeHtml).join(', ') : 'None added';
+                return reviewTypes.length > 1 ? `<b>${escapeHtml(t)}:</b> ${text}` : text;
+            }).join('<br>');
             document.getElementById('eng_review_summary').innerHTML = `
                 <div class="eng-review-row"><dt>Name</dt><dd>${escapeHtml(name)}</dd></div>
-                <div class="eng-review-row"><dt>Manager</dt><dd>${escapeHtml(managerLabel)}</dd></div>
-                <div class="eng-review-row"><dt>Team</dt><dd>${escapeHtml(teamLabel)}</dd></div>
+                <div class="eng-review-row"><dt>Manager</dt><dd>${escapeHtml(managerLabel)}${selectedManager && pickedTypes.length > 1 ? ' (every engagement)' : ''}</dd></div>
+                <div class="eng-review-row"><dt>Team</dt><dd>${teamHtml}</dd></div>
                 <div class="eng-review-row"><dt>Status</dt><dd>${escapeHtml(STATUS_LABELS[status] || status)}</dd></div>
                 <div class="eng-review-row"><dt>Audit Types</dt><dd>${escapeHtml(types)}</dd></div>
                 <div class="eng-review-row"><dt>TSC</dt><dd>${escapeHtml(tsc)}</dd></div>
-                ${pickedTypes.length > 1 ? '<div class="eng-review-row"><dt>Note</dt><dd>Manager, team and hours are added to each engagement &mdash; adjust per engagement afterward</dd></div>' : ''}
             `;
         }
 
@@ -2481,9 +2555,7 @@ if (!empty($_SESSION['name'])) {
             // successfully, so the summary just reports how many assignments
             // didn't save rather than failing the whole onboarding over what's
             // ultimately a convenience step (they can always add people from
-            // the Team card afterward). The same manager/team (hours
-            // included) goes on every engagement created — adjust per
-            // engagement afterward.
+            // the Team card afterward).
             function addMemberToEngagement(engagementIdno, empName, role, hours) {
                 return fetch('../api/add-team-member.php', {
                     method: 'POST',
@@ -2492,21 +2564,19 @@ if (!empty($_SESSION['name'])) {
                 });
             }
 
-            // Resolves to { total, failed } assignment counts.
-            function assignTeam(engagementIdnos) {
-                const people = [];
-                if (selectedManager) {
-                    people.push({ emp_name: selectedManager.emp_name, role: 'manager', isNew: selectedManager.isNew, hours: null });
-                }
-                wizardTeamMembers.forEach(m => {
-                    people.push({ emp_name: m.emp_name, role: m.role, isNew: m.isNew, hours: m.hours });
-                });
+            // Resolves to { total, failed } assignment counts. The manager goes
+            // on every engagement; everyone else only on the engagements they
+            // were ticked for, with the hours entered for that engagement.
+            function assignTeam(createdList) {
+                const everyone = [];
+                if (selectedManager) everyone.push({ emp_name: selectedManager.emp_name, role: 'manager', isNew: selectedManager.isNew });
+                wizardTeamMembers.forEach(m => everyone.push({ emp_name: m.emp_name, role: m.role, isNew: m.isNew }));
                 // Roster entries for brand-new names are created once up
                 // front, not once per engagement: add-employee.php is
                 // idempotent, but parallel calls for the same new name could
                 // still race past its existence check and double-insert.
                 const seen = new Set();
-                const rosterTasks = people
+                const rosterTasks = everyone
                     .filter(p => p.isNew && !seen.has(p.emp_name.toLowerCase()) && seen.add(p.emp_name.toLowerCase()))
                     .map(p => fetch('../api/add-employee.php', {
                         method: 'POST',
@@ -2516,8 +2586,14 @@ if (!empty($_SESSION['name'])) {
                 return Promise.allSettled(rosterTasks)
                     .then(() => {
                         const tasks = [];
-                        engagementIdnos.forEach(idno => {
-                            people.forEach(p => tasks.push(addMemberToEngagement(idno, p.emp_name, p.role, p.hours).then(r => r.ok)));
+                        createdList.filter(c => c.id).forEach(c => {
+                            const typeKey = c.type === null ? NO_TYPE : c.type;
+                            if (selectedManager) {
+                                tasks.push(addMemberToEngagement(c.id, selectedManager.emp_name, 'manager', null).then(r => r.ok));
+                            }
+                            wizardTeamMembers.filter(m => memberOn(m, typeKey)).forEach(m => {
+                                tasks.push(addMemberToEngagement(c.id, m.emp_name, m.role, memberHours(m, typeKey)).then(r => r.ok));
+                            });
                         });
                         return Promise.allSettled(tasks);
                     })
@@ -2547,9 +2623,8 @@ if (!empty($_SESSION['name'])) {
                 // Whatever got created is kept and reported (a mid-batch
                 // failure must not leave a form that would create the earlier
                 // ones twice if retried).
-                const realIds = created.map(c => c.id).filter(Boolean);
                 const hasPeople = selectedManager || wizardTeamMembers.length;
-                const teamStep = (hasPeople && realIds.length) ? assignTeam(realIds) : Promise.resolve({ total: 0, failed: 0 });
+                const teamStep = (hasPeople && created.some(c => c.id)) ? assignTeam(created) : Promise.resolve({ total: 0, failed: 0 });
                 teamStep.then(team => showOnboardSummary({
                     clientName: engName, created, requested: typesToCreate.length, team, errorMessage
                 }));
