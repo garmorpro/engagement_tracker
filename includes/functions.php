@@ -671,3 +671,106 @@ function planningDocDir(): string
 {
     return dirname(__DIR__) . '/uploads/engagement-screenshots';
 }
+
+// PCI-only checklist. An engagement whose only audit type is PCI is tracked on
+// this fixed phased checklist (Garrett's PCI sheet) instead of the SOC-style
+// timeline. Ticking a step records the date it was completed in
+// engagement_checklist (a row exists only for completed steps). Engagements
+// with other types alongside PCI keep the normal timeline.
+const PCI_CHECKLIST = [
+    ['phase' => 'Phase 0: Planning & Kick-Off', 'steps' => [
+        'internal_planning_call' => 'Internal Planning Call',
+        'kickoff_call'           => 'Kick-Off Call',
+        'send_irl'               => 'Send IRL',
+    ]],
+    ['phase' => 'Phase 1: Fieldwork', 'steps' => [
+        'create_draft_roc' => 'Create Draft ROC',
+        'fieldwork'        => 'Fieldwork',
+    ]],
+    ['phase' => 'Phase 2: Documentation', 'steps' => [
+        'document_roc'     => 'Document ROC',
+        'qa_roc'           => 'QA ROC',
+        'deliver_draft_roc' => 'Deliver Draft ROC',
+    ]],
+    ['phase' => 'Phase 3: Report Finalization & Delivery', 'steps' => [
+        'create_final_roc'  => 'Create Final ROC',
+        'qa_final_roc'      => 'QA Final ROC',
+        'deliver_final_roc' => 'Deliver Final ROC',
+    ]],
+    ['phase' => 'Phase 4: Project Closeout', 'steps' => [
+        'reconcile_zoho' => 'Reconcile Zoho',
+    ]],
+];
+// Delivering the final ROC is the "nothing left to do but archive it" moment.
+const PCI_CHECKLIST_FINAL_STEP = 'deliver_final_roc';
+
+// True when PCI is the engagement's only audit type.
+function isPciOnly(?string $rawTypes): bool
+{
+    $types = array_values(array_filter(array_map('trim', explode(',', (string) $rawTypes))));
+    return count($types) === 1 && $types[0] === 'PCI';
+}
+
+// How an engagement relates to the PCI checklist:
+//   'only' - PCI is its only audit type: the checklist IS its tracking (replaces the timeline)
+//   'on'   - PCI plus other types, and "Add PCI checklist" was pressed: shown as an extra section
+//   'off'  - PCI plus other types, not added: only the "Add PCI checklist" button shows
+//   'none' - no PCI at all: nothing about the checklist is shown
+function pciChecklistMode(array $eng): string
+{
+    $types = array_values(array_filter(array_map('trim', explode(',', (string) ($eng['eng_audit_type'] ?? '')))));
+    if (!in_array('PCI', $types, true)) {
+        return 'none';
+    }
+    if (count($types) === 1) {
+        return 'only';
+    }
+    return !empty($eng['eng_pci_checklist']) ? 'on' : 'off';
+}
+
+// step key => label, flattened across the phases.
+function pciChecklistSteps(): array
+{
+    $steps = [];
+    foreach (PCI_CHECKLIST as $phase) {
+        foreach ($phase['steps'] as $key => $label) {
+            $steps[$key] = $label;
+        }
+    }
+    return $steps;
+}
+
+// step key => completed_at for one engagement. [] if none, or if the table
+// hasn't been created yet (so deploying before running the migration is safe).
+function getChecklistMap(mysqli $conn, string $engagementIdno): array
+{
+    try {
+        $stmt = $conn->prepare("SELECT step_key, completed_at FROM engagement_checklist WHERE engagement_idno = ?");
+        $stmt->bind_param('s', $engagementIdno);
+        $stmt->execute();
+        $map = [];
+        foreach ($stmt->get_result()->fetch_all(MYSQLI_ASSOC) as $row) {
+            $map[$row['step_key']] = $row['completed_at'];
+        }
+        $stmt->close();
+        return $map;
+    } catch (\Throwable $e) {
+        return [];
+    }
+}
+
+// engagement_idno => [step key => completed_at], for every engagement at
+// once (same fetch-once pattern as getAllTimelineData()/getAllTeamData()).
+function getAllChecklistData(mysqli $conn): array
+{
+    try {
+        $out = [];
+        $result = $conn->query("SELECT engagement_idno, step_key, completed_at FROM engagement_checklist");
+        foreach ($result->fetch_all(MYSQLI_ASSOC) as $row) {
+            $out[$row['engagement_idno']][$row['step_key']] = $row['completed_at'];
+        }
+        return $out;
+    } catch (\Throwable $e) {
+        return [];
+    }
+}

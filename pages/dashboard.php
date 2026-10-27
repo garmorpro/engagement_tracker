@@ -17,6 +17,7 @@ foreach ($allTimelineData as $row) {
 // still need a team and/or DOL assigned (see getSetupInfo() below), same
 // "fetch everything once, look it up per engagement" pattern as the
 // timeline lookup above.
+$checklistLookup = getAllChecklistData($conn); // PCI checklist progress: eng_idno => [step => completed_at]
 $allTeamData = getAllTeamData($conn);
 $teamLookup = [];
 foreach ($allTeamData as $row) {
@@ -56,7 +57,13 @@ foreach ($sectionOrder as $status) {
 }
 
 // Due date state for an engagement: [dateObj|null, 'overdue'|'soon'|'ok'|'archive_ready'|'none']
-function getDueInfo($engIdno, $timelineLookup) {
+function getDueInfo($engIdno, $timelineLookup, $eng = null, $checklistLookup = []) {
+    // PCI-only engagements are tracked on the checklist, not the timeline: no
+    // dates to be late against, but once the final ROC is delivered there's
+    // nothing left but to archive it.
+    if ($eng !== null && pciChecklistMode($eng) === 'only') {
+        return isset(($checklistLookup[$engIdno] ?? [])[PCI_CHECKLIST_FINAL_STEP]) ? [null, 'archive_ready'] : [null, 'none'];
+    }
     if (!isset($timelineLookup[$engIdno])) {
         return [null, 'none'];
     }
@@ -120,13 +127,13 @@ const TIMELINE_DATE_COLUMNS = [
 // how DOL is already never required for PCI. Scoped to PCI specifically
 // (not extended to ISO, even though ISO shares PCI's no-DOL-column
 // treatment above) since that's what was actually asked for.
-function getSetupInfo($eng, $teamLookup, $timelineLookup) {
+function getSetupInfo($eng, $teamLookup, $timelineLookup, $checklistLookup = []) {
     $engIdno = $eng['eng_idno'];
     $members = $teamLookup[$engIdno] ?? [];
     $hasTeam = count($members) > 0;
 
     $auditTypes = array_values(array_filter(array_map('trim', explode(',', (string) ($eng['eng_audit_type'] ?? '')))));
-    $isPciOnly = count($auditTypes) === 1 && $auditTypes[0] === 'PCI';
+    $isPciOnly = pciChecklistMode($eng) === 'only';
     $applicableTypes = array_intersect($auditTypes, array_keys(DOL_AUDIT_TYPE_COLUMNS));
 
     $dolComplete = true;
@@ -151,11 +158,13 @@ function getSetupInfo($eng, $teamLookup, $timelineLookup) {
     }
 
     $hasPlanningDoc = !empty($eng['eng_planning_doc']);
+    // A PCI-only engagement has no timeline: any ticked checklist step is its "filled out".
+    $hasChecklistProgress = $isPciOnly && !empty($checklistLookup[$engIdno]);
 
     $missing = [];
     if (!$hasTeam) $missing[] = 'No team';
     if ($isPciOnly) {
-        if (!$hasTimeline && !$hasPlanningDoc) $missing[] = 'No timeline or planning doc';
+        if (!$hasChecklistProgress && !$hasPlanningDoc) $missing[] = 'No checklist progress or planning doc';
     } else {
         if (!$hasTimeline) $missing[] = 'No timeline';
         if (!$hasPlanningDoc) $missing[] = 'No planning doc';
@@ -165,7 +174,7 @@ function getSetupInfo($eng, $teamLookup, $timelineLookup) {
     return [
         'has_team' => $hasTeam,
         'dol_complete' => $dolComplete,
-        'has_timeline' => $hasTimeline,
+        'has_timeline' => $hasTimeline || $hasChecklistProgress,
         'has_planning_doc' => $hasPlanningDoc,
         'missing' => $missing,
         'needs_setup' => !empty($missing),
@@ -196,7 +205,7 @@ function renderTypeBadges($rawTypes) {
 // setup completeness instead (below), so this is split out on its own.
 $dueSoonCount = 0;
 foreach ($engagements as $e) {
-    [, $state] = getDueInfo($e['eng_idno'], $timelineLookup);
+    [, $state] = getDueInfo($e['eng_idno'], $timelineLookup, $e, $checklistLookup);
     if (in_array($state, ['overdue', 'soon', 'archive_ready'], true)) $dueSoonCount++;
 }
 
@@ -204,7 +213,7 @@ foreach ($engagements as $e) {
 // planning doc. See getSetupInfo() above for exactly what each means.
 $attentionCount = 0;
 foreach ($engagements as $e) {
-    $setup = getSetupInfo($e, $teamLookup, $timelineLookup);
+    $setup = getSetupInfo($e, $teamLookup, $timelineLookup, $checklistLookup);
     if ($setup['needs_setup']) $attentionCount++;
 }
 
@@ -1131,6 +1140,19 @@ if (!empty($_SESSION['name'])) {
         .drawer-tl-date { font-size: 12.5px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
         .drawer-tl-date.overdue { color: var(--critical); }
         .drawer-tl-date.empty { color: var(--text-muted); font-weight: 500; }
+        .drawer-ck-summary { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.4rem; font-size: 11.5px; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+        .drawer-ck-bar { flex: 1; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
+        .drawer-ck-bar span { display: block; height: 100%; background: var(--good); border-radius: 3px; }
+        .drawer-ck-phase { display: flex; justify-content: space-between; margin: 0.85rem 0 0.2rem; font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
+        .drawer-ck-phase .n { font-weight: 600; letter-spacing: 0; }
+        .drawer-ck-item { display: flex; align-items: center; gap: 0.65rem; padding: 0.38rem 0.35rem; border-radius: 6px; cursor: pointer; }
+        .drawer-ck-item:hover { background: var(--paper); }
+        .drawer-ck-box { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--line-strong); display: flex; align-items: center; justify-content: center; font-size: 11px; color: transparent; flex-shrink: 0; }
+        .drawer-ck-item.done .drawer-ck-box { background: var(--good); border-color: var(--good); color: var(--card); }
+        .drawer-ck-label { flex: 1; font-size: 12.5px; font-weight: 600; color: var(--text); }
+        .drawer-ck-item.done .drawer-ck-label { color: var(--text-muted); }
+        .drawer-ck-date { font-size: 11.5px; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+        .drawer-addck-row { margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid var(--line); }
         .drawer-tl-hint { font-size: 10.5px; color: var(--text-muted); margin-top: 0.75rem; }
         .drawer-weekly-call-row { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px solid var(--line); }
         .drawer-weekly-call-row label { font-size: 11.5px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
@@ -1284,12 +1306,12 @@ if (!empty($_SESSION['name'])) {
         </div>
 
         <?php
-        $renderRow = function ($eng) use ($timelineLookup, $teamLookup, $statusMeta) {
-            [$due, $dueState] = getDueInfo($eng['eng_idno'], $timelineLookup);
+        $renderRow = function ($eng) use ($timelineLookup, $teamLookup, $statusMeta, $checklistLookup) {
+            [$due, $dueState] = getDueInfo($eng['eng_idno'], $timelineLookup, $eng, $checklistLookup);
             $critical = $dueState === 'overdue';
             $tickVar = $statusMeta[$eng['eng_status']]['var'] ?? '--text-muted';
             $dueSoon = in_array($dueState, ['overdue', 'soon', 'archive_ready'], true) ? '1' : '0';
-            $setup = getSetupInfo($eng, $teamLookup, $timelineLookup);
+            $setup = getSetupInfo($eng, $teamLookup, $timelineLookup, $checklistLookup);
             $setupFlagHtml = '';
             if ($setup['needs_setup']) {
                 // First/most-actionable gap only — the row is a scannable
@@ -1313,6 +1335,12 @@ if (!empty($_SESSION['name'])) {
                 } else {
                     $dueHtml = '<div class="reg-due">' . $fmt . '</div>';
                 }
+            }
+
+            // PCI-only: progress through the checklist stands in for a due date.
+            if (pciChecklistMode($eng) === 'only' && $dueState !== 'archive_ready') {
+                $ckDone = count(array_intersect_key($checklistLookup[$eng['eng_idno']] ?? [], pciChecklistSteps()));
+                $dueHtml = '<div class="reg-due">' . $ckDone . ' of ' . count(pciChecklistSteps()) . ' steps</div>';
             }
 
             $actions = '<button data-action="archive" title="Archive &amp; Export"><i class="bi bi-archive"></i></button>
@@ -1342,9 +1370,9 @@ if (!empty($_SESSION['name'])) {
         <?php foreach ($sectionOrder as $status): ?>
                 <?php
                     $items = array_filter($engagements, fn($e) => $e['eng_status'] === $status);
-                    usort($items, function ($a, $b) use ($timelineLookup) {
-                        [$dueA, $stateA] = getDueInfo($a['eng_idno'], $timelineLookup);
-                        [$dueB, $stateB] = getDueInfo($b['eng_idno'], $timelineLookup);
+                    usort($items, function ($a, $b) use ($timelineLookup, $checklistLookup) {
+                        [$dueA, $stateA] = getDueInfo($a['eng_idno'], $timelineLookup, $a, $checklistLookup);
+                        [$dueB, $stateB] = getDueInfo($b['eng_idno'], $timelineLookup, $b, $checklistLookup);
                         // Ready-to-archive engagements float to the top of their
                         // section — there's nothing left to do but archive them,
                         // so they're the most actionable thing in the list.
@@ -2550,6 +2578,17 @@ if (!empty($_SESSION['name'])) {
     // are ported near-verbatim from that page so their behavior matches.
     // ===================================================================
     const STATUS_META = <?php echo json_encode($statusMeta); ?>;
+    // The PCI checklist (defined once in includes/functions.php) and the step whose completion means "ready to archive".
+    const PCI_CHECKLIST = <?php echo json_encode(PCI_CHECKLIST); ?>;
+    const PCI_FINAL_STEP = <?php echo json_encode(PCI_CHECKLIST_FINAL_STEP); ?>;
+    // Mirrors pciChecklistMode() in includes/functions.php: 'only' (PCI is the only type: checklist replaces
+    // the timeline), 'on'/'off' (PCI plus other types: extra section / "Add PCI checklist" button), 'none'.
+    function pciChecklistMode(eng) {
+        const types = (eng.eng_audit_type || '').split(',').map(t => t.trim()).filter(Boolean);
+        if (!types.includes('PCI')) return 'none';
+        if (types.length === 1) return 'only';
+        return Number(eng.eng_pci_checklist) ? 'on' : 'off';
+    }
     const DOL_AUDIT_TYPES = {
         'SOC 1':   'emp_soc1_dol',
         'SOC 2':   'emp_soc2_dol',
@@ -2769,6 +2808,7 @@ if (!empty($_SESSION['name'])) {
             ? `<div class="drawer-info-item"><div class="drawer-info-label">Report Type</div><div class="drawer-info-value">${escapeHtml(eng.eng_soc_type === 'Type 1' ? 'Type I' : (eng.eng_soc_type === 'Type 2' ? 'Type II' : eng.eng_soc_type))}</div></div>`
             : '';
 
+        const checklistMode = pciChecklistMode(eng);
         document.getElementById('drawerBody').innerHTML = `
             <div id="drawerSetupBanner"></div>
             <div class="drawer-section">
@@ -2816,15 +2856,18 @@ if (!empty($_SESSION['name'])) {
 
             <div class="drawer-section">
                 <div class="drawer-section-head">
-                    <div class="drawer-section-title"><span class="dot" style="background:var(--good)"></span>Timeline &amp; Key Dates</div>
-                    <div style="display:flex; gap:0.9rem;">
+                    <div class="drawer-section-title"><span class="dot" style="background:var(--good)"></span>${checklistMode === 'only' ? 'PCI Checklist' : 'Timeline &amp; Key Dates'}</div>
+                    ${checklistMode === 'only' ? '' : `<div style="display:flex; gap:0.9rem;">
                         <button class="drawer-link-btn" id="drawerImportTimelineBtn">Import Timeline</button>
                         <button class="drawer-link-btn" id="drawerEditTimelineBtn">Edit Timeline</button>
-                    </div>
+                    </div>`}
                 </div>
                 <div id="drawerPlanningDocRow" class="drawer-planning-doc-row"></div>
-                <div id="drawerTimelineContent"></div>
-                <div class="drawer-tl-hint">Click a date to mark it complete or incomplete.</div>
+                ${checklistMode === 'only'
+                    ? `<div id="drawerChecklistContent"></div>
+                <div class="drawer-tl-hint">Click a step to mark it complete. The date it was completed is recorded.</div>`
+                    : `<div id="drawerTimelineContent"></div>
+                <div class="drawer-tl-hint">Click a date to mark it complete or incomplete.</div>`}
                 <div class="drawer-weekly-call-row">
                     <label for="drawerWeeklyCallSelect"><i class="bi bi-arrow-repeat"></i> Weekly Status Call</label>
                     <select id="drawerWeeklyCallSelect">
@@ -2839,21 +2882,111 @@ if (!empty($_SESSION['name'])) {
                     </select>
                 </div>
                 <div id="drawerWeeklyCallLinks" class="wcall-linked-row"></div>
+                ${checklistMode === 'off' ? `<div class="drawer-addck-row"><button class="drawer-link-btn" id="drawerAddChecklistBtn"><i class="bi bi-plus-lg"></i> Add PCI checklist</button></div>` : ''}
             </div>
+            ${checklistMode === 'on' ? `
+            <div class="drawer-section">
+                <div class="drawer-section-head">
+                    <div class="drawer-section-title"><span class="dot" style="background:var(--good)"></span>PCI Checklist</div>
+                    <button class="drawer-link-btn" id="drawerRemoveChecklistBtn" title="Hide the checklist (ticked steps are kept)">Remove</button>
+                </div>
+                <div id="drawerChecklistContent"></div>
+                <div class="drawer-tl-hint">Click a step to mark it complete. The date it was completed is recorded.</div>
+            </div>` : ''}
         `;
 
-        updateDrawerSetupBanner(eng, team, auditTypes, timeline);
+        updateDrawerSetupBanner(eng, team, auditTypes, timeline, data.checklist || {});
         renderDrawerTeam(team, auditTypes);
         renderNoteLog(data.notes || []);
         wireMeetingButtons();
-        renderDrawerTimeline(timeline, eng.eng_idno);
+        if (checklistMode !== 'only') renderDrawerTimeline(timeline, eng.eng_idno);
+        if (checklistMode === 'only' || checklistMode === 'on') renderDrawerChecklist(data.checklist || {}, eng);
         renderPlanningDocRow(eng);
         renderWeeklyStatusCallControl(timeline, eng.eng_idno, eng.eng_name, data.linked_calls || []);
 
         document.getElementById('drawerManageTeamBtn').addEventListener('click', openManageTeamModal);
-        document.getElementById('drawerEditTimelineBtn').addEventListener('click', () => openEditTimelineModal());
-        document.getElementById('drawerImportTimelineBtn').addEventListener('click', () => {
+        document.getElementById('drawerEditTimelineBtn')?.addEventListener('click', () => openEditTimelineModal());
+        document.getElementById('drawerImportTimelineBtn')?.addEventListener('click', () => {
             document.getElementById('timelineImportFileInput').click();
+        });
+        document.getElementById('drawerAddChecklistBtn')?.addEventListener('click', () => setPciChecklist(eng.eng_idno, true));
+        document.getElementById('drawerRemoveChecklistBtn')?.addEventListener('click', () => setPciChecklist(eng.eng_idno, false));
+    }
+
+    // "Add PCI checklist" / "Remove" on an engagement that has PCI plus other types.
+    async function setPciChecklist(engagementId, enabled) {
+        try {
+            const res = await fetch('../api/set-pci-checklist.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ engagement_id: engagementId, enabled })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Failed to update the checklist');
+            await refreshDrawer();
+        } catch (err) {
+            console.error('Error:', err);
+            Swal.fire('Error', (err && err.message) || 'Failed to update the checklist', 'error');
+        }
+    }
+
+    // The PCI checklist: phases of steps, each a checkbox that records the date it
+    // was completed. Ticking saves immediately; the drawer refreshes in place, and
+    // the page reloads only when the list row behind it would change in a way that
+    // can't be patched (first/last tick for Needs Attention, or the final ROC step
+    // flipping the row to / from Archive Ready).
+    function renderDrawerChecklist(checklist, eng) {
+        const el = document.getElementById('drawerChecklistContent');
+        if (!el) return;
+        const allKeys = PCI_CHECKLIST.flatMap(p => Object.keys(p.steps));
+        const doneCount = allKeys.filter(k => checklist[k]).length;
+        const pct = Math.round((doneCount / allKeys.length) * 100);
+        el.innerHTML = `
+            <div class="drawer-ck-summary"><span>${doneCount} of ${allKeys.length} steps</span><div class="drawer-ck-bar"><span style="width:${pct}%"></span></div><span>${pct}%</span></div>
+            ${PCI_CHECKLIST.map(phase => {
+                const keys = Object.keys(phase.steps);
+                const phaseDone = keys.filter(k => checklist[k]).length;
+                return `<div class="drawer-ck-phase"><span>${escapeHtml(phase.phase)}</span><span class="n">${phaseDone}/${keys.length}</span></div>` +
+                    keys.map(k => {
+                        const at = checklist[k];
+                        return `<div class="drawer-ck-item ${at ? 'done' : ''}" data-step="${escAttr(k)}" data-done="${at ? '1' : '0'}" title="Click to mark ${at ? 'incomplete' : 'complete'}">
+                            <span class="drawer-ck-box"><i class="bi bi-check-lg"></i></span>
+                            <span class="drawer-ck-label">${escapeHtml(phase.steps[k])}</span>
+                            <span class="drawer-ck-date">${at ? escapeHtml(fmtDate(String(at).slice(0, 10)) || '') : ''}</span>
+                        </div>`;
+                    }).join('');
+            }).join('')}`;
+
+        el.querySelectorAll('.drawer-ck-item').forEach(item => {
+            item.addEventListener('click', async () => {
+                const key = item.dataset.step;
+                const wasDone = item.dataset.done === '1';
+                try {
+                    const res = await fetch('../api/update-checklist-step.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ engagement_id: eng.eng_idno, step_key: key, completed: !wasDone })
+                    });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message || 'Failed to update the checklist');
+                    const now = data.checklist || {};
+                    const nowCount = allKeys.filter(k => now[k]).length;
+                    const finalFlipped = !!checklist[PCI_FINAL_STEP] !== !!now[PCI_FINAL_STEP];
+                    const emptinessFlipped = (doneCount === 0) !== (nowCount === 0);
+                    if (pciChecklistMode(eng) === 'only' && (finalFlipped || emptinessFlipped)) {
+                        reopenDrawerAfterReload(eng.eng_idno);
+                        location.reload();
+                        return;
+                    }
+                    await refreshDrawer();
+                    // keep the "N of 12 steps" in the list row behind the drawer current
+                    const rowDue = document.querySelector('.reg-row[data-id="' + CSS.escape(eng.eng_idno) + '"] .reg-due');
+                    if (rowDue && pciChecklistMode(eng) === 'only') rowDue.textContent = nowCount + ' of ' + allKeys.length + ' steps';
+                } catch (err) {
+                    console.error('Error:', err);
+                    Swal.fire('Error', (err && err.message) || 'Failed to update the checklist', 'error');
+                }
+            });
         });
     }
 
@@ -3174,7 +3307,7 @@ if (!empty($_SESSION['name'])) {
     // PCI-only engagements: see the matching comment on PHP's getSetupInfo()
     // — neither timeline nor planning doc is independently required, only
     // having neither counts as missing.
-    function drawerSetupStatus(team, auditTypes, timeline, hasPlanningDoc) {
+    function drawerSetupStatus(team, auditTypes, timeline, hasPlanningDoc, checklist) {
         const hasTeam = team.length > 0;
         const isPciOnly = auditTypes.length === 1 && auditTypes[0] === 'PCI';
         const relevant = auditTypes.filter(t => DOL_AUDIT_TYPES.hasOwnProperty(t));
@@ -3185,24 +3318,26 @@ if (!empty($_SESSION['name'])) {
         const hasTimeline = !!timeline && TIMELINE_STEPS.some(step =>
             !!timeline[step.date] || (step.startDate && !!timeline[step.startDate])
         );
+        // A PCI-only engagement has no timeline: any ticked checklist step is its "filled out".
+        const hasChecklistProgress = isPciOnly && Object.keys(checklist || {}).length > 0;
 
         const missing = [];
         if (!hasTeam) missing.push('No team');
         if (isPciOnly) {
-            if (!hasTimeline && !hasPlanningDoc) missing.push('No timeline or planning doc');
+            if (!hasChecklistProgress && !hasPlanningDoc) missing.push('No checklist progress or planning doc');
         } else {
             if (!hasTimeline) missing.push('No timeline');
             if (!hasPlanningDoc) missing.push('No planning doc');
         }
         if (hasTeam && !dolComplete) missing.push('DOL incomplete');
 
-        return { hasTeam, dolComplete, hasTimeline, hasPlanningDoc, missing, needsSetup: missing.length > 0 };
+        return { hasTeam, dolComplete, hasTimeline: hasTimeline || hasChecklistProgress, hasPlanningDoc, missing, needsSetup: missing.length > 0 };
     }
 
-    function updateDrawerSetupBanner(eng, team, auditTypes, timeline) {
+    function updateDrawerSetupBanner(eng, team, auditTypes, timeline, checklist) {
         const banner = document.getElementById('drawerSetupBanner');
         if (!banner) return;
-        const status = drawerSetupStatus(team, auditTypes, timeline, !!eng.eng_planning_doc);
+        const status = drawerSetupStatus(team, auditTypes, timeline, !!eng.eng_planning_doc, checklist);
         if (!status.needsSetup) { banner.innerHTML = ''; return; }
         banner.innerHTML = `
             <div class="drawer-setup-banner">

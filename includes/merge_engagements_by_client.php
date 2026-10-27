@@ -142,6 +142,8 @@ function mergeGroup(mysqli $conn, array $rows, bool $dryRun): void
         foreach (mergeRows($conn, "SELECT * FROM engagement_team WHERE engagement_idno = ?", $keepId) as $m) {
             $teamByName[strtolower(trim((string) $m['emp_name']))] = $m;
         }
+        $hasChecklistTable = $conn->query("SHOW TABLES LIKE 'engagement_checklist'")->num_rows > 0;
+        $checklistMoved = false;
         $movedNotes = 0;
         $movedMs = 0;
         $mergedPeople = 0;
@@ -217,6 +219,14 @@ function mergeGroup(mysqli $conn, array $rows, bool $dryRun): void
                 }
             }
 
+            if ($hasChecklistTable) {
+                // Ticked checklist steps follow the survivor (a step ticked on both keeps the survivor's date).
+                $movedSteps = mergeExec($conn, "UPDATE IGNORE engagement_checklist SET engagement_idno = ? WHERE engagement_idno = ?", 'ss', $keepId, $sibId);
+                mergeExec($conn, "DELETE FROM engagement_checklist WHERE engagement_idno = ?", 's', $sibId);
+                if ($movedSteps > 0) {
+                    $checklistMoved = true;
+                }
+            }
             $movedNotes += mergeExec($conn, "UPDATE engagement_notes SET engagement_idno = ? WHERE engagement_idno = ?", 'ss', $keepId, $sibId);
             $movedMs += mergeExec($conn, "UPDATE engagement_milestones SET engagement_idno = ? WHERE engagement_idno = ?", 'ss', $keepId, $sibId);
 
@@ -231,6 +241,11 @@ function mergeGroup(mysqli $conn, array $rows, bool $dryRun): void
         mergeExec($conn,
             "UPDATE engagements SET eng_audit_type = ?, eng_soc_type = ?, eng_tsc = ?, eng_poc = ?, eng_location = ?, eng_start_period = ?, eng_end_period = ?, eng_as_of_date = ?, eng_complete_date = ?, eng_scope = ?, eng_notes = ?, eng_planning_doc = ?, eng_updated = NOW() WHERE eng_idno = ?",
             'sssssssssssss', $typeStr, $fill['eng_soc_type'], $fill['eng_tsc'], $fill['eng_poc'], $fill['eng_location'], $fill['eng_start_period'], $fill['eng_end_period'], $fill['eng_as_of_date'], $fill['eng_complete_date'], $scope, $legacyNotes === '' ? null : $legacyNotes, $storedDocs, $keepId);
+
+        if ($checklistMoved && in_array('PCI', $seen, true) && $conn->query("SHOW COLUMNS FROM engagements LIKE 'eng_pci_checklist'")->num_rows > 0) {
+            // Progress was carried over, so keep the checklist visible on the merged engagement.
+            mergeExec($conn, "UPDATE engagements SET eng_pci_checklist = 1 WHERE eng_idno = ?", 's', $keepId);
+        }
 
         logActivity($conn, 'engagement_merged', 'engagement', $keepId,
             "Merged " . implode(', ', array_column($rows, 'eng_idno')) . " into $keepId (audit types: $typeStr)");

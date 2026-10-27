@@ -66,6 +66,7 @@ try {
         'team' => $team,
         'notes' => $notes,
         'linked_calls' => $linkedCalls,
+        'checklist' => getChecklistMap($conn, $engagementId),
     ]);
 } catch (Exception $e) {
     http_response_code(500);

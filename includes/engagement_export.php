@@ -78,8 +78,23 @@ function exportLoadData(mysqli $conn, string $idno): ?array
         'timeline'   => exportRows($conn, "SELECT * FROM engagement_timeline WHERE engagement_idno = ?", $idno)[0] ?? [],
         'team'       => exportRows($conn, "SELECT * FROM engagement_team WHERE engagement_idno = ? ORDER BY emp_name", $idno),
         'milestones' => exportRows($conn, "SELECT milestone_type, due_date, is_completed FROM engagement_milestones WHERE engagement_idno = ? ORDER BY due_date, ms_id", $idno),
+        'checklist'  => exportChecklistRows($conn, $idno),
         'notes'      => exportRows($conn, "SELECT note_type, note_text, author_name, created_at FROM engagement_notes WHERE engagement_idno = ? ORDER BY created_at, note_id", $idno),
     ];
+}
+
+// step key => completed_at (empty if nothing ticked, or the checklist table doesn't exist yet).
+function exportChecklistRows(mysqli $conn, string $idno): array
+{
+    try {
+        $map = [];
+        foreach (exportRows($conn, "SELECT step_key, completed_at FROM engagement_checklist WHERE engagement_idno = ?", $idno) as $r) {
+            $map[$r['step_key']] = $r['completed_at'];
+        }
+        return $map;
+    } catch (Throwable $e) {
+        return [];
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -418,7 +433,10 @@ function exportBuildPdf(array $data, string $exportedBy = ''): string
         $pdf->Cell(0, 6, 'No team members were recorded.', 0, 1);
     }
 
-    // Timeline
+    $checklistMode = pciChecklistMode($eng);
+
+    // Timeline (a PCI-only engagement has no timeline: its checklist, below, is the tracking)
+    if ($checklistMode !== 'only') {
     exportPdfSection($pdf, 'Timeline');
     $tlRows = [];
     foreach (EXPORT_TIMELINE_STEPS as [$label, $dueCol, $doneCol, $startCol]) {
@@ -462,6 +480,25 @@ function exportBuildPdf(array $data, string $exportedBy = ''): string
             $line .= ' (' . $tl['weekly_status_call_group_name'] . ')';
         }
         $pdf->Cell(0, 5.5, exportText($line), 0, 1);
+    }
+
+    }
+
+    // PCI checklist (PCI-only engagements, or ones where it was added)
+    if ($checklistMode === 'only' || $checklistMode === 'on') {
+        $done = $data['checklist'] ?? [];
+        $total = count(pciChecklistSteps());
+        $ticked = count(array_intersect_key($done, pciChecklistSteps()));
+        exportPdfSection($pdf, 'PCI checklist  (' . $ticked . ' of ' . $total . ' steps completed)');
+        $ckRows = [];
+        foreach (PCI_CHECKLIST as $phase) {
+            $first = true;
+            foreach ($phase['steps'] as $key => $label) {
+                $ckRows[] = [$first ? $phase['phase'] : '', $label, isset($done[$key]) ? exportDate($done[$key]) : 'Not completed'];
+                $first = false;
+            }
+        }
+        exportPdfTable($pdf, [72, 56, 46], ['Phase', 'Step', 'Completed'], $ckRows);
     }
 
     // Milestones
@@ -610,15 +647,16 @@ function exportRemoveEngagement(mysqli $conn, string $idno): string
     if (!$eng) {
         throw new Exception("Engagement $idno not found.");
     }
+    $hasChecklistTable = $conn->query("SHOW TABLES LIKE 'engagement_checklist'")->num_rows > 0;
     $conn->begin_transaction();
     try {
-        foreach ([
+        foreach (array_merge($hasChecklistTable ? ["DELETE FROM engagement_checklist WHERE engagement_idno = ?"] : [], [
             "DELETE FROM engagement_notes WHERE engagement_idno = ?",
             "DELETE FROM engagement_timeline WHERE engagement_idno = ?",
             "DELETE FROM engagement_milestones WHERE engagement_idno = ?",
             "DELETE FROM engagement_team WHERE engagement_idno = ?",
             "DELETE FROM engagements WHERE eng_idno = ?",
-        ] as $sql) {
+        ]) as $sql) {
             $stmt = $conn->prepare($sql);
             if (!$stmt) {
                 throw new Exception('Prepare failed: ' . $conn->error);
