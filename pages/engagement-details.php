@@ -1547,7 +1547,7 @@ $engagementData = $engagement;
                 <i class="bi bi-arrow-counterclockwise"></i>
             </button>
             <?php else: ?>
-            <button class="btn-icon" title="Archive" onclick="event.stopPropagation(); archiveEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
+            <button class="btn-icon" title="Archive &amp; Export" onclick="event.stopPropagation(); archiveEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                 <i class="bi bi-archive"></i>
             </button>
             <?php endif; ?>
@@ -2436,54 +2436,98 @@ $engagementData = $engagement;
         }
     }
 
-    // Archive engagement function
+    // Archive & export: downloads the engagement's history folder (PDF synopsis +
+    // planning doc), and only once that download is in hand asks whether to
+    // remove the engagement from the tracker, so a failed download or a closed
+    // tab can never cost data.
     async function archiveEngagement(engagementId) {
-        const isDarkMode = localStorage.getItem('darkMode') === 'true';
-        
-        const result = await Swal.fire({
-            title: 'Archive Engagement?',
-            text: 'Are you sure you want to archive this engagement? It will be moved to the archive and hidden from the main dashboard.',
-            icon: 'warning',
-            confirmButtonText: 'Archive',
+        const colors = { background: 'var(--card)', color: 'var(--text-primary)' };
+        const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const start = await Swal.fire({
+            title: 'Archive & export?',
+            html: 'This downloads a folder with a <b>PDF synopsis</b> (details, team, timeline and every note) plus the planning doc. Nothing is removed until you confirm the next step.',
+            icon: 'question',
+            confirmButtonText: 'Download export',
             cancelButtonText: 'Cancel',
             showCancelButton: true,
             confirmButtonColor: 'var(--primary-blue)',
-            background: 'var(--card)',
-            color: 'var(--text-primary)',
-            confirmButtonClass: isDarkMode ? 'swal-dark-btn' : '',
-            cancelButtonClass: isDarkMode ? 'swal-dark-cancel-btn' : ''
+            background: colors.background,
+            color: colors.color
+        });
+        if (!start.isConfirmed) return;
+
+        Swal.fire({
+            title: 'Building export...',
+            text: 'This can take a few seconds.',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
+            didOpen: () => Swal.showLoading(),
+            background: colors.background,
+            color: colors.color
         });
 
-        if (result.isConfirmed) {
-            try {
-                const response = await fetch('../api/archive-engagement.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        engagement_id: engagementId
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    Swal.fire({
-                        title: 'Archived!',
-                        text: 'Engagement has been archived successfully.',
-                        icon: 'success',
-                        confirmButtonText: 'OK',
-                        background: 'var(--card)',
-                        color: 'var(--text-primary)'
-                    }).then(() => {
-                        window.location.href = "archive.php";
-                    });
-                } else {
-                    Swal.fire('Error', data.message || 'Failed to archive engagement', 'error');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                Swal.fire('Error', 'Failed to archive engagement', 'error');
+        let filename = engagementId + '.zip';
+        try {
+            const response = await fetch('../api/export-engagement.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ engagement_id: engagementId })
+            });
+            if (!response.ok) {
+                let message = 'Failed to build the export.';
+                try { message = (await response.json()).message || message; } catch (e) {}
+                throw new Error(message);
             }
+            const header = response.headers.get('X-Export-Filename');
+            if (header) filename = decodeURIComponent(header);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({ title: 'Export failed', text: (error && error.message) || 'Could not build the export. The engagement was not changed.', icon: 'error', background: colors.background, color: colors.color });
+            return;
+        }
+
+        const confirmRemove = await Swal.fire({
+            title: 'Export downloaded',
+            html: 'Saved as <b>' + esc(filename) + '</b> in your Downloads folder.<br><br>Open it and check the PDF looks right. Removing the engagement from the tracker <b>can\'t be undone</b>.',
+            icon: 'success',
+            confirmButtonText: 'Remove from tracker',
+            cancelButtonText: 'Keep it for now',
+            showCancelButton: true,
+            confirmButtonColor: '#B42318',
+            allowOutsideClick: false,
+            background: colors.background,
+            color: colors.color
+        });
+        if (!confirmRemove.isConfirmed) {
+            // Nothing was removed; the export dialog above already told them it downloaded.
+            return;
+        }
+
+        try {
+            const response = await fetch('../api/delete-engagement.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ engagement_id: engagementId })
+            });
+            const data = await response.json();
+            if (data.success) {
+                window.location.href = "dashboard.php";
+            } else {
+                Swal.fire({ title: 'Error', text: data.message || 'Failed to remove the engagement. Your export was still downloaded.', icon: 'error', background: colors.background, color: colors.color });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Swal.fire({ title: 'Error', text: 'Failed to remove the engagement. Your export was still downloaded.', icon: 'error', background: colors.background, color: colors.color });
         }
     }
 
