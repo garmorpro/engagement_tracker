@@ -643,3 +643,31 @@ function getEngagementNotes(mysqli $conn, string $engagementIdno): array
     return $rows;
 }
 
+
+// Planning docs. engagements.eng_planning_doc holds one stored filename per
+// line (an engagement can have several — e.g. one per audit type after
+// engagements were merged back into one line per client). The files live in
+// uploads/engagement-screenshots/. A single legacy filename is a valid
+// one-item list, so nothing needed rewriting when this became a list.
+function planningDocList(?string $stored): array
+{
+    $files = [];
+    foreach (preg_split('/\R/', (string) $stored) as $f) {
+        $f = basename(trim($f));
+        if ($f !== '' && $f !== '.' && $f !== '..') {
+            $files[] = $f;
+        }
+    }
+    return array_values(array_unique($files));
+}
+
+function planningDocStore(array $files): ?string
+{
+    $files = array_values(array_unique($files));
+    return $files ? implode("\n", $files) : null;
+}
+
+function planningDocDir(): string
+{
+    return dirname(__DIR__) . '/uploads/engagement-screenshots';
+}

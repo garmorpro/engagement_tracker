@@ -4,6 +4,7 @@ require_once '../includes/functions.php';
 requireApiAuth();
 
 $engagementId = trim($_GET['id'] ?? '');
+$requested = basename(trim($_GET['file'] ?? ''));
 
 if ($engagementId === '') {
     http_response_code(400);
@@ -16,19 +17,25 @@ $stmt->execute();
 $row = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if (!$row || empty($row['eng_planning_doc'])) {
+$files = $row ? planningDocList($row['eng_planning_doc']) : [];
+if (!$files) {
     http_response_code(404);
-    exit('No screenshot on file for this engagement');
+    exit('No planning doc on file for this engagement');
 }
 
-// basename() strips any path component, so this can only ever resolve to a
-// file directly inside uploads/engagement-screenshots/ — no traversal.
-$filename = basename($row['eng_planning_doc']);
-$path = dirname(__DIR__) . '/uploads/engagement-screenshots/' . $filename;
+// Only a file that is actually in this engagement's list can be served (and
+// basename() on each entry keeps it directly inside the uploads folder), so
+// ?file= can't be used to read anything else. No ?file= means the first doc.
+$filename = $requested === '' ? $files[0] : $requested;
+if (!in_array($filename, $files, true)) {
+    http_response_code(404);
+    exit('That planning doc does not belong to this engagement');
+}
+$path = planningDocDir() . '/' . $filename;
 
 if (!is_file($path)) {
     http_response_code(404);
-    exit('Screenshot file is missing');
+    exit('Planning doc file is missing');
 }
 
 $mime = @getimagesize($path)['mime'] ?? 'application/octet-stream';

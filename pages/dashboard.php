@@ -1000,7 +1000,8 @@ if (!empty($_SESSION['name'])) {
         .drawer-link-btn { font-size: 12px; font-weight: 600; color: var(--ink); background: none; border: none; cursor: pointer; padding: 0; }
         .drawer-link-btn:hover { text-decoration: underline; }
         .drawer-link-btn-danger { color: var(--critical); }
-        .drawer-planning-doc-row { display: flex; gap: 0.9rem; margin-bottom: 0.9rem; }
+        .drawer-planning-doc-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.1rem; margin-bottom: 0.9rem; }
+        .drawer-doc-item { display: inline-flex; align-items: center; gap: 0.5rem; }
 
         .doc-lightbox-scrim {
             position: fixed; inset: 0; background: rgba(10, 15, 22, 0.85); z-index: 300;
@@ -3110,22 +3111,31 @@ if (!empty($_SESSION['name'])) {
     // ---------- Planning doc (uploaded screenshot of the client's key-dates table) ----------
     function renderPlanningDocRow(eng) {
         const row = document.getElementById('drawerPlanningDocRow');
-        if (eng.eng_planning_doc) {
-            row.innerHTML = `
-                <button class="drawer-link-btn" id="drawerViewDocBtn"><i class="bi bi-image"></i> View Planning Doc</button>
-                <button class="drawer-link-btn" id="drawerReplaceDocBtn">Replace</button>
-                <button class="drawer-link-btn drawer-link-btn-danger" id="drawerRemoveDocBtn">Remove</button>
-            `;
-            document.getElementById('drawerViewDocBtn').addEventListener('click', () => {
-                openDocLightbox('../api/view-engagement-screenshot.php?id=' + encodeURIComponent(eng.eng_idno));
+        // eng_planning_doc holds one stored filename per line: an engagement can have several.
+        const files = (eng.eng_planning_doc || '').split(/\r?\n/).map(f => f.trim()).filter(Boolean);
+        let html = '';
+        files.forEach((file, i) => {
+            const label = files.length > 1 ? 'Planning Doc ' + (i + 1) : 'Planning Doc';
+            html += `<span class="drawer-doc-item">
+                <button class="drawer-link-btn" data-doc-view="${i}"><i class="bi bi-image"></i> View ${label}</button>
+                <button class="drawer-link-btn drawer-link-btn-danger" data-doc-remove="${i}">Remove</button>
+            </span>`;
+        });
+        html += `<button class="drawer-link-btn" id="drawerUploadDocBtn"><i class="bi bi-upload"></i> ${files.length ? 'Add Another' : 'Upload Planning Doc'}</button>`;
+        row.innerHTML = html;
+
+        row.querySelectorAll('[data-doc-view]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const file = files[Number(btn.dataset.docView)];
+                openDocLightbox('../api/view-engagement-screenshot.php?id=' + encodeURIComponent(eng.eng_idno) + '&file=' + encodeURIComponent(file));
             });
-            document.getElementById('drawerReplaceDocBtn').addEventListener('click', () => {
-                document.getElementById('planningDocFileInput').click();
-            });
-            document.getElementById('drawerRemoveDocBtn').addEventListener('click', () => {
+        });
+        row.querySelectorAll('[data-doc-remove]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const file = files[Number(btn.dataset.docRemove)];
                 Swal.fire({
                     title: 'Remove Planning Doc?',
-                    text: 'This deletes the uploaded screenshot for this engagement. This cannot be undone.',
+                    text: 'This deletes that uploaded image from this engagement. This cannot be undone.',
                     icon: 'warning',
                     confirmButtonText: 'Remove',
                     cancelButtonText: 'Cancel',
@@ -3136,22 +3146,20 @@ if (!empty($_SESSION['name'])) {
                     fetch('../api/delete-engagement-screenshot.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ engagement_id: eng.eng_idno })
+                        body: JSON.stringify({ engagement_id: eng.eng_idno, file: file })
                     })
                     .then(r => r.json())
                     .then(data => {
                         if (data.success) refreshDrawer();
-                        else Swal.fire('Error', data.message || 'Failed to remove screenshot', 'error');
+                        else Swal.fire('Error', data.message || 'Failed to remove planning doc', 'error');
                     })
-                    .catch(() => Swal.fire('Error', 'Failed to remove screenshot', 'error'));
+                    .catch(() => Swal.fire('Error', 'Failed to remove planning doc', 'error'));
                 });
             });
-        } else {
-            row.innerHTML = `<button class="drawer-link-btn" id="drawerUploadDocBtn"><i class="bi bi-upload"></i> Upload Planning Doc</button>`;
-            document.getElementById('drawerUploadDocBtn').addEventListener('click', () => {
-                document.getElementById('planningDocFileInput').click();
-            });
-        }
+        });
+        document.getElementById('drawerUploadDocBtn').addEventListener('click', () => {
+            document.getElementById('planningDocFileInput').click();
+        });
     }
 
     document.getElementById('planningDocFileInput').addEventListener('change', async (ev) => {

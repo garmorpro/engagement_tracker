@@ -393,7 +393,7 @@ function exportBuildPdf(array $data, string $exportedBy = ''): string
         ['Repeat engagement', ($eng['eng_repeat'] ?? 'N') === 'Y' ? 'Yes' : (($eng['eng_repeat'] ?? 'N') === 'N' ? 'No' : (string) $eng['eng_repeat'])],
         ['Status at export', ucfirst(str_replace('-', ' ', (string) ($eng['eng_status'] ?? '')))],
         ['Created', exportDate($eng['eng_created'] ?? null)],
-        ['Planning doc', !empty($eng['eng_planning_doc']) ? 'Included in this folder (Planning doc)' : ''],
+        ['Planning docs', exportPlanningDocLine($eng['eng_planning_doc'] ?? null)],
     ]);
 
     // Team
@@ -524,13 +524,26 @@ function exportBuildPdf(array $data, string $exportedBy = ''): string
 // ZIP + removal
 // ---------------------------------------------------------------------------
 
-function exportPlanningDocPath(?string $file): ?string
+// Every planning doc file that actually exists on disk, in stored order.
+function exportPlanningDocPaths(?string $stored): array
 {
-    if ($file === null || trim($file) === '') {
-        return null;
+    $paths = [];
+    foreach (planningDocList($stored) as $file) {
+        $path = planningDocDir() . '/' . $file;
+        if (is_file($path)) {
+            $paths[] = $path;
+        }
     }
-    $path = dirname(__DIR__) . '/uploads/engagement-screenshots/' . basename($file);
-    return is_file($path) ? $path : null;
+    return $paths;
+}
+
+function exportPlanningDocLine(?string $stored): string
+{
+    $n = count(exportPlanningDocPaths($stored));
+    if ($n === 0) {
+        return '';
+    }
+    return $n === 1 ? 'Included in this folder (Planning doc)' : "$n included in this folder (Planning doc 1 to $n)";
 }
 
 // Builds the history folder as a ZIP at $destPath. Returns the download
@@ -552,10 +565,11 @@ function exportBuildZip(mysqli $conn, string $idno, string $exportedBy, string $
         throw new Exception('Could not create the export file.');
     }
     $zip->addFromString($folder . '/Engagement Synopsis.pdf', $pdfBytes);
-    $doc = exportPlanningDocPath($data['eng']['eng_planning_doc'] ?? null);
-    if ($doc !== null) {
+    $docs = exportPlanningDocPaths($data['eng']['eng_planning_doc'] ?? null);
+    foreach ($docs as $i => $doc) {
         $ext = strtolower(pathinfo($doc, PATHINFO_EXTENSION));
-        $zip->addFile($doc, $folder . '/Planning doc' . ($ext !== '' ? '.' . $ext : ''));
+        $label = count($docs) > 1 ? 'Planning doc ' . ($i + 1) : 'Planning doc';
+        $zip->addFile($doc, $folder . '/' . $label . ($ext !== '' ? '.' . $ext : ''));
     }
     if (!$zip->close()) {
         throw new Exception('Could not finish the export file.');
@@ -621,8 +635,7 @@ function exportRemoveEngagement(mysqli $conn, string $idno): string
         throw $e;
     }
     // Only after the database change is durable.
-    $doc = exportPlanningDocPath($eng['eng_planning_doc'] ?? null);
-    if ($doc !== null) {
+    foreach (exportPlanningDocPaths($eng['eng_planning_doc'] ?? null) as $doc) {
         @unlink($doc);
     }
     return (string) $eng['eng_name'];

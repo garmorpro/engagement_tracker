@@ -68,8 +68,7 @@ try {
         }
     }
 
-    // Look up the engagement and its current screenshot (if any), so we can
-    // delete the old file when replacing rather than leaving it orphaned.
+    // An engagement can hold several planning docs; a new upload is added to the list.
     $stmt = $conn->prepare("SELECT eng_planning_doc FROM engagements WHERE eng_idno = ?");
     $stmt->bind_param('s', $engagementId);
     $stmt->execute();
@@ -90,21 +89,16 @@ try {
         throw new Exception('Failed to save uploaded file');
     }
 
+    $files = planningDocList($existing['eng_planning_doc'] ?? null);
+    $files[] = $filename;
+    $stored = planningDocStore($files);
     $stmt = $conn->prepare("UPDATE engagements SET eng_planning_doc = ? WHERE eng_idno = ?");
-    $stmt->bind_param('ss', $filename, $engagementId);
+    $stmt->bind_param('ss', $stored, $engagementId);
     if (!$stmt->execute()) {
         unlink($destPath);
         throw new Exception($stmt->error);
     }
     $stmt->close();
-
-    // Clean up the previous file now that the new one is safely saved and recorded.
-    if (!empty($existing['eng_planning_doc'])) {
-        $oldPath = $uploadDir . '/' . basename($existing['eng_planning_doc']);
-        if (is_file($oldPath)) {
-            @unlink($oldPath);
-        }
-    }
 
     echo json_encode(['success' => true, 'message' => 'Screenshot uploaded successfully']);
 } catch (Exception $e) {
