@@ -1342,7 +1342,7 @@ if (!empty($_SESSION['name'])) {
                 : '<button data-action="archive" title="Archive"><i class="bi bi-archive"></i></button>
                    <button class="danger" data-action="delete" title="Delete"><i class="bi bi-trash"></i></button>';
 
-            $detailPage = $showArchived ? 'archived-engagement-details.php' : 'engagement-details.php';
+            $detailPage = 'engagement-details.php';
 
             echo '<div class="reg-row ' . ($critical ? 'is-critical' : '') . ' ' . ($setup['needs_setup'] ? 'is-needs-setup' : '') . ' ' . ($showArchived ? 'is-archived' : '') . '"'
                 . ' data-id="' . htmlspecialchars($eng['eng_idno']) . '"'

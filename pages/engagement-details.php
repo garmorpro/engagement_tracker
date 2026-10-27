@@ -22,6 +22,10 @@ foreach ($allEngagements as $eng) {
     }
 }
 
+// Archived engagements use this same page (Restore instead of Archive, a back
+// link to the archived list, an [Archived] title) rather than a separate copy.
+$isArchived = ($engagement['eng_status'] ?? '') === 'archived';
+
 // Current engagement you are viewing
 $currentEngagementId = $engagementId; // assume this is set somewhere
 
@@ -184,7 +188,7 @@ $engagementData = $engagement;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($engagement['eng_name']); ?> - Engagement Tracker</title>
+    <title><?php echo $isArchived ? '[Archived] ' : ''; ?><?php echo htmlspecialchars($engagement['eng_name']); ?> - Engagement Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
@@ -375,6 +379,11 @@ $engagementData = $engagement;
         .engagement-badge.in-progress {
             background: color-mix(in srgb, var(--ink) 12%, transparent);
             color: var(--ink);
+        }
+
+        .engagement-badge.archived {
+            background: color-mix(in srgb, var(--text-secondary) 14%, transparent);
+            color: var(--text-secondary);
         }
 
         .badge-priority {
@@ -1522,9 +1531,9 @@ $engagementData = $engagement;
 <div class="main-container">
     <!-- Sticky Header -->
     <div class="page-header" id="pageHeader">
-        <a href="dashboard.php" class="back-button">
+        <a href="<?php echo $isArchived ? 'dashboard.php?view=archived' : 'dashboard.php'; ?>" class="back-button">
             <i class="bi bi-chevron-left"></i>
-            Dashboard
+            <?php echo $isArchived ? 'Archived Engagements' : 'Dashboard'; ?>
         </a>
 
         <!-- Action Buttons -->
@@ -1533,9 +1542,15 @@ $engagementData = $engagement;
                 <i class="bi bi-pencil"></i>
                 Edit
             </button>
+            <?php if ($isArchived): ?>
+            <button class="btn-icon" title="Restore" onclick="event.stopPropagation(); restoreEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
+                <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+            <?php else: ?>
             <button class="btn-icon" title="Archive" onclick="event.stopPropagation(); archiveEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                 <i class="bi bi-archive"></i>
             </button>
+            <?php endif; ?>
             <button class="btn-icon" title="Delete" onclick="event.stopPropagation(); deleteEngagement('<?php echo htmlspecialchars($eng['eng_idno']); ?>')">
                 <i class="bi bi-trash"></i>
             </button>
@@ -2372,6 +2387,55 @@ $engagementData = $engagement;
     }
 
 
+    // Restore engagement function
+    async function restoreEngagement(engagementId) {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        const result = await Swal.fire({
+            title: 'Restore Engagement?',
+            text: 'Are you sure you want to restore this engagement? It will be moved back to complete status.',
+            icon: 'question',
+            confirmButtonText: 'Restore',
+            cancelButtonText: 'Cancel',
+            showCancelButton: true,
+            confirmButtonColor: '#4487FC',
+            background: isDarkMode ? '#1A2332' : '#FFFFFF',
+            color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+        });
+
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch('../api/restore-engagement.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        engagement_id: engagementId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Restored!',
+                        text: 'Engagement has been restored successfully.',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        background: isDarkMode ? '#1A2332' : '#FFFFFF',
+                        color: isDarkMode ? '#E8EAED' : '#1A1A1A'
+                    }).then(() => {
+                        window.location.href = "dashboard.php";
+                    });
+                } else {
+                    Swal.fire('Error', data.message || 'Failed to restore engagement', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Failed to restore engagement', 'error');
+            }
+        }
+    }
+
     // Archive engagement function
     async function archiveEngagement(engagementId) {
         const isDarkMode = localStorage.getItem('darkMode') === 'true';
@@ -2621,6 +2685,7 @@ $engagementData = $engagement;
                             <option value="in-progress" ${engagementData.eng_status === 'in-progress' ? 'selected' : ''}>In Progress</option>
                             <option value="in-review"   ${engagementData.eng_status === 'in-review'   ? 'selected' : ''}>In Review</option>
                             <option value="complete"    ${engagementData.eng_status === 'complete'    ? 'selected' : ''}>Complete</option>
+                            ${engagementData.eng_status === 'archived' ? '<option value="archived" selected>Archived</option>' : ''}
                         </select>
                     </div>
 
