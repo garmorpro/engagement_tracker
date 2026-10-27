@@ -331,7 +331,9 @@ if (!empty($_SESSION['name'])) {
            column is a definite width however the browser sizes things, so the bar always spans it. 1200px (wider
            than the 1024px page column) is what gives the logo, search and buttons room to breathe. */
         .top-header { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: minmax(1.75rem, 1fr) minmax(0, 1200px) minmax(1.75rem, 1fr); }
-        .header-inner { grid-column: 2; min-width: 0; height: 68px; display: flex; align-items: center; gap: 2rem; }
+        /* assets/styles/main.css (loaded on this page) has a legacy .header-inner { padding: 0 200px; justify-content: space-between },
+           which is what was squeezing the bar into the middle: cancel it explicitly. */
+        .header-inner { grid-column: 2; min-width: 0; height: 68px; display: flex; align-items: center; justify-content: flex-start; gap: 2rem; padding: 0; }
         .brand { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; text-decoration: none; }
         .brand-icon { width: 26px; height: 26px; border-radius: 7px; background: var(--ink); color: var(--card); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .brand-mark { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
