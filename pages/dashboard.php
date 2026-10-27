@@ -989,8 +989,20 @@ if (!empty($_SESSION['name'])) {
         .drawer-link-btn { font-size: 12px; font-weight: 600; color: var(--ink); background: none; border: none; cursor: pointer; padding: 0; }
         .drawer-link-btn:hover { text-decoration: underline; }
         .drawer-link-btn-danger { color: var(--critical); }
-        .drawer-planning-doc-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.1rem; margin-bottom: 0.9rem; }
-        .drawer-doc-item { display: inline-flex; align-items: center; gap: 0.5rem; }
+        .drawer-planning-doc-row { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.9rem; }
+        /* Planning docs window: above the drawer (141), below the full-size viewer (300) so a thumbnail opens on top of it. */
+        .mtg-modal-scrim.docs-modal-scrim { z-index: 250; }
+        .docs-modal-box { max-width: 460px; }
+        .docs-list { display: flex; flex-direction: column; gap: 0.55rem; }
+        .docs-row { display: flex; align-items: center; gap: 0.8rem; padding: 0.55rem 0.65rem; border: 1px solid var(--line); border-radius: 9px; }
+        .docs-row.confirming { background: color-mix(in srgb, var(--critical) 7%, transparent); border-color: color-mix(in srgb, var(--critical) 35%, transparent); }
+        .docs-thumb { width: 54px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); background: var(--paper); cursor: zoom-in; flex-shrink: 0; }
+        .docs-name { flex: 1; min-width: 0; font-size: 12.5px; font-weight: 700; }
+        .docs-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+        .docs-confirm-text { flex: 1; min-width: 0; font-size: 12px; font-weight: 600; }
+        .docs-empty { font-size: 12.5px; color: var(--text-muted); text-align: center; padding: 1.1rem 0; }
+        .mtg-btn-sm { padding: 5px 11px; font-size: 11.5px; }
+        .mtg-btn.mtg-btn-danger { color: var(--critical); }
 
         .doc-lightbox-scrim {
             position: fixed; inset: 0; background: rgba(10, 15, 22, 0.85); z-index: 300;
@@ -1645,6 +1657,24 @@ if (!empty($_SESSION['name'])) {
         <div class="mtg-modal-footer">
             <button class="mtg-btn" data-mtg-close type="button">Cancel</button>
             <button class="mtg-btn mtg-btn-primary" id="mtgSaveGeneral" type="button">Save Note</button>
+        </div>
+    </div>
+</div>
+
+<div class="mtg-modal-scrim docs-modal-scrim" id="docsModalScrim">
+    <div class="mtg-modal-box docs-modal-box">
+        <div class="mtg-modal-header">
+            <div class="mtg-modal-header-icon" style="background:color-mix(in srgb, var(--ink) 10%, transparent); color:var(--ink);"><i class="bi bi-images"></i></div>
+            <div class="mtg-modal-header-text">
+                <h3>Planning docs</h3>
+                <p id="docsModalSub"></p>
+            </div>
+            <button class="mtg-modal-close" id="docsModalClose" type="button" title="Close"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="mtg-modal-body"><div class="docs-list" id="docsList"></div></div>
+        <div class="mtg-modal-footer">
+            <button class="mtg-btn" id="docsAddBtn" type="button"><i class="bi bi-plus-lg"></i> Add another</button>
+            <button class="mtg-btn mtg-btn-primary" id="docsDoneBtn" type="button">Done</button>
         </div>
     </div>
 </div>
@@ -3000,58 +3030,116 @@ if (!empty($_SESSION['name'])) {
     }
 
     // ---------- Planning doc (uploaded screenshot of the client's key-dates table) ----------
+    // eng_planning_doc holds one stored filename per line: an engagement can have several.
+    function planningDocFiles(eng) {
+        return (eng.eng_planning_doc || '').split(/\r?\n/).map(f => f.trim()).filter(Boolean);
+    }
+
+    // The drawer shows a single button: "Planning Docs (N)" opens the window below,
+    // and with none yet it is a direct "Upload Planning Doc".
     function renderPlanningDocRow(eng) {
         const row = document.getElementById('drawerPlanningDocRow');
-        // eng_planning_doc holds one stored filename per line: an engagement can have several.
-        const files = (eng.eng_planning_doc || '').split(/\r?\n/).map(f => f.trim()).filter(Boolean);
-        let html = '';
-        files.forEach((file, i) => {
-            const label = files.length > 1 ? 'Planning Doc ' + (i + 1) : 'Planning Doc';
-            html += `<span class="drawer-doc-item">
-                <button class="drawer-link-btn" data-doc-view="${i}"><i class="bi bi-image"></i> View ${label}</button>
-                <button class="drawer-link-btn drawer-link-btn-danger" data-doc-remove="${i}">Remove</button>
-            </span>`;
+        const n = planningDocFiles(eng).length;
+        row.innerHTML = n
+            ? `<button class="drawer-link-btn" id="drawerDocsBtn"><i class="bi bi-images"></i> Planning Docs (${n})</button>`
+            : `<button class="drawer-link-btn" id="drawerUploadDocBtn"><i class="bi bi-upload"></i> Upload Planning Doc</button>`;
+        document.getElementById(n ? 'drawerDocsBtn' : 'drawerUploadDocBtn').addEventListener('click', () => {
+            if (n) openDocsManager();
+            else document.getElementById('planningDocFileInput').click();
         });
-        html += `<button class="drawer-link-btn" id="drawerUploadDocBtn"><i class="bi bi-upload"></i> ${files.length ? 'Add Another' : 'Upload Planning Doc'}</button>`;
-        row.innerHTML = html;
+    }
 
-        row.querySelectorAll('[data-doc-view]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const file = files[Number(btn.dataset.docView)];
-                openDocLightbox('../api/view-engagement-screenshot.php?id=' + encodeURIComponent(eng.eng_idno) + '&file=' + encodeURIComponent(file));
-            });
+    // ---------- Planning docs window ----------
+    const docsScrim = document.getElementById('docsModalScrim');
+    let docsConfirming = null; // the file waiting on an inline "remove it?" answer (no second popup: it would replace this one)
+
+    function openDocsManager() {
+        docsConfirming = null;
+        renderDocsManager();
+        docsScrim.classList.add('open');
+    }
+    function closeDocsManager() {
+        docsScrim.classList.remove('open');
+        docsConfirming = null;
+    }
+    function docUrl(idno, file) {
+        return '../api/view-engagement-screenshot.php?id=' + encodeURIComponent(idno) + '&file=' + encodeURIComponent(file);
+    }
+
+    function renderDocsManager() {
+        if (!drawerData) return;
+        const eng = drawerData.engagement;
+        const files = planningDocFiles(eng);
+        document.getElementById('docsModalSub').textContent = files.length
+            ? files.length + (files.length === 1 ? ' doc' : ' docs') + ' on ' + eng.eng_idno
+            : 'Nothing uploaded for ' + eng.eng_idno + ' yet';
+        const list = document.getElementById('docsList');
+        if (!files.length) {
+            list.innerHTML = '<div class="docs-empty">No planning docs yet. Add one below.</div>';
+            return;
+        }
+        list.innerHTML = files.map((file, i) => {
+            const name = files.length > 1 ? 'Planning doc ' + (i + 1) : 'Planning doc';
+            const thumb = `<img class="docs-thumb" data-doc-open="${i}" src="${escAttr(docUrl(eng.eng_idno, file))}" alt="${escAttr(name)}" loading="lazy">`;
+            if (docsConfirming === file) {
+                return `<div class="docs-row confirming">${thumb}
+                    <div class="docs-confirm-text">Remove ${escapeHtml(name)}? This can't be undone.</div>
+                    <div class="docs-actions">
+                        <button type="button" class="mtg-btn mtg-btn-sm" data-doc-cancel>Cancel</button>
+                        <button type="button" class="mtg-btn mtg-btn-sm mtg-btn-danger" data-doc-confirm="${i}">Remove</button>
+                    </div></div>`;
+            }
+            return `<div class="docs-row">${thumb}
+                <div class="docs-name">${escapeHtml(name)}</div>
+                <div class="docs-actions">
+                    <button type="button" class="mtg-btn mtg-btn-sm" data-doc-open="${i}">View</button>
+                    <button type="button" class="mtg-btn mtg-btn-sm mtg-btn-danger" data-doc-remove="${i}">Remove</button>
+                </div></div>`;
+        }).join('');
+
+        list.querySelectorAll('[data-doc-open]').forEach(el => {
+            el.addEventListener('click', () => openDocLightbox(docUrl(eng.eng_idno, files[Number(el.dataset.docOpen)])));
         });
-        row.querySelectorAll('[data-doc-remove]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const file = files[Number(btn.dataset.docRemove)];
-                Swal.fire({
-                    title: 'Remove Planning Doc?',
-                    text: 'This deletes that uploaded image from this engagement. This cannot be undone.',
-                    icon: 'warning',
-                    confirmButtonText: 'Remove',
-                    cancelButtonText: 'Cancel',
-                    showCancelButton: true,
-                    confirmButtonColor: 'var(--danger-red)'
-                }).then((result) => {
-                    if (!result.isConfirmed) return;
-                    fetch('../api/delete-engagement-screenshot.php', {
+        list.querySelectorAll('[data-doc-remove]').forEach(btn => {
+            btn.addEventListener('click', () => { docsConfirming = files[Number(btn.dataset.docRemove)]; renderDocsManager(); });
+        });
+        list.querySelectorAll('[data-doc-cancel]').forEach(btn => {
+            btn.addEventListener('click', () => { docsConfirming = null; renderDocsManager(); });
+        });
+        list.querySelectorAll('[data-doc-confirm]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const file = files[Number(btn.dataset.docConfirm)];
+                btn.disabled = true;
+                try {
+                    const res = await fetch('../api/delete-engagement-screenshot.php', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ engagement_id: eng.eng_idno, file: file })
-                    })
-                    .then(r => r.json())
-                    .then(data => {
-                        if (data.success) refreshDrawer();
-                        else Swal.fire('Error', data.message || 'Failed to remove planning doc', 'error');
-                    })
-                    .catch(() => Swal.fire('Error', 'Failed to remove planning doc', 'error'));
-                });
+                    });
+                    const data = await res.json();
+                    if (!data.success) throw new Error(data.message || 'Failed to remove planning doc');
+                    docsConfirming = null;
+                    await refreshDrawer();   // also refreshes the "Planning Docs (N)" button behind this window
+                    renderDocsManager();
+                } catch (err) {
+                    console.error('Error:', err);
+                    docsConfirming = null;
+                    renderDocsManager();
+                    Swal.fire('Error', (err && err.message) || 'Failed to remove planning doc', 'error');
+                }
             });
         });
-        document.getElementById('drawerUploadDocBtn').addEventListener('click', () => {
-            document.getElementById('planningDocFileInput').click();
-        });
     }
+
+    document.getElementById('docsAddBtn').addEventListener('click', () => document.getElementById('planningDocFileInput').click());
+    document.getElementById('docsDoneBtn').addEventListener('click', closeDocsManager);
+    document.getElementById('docsModalClose').addEventListener('click', closeDocsManager);
+    docsScrim.addEventListener('click', (ev) => { if (ev.target === docsScrim) closeDocsManager(); });
+    window.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape' && docsScrim.classList.contains('open') && !document.getElementById('docLightboxScrim').classList.contains('open')) {
+            closeDocsManager();
+        }
+    });
 
     document.getElementById('planningDocFileInput').addEventListener('change', async (ev) => {
         const file = ev.target.files[0];
@@ -3066,7 +3154,8 @@ if (!empty($_SESSION['name'])) {
             const res = await fetch('../api/upload-engagement-screenshot.php', { method: 'POST', body: formData });
             const data = await res.json();
             if (data.success) {
-                refreshDrawer();
+                await refreshDrawer();
+                if (docsScrim.classList.contains('open')) renderDocsManager();
             } else {
                 Swal.fire('Error', data.message || 'Failed to upload screenshot', 'error');
             }
