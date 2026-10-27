@@ -145,6 +145,20 @@ try {
     // Commit transaction
     $conn->commit();
 
+    // The PCI ROC delivery date is saved on its own so creating an engagement
+    // still works on a server that hasn't run the migration yet.
+    $eng_roc_delivery_date = ($data['eng_roc_delivery_date'] ?? null) ?: null;
+    if ($eng_roc_delivery_date !== null) {
+        try {
+            $rocStmt = $conn->prepare("UPDATE engagements SET eng_roc_delivery_date = ? WHERE eng_idno = ?");
+            $rocStmt->bind_param('ss', $eng_roc_delivery_date, $eng_idno);
+            $rocStmt->execute();
+            $rocStmt->close();
+        } catch (Throwable $e) {
+            error_log('create-engagement.php: could not save eng_roc_delivery_date: ' . $e->getMessage());
+        }
+    }
+
     echo json_encode([
         'success' => true,
         'message' => 'Engagement created successfully',

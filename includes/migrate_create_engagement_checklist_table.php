@@ -6,6 +6,8 @@
  *   - adds engagements.eng_pci_checklist (0/1): PCI-only engagements always get
  *     the checklist; an engagement with PCI plus other audit types gets it only
  *     once someone presses "Add PCI checklist" (this flag), default 0.
+ *   - adds engagements.eng_roc_delivery_date (DATE): the PCI ROC delivery date,
+ *     asked for whenever PCI is a selected audit type.
  *
  * Safe to run more than once. CLI only.
  *   php includes/migrate_create_engagement_checklist_table.php
@@ -36,13 +38,18 @@ if (!$conn->query($sql)) {
 }
 echo "engagement_checklist is ready.\n";
 
-$col = $conn->query("SHOW COLUMNS FROM `engagements` LIKE 'eng_pci_checklist'");
-if ($col && $col->num_rows > 0) {
-    echo "engagements.eng_pci_checklist already exists, skipping.\n";
-    exit(0);
+foreach ([
+    'eng_pci_checklist'     => "ALTER TABLE `engagements` ADD COLUMN `eng_pci_checklist` TINYINT(1) NOT NULL DEFAULT 0",
+    'eng_roc_delivery_date' => "ALTER TABLE `engagements` ADD COLUMN `eng_roc_delivery_date` DATE NULL",
+] as $column => $alter) {
+    $col = $conn->query("SHOW COLUMNS FROM `engagements` LIKE '$column'");
+    if ($col && $col->num_rows > 0) {
+        echo "engagements.$column already exists, skipping.\n";
+        continue;
+    }
+    if (!$conn->query($alter)) {
+        fwrite(STDERR, "Failed to add engagements.$column: " . $conn->error . PHP_EOL);
+        exit(1);
+    }
+    echo "Added engagements.$column.\n";
 }
-if (!$conn->query("ALTER TABLE `engagements` ADD COLUMN `eng_pci_checklist` TINYINT(1) NOT NULL DEFAULT 0")) {
-    fwrite(STDERR, "Failed to add engagements.eng_pci_checklist: " . $conn->error . PHP_EOL);
-    exit(1);
-}
-echo "Added engagements.eng_pci_checklist.\n";

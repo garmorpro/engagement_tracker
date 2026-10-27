@@ -402,6 +402,7 @@ function exportBuildPdf(array $data, string $exportedBy = ''): string
         ['Period', $period],
         ['As-of date', exportDate($eng['eng_as_of_date'] ?? null)],
         ['Trust services', $eng['eng_tsc'] ?? ''],
+        ['ROC delivery date', exportDate($eng['eng_roc_delivery_date'] ?? null)],
         ['Scope', $eng['eng_scope'] ?? ''],
         ['Location', $eng['eng_location'] ?? ''],
         ['Point of contact', $eng['eng_poc'] ?? ''],

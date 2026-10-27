@@ -578,6 +578,33 @@ function getDueItemsSummary(mysqli $conn, int $daysAhead): array
         }
     }
 
+    // PCI ROC delivery date: due until the checklist's final step (Deliver Final
+    // ROC) is ticked. Only where the checklist is in use (PCI-only, or added to a
+    // combined engagement), since that's the only way to know it was delivered.
+    try {
+        $rocResult = $conn->query("SELECT eng_idno, eng_name, eng_audit_type, eng_pci_checklist, eng_roc_delivery_date
+                                   FROM engagements
+                                   WHERE eng_roc_delivery_date IS NOT NULL AND eng_status NOT IN ('archived', 'complete')");
+        foreach ($rocResult->fetch_all(MYSQLI_ASSOC) as $row) {
+            if (!in_array(pciChecklistMode($row), ['only', 'on'], true)) continue;
+            if (isset(getChecklistMap($conn, $row['eng_idno'])[PCI_CHECKLIST_FINAL_STEP])) continue;
+            $daysUntil = (int) round((strtotime($row['eng_roc_delivery_date']) - time()) / 86400);
+            if ($daysUntil > $daysAhead) continue;
+            $item = [
+                'engagement_idno' => $row['eng_idno'],
+                'eng_name' => $row['eng_name'],
+                'title' => 'ROC Delivery',
+                'due_date' => $row['eng_roc_delivery_date'],
+                'start_date' => null,
+                'days_until' => $daysUntil,
+                'type' => 'key_date',
+            ];
+            if ($daysUntil < 0) $overdue[] = $item; else $upcoming[] = $item;
+        }
+    } catch (\Throwable $e) {
+        // column not migrated yet: nothing to add
+    }
+
     // Most overdue first, then soonest-due first.
     usort($overdue, fn($a, $b) => $a['days_until'] <=> $b['days_until']);
     usort($upcoming, fn($a, $b) => $a['days_until'] <=> $b['days_until']);

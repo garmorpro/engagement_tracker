@@ -61,8 +61,20 @@ function getDueInfo($engIdno, $timelineLookup, $eng = null, $checklistLookup = [
     // PCI-only engagements are tracked on the checklist, not the timeline: no
     // dates to be late against, but once the final ROC is delivered there's
     // nothing left but to archive it.
+    // The ROC delivery date stands in for the final-report date, and the final
+    // ROC being delivered stands in for "final report done".
     if ($eng !== null && pciChecklistMode($eng) === 'only') {
-        return isset(($checklistLookup[$engIdno] ?? [])[PCI_CHECKLIST_FINAL_STEP]) ? [null, 'archive_ready'] : [null, 'none'];
+        if (isset(($checklistLookup[$engIdno] ?? [])[PCI_CHECKLIST_FINAL_STEP])) {
+            return [null, 'archive_ready'];
+        }
+        if (empty($eng['eng_roc_delivery_date'])) {
+            return [null, 'none'];
+        }
+        $due = new DateTime($eng['eng_roc_delivery_date']);
+        $diffDays = (int) (new DateTime('today'))->diff($due)->format('%r%a');
+        if ($diffDays < 0) return [$due, 'overdue'];
+        if ($diffDays <= 5) return [$due, 'soon'];
+        return [$due, 'ok'];
     }
     if (!isset($timelineLookup[$engIdno])) {
         return [null, 'none'];
@@ -554,6 +566,7 @@ if (!empty($_SESSION['name'])) {
 
         .reg-due { font-size: 12.5px; font-weight: 600; width: 96px; flex-shrink: 0; text-align: right; }
         .reg-due .tag { display: block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+        .reg-due .steps { display: block; font-size: 10.5px; font-weight: 600; color: var(--text-muted); }
         .reg-due.overdue, .reg-due.overdue .tag { color: var(--critical); }
         .reg-due.soon .tag { color: var(--caution); }
         .reg-due.archive-ready { color: var(--good); font-size: 11.5px; }
@@ -1140,6 +1153,11 @@ if (!empty($_SESSION['name'])) {
         .drawer-tl-date { font-size: 12.5px; font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
         .drawer-tl-date.overdue { color: var(--critical); }
         .drawer-tl-date.empty { color: var(--text-muted); font-weight: 500; }
+        .drawer-ck-roc { font-size: 11.5px; color: var(--text-muted); margin-bottom: 0.55rem; }
+        .drawer-ck-roc b { color: var(--text); font-weight: 700; }
+        .drawer-ck-roc .overdue { color: var(--critical); font-weight: 700; }
+        .drawer-ck-roc .soon { color: var(--caution); font-weight: 700; }
+        .drawer-ck-roc .done { color: var(--good); font-weight: 700; }
         .drawer-ck-summary { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.4rem; font-size: 11.5px; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
         .drawer-ck-bar { flex: 1; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; }
         .drawer-ck-bar span { display: block; height: 100%; background: var(--good); border-radius: 3px; }
@@ -1337,10 +1355,12 @@ if (!empty($_SESSION['name'])) {
                 }
             }
 
-            // PCI-only: progress through the checklist stands in for a due date.
+            // PCI-only: the ROC delivery date (formatted above like any due date), with
+            // progress through the checklist under it.
             if (pciChecklistMode($eng) === 'only' && $dueState !== 'archive_ready') {
                 $ckDone = count(array_intersect_key($checklistLookup[$eng['eng_idno']] ?? [], pciChecklistSteps()));
-                $dueHtml = '<div class="reg-due">' . $ckDone . ' of ' . count(pciChecklistSteps()) . ' steps</div>';
+                $stepsHtml = '<span class="steps">' . $ckDone . ' of ' . count(pciChecklistSteps()) . ' steps</span>';
+                $dueHtml = $due ? preg_replace('#</div>$#', $stepsHtml . '</div>', $dueHtml) : '<div class="reg-due">' . $stepsHtml . '</div>';
             }
 
             $actions = '<button data-action="archive" title="Archive &amp; Export"><i class="bi bi-archive"></i></button>
@@ -1512,6 +1532,12 @@ if (!empty($_SESSION['name'])) {
                             <label>End Period</label>
                             <input type="date" id="new_soc_end_period" class="eng-date">
                         </div>
+                    </div>
+                </div>
+                <div id="new_roc_section" class="eng-soc-box" style="display: none;">
+                    <div class="eng-field" style="margin-bottom: 0;">
+                        <label>ROC Delivery Date</label>
+                        <input type="date" id="new_roc_delivery_date" class="eng-date">
                     </div>
                 </div>
                 <div class="eng-field" style="margin-top: 1.15rem;">
@@ -2079,6 +2105,7 @@ if (!empty($_SESSION['name'])) {
             const selected = Array.from(document.querySelectorAll('.new-audit-type-checkbox:checked')).map(cb => cb.value);
             const hasSOC = selected.includes('SOC 1') || selected.includes('SOC 2');
             document.getElementById('new_soc_type_section').style.display = hasSOC ? 'block' : 'none';
+            document.getElementById('new_roc_section').style.display = selected.includes('PCI') ? 'block' : 'none';
             document.querySelectorAll('.eng-chip').forEach(chip => {
                 chip.classList.toggle('checked', chip.querySelector('input').checked);
             });
@@ -2295,7 +2322,7 @@ if (!empty($_SESSION['name'])) {
 
         function resetWizard() {
             ['new_eng_name', 'new_eng_location', 'new_eng_poc', 'new_eng_tsc', 'new_eng_scope', 'new_eng_notes',
-             'new_soc_as_of_date', 'new_soc_start_period', 'new_soc_end_period'].forEach(id => {
+             'new_soc_as_of_date', 'new_soc_start_period', 'new_soc_end_period', 'new_roc_delivery_date'].forEach(id => {
                 document.getElementById(id).value = '';
             });
             document.getElementById('new_eng_repeat').checked = false;
@@ -2305,6 +2332,7 @@ if (!empty($_SESSION['name'])) {
             setSegmented('new_eng_status_segment', 'planning');
             setSegmented('new_soc_type_segment', null);
             document.getElementById('new_soc_type_section').style.display = 'none';
+            document.getElementById('new_roc_section').style.display = 'none';
             document.getElementById('new_soc_type1_dates').style.display = 'none';
             document.getElementById('new_soc_type2_dates').style.display = 'none';
             document.getElementById('new_eng_manager_search').value = '';
@@ -2411,6 +2439,7 @@ if (!empty($_SESSION['name'])) {
                 <div class="eng-review-row"><dt>Status</dt><dd>${escapeHtml(STATUS_LABELS[status] || status)}</dd></div>
                 <div class="eng-review-row"><dt>Audit Types</dt><dd>${escapeHtml(types)}</dd></div>
                 <div class="eng-review-row"><dt>TSC</dt><dd>${escapeHtml(tsc)}</dd></div>
+                ${pickedTypes.includes('PCI') ? `<div class="eng-review-row"><dt>ROC Delivery</dt><dd>${escapeHtml(fmtDate(document.getElementById('new_roc_delivery_date').value) || '\u2014')}</dd></div>` : ''}
             `;
         }
 
@@ -2474,6 +2503,7 @@ if (!empty($_SESSION['name'])) {
                 eng_start_period: hasSoc ? (document.getElementById('new_soc_start_period').value || null) : null,
                 eng_end_period: hasSoc ? (document.getElementById('new_soc_end_period').value || null) : null,
                 eng_tsc: (noType || pickedTypes.includes('SOC 2')) ? (document.getElementById('new_eng_tsc').value || null) : null,
+                eng_roc_delivery_date: pickedTypes.includes('PCI') ? (document.getElementById('new_roc_delivery_date').value || null) : null,
                 eng_notes: document.getElementById('new_eng_notes').value || null
             };
 
@@ -2818,6 +2848,7 @@ if (!empty($_SESSION['name'])) {
                     <div class="drawer-info-item"><div class="drawer-info-label">Review Period</div><div class="drawer-info-value">${escapeHtml(period)}</div></div>
                     <div class="drawer-info-item"><div class="drawer-info-label">Audit Type</div><div class="drawer-info-value">${escapeHtml(auditTypes.join(', ') || 'N/A')}</div></div>
                     ${reportTypeRow}
+                    ${auditTypes.includes('PCI') ? `<div class="drawer-info-item"><div class="drawer-info-label">ROC Delivery</div><div class="drawer-info-value">${escapeHtml(fmtDate(eng.eng_roc_delivery_date) || 'Not set')}</div></div>` : ''}
                     <div class="drawer-info-item"><div class="drawer-info-label">Manager</div><div class="drawer-info-value">${escapeHtml(eng.eng_manager || 'Unassigned')}</div></div>
                     <div class="drawer-info-item"><div class="drawer-info-label">Point of Contact</div><div class="drawer-info-value">${escapeHtml(eng.eng_poc || 'N/A')}</div></div>
                 </div>
@@ -2941,7 +2972,21 @@ if (!empty($_SESSION['name'])) {
         const allKeys = PCI_CHECKLIST.flatMap(p => Object.keys(p.steps));
         const doneCount = allKeys.filter(k => checklist[k]).length;
         const pct = Math.round((doneCount / allKeys.length) * 100);
+        // ROC delivery date, with how late / close it is until the final ROC is delivered
+        let rocLine = '';
+        if (eng.eng_roc_delivery_date) {
+            const delivered = !!checklist[PCI_FINAL_STEP];
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+            const days = Math.round((new Date(eng.eng_roc_delivery_date + 'T00:00:00') - today) / 86400000);
+            let note = '';
+            if (delivered) note = '<span class="done">delivered</span>';
+            else if (days < 0) note = `<span class="overdue">${Math.abs(days)} day${Math.abs(days) === 1 ? '' : 's'} late</span>`;
+            else if (days === 0) note = '<span class="soon">due today</span>';
+            else if (days <= 5) note = `<span class="soon">due in ${days} day${days === 1 ? '' : 's'}</span>`;
+            rocLine = `<div class="drawer-ck-roc">ROC delivery <b>${escapeHtml(fmtDate(eng.eng_roc_delivery_date) || '')}</b> ${note}</div>`;
+        }
         el.innerHTML = `
+            ${rocLine}
             <div class="drawer-ck-summary"><span>${doneCount} of ${allKeys.length} steps</span><div class="drawer-ck-bar"><span style="width:${pct}%"></span></div><span>${pct}%</span></div>
             ${PCI_CHECKLIST.map(phase => {
                 const keys = Object.keys(phase.steps);
@@ -2981,7 +3026,8 @@ if (!empty($_SESSION['name'])) {
                     await refreshDrawer();
                     // keep the "N of 12 steps" in the list row behind the drawer current
                     const rowDue = document.querySelector('.reg-row[data-id="' + CSS.escape(eng.eng_idno) + '"] .reg-due');
-                    if (rowDue && pciChecklistMode(eng) === 'only') rowDue.textContent = nowCount + ' of ' + allKeys.length + ' steps';
+                    const stepsEl = rowDue && rowDue.querySelector('.steps');
+                    if (stepsEl && pciChecklistMode(eng) === 'only') stepsEl.textContent = nowCount + ' of ' + allKeys.length + ' steps';
                 } catch (err) {
                     console.error('Error:', err);
                     Swal.fire('Error', (err && err.message) || 'Failed to update the checklist', 'error');
@@ -4439,6 +4485,7 @@ if (!empty($_SESSION['name'])) {
             eng_start_period: eng.eng_start_period || '',
             eng_end_period:   eng.eng_end_period || '',
             eng_repeat:       eng.eng_repeat || '',
+            eng_roc_delivery_date: eng.eng_roc_delivery_date || '',
             eng_notes:        eng.eng_notes || ''
         };
 
@@ -4537,6 +4584,11 @@ if (!empty($_SESSION['name'])) {
                         </div>
                     </div>
 
+                    <div id="pci_roc_section" style="margin-bottom: 1.5rem; display: none; padding: 1rem; background: color-mix(in srgb, var(--primary-blue) 10%, transparent); border-radius: 8px;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">ROC Delivery Date</label>
+                        <input type="date" id="edit_roc_delivery_date" class="swal2-input" value="${escAttr(engagementData.eng_roc_delivery_date)}" style="width: 100%;">
+                    </div>
+
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Scope</label>
                         <textarea id="edit_eng_scope" class="swal2-input" style="width: 100%; min-height: 80px; resize: vertical; padding: 0.6rem;">${escapeHtml(engagementData.eng_scope)}</textarea>
@@ -4576,11 +4628,13 @@ if (!empty($_SESSION['name'])) {
                 const socTypeRadios   = document.querySelectorAll('input[name="soc_type"]');
                 const socType1Dates   = document.getElementById('soc_type1_dates');
                 const socType2Dates   = document.getElementById('soc_type2_dates');
+                const pciRocSection   = document.getElementById('pci_roc_section');
 
                 function updateFormVisibility() {
                     const selectedTypes = Array.from(auditCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
                     const hasSOC = selectedTypes.includes('SOC 1') || selectedTypes.includes('SOC 2');
                     socTypeSection.style.display = hasSOC ? 'block' : 'none';
+                    pciRocSection.style.display = selectedTypes.includes('PCI') ? 'block' : 'none';
                     updateDateFields();
                 }
                 function updateDateFields() {
@@ -4617,6 +4671,8 @@ if (!empty($_SESSION['name'])) {
                     eng_start_period: document.getElementById('edit_soc_start_period')?.value || '',
                     eng_end_period:   document.getElementById('edit_soc_end_period')?.value || '',
                     eng_repeat:       document.getElementById('edit_eng_repeat').checked ? 'Y' : 'N',
+                    // only meaningful with PCI selected; unticking PCI clears it
+                    eng_roc_delivery_date: selectedAuditTypes.split(',').includes('PCI') ? (document.getElementById('edit_roc_delivery_date').value || '') : '',
                     eng_notes:        document.getElementById('edit_eng_notes').value
                 };
 
