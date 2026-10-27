@@ -78,7 +78,7 @@ function exportLoadData(mysqli $conn, string $idno): ?array
         'timeline'   => exportRows($conn, "SELECT * FROM engagement_timeline WHERE engagement_idno = ?", $idno)[0] ?? [],
         'team'       => exportRows($conn, "SELECT * FROM engagement_team WHERE engagement_idno = ? ORDER BY emp_name", $idno),
         'milestones' => exportRows($conn, "SELECT milestone_type, due_date, is_completed FROM engagement_milestones WHERE engagement_idno = ? ORDER BY due_date, ms_id", $idno),
-        'notes'      => exportRows($conn, "SELECT note_type, note_text, independence_snapshot, author_name, created_at FROM engagement_notes WHERE engagement_idno = ? ORDER BY created_at, note_id", $idno),
+        'notes'      => exportRows($conn, "SELECT note_type, note_text, author_name, created_at FROM engagement_notes WHERE engagement_idno = ? ORDER BY created_at, note_id", $idno),
     ];
 }
 
@@ -502,18 +502,6 @@ function exportBuildPdf(array $data, string $exportedBy = ''): string
         $pdf->SetFont('Helvetica', '', 10);
         $pdf->SetTextColor(40, 50, 62);
         $pdf->MultiCell(0, 5.2, exportText(trim((string) $n['note_text'])));
-        if (!empty($n['independence_snapshot'])) {
-            $snap = json_decode((string) $n['independence_snapshot'], true);
-            if (is_array($snap) && $snap) {
-                $parts = [];
-                foreach ($snap as $name => $val) {
-                    $parts[] = $name . ': ' . ($val === 'Y' ? 'Yes' : ($val === 'N' ? 'No' : 'not answered'));
-                }
-                $pdf->SetFont('Helvetica', 'I', 9);
-                $pdf->SetTextColor(95, 106, 120);
-                $pdf->MultiCell(0, 4.8, exportText('Independence confirmed at this meeting - ' . implode(';  ', $parts)));
-            }
-        }
         $pdf->Ln(1.5);
         $pdf->SetDrawColor(224, 229, 235);
         $pdf->SetLineWidth(0.2);
