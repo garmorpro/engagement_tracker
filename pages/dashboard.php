@@ -1256,7 +1256,7 @@ if (!empty($_SESSION['name'])) {
         <label class="hdr-search">
             <i class="bi bi-search" aria-hidden="true"></i>
             <span class="sr-only">Search engagements</span>
-            <input type="search" id="searchInput" placeholder="Search engagements" autocomplete="off">
+            <input type="search" id="searchInput" placeholder="Search engagements (comma for more)" title="Type 3+ letters. Add a comma to search for another engagement too, e.g. pay, pcmi" autocomplete="off">
             <kbd title="Press / to search">/</kbd>
         </label>
 
@@ -2089,11 +2089,23 @@ if (!empty($_SESSION['name'])) {
     // quick-filter chips normally means "show me anything flagged."
     let setupOnly = false;
     let dueSoonOnly = false;
+    // Header search: comma-separated terms, a row shows if it matches ANY of them
+    // ("pay, pcmi" finds both). A term only counts once it has 3+ letters, so the
+    // list doesn't jump around while you're still mid-word.
+    const MIN_SEARCH_LETTERS = 3;
+    function parseSearch() {
+        const raw = (document.getElementById('searchInput')?.value || '').toLowerCase()
+            .split(',').map(t => t.trim()).filter(Boolean);
+        return {
+            terms: raw.filter(t => t.length >= MIN_SEARCH_LETTERS),
+            hasShortTerm: raw.some(t => t.length < MIN_SEARCH_LETTERS)
+        };
+    }
     function applyFilters() {
-        const query = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+        const { terms, hasShortTerm } = parseSearch();
         let visibleCount = 0;
         document.querySelectorAll('.reg-row').forEach(row => {
-            const matchesSearch = !query || row.dataset.search.includes(query);
+            const matchesSearch = !terms.length || terms.some(t => row.dataset.search.includes(t));
             const noStatusFilterActive = !setupOnly && !dueSoonOnly;
             const matchesStatus = noStatusFilterActive
                 || (setupOnly && row.dataset.needsSetup === '1')
@@ -2111,7 +2123,7 @@ if (!empty($_SESSION['name'])) {
             group.style.display = anyVisible ? '' : 'none';
         });
         const note = document.getElementById('resultNote');
-        if (note) note.textContent = `${visibleCount} shown`;
+        if (note) note.textContent = `${visibleCount} shown` + (hasShortTerm ? ` \u00b7 ${MIN_SEARCH_LETTERS}+ letters per search` : '');
     }
     document.getElementById('searchInput')?.addEventListener('input', applyFilters);
     document.getElementById('attentionLink')?.addEventListener('click', () => {
