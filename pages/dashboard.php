@@ -327,28 +327,32 @@ if (!empty($_SESSION['name'])) {
         .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 
         /* ---------- header ---------- */
-        .top-header { background: var(--card); border-bottom: 1px solid var(--line); padding: 0 1.75rem; position: sticky; top: 0; z-index: 100; }
-        .header-inner { width: 100%; max-width: 1024px; margin: 0 auto; height: 64px; display: flex; align-items: center; gap: 1.75rem; }
+        /* The header is a 3-column grid (gutter | content | gutter) rather than a centered max-width box: the middle
+           column is a definite width however the browser sizes things, so the bar always spans it. 1200px (wider
+           than the 1024px page column) is what gives the logo, search and buttons room to breathe. */
+        .top-header { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; width: 100%; box-sizing: border-box; display: grid; grid-template-columns: minmax(1.75rem, 1fr) minmax(0, 1200px) minmax(1.75rem, 1fr); }
+        .header-inner { grid-column: 2; min-width: 0; height: 68px; display: flex; align-items: center; gap: 2rem; }
         .brand { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; text-decoration: none; }
         .brand-icon { width: 26px; height: 26px; border-radius: 7px; background: var(--ink); color: var(--card); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .brand-mark { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
 
         .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-        .header-right { display: flex; align-items: center; gap: 0.65rem; margin-left: auto; flex-shrink: 0; }
-        .hdr-search { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; max-width: 360px; height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text-muted); box-sizing: border-box; }
+        .header-right { display: flex; align-items: center; gap: 0.9rem; flex-shrink: 0; }
+        /* auto side margins centre the search in whatever space is left between the logo and the buttons */
+        .hdr-search { display: flex; align-items: center; gap: 10px; flex: 1 1 260px; min-width: 0; max-width: 420px; margin: 0 auto; height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text-muted); box-sizing: border-box; }
         .hdr-search:focus-within { border-color: var(--ink); background: var(--card); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
         .hdr-search i { font-size: 14px; flex-shrink: 0; }
         .hdr-search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font: inherit; font-size: 13px; color: var(--text); }
         .hdr-search input::placeholder { color: var(--text-muted); }
         .hdr-search kbd { font-family: inherit; font-size: 11px; font-weight: 600; color: var(--text-muted); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; background: var(--card); }
         .hdr-search:focus-within kbd { display: none; }
-        .hdr-due { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 12px; border-radius: 19px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .hdr-due { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 19px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
         .hdr-due:hover { border-color: var(--line-strong); background: var(--paper); }
         .hdr-due i { font-size: 15px; }
         .hdr-badge { min-width: 20px; height: 20px; border-radius: 10px; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 6px; box-sizing: border-box; margin-right: -4px; }
         .hdr-badge.overdue { background: var(--critical-tint-strong); color: var(--critical); }
         .hdr-badge.upcoming { background: color-mix(in srgb, var(--caution) 16%, transparent); color: var(--caution); }
-        .hdr-sep { width: 1px; height: 26px; background: var(--line); margin: 0 0.15rem; }
+        .hdr-sep { width: 1px; height: 26px; background: var(--line); margin: 0 0.25rem; }
 
         /* ---------- "what's due" popup (replaces the old notification bell) ---------- */
         .due-popup-scrim {
@@ -505,7 +509,7 @@ if (!empty($_SESSION['name'])) {
         }
 
         .profile-section { position: relative; }
-        .profile-wrapper { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 10px 0 4px; border-radius: 19px; border: 1px solid var(--line); background: var(--paper); color: var(--text-muted); cursor: pointer; font-family: inherit; }
+        .profile-wrapper { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px 0 5px; border-radius: 19px; border: 1px solid var(--line); background: var(--paper); color: var(--text-muted); cursor: pointer; font-family: inherit; }
         .profile-wrapper:hover { border-color: var(--line-strong); }
         .profile-wrapper i { font-size: 12px; }
         .profile-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--card); border: none; font-weight: 700; font-size: 11.5px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
@@ -537,7 +541,7 @@ if (!empty($_SESSION['name'])) {
         .page-sub { font-size: 13px; color: var(--text-muted); margin: 4px 0 0; }
 
 
-        .btn-new-engagement { background: var(--ink); color: var(--card); border: none; height: 38px; padding: 0 16px; border-radius: 10px; font-size: 13px; font-weight: 600; font-family: inherit; display: flex; align-items: center; gap: 8px; flex-shrink: 0; cursor: pointer; }
+        .btn-new-engagement { background: var(--ink); color: var(--card); border: none; height: 40px; padding: 0 18px; border-radius: 10px; font-size: 13px; font-weight: 600; font-family: inherit; display: flex; align-items: center; gap: 8px; flex-shrink: 0; cursor: pointer; }
         .btn-new-engagement:hover { opacity: 0.92; }
 
         hr.rule { border: none; border-top: 1px solid var(--line); margin: 1.1rem 0 1.5rem; }
@@ -857,6 +861,7 @@ if (!empty($_SESSION['name'])) {
         }
 
         @media (max-width: 900px) {
+            .header-inner { gap: 1rem; }
             .hdr-label { display: none; }
             .hdr-due { padding: 0 10px; }
             .btn-new-engagement { padding: 0 12px; }
@@ -872,12 +877,14 @@ if (!empty($_SESSION['name'])) {
            entirely (invisible without scrolling). Drop to icon-only
            branding and tighten spacing so everything stays on screen. */
         @media (max-width: 480px) {
-            .top-header { padding: 0 1rem; }
-            .header-inner { gap: 0.6rem; }
+            .top-header { grid-template-columns: 1rem minmax(0, 1fr) 1rem; }
+            .header-inner { gap: 0.6rem; height: 64px; }
             .brand-mark { display: none; }
             .header-right { gap: 0.35rem; }
             .hdr-sep { display: none; }
             .hdr-search kbd { display: none; }
+            .hdr-search { padding: 0 10px; gap: 8px; }
+            .profile-wrapper { padding: 0 8px 0 4px; gap: 5px; }
 
             /* Each row was cramming a fixed 90px ID column, a fixed 96px
                due-date column, and a 56px-wide (invisible but still
