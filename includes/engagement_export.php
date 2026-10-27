@@ -154,17 +154,15 @@ function exportTeamRows(array $team): array
         foreach (EXPORT_DOL_COLUMNS as $type => $col) {
             $val = trim((string) ($m[$col] ?? ''));
             if ($val !== '') {
-                $duties[] = $type . ': ' . exportSortDol($val, $type);
+                $duties[] = [$type, exportSortDol($val, $type)];
             }
         }
-        $indep = $m['emp_independent'] === 'Y' ? 'Yes' : ($m['emp_independent'] === 'N' ? 'No' : '');
         $hours = $m['budgeted_hours'] === null ? '' : rtrim(rtrim(number_format((float) $m['budgeted_hours'], 2, '.', ''), '0'), '.');
         $out[] = [
             'name'   => (string) $m['emp_name'],
             'role'   => ucfirst((string) $m['role']),
-            'indep'  => $indep,
             'hours'  => $hours,
-            'duties' => implode("\n", $duties),
+            'duties' => $duties, // [[audit type, 'CC1, CC2'], ...], drawn with the type in bold
         ];
     }
     return $out;
@@ -198,6 +196,31 @@ class EngagementSynopsisPdf extends FPDF
         $this->SetFont('Helvetica', '', 8);
         $this->SetTextColor(125, 134, 145);
         $this->Cell(0, 5, exportText($this->footerText) . '    Page ' . $this->PageNo() . ' of {nb}', 0, 0, 'C');
+    }
+
+    // Lines the duties cell takes: each audit type is its own line(s), the bold
+    // "SOC 2: " label sharing its first line with the start of the list.
+    function dutyLineCount(float $w, array $duties): int
+    {
+        $total = 0;
+        foreach ($duties as [$type, $list]) {
+            $this->SetFont('Helvetica', 'B', 9.5);
+            $lineW = $this->GetStringWidth(exportText($type . ': '));
+            $this->SetFont('Helvetica', '', 9.5);
+            $space = $this->GetStringWidth(' ');
+            $lines = 1;
+            foreach (preg_split('/\s+/', trim((string) $list)) as $word) {
+                $ww = $this->GetStringWidth(exportText($word));
+                if ($lineW + $ww > $w && $lineW > 0) {
+                    $lines++;
+                    $lineW = $ww + $space;
+                } else {
+                    $lineW += $ww + $space;
+                }
+            }
+            $total += $lines;
+        }
+        return max(1, $total);
     }
 
     // Lines a string will take in a cell of inner width $w, wrapping on words.
@@ -266,10 +289,12 @@ function exportPdfTable(EngagementSynopsisPdf $pdf, array $widths, array $header
         $pdf->SetFont('Helvetica', $isHeader ? 'B' : '', $isHeader ? 8.5 : 9.5);
         $lines = 1;
         foreach ($cells as $i => $text) {
-            $lines = max($lines, $pdf->lineCount($widths[$i] - 3, exportText($text)));
+            $lines = max($lines, is_array($text)
+                ? $pdf->dutyLineCount($widths[$i] - 3, $text['duties'])
+                : $pdf->lineCount($widths[$i] - 3, exportText($text)));
         }
         $h = $lines * 4.8 + 2.4;
-        if ($pdf->GetY() + $h > 280) {
+        if ($pdf->GetY() + $h > 277) {
             return false;
         }
         $x = $pdf->GetX();
@@ -283,7 +308,24 @@ function exportPdfTable(EngagementSynopsisPdf $pdf, array $widths, array $header
         }
         foreach ($cells as $i => $text) {
             $pdf->SetXY($x + 1.5, $y + 1.2);
-            $pdf->MultiCell($widths[$i] - 3, 4.8, exportText($text), 0, 'L');
+            if (is_array($text)) {
+                // Audit type in bold, its duties in regular weight. Write() wraps
+                // at the page margins, so narrow them to this column for the cell.
+                $pdf->SetLeftMargin($x + 1.5);
+                $pdf->SetRightMargin(210 - ($x + $widths[$i] - 1.5));
+                $pdf->SetXY($x + 1.5, $y + 1.2);
+                foreach ($text['duties'] as [$type, $list]) {
+                    $pdf->SetFont('Helvetica', 'B', 9.5);
+                    $pdf->Write(4.8, exportText($type . ': '));
+                    $pdf->SetFont('Helvetica', '', 9.5);
+                    $pdf->Write(4.8, exportText($list));
+                    $pdf->Ln(4.8);
+                }
+                $pdf->SetLeftMargin(18);
+                $pdf->SetRightMargin(18);
+            } else {
+                $pdf->MultiCell($widths[$i] - 3, 4.8, exportText($text), 0, 'L');
+            }
             $x += $widths[$i];
         }
         $pdf->SetDrawColor(214, 220, 227);
@@ -361,10 +403,10 @@ function exportBuildPdf(array $data, string $exportedBy = ''): string
         $totalHours = 0.0;
         $table = [];
         foreach ($teamRows as $r) {
-            $table[] = [$r['name'], $r['role'], $r['indep'], $r['hours'], $r['duties']];
+            $table[] = [$r['name'], $r['role'], $r['hours'], ['duties' => $r['duties']]];
             $totalHours += (float) $r['hours'];
         }
-        exportPdfTable($pdf, [36, 20, 25, 14, 79], ['Name', 'Role', 'Independent', 'Hours', 'Duties (DOL)'], $table);
+        exportPdfTable($pdf, [40, 22, 16, 96], ['Name', 'Role', 'Hours', 'Duties (DOL)'], $table);
         if ($totalHours > 0) {
             $pdf->SetFont('Helvetica', '', 9);
             $pdf->SetTextColor(95, 106, 120);
