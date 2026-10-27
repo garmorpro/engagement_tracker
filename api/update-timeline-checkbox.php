@@ -1,7 +1,6 @@
 <?php
 require_once '../path.php';
 require_once '../includes/functions.php';
-require_once '../pages/notification-helper.php';
 requireApiAuth();
 
 header('Content-Type: application/json');
@@ -76,9 +75,6 @@ try {
     }
     
     if ($stmt->execute()) {
-        if ($completed_datetime) {
-            resolveKeyDateNotification($engagement_id, $date_field);
-        }
         echo json_encode(['success' => true, 'message' => 'Timeline updated successfully']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Database update failed: ' . $stmt->error]);

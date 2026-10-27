@@ -516,82 +516,10 @@ function setAppSetting(mysqli $conn, string $key, string $value): bool
     return $stmt->execute();
 }
 
-// Posts $message to the configured Slack webhook, if one is set. Silently
-// no-ops when unconfigured (Slack is optional) and never throws — a Slack
-// delivery failure should never break notification creation, which is why
-// this is called from inside createNotification() rather than the other
-// way around.
-function sendSlackNotification(mysqli $conn, string $message): void
-{
-    // Missing setting = enabled, so installs from before this toggle existed
-    // keep working until someone explicitly flips it off from the Admin
-    // Dashboard.
-    if (getAppSetting($conn, 'slack_enabled') === '0') {
-        return;
-    }
-
-    $webhookUrl = getAppSetting($conn, 'slack_webhook_url');
-    if (empty($webhookUrl)) {
-        return;
-    }
-
-    $payload = json_encode(['text' => $message]);
-
-    $ch = curl_init($webhookUrl);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    curl_exec($ch);
-    if (curl_errno($ch)) {
-        error_log('Slack notification failed: ' . curl_error($ch));
-    }
-    curl_close($ch);
-}
-
-// Posts $title/$message as a push notification to the configured ntfy.sh
-// topic URL, if one is set. Same optional/never-throws contract as
-// sendSlackNotification() above — this runs alongside Slack, not instead of
-// it, so a missing or failing ntfy config must never block anything else.
-function sendNtfyNotification(mysqli $conn, string $title, string $message): void
-{
-    // Missing setting = enabled, so installs from before this toggle existed
-    // keep working until someone explicitly flips it off from the Admin
-    // Dashboard.
-    if (getAppSetting($conn, 'ntfy_enabled') === '0') {
-        return;
-    }
-
-    $topicUrl = getAppSetting($conn, 'ntfy_topic_url');
-    if (empty($topicUrl)) {
-        return;
-    }
-
-    $ch = curl_init($topicUrl);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Title: ' . $title,
-        'Priority: default',
-        'Content-Type: text/plain; charset=utf-8'
-    ]);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-    curl_exec($ch);
-    if (curl_errno($ch)) {
-        error_log('ntfy notification failed: ' . curl_error($ch));
-    }
-    curl_close($ch);
-}
-
 // DUE ITEMS SUMMARY (login popup)
-// Live, read-only snapshot of everything overdue or due soon — deliberately
-// NOT sourced from engagement_notifications (that table is a one-time-fired
-// log feeding Slack/ntfy with its own "already notified" dedup, so a resolved
-// or long-since-alerted item would never show there again). This always
-// reflects current reality: run it twice in a row and you get the same
-// answer both times, until something actually changes.
+// Live, read-only snapshot of everything overdue or due soon, computed from
+// the timeline/milestone dates each time. Run it twice in a row and you get
+// the same answer both times, until something actually changes.
 function getDueItemsSummary(mysqli $conn, int $daysAhead): array
 {
     $dateFields = [

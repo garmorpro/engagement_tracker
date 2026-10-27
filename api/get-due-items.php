@@ -1,7 +1,7 @@
 <?php
 // api/get-due-items.php
 // Live snapshot for the login "what's due" popup — see getDueItemsSummary()
-// in includes/functions.php for why this doesn't read engagement_notifications.
+// in includes/functions.php.
 require_once '../path.php';
 require_once '../includes/functions.php';
 requireApiAuth();

@@ -63,21 +63,6 @@ try {
     }
     $stmt->close();
 
-    // Delete from engagement_notifications
-    $notifQuery = "DELETE FROM engagement_notifications WHERE engagement_idno = ?";
-    $stmt = $conn->prepare($notifQuery);
-    
-    if (!$stmt) {
-        throw new Exception('Prepare failed on notification delete: ' . $conn->error);
-    }
-    
-    $stmt->bind_param('s', $engagement_id);
-    
-    if (!$stmt->execute()) {
-        throw new Exception('Failed to delete notifications: ' . $stmt->error);
-    }
-    $stmt->close();
-
     // Delete from engagements
     $engQuery = "DELETE FROM engagements WHERE eng_idno = ?";
     $stmt = $conn->prepare($engQuery);

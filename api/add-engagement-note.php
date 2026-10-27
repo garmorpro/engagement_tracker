@@ -16,12 +16,9 @@
 //   3. Only for note_type 'planning' or 'client': mark the matching
 //      timeline step (Internal Planning Call / Client Planning Call)
 //      complete, the same way the timeline's own click-to-complete
-//      checkbox does (api/update-timeline-checkbox.php) — including
-//      resolving any pending notification for that date, via the same
-//      notification-helper.php used there.
+//      checkbox does (api/update-timeline-checkbox.php).
 require_once '../path.php';
 require_once '../includes/functions.php';
-require_once '../pages/notification-helper.php';
 requireApiAuth();
 
 header('Content-Type: application/json');
@@ -107,14 +104,6 @@ try {
     }
 
     $conn->commit();
-
-    if (isset($timelineDateFieldByType[$noteType])) {
-        // Same helper update-timeline-checkbox.php calls on manual
-        // completion — dismisses any pending "upcoming" notification for
-        // this date now that it's done. Runs after commit, on purpose:
-        // this only matters once the completion is actually durable.
-        resolveKeyDateNotification($engagementIdno, $timelineDateFieldByType[$noteType]);
-    }
 
     $label = ['planning' => 'Planning Meeting', 'client' => 'Client Planning Meeting', 'weekly' => 'Weekly Status Call', 'general' => 'Note'][$noteType];
     logActivity($conn, 'engagement_note_added', 'engagement', $engagementIdno, "Logged a {$label} on {$engagementIdno}");

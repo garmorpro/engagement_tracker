@@ -110,13 +110,6 @@ if (!empty($_SESSION['name'])) {
         .settings-card-header h2 { font-size: 15px; font-weight: 700; margin: 0; }
         .settings-card-desc { font-size: 12px; color: var(--text-muted); margin: -0.7rem 0 1.1rem; }
 
-        .channel-header { display: flex; align-items: center; justify-content: space-between; margin: 0 0 0.6rem; }
-        .channel-toggle { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; }
-        .channel-toggle input { opacity: 0; width: 0; height: 0; }
-        .channel-toggle-track { position: absolute; cursor: pointer; inset: 0; background: var(--line-strong); border-radius: 20px; transition: background 0.15s ease; }
-        .channel-toggle-track::before { content: ""; position: absolute; height: 14px; width: 14px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: transform 0.15s ease; }
-        .channel-toggle input:checked + .channel-toggle-track { background: var(--good); }
-        .channel-toggle input:checked + .channel-toggle-track::before { transform: translateX(16px); }
 
         .form-label { font-size: 11.5px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; font-weight: 700; display: block; }
         .form-control { background: var(--paper); border: 1px solid var(--line); color: var(--text); border-radius: 8px; padding: 0.75rem 1rem; font-size: 14px; width: 100%; }
@@ -254,42 +247,6 @@ if (!empty($_SESSION['name'])) {
             </button>
         </div>
         <div id="accountsList"></div>
-    </div>
-
-    <div class="settings-card">
-        <div class="channel-header">
-            <h2 style="font-size: 15px; font-weight: 700; margin: 0;">Slack Notifications</h2>
-            <label class="channel-toggle">
-                <input type="checkbox" id="slackEnabledToggle">
-                <span class="channel-toggle-track"></span>
-            </label>
-        </div>
-        <label class="form-label">Incoming Webhook URL</label>
-        <input type="text" class="form-control" id="slackWebhookInput" placeholder="https://hooks.slack.com/services/...">
-        <p class="settings-card-desc" style="margin-top: 0.5rem;">Use the toggle above to pause Slack without losing the saved webhook. Applies to upcoming key dates, upcoming milestones, and ready-to-archive alerts.</p>
-        <div class="button-group">
-            <button type="button" class="btn btn-secondary" id="slackTestBtn">Send Test</button>
-            <button type="button" class="btn btn-primary" id="slackSaveBtn">Save</button>
-        </div>
-        <p id="slackStatusMsg" style="font-size: 11.5px; margin: 0.6rem 0 0; display: none;"></p>
-    </div>
-
-    <div class="settings-card">
-        <div class="channel-header">
-            <h2 style="font-size: 15px; font-weight: 700; margin: 0;">Push Notifications (ntfy)</h2>
-            <label class="channel-toggle">
-                <input type="checkbox" id="ntfyEnabledToggle">
-                <span class="channel-toggle-track"></span>
-            </label>
-        </div>
-        <label class="form-label">Topic URL</label>
-        <input type="text" class="form-control" id="ntfyTopicInput" placeholder="https://ntfy.sh/your-private-topic-name">
-        <p class="settings-card-desc" style="margin-top: 0.5rem;">Install the free ntfy app on your phone and subscribe to this same topic name to get push notifications. Pick something private/hard-to-guess. Use the toggle above to pause push without losing the saved topic.</p>
-        <div class="button-group">
-            <button type="button" class="btn btn-secondary" id="ntfyTestBtn">Send Test</button>
-            <button type="button" class="btn btn-primary" id="ntfySaveBtn">Save</button>
-        </div>
-        <p id="ntfyStatusMsg" style="font-size: 11.5px; margin: 0.6rem 0 0; display: none;"></p>
     </div>
 
     <div class="settings-card">
@@ -561,118 +518,6 @@ function deleteAccount(userId, accountName) {
     });
 }
 
-// ---------- Slack ----------
-function showSlackStatus(message, isError) {
-    const el = document.getElementById('slackStatusMsg');
-    el.textContent = message;
-    el.style.color = isError ? 'var(--critical)' : 'var(--good)';
-    el.style.display = 'block';
-}
-function loadSlackSettings() {
-    fetch('../auth/get_slack_webhook.php')
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('slackWebhookInput').value = data.webhook_url || '';
-                document.getElementById('slackEnabledToggle').checked = !!data.enabled;
-            }
-        })
-        .catch(() => {});
-}
-document.getElementById('slackSaveBtn').addEventListener('click', () => {
-    const webhookUrl = document.getElementById('slackWebhookInput').value.trim();
-    const enabled = document.getElementById('slackEnabledToggle').checked;
-    fetch('../auth/update_slack_webhook.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ webhook_url: webhookUrl, enabled })
-    })
-        .then(res => res.json())
-        .then(data => showSlackStatus(data.message, !data.success))
-        .catch(() => showSlackStatus('Failed to save Slack settings', true));
-});
-document.getElementById('slackTestBtn').addEventListener('click', () => {
-    const webhookUrl = document.getElementById('slackWebhookInput').value.trim();
-    showSlackStatus('Sending…', false);
-    fetch('../auth/test_slack_webhook.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ webhook_url: webhookUrl })
-    })
-        .then(res => res.json())
-        .then(data => showSlackStatus(data.message, !data.success))
-        .catch(() => showSlackStatus('Failed to send test message', true));
-});
-document.getElementById('slackEnabledToggle').addEventListener('change', (ev) => {
-    const enabled = ev.target.checked;
-    fetch('../auth/get_slack_webhook.php')
-        .then(res => res.json())
-        .then(data => fetch('../auth/update_slack_webhook.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ webhook_url: data.webhook_url || '', enabled })
-        }))
-        .then(res => res.json())
-        .then(data => showSlackStatus(enabled ? 'Slack notifications on' : 'Slack notifications off', !data.success))
-        .catch(() => showSlackStatus('Failed to update Slack toggle', true));
-});
-
-// ---------- ntfy ----------
-function showNtfyStatus(message, isError) {
-    const el = document.getElementById('ntfyStatusMsg');
-    el.textContent = message;
-    el.style.color = isError ? 'var(--critical)' : 'var(--good)';
-    el.style.display = 'block';
-}
-function loadNtfySettings() {
-    fetch('../auth/get_ntfy_settings.php')
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('ntfyTopicInput').value = data.topic_url || '';
-                document.getElementById('ntfyEnabledToggle').checked = !!data.enabled;
-            }
-        })
-        .catch(() => {});
-}
-document.getElementById('ntfySaveBtn').addEventListener('click', () => {
-    const topicUrl = document.getElementById('ntfyTopicInput').value.trim();
-    const enabled = document.getElementById('ntfyEnabledToggle').checked;
-    fetch('../auth/update_ntfy_settings.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic_url: topicUrl, enabled })
-    })
-        .then(res => res.json())
-        .then(data => showNtfyStatus(data.message, !data.success))
-        .catch(() => showNtfyStatus('Failed to save push notification settings', true));
-});
-document.getElementById('ntfyTestBtn').addEventListener('click', () => {
-    const topicUrl = document.getElementById('ntfyTopicInput').value.trim();
-    showNtfyStatus('Sending…', false);
-    fetch('../auth/test_ntfy_notification.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ topic_url: topicUrl })
-    })
-        .then(res => res.json())
-        .then(data => showNtfyStatus(data.message, !data.success))
-        .catch(() => showNtfyStatus('Failed to send test push', true));
-});
-document.getElementById('ntfyEnabledToggle').addEventListener('change', (ev) => {
-    const enabled = ev.target.checked;
-    fetch('../auth/get_ntfy_settings.php')
-        .then(res => res.json())
-        .then(data => fetch('../auth/update_ntfy_settings.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ topic_url: data.topic_url || '', enabled })
-        }))
-        .then(res => res.json())
-        .then(data => showNtfyStatus(enabled ? 'Push notifications on' : 'Push notifications off', !data.success))
-        .catch(() => showNtfyStatus('Failed to update push toggle', true));
-});
-
 // ---------- "What's Due" popup settings ----------
 function showDuePopupStatus(message, isError) {
     const el = document.getElementById('duePopupStatusMsg');
@@ -702,8 +547,6 @@ document.getElementById('duePopupSaveBtn').addEventListener('click', () => {
 
 // ---------- init ----------
 loadAccountsList();
-loadSlackSettings();
-loadNtfySettings();
 loadDuePopupSettings();
 
 window.addEventListener('click', function (e) {

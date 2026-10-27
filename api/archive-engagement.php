@@ -1,7 +1,6 @@
 <?php
 require_once '../path.php';
 require_once '../includes/functions.php';
-require_once '../pages/notification-helper.php';
 requireApiAuth();
 
 header('Content-Type: application/json');
@@ -35,7 +34,6 @@ try {
     $stmt->bind_param('s', $engagement_id);
     
     if ($stmt->execute()) {
-        resolveNotifications($engagement_id, 'ready_to_archive');
         echo json_encode(['success' => true, 'message' => 'Engagement archived successfully']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Database update failed: ' . $stmt->error]);
