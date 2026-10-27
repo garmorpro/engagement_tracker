@@ -3,8 +3,6 @@ require_once '../auth/session_check.php';
 require_once '../path.php';
 require_once '../includes/functions.php';
 
-$showArchived = isset($_GET['view']) && $_GET['view'] === 'archived';
-
 // Get all engagements data
 $allEngagements = getAllEngagements($conn);
 
@@ -25,12 +23,12 @@ foreach ($allTeamData as $row) {
     $teamLookup[$row['engagement_idno']][] = $row;
 }
 
-$activeEngagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
-$archivedEngagements = array_filter($allEngagements, fn($e) => $e['eng_status'] === 'archived');
-$activeCount = count($activeEngagements);
-$archivedCount = count($archivedEngagements);
-
-$engagements = $showArchived ? $archivedEngagements : $activeEngagements;
+// There is no Archived view any more: "Archive" exports a PDF synopsis folder and
+// then removes the engagement (api/export-engagement.php + delete-engagement.php).
+// Any row still marked 'archived' from before that is kept out of every list
+// until it's removed (includes/export_archived_engagements.php --remove).
+$engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
+$activeCount = count($engagements);
 
 $statusMeta = [
     'in-review'   => ['label' => 'In Review',   'var' => '--ink-soft'],
@@ -51,7 +49,7 @@ $sectionOrder = ['in-review', 'in-progress', 'planning', 'complete'];
 // code change needed.
 $statusCounts = [];
 foreach ($sectionOrder as $status) {
-    $count = count(array_filter($activeEngagements, fn($e) => $e['eng_status'] === $status));
+    $count = count(array_filter($engagements, fn($e) => $e['eng_status'] === $status));
     if ($count > 0) {
         $statusCounts[$status] = $count;
     }
@@ -197,7 +195,7 @@ function renderTypeBadges($rawTypes) {
 // archive). This used to be called "Needs Attention"; that label now means
 // setup completeness instead (below), so this is split out on its own.
 $dueSoonCount = 0;
-foreach ($activeEngagements as $e) {
+foreach ($engagements as $e) {
     [, $state] = getDueInfo($e['eng_idno'], $timelineLookup);
     if (in_array($state, ['overdue', 'soon', 'archive_ready'], true)) $dueSoonCount++;
 }
@@ -205,7 +203,7 @@ foreach ($activeEngagements as $e) {
 // "Needs Attention" — onboarding completeness: team, DOL, timeline, and
 // planning doc. See getSetupInfo() above for exactly what each means.
 $attentionCount = 0;
-foreach ($activeEngagements as $e) {
+foreach ($engagements as $e) {
     $setup = getSetupInfo($e, $teamLookup, $timelineLookup);
     if ($setup['needs_setup']) $attentionCount++;
 }
@@ -229,7 +227,7 @@ if (!empty($_SESSION['name'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $showArchived ? 'Archived' : 'Engagements'; ?> - Engagement Tracker</title>
+    <title>Engagements - Engagement Tracker</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
@@ -498,10 +496,6 @@ if (!empty($_SESSION['name'])) {
         .page-sub { font-size: 13px; color: var(--text-muted); margin: 4px 0 0; }
 
         .head-actions { display: flex; align-items: center; gap: 1.5rem; }
-        .tab-toggle { display: flex; gap: 1.4rem; }
-        .tab-toggle a { border: none; background: transparent; padding: 4px 0; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; text-decoration: none; }
-        .tab-toggle a.active { color: var(--text); border-bottom-color: var(--ink); }
-        .tab-toggle .count { font-weight: 400; color: var(--text-muted); }
 
         .btn-new-engagement { background: transparent; color: var(--ink); border: 1px solid var(--ink); padding: 7px 14px; border-radius: 4px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; }
         .btn-new-engagement:hover { background: var(--ink); color: var(--card); }
@@ -534,7 +528,6 @@ if (!empty($_SESSION['name'])) {
         .reg-row { display: flex; align-items: center; gap: 1.25rem; padding: 13px 8px 13px 4px; border-bottom: 1px solid var(--line); cursor: pointer; position: relative; transition: background-color 0.1s ease; }
         .reg-row.is-critical { background: var(--critical-tint); }
         .reg-row.is-needs-setup:not(.is-critical) { background: color-mix(in srgb, var(--caution) 7%, transparent); }
-        .reg-row.is-archived { opacity: 0.62; }
         /* :hover rules gated to actual mouse/trackpad devices — on a touch
            screen, an element with :hover styling makes iOS/Android browsers
            spend the first tap entering the hover state (revealing
@@ -1224,25 +1217,18 @@ if (!empty($_SESSION['name'])) {
     <div class="page-head">
         <div>
             <h1>Engagements</h1>
-            <p class="page-sub"><?php echo $activeCount; ?> active &middot; <?php echo $archivedCount; ?> archived</p>
+            <p class="page-sub"><?php echo $activeCount; ?> active</p>
         </div>
         <div class="head-actions">
-            <div class="tab-toggle">
-                <a class="<?php echo !$showArchived ? 'active' : ''; ?>" href="dashboard.php">Active <span class="count">(<?php echo $activeCount; ?>)</span></a>
-                <a class="<?php echo $showArchived ? 'active' : ''; ?>" href="dashboard.php?view=archived">Archived <span class="count">(<?php echo $archivedCount; ?>)</span></a>
-            </div>
-            <?php if (!$showArchived): ?>
             <button class="btn-new-engagement">
                 <i class="bi bi-plus"></i> Onboard Client
             </button>
-            <?php endif; ?>
         </div>
     </div>
 
     <hr class="rule">
 
     <div class="stat-row">
-        <?php if (!$showArchived): ?>
             <div class="stat-card"><div><div class="value"><?php echo $activeCount; ?></div><div class="label">Total Active</div></div></div>
             <div class="stat-card <?php echo $attentionCount ? 'stat-card--setup' : ''; ?>"><div><div class="value"><?php echo $attentionCount; ?></div><div class="label">Needs Attention</div></div></div>
             <div class="stat-card <?php echo $dueSoonCount ? 'stat-card--attention' : ''; ?>"><div><div class="value"><?php echo $dueSoonCount; ?></div><div class="label">Due Soon</div></div></div>
@@ -1263,9 +1249,6 @@ if (!empty($_SESSION['name'])) {
                 </div>
             </div>
             <?php endif; ?>
-        <?php else: ?>
-            <div class="stat-card"><div><div class="value"><?php echo $archivedCount; ?></div><div class="label">Total Archived</div></div></div>
-        <?php endif; ?>
     </div>
 
     <div class="toolbar">
@@ -1273,7 +1256,6 @@ if (!empty($_SESSION['name'])) {
             <i class="bi bi-search"></i>
             <input type="text" class="search-input" id="searchInput" placeholder="Search engagements&hellip;">
         </div>
-        <?php if (!$showArchived): ?>
         <div class="toolbar-flags">
             <button class="attention-link attention-link--setup" id="attentionLink">
                 <span class="swatch"></span>
@@ -1284,31 +1266,28 @@ if (!empty($_SESSION['name'])) {
                 <span><?php echo $dueSoonCount; ?> due soon</span>
             </button>
         </div>
-        <?php endif; ?>
         <div class="result-note" id="resultNote"></div>
     </div>
 
     <?php if (empty($engagements)): ?>
-        <div class="empty-state" id="emptyState"><?php echo $showArchived ? 'No archived engagements yet.' : 'No engagements found. Onboard a client to get started.'; ?></div>
+        <div class="empty-state" id="emptyState">No engagements found. Onboard a client to get started.</div>
     <?php else: ?>
         <div class="list-head">
             <span class="lh-tick"></span>
             <span class="lh-id">ID</span>
             <span class="lh-main">Client</span>
             <span class="lh-type">Type</span>
-            <span class="lh-due"><?php echo $showArchived ? 'Archived' : 'Due'; ?></span>
+            <span class="lh-due">Due</span>
             <span class="lh-actions"></span>
         </div>
 
         <?php
-        $renderRow = function ($eng) use ($timelineLookup, $teamLookup, $showArchived, $statusMeta) {
+        $renderRow = function ($eng) use ($timelineLookup, $teamLookup, $statusMeta) {
             [$due, $dueState] = getDueInfo($eng['eng_idno'], $timelineLookup);
-            $critical = !$showArchived && $dueState === 'overdue';
-            $tickVar = $showArchived ? '--text-muted' : ($statusMeta[$eng['eng_status']]['var'] ?? '--text-muted');
+            $critical = $dueState === 'overdue';
+            $tickVar = $statusMeta[$eng['eng_status']]['var'] ?? '--text-muted';
             $dueSoon = in_array($dueState, ['overdue', 'soon', 'archive_ready'], true) ? '1' : '0';
-            $setup = $showArchived
-                ? ['has_team' => true, 'dol_complete' => true, 'has_timeline' => true, 'has_planning_doc' => true, 'missing' => [], 'needs_setup' => false]
-                : getSetupInfo($eng, $teamLookup, $timelineLookup);
+            $setup = getSetupInfo($eng, $teamLookup, $timelineLookup);
             $setupFlagHtml = '';
             if ($setup['needs_setup']) {
                 // First/most-actionable gap only — the row is a scannable
@@ -1320,13 +1299,11 @@ if (!empty($_SESSION['name'])) {
             $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? '') . ' ' . $eng['eng_idno'] . ' ' . ($eng['eng_poc'] ?? '') . ' ' . ($eng['eng_audit_type'] ?? ''));
 
             $dueHtml = '<div class="reg-due">&mdash;</div>';
-            if (!$showArchived && $dueState === 'archive_ready') {
+            if ($dueState === 'archive_ready') {
                 $dueHtml = '<div class="reg-due archive-ready"><i class="bi bi-archive"></i> Archive Ready</div>';
             } elseif ($due) {
                 $fmt = $due->format('M j, Y');
-                if ($showArchived) {
-                    $dueHtml = '<div class="reg-due">' . $fmt . '</div>';
-                } elseif ($dueState === 'overdue') {
+                if ($dueState === 'overdue') {
                     $daysLate = (new DateTime('today'))->diff($due)->days;
                     $dueHtml = '<div class="reg-due overdue">' . $fmt . '<span class="tag">' . $daysLate . 'd late</span></div>';
                 } elseif ($dueState === 'soon') {
@@ -1336,15 +1313,12 @@ if (!empty($_SESSION['name'])) {
                 }
             }
 
-            $actions = $showArchived
-                ? '<button data-action="restore" title="Restore"><i class="bi bi-arrow-counterclockwise"></i></button>
-                   <button class="danger" data-action="delete" title="Delete"><i class="bi bi-trash"></i></button>'
-                : '<button data-action="archive" title="Archive &amp; Export"><i class="bi bi-archive"></i></button>
+            $actions = '<button data-action="archive" title="Archive &amp; Export"><i class="bi bi-archive"></i></button>
                    <button class="danger" data-action="delete" title="Delete"><i class="bi bi-trash"></i></button>';
 
             $detailPage = 'engagement-details.php';
 
-            echo '<div class="reg-row ' . ($critical ? 'is-critical' : '') . ' ' . ($setup['needs_setup'] ? 'is-needs-setup' : '') . ' ' . ($showArchived ? 'is-archived' : '') . '"'
+            echo '<div class="reg-row ' . ($critical ? 'is-critical' : '') . ' ' . ($setup['needs_setup'] ? 'is-needs-setup' : '') . '"'
                 . ' data-id="' . htmlspecialchars($eng['eng_idno']) . '"'
                 . ' data-detail-href="' . $detailPage . '?id=' . urlencode($eng['eng_idno']) . '"'
                 . ' data-search="' . htmlspecialchars($searchBlob) . '"'
@@ -1363,8 +1337,7 @@ if (!empty($_SESSION['name'])) {
         };
         ?>
 
-        <?php if (!$showArchived): ?>
-            <?php foreach ($sectionOrder as $status): ?>
+        <?php foreach ($sectionOrder as $status): ?>
                 <?php
                     $items = array_filter($engagements, fn($e) => $e['eng_status'] === $status);
                     usort($items, function ($a, $b) use ($timelineLookup) {
@@ -1392,11 +1365,6 @@ if (!empty($_SESSION['name'])) {
                     <?php foreach ($items as $eng) $renderRow($eng); ?>
                 </div>
             <?php endforeach; ?>
-        <?php else: ?>
-            <div class="register">
-                <?php foreach ($engagements as $eng) $renderRow($eng); ?>
-            </div>
-        <?php endif; ?>
     <?php endif; ?>
 
 </div>
@@ -1715,10 +1683,6 @@ if (!empty($_SESSION['name'])) {
         sessionStorage.removeItem('showArchivedToast');
         showToast('Exported and removed from the tracker');
     }
-    if (sessionStorage.getItem('showRestoredToast')) {
-        sessionStorage.removeItem('showRestoredToast');
-        showToast('Engagement restored successfully');
-    }
     if (sessionStorage.getItem('showTimelineToast')) {
         sessionStorage.removeItem('showTimelineToast');
         showToast('Timeline updated successfully');
@@ -1865,39 +1829,6 @@ if (!empty($_SESSION['name'])) {
         }
     }
 
-    async function restoreEngagement(engagementId) {
-        const colors = swalColors();
-        const result = await Swal.fire({
-            title: 'Restore Engagement?',
-            text: 'Are you sure you want to restore this engagement? It will be moved back to complete status.',
-            icon: 'question',
-            confirmButtonText: 'Restore',
-            cancelButtonText: 'Cancel',
-            showCancelButton: true,
-            confirmButtonColor: 'var(--ink)',
-            background: colors.background,
-            color: colors.color
-        });
-        if (!result.isConfirmed) return;
-        try {
-            const response = await fetch('../api/restore-engagement.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ engagement_id: engagementId })
-            });
-            const data = await response.json();
-            if (data.success) {
-                sessionStorage.setItem('showRestoredToast', 'true');
-                location.reload();
-            } else {
-                Swal.fire('Error', data.message || 'Failed to restore engagement', 'error');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Error', 'Failed to restore engagement', 'error');
-        }
-    }
-
     // ---------- "What's Due" popup ----------
     function duePopupWhenLabel(item) {
         if (item.days_until < 0) {
@@ -1975,23 +1906,15 @@ if (!empty($_SESSION['name'])) {
     openDuePopup();
     <?php endif; ?>
 
-    // Row click -> quick-view drawer (active list) or full page (archived list, not yet converted)
-    const IS_ARCHIVED_VIEW = <?php echo $showArchived ? 'true' : 'false'; ?>;
+    // Row click -> quick-view drawer
     document.querySelectorAll('.reg-row').forEach(row => {
-        row.addEventListener('click', () => {
-            if (IS_ARCHIVED_VIEW) {
-                window.location.href = row.dataset.detailHref;
-            } else {
-                openDrawer(row.dataset.id);
-            }
-        });
+        row.addEventListener('click', () => openDrawer(row.dataset.id));
     });
     document.querySelectorAll('.row-actions button').forEach(btn => {
         btn.addEventListener('click', (ev) => {
             ev.stopPropagation();
             const id = btn.closest('.reg-row').dataset.id;
             if (btn.dataset.action === 'archive') archiveEngagement(id);
-            else if (btn.dataset.action === 'restore') restoreEngagement(id);
             else if (btn.dataset.action === 'delete') deleteEngagement(id);
         });
     });

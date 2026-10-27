@@ -17,7 +17,7 @@ Live at `https://engagements.morganserver.com` (see `path.php`). Repo: `github.c
 - `index.php` — public login page. Also embeds a super-admin "Admin Dashboard" (account management UI) unlocked via a 6-digit PIN, reachable *before* normal login.
 - `auth/` — login, logout, registration, session check, account management endpoints
 - `api/` — JSON endpoints for engagement/milestone/team-member CRUD, called via `fetch()` from the frontend
-- `pages/` — main authenticated app screens: dashboard (which also shows the archived list via `?view=archived`; `archive.php` is a redirect), engagement details (also used for archived engagements), employees, activity log, settings
+- `pages/` — main authenticated app screens: dashboard (the single engagement list; rows open a side drawer), engagement details, employees, activity log, settings
 - `includes/` — shared PHP: `db.php` (connection/env), `functions.php` (helpers + auth guards), `init.php` (an older/partial auth guard used by a few pages), modals
 - `path.php` — defines `BASE_URL` (hardcoded to production) and `ROOT_PATH`
 
@@ -43,7 +43,7 @@ Live at `https://engagements.morganserver.com` (see `path.php`). Repo: `github.c
 
 Started 2026-07-13, after the security review. New pages use a navy/slate/parchment palette (`--ink`, `--paper`, `--card`, `--line`, `--manager`/`--senior`/`--staff`/`--intern` for role colors) instead of the original bright blue/purple/teal tokens — deliberately chosen to read as a compliance/audit tool rather than a generic SaaS dashboard. Not applied page-wide yet; each page keeps its old palette until it gets its own redesign pass, so the app looks inconsistent across pages for now. Converted so far:
 
-- **`dashboard.php`** — merged with `archive.php` into a single page toggled via `?view=archived` (see known issues below); `archive.php` is now just a redirect, and an archived engagement opens the normal `engagement-details.php` in an archived mode (`$isArchived`: `[Archived]` title and badge, back link to the archived list, Restore instead of Archive). Engagements grouped into labeled sections by status, sorted by due date, with search and a "needs attention" filter.
+- **`dashboard.php`** — the one engagement list (there is no Archived view any more, see "Archive & Export" below). Engagements grouped into labeled sections by status, sorted by due date, with search and a "needs attention" filter.
 - **`engagement-details.php`** — only the **Team** section and its two management modals were redesigned (not the rest of the page — Details/Notes/Timeline/Milestones are still on the old palette). See below for what changed functionally.
 
 ### Team / Division of Labor (DOL) rework
@@ -110,9 +110,20 @@ All four post to `api/add-engagement-note.php`, one transaction rather than chai
 
 Any pre-existing `eng_notes` content isn't migrated automatically (no reliable author/timestamp to attribute it to) — the drawer shows it read-only in a "From before this log existed" callout above the log instead of silently dropping it.
 
+## Archive & Export (2026-10-27)
+
+There is no archived state to browse. Clicking **Archive & Export** (row action, drawer button, or the details page) runs a two-step flow from `archiveEngagement()` in `pages/dashboard.php` and `pages/engagement-details.php` (each page has its own copy of the JS):
+
+1. `api/export-engagement.php` builds a ZIP and streams it to the browser, named `<ENG-ID> - <client> - <audit type>`, containing **`Engagement Synopsis.pdf`** (details & scope, team with duties/hours, timeline with on-time/late, milestones, the full notes & meetings log) and the planning doc image if there is one. Nothing is kept on the server, and the export itself changes nothing.
+2. Only after the download is in hand, a second dialog asks "Remove from tracker" or "Keep it for now". Removing calls `api/delete-engagement.php`, which uses `exportRemoveEngagement()`: deletes the notes log, timeline, milestones, team and engagement rows in one transaction, then the planning doc file. (The old delete left the notes and the file behind, and since `eng_idno` comes from `MAX()+1`, a reused number could inherit orphaned notes.) "Delete" (trash icon) goes through the same cleanup.
+
+Code: `includes/engagement_export.php` (data load, PDF, ZIP, removal), FPDF 1.86 in `includes/lib/` (core Helvetica fonts only; text is converted to Windows-1252, so emoji are dropped). PDF decisions made with Garrett: no independence anywhere in it (neither a column nor the planning-meeting snapshot line), duties show the audit type in bold with the CC/CO items regular, canonical duty order. Download only: no History page, nothing stored on the Pi.
+
+For engagements archived before this existed, `includes/export_archived_engagements.php OUTDIR [--remove] [ENG-...]` (CLI, run as `garrett` on the Pi) writes the same ZIPs; with `--remove` it deletes an engagement only after re-opening its ZIP and finding the PDF inside. Rows still marked `eng_status = 'archived'` are filtered out of every list (`dashboard.php`, `functions.php`) until removed; once none are left those filters are dead but harmless. The timeline's own "Archive" step/date and the "Archive Ready" flag are unrelated and unchanged.
+
 ## Slimmed down (2026-10-27)
 
-Garrett only uses this to track his own engagements, so after the Pi move these were removed (each its own commit, recoverable from git history): the separate `mobile/` views; the Tools pages (`tools.php`, DOL Generator, work-balance tool); Slack/ntfy notifications along with the notification cron, helper, test/debug pages, `trigger-notification.php`, the `auth/*ntfy*`/`*slack*` endpoints and their Settings cards; the old `engagement-list.php` and the `check-*` debug scripts; and the separate `archived-engagement-details.php` (folded into `engagement-details.php`). Database: `webauthn_credentials`, `biometric_accounts`, `authentik_users` and `engagement_notifications` were dropped, along with the saved Slack/ntfy rows in `app_settings`. **Kept on purpose:** the in-app "What's Due" login popup (`api/get-due-items.php`, `getDueItemsSummary()`, its days-ahead setting in Settings) — it computes from live dates and never used the notification tables or the cron. Don't re-add the removed features without asking.
+Garrett only uses this to track his own engagements, so after the Pi move these were removed (each its own commit, recoverable from git history): the separate `mobile/` views; the Tools pages (`tools.php`, DOL Generator, work-balance tool); Slack/ntfy notifications along with the notification cron, helper, test/debug pages, `trigger-notification.php`, the `auth/*ntfy*`/`*slack*` endpoints and their Settings cards; the old `engagement-list.php` and the `check-*` debug scripts; and, later the same day, the whole Archived list (`archive.php`, restore, `archive-engagement.php`, `archived-engagement-details.php`, the Active/Archived tabs) in favour of Archive & Export. Database: `webauthn_credentials`, `biometric_accounts`, `authentik_users` and `engagement_notifications` were dropped, along with the saved Slack/ntfy rows in `app_settings`. **Kept on purpose:** the in-app "What's Due" login popup (`api/get-due-items.php`, `getDueItemsSummary()`, its days-ahead setting in Settings) — it computes from live dates and never used the notification tables or the cron. Don't re-add the removed features without asking.
 
 ## Known issues / backlog
 
