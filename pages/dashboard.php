@@ -235,6 +235,23 @@ foreach ($engagements as $e) {
 $showDuePopupOnLoad = !empty($_SESSION['show_due_popup']);
 unset($_SESSION['show_due_popup']);
 
+// Header "What's due" badge: the same items the popup lists (overdue + upcoming within
+// the popup's days-ahead window), so the number matches what opens.
+$dueItemsOverdue = 0;
+$dueItemsTotal = 0;
+try {
+    $daysAheadSetting = getAppSetting($conn, 'due_popup_days_ahead');
+    $headerDaysAhead = ($daysAheadSetting !== null && ctype_digit($daysAheadSetting)) ? (int) $daysAheadSetting : 7;
+    $headerDue = getDueItemsSummary($conn, $headerDaysAhead);
+    $dueItemsOverdue = count($headerDue['overdue']);
+    $dueItemsTotal = $dueItemsOverdue + count($headerDue['upcoming']);
+} catch (Throwable $e) {
+    // the badge is a convenience; the popup itself still works
+}
+
+$roleLabels = ['super_admin' => 'Super admin', 'admin' => 'Admin'];
+$roleLabel = $roleLabels[$_SESSION['role'] ?? ''] ?? ucfirst(str_replace('_', ' ', $_SESSION['role'] ?? 'user'));
+
 $initials = '';
 if (!empty($_SESSION['name'])) {
     foreach (explode(' ', trim($_SESSION['name'])) as $part) {
@@ -311,19 +328,27 @@ if (!empty($_SESSION['name'])) {
 
         /* ---------- header ---------- */
         .top-header { background: var(--card); border-bottom: 1px solid var(--line); padding: 0 1.75rem; position: sticky; top: 0; z-index: 100; }
-        .header-inner { max-width: 1080px; margin: 0 auto; height: 62px; display: flex; align-items: center; justify-content: space-between; gap: 2.5rem; }
+        .header-inner { width: 100%; max-width: 1024px; margin: 0 auto; height: 64px; display: flex; align-items: center; gap: 1.75rem; }
         .brand { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; text-decoration: none; }
         .brand-icon { width: 26px; height: 26px; border-radius: 7px; background: var(--ink); color: var(--card); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .brand-mark { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; color: var(--text); }
 
-        .main-nav { display: flex; gap: 1.6rem; }
-        .main-nav a { font-size: 13px; font-weight: 600; color: var(--text-muted); text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; }
-        .main-nav a.active { color: var(--text); border-bottom-color: var(--ink); }
-        .main-nav a:hover { color: var(--text); }
-
-        .header-right { display: flex; align-items: center; gap: 0.65rem; margin-left: auto; }
-        .icon-btn { width: 32px; height: 32px; border-radius: 6px; border: none; background: transparent; color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; font-size: 15px; }
-        .icon-btn:hover { background: color-mix(in srgb, var(--ink) 8%, var(--paper)); color: var(--text); }
+        .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+        .header-right { display: flex; align-items: center; gap: 0.65rem; margin-left: auto; flex-shrink: 0; }
+        .hdr-search { display: flex; align-items: center; gap: 10px; flex: 1 1 auto; max-width: 360px; height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text-muted); box-sizing: border-box; }
+        .hdr-search:focus-within { border-color: var(--ink); background: var(--card); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
+        .hdr-search i { font-size: 14px; flex-shrink: 0; }
+        .hdr-search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font: inherit; font-size: 13px; color: var(--text); }
+        .hdr-search input::placeholder { color: var(--text-muted); }
+        .hdr-search kbd { font-family: inherit; font-size: 11px; font-weight: 600; color: var(--text-muted); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; background: var(--card); }
+        .hdr-search:focus-within kbd { display: none; }
+        .hdr-due { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 12px; border-radius: 19px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        .hdr-due:hover { border-color: var(--line-strong); background: var(--paper); }
+        .hdr-due i { font-size: 15px; }
+        .hdr-badge { min-width: 20px; height: 20px; border-radius: 10px; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 6px; box-sizing: border-box; margin-right: -4px; }
+        .hdr-badge.overdue { background: var(--critical-tint-strong); color: var(--critical); }
+        .hdr-badge.upcoming { background: color-mix(in srgb, var(--caution) 16%, transparent); color: var(--caution); }
+        .hdr-sep { width: 1px; height: 26px; background: var(--line); margin: 0 0.15rem; }
 
         /* ---------- "what's due" popup (replaces the old notification bell) ---------- */
         .due-popup-scrim {
@@ -479,8 +504,10 @@ if (!empty($_SESSION['name'])) {
             .eng-chip-grid { grid-template-columns: 1fr; }
         }
 
-        .profile-section { position: relative; margin-left: 0.4rem; padding-left: 0.75rem; border-left: 1px solid var(--line); }
-        .profile-wrapper { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .profile-section { position: relative; }
+        .profile-wrapper { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 10px 0 4px; border-radius: 19px; border: 1px solid var(--line); background: var(--paper); color: var(--text-muted); cursor: pointer; font-family: inherit; }
+        .profile-wrapper:hover { border-color: var(--line-strong); }
+        .profile-wrapper i { font-size: 12px; }
         .profile-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--card); border: none; font-weight: 700; font-size: 11.5px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .profile-dropdown-toggle { border: none; background: transparent; color: var(--text-muted); cursor: pointer; padding: 2px; }
         .profile-dropdown {
@@ -496,6 +523,10 @@ if (!empty($_SESSION['name'])) {
         .profile-dropdown-menu { padding: 0.4rem; }
         .profile-dropdown-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; font-size: 12.5px; color: var(--text); text-decoration: none; }
         .profile-dropdown-item:hover { background: var(--paper); }
+        button.profile-dropdown-item { width: 100%; border: none; background: none; text-align: left; font-family: inherit; cursor: pointer; }
+        button.profile-dropdown-item:hover { background: var(--paper); }
+        .profile-dropdown-state { margin-left: auto; font-size: 11.5px; color: var(--text-muted); }
+        .profile-dropdown-sep { height: 1px; background: var(--line); margin: 0.35rem 0.25rem; }
         .profile-dropdown-item.logout { color: var(--critical); }
 
         /* ---------- page body ---------- */
@@ -505,19 +536,14 @@ if (!empty($_SESSION['name'])) {
         .page-head h1 { font-size: 24px; margin: 0; font-weight: 700; letter-spacing: -0.015em; }
         .page-sub { font-size: 13px; color: var(--text-muted); margin: 4px 0 0; }
 
-        .head-actions { display: flex; align-items: center; gap: 1.5rem; }
 
-        .btn-new-engagement { background: transparent; color: var(--ink); border: 1px solid var(--ink); padding: 7px 14px; border-radius: 4px; font-size: 12.5px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-        .btn-new-engagement:hover { background: var(--ink); color: var(--card); }
+        .btn-new-engagement { background: var(--ink); color: var(--card); border: none; height: 38px; padding: 0 16px; border-radius: 10px; font-size: 13px; font-weight: 600; font-family: inherit; display: flex; align-items: center; gap: 8px; flex-shrink: 0; cursor: pointer; }
+        .btn-new-engagement:hover { opacity: 0.92; }
 
         hr.rule { border: none; border-top: 1px solid var(--line); margin: 1.1rem 0 1.5rem; }
 
         /* ---------- toolbar ---------- */
         .toolbar { display: flex; gap: 1.5rem; align-items: center; margin-bottom: 1.75rem; }
-        .search-wrap { position: relative; width: 260px; flex-shrink: 0; }
-        .search-wrap i { position: absolute; left: 0; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 13px; }
-        .search-input { width: 100%; padding: 6px 6px 6px 22px; border: none; border-bottom: 1px solid var(--line); background: transparent; color: var(--text); font-size: 13px; }
-        .search-input:focus { outline: none; border-bottom-color: var(--ink); }
 
         .attention-link { background: none; border: none; padding: 0; font-size: 13px; font-weight: 600; color: var(--critical); cursor: pointer; display: flex; align-items: center; gap: 6px; }
         .attention-link .swatch { width: 8px; height: 8px; border-radius: 1px; background: var(--critical); }
@@ -830,9 +856,12 @@ if (!empty($_SESSION['name'])) {
             width: 100% !important;
         }
 
+        @media (max-width: 900px) {
+            .hdr-label { display: none; }
+            .hdr-due { padding: 0 10px; }
+            .btn-new-engagement { padding: 0 12px; }
+        }
         @media (max-width: 720px) {
-            .main-nav { display: none; }
-            .search-wrap { width: 100%; }
             .toolbar { flex-wrap: wrap; }
             .reg-type, .list-head .lh-type { display: none; }
         }
@@ -847,7 +876,8 @@ if (!empty($_SESSION['name'])) {
             .header-inner { gap: 0.6rem; }
             .brand-mark { display: none; }
             .header-right { gap: 0.35rem; }
-            .profile-section { padding-left: 0.5rem; margin-left: 0.2rem; }
+            .hdr-sep { display: none; }
+            .hdr-search kbd { display: none; }
 
             /* Each row was cramming a fixed 90px ID column, a fixed 96px
                due-date column, and a 56px-wide (invisible but still
@@ -1213,28 +1243,38 @@ if (!empty($_SESSION['name'])) {
             <span class="brand-icon">ET</span>
             <span class="brand-mark">Engagement Tracker</span>
         </a>
-        <nav class="main-nav">
-            <a class="active" href="dashboard.php">Engagements</a>
-        </nav>
+
+        <label class="hdr-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <span class="sr-only">Search engagements</span>
+            <input type="search" id="searchInput" placeholder="Search engagements" autocomplete="off">
+            <kbd title="Press / to search">/</kbd>
+        </label>
+
         <div class="header-right">
-            <button class="icon-btn" title="Dark mode">
-                <i class="bi bi-moon"></i>
+            <button type="button" class="hdr-due" onclick="openDuePopup()" aria-label="What's due<?php echo $dueItemsTotal ? ': ' . $dueItemsTotal . ' item' . ($dueItemsTotal === 1 ? '' : 's') : ''; ?>">
+                <i class="bi bi-list-check" aria-hidden="true"></i>
+                <span class="hdr-label">What's due</span>
+                <?php if ($dueItemsTotal > 0): ?>
+                <span class="hdr-badge <?php echo $dueItemsOverdue > 0 ? 'overdue' : 'upcoming'; ?>"><?php echo $dueItemsTotal; ?></span>
+                <?php endif; ?>
             </button>
-            <button class="icon-btn" title="What's Due" onclick="openDuePopup()">
-                <i class="bi bi-list-check"></i>
+            <button type="button" class="btn-new-engagement">
+                <i class="bi bi-plus-lg" aria-hidden="true"></i><span class="hdr-label">Onboard Client</span>
             </button>
+            <span class="hdr-sep" aria-hidden="true"></span>
 
             <div class="profile-section">
-                <div class="profile-wrapper" id="profileToggle">
-                    <button class="profile-btn" title="Profile"><?php echo $initials; ?></button>
-                    <button class="profile-dropdown-toggle"><i class="bi bi-chevron-down"></i></button>
-                </div>
+                <button type="button" class="profile-wrapper" id="profileToggle" aria-haspopup="true" aria-expanded="false" aria-label="Account menu, <?php echo htmlspecialchars($_SESSION['name'] ?? ''); ?>">
+                    <span class="profile-btn"><?php echo $initials; ?></span>
+                    <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                </button>
                 <div class="profile-dropdown" id="profileDropdown">
                     <div class="profile-dropdown-header">
                         <div class="profile-dropdown-avatar"><?php echo $initials; ?></div>
                         <div>
                             <div class="profile-dropdown-name"><?php echo htmlspecialchars($_SESSION['name'] ?? ''); ?></div>
-                            <div class="profile-dropdown-email"><?php echo htmlspecialchars($_SESSION['email'] ?? ''); ?></div>
+                            <div class="profile-dropdown-email"><?php echo htmlspecialchars($roleLabel); ?></div>
                         </div>
                     </div>
                     <div class="profile-dropdown-menu">
@@ -1243,6 +1283,11 @@ if (!empty($_SESSION['name'])) {
                             <i class="bi bi-gear"></i> Settings
                         </a>
                         <?php endif; ?>
+                        <button type="button" class="profile-dropdown-item" id="darkModeItem">
+                            <i class="bi bi-moon"></i> Dark mode
+                            <span class="profile-dropdown-state" id="darkModeState">Off</span>
+                        </button>
+                        <div class="profile-dropdown-sep" aria-hidden="true"></div>
                         <a href="<?php echo BASE_URL . '/auth/logout.php'; ?>" class="profile-dropdown-item logout">
                             <i class="bi bi-box-arrow-right"></i> Log Out
                         </a>
@@ -1260,11 +1305,6 @@ if (!empty($_SESSION['name'])) {
         <div>
             <h1>Engagements</h1>
             <p class="page-sub"><?php echo $activeCount; ?> active</p>
-        </div>
-        <div class="head-actions">
-            <button class="btn-new-engagement">
-                <i class="bi bi-plus"></i> Onboard Client
-            </button>
         </div>
     </div>
 
@@ -1294,10 +1334,6 @@ if (!empty($_SESSION['name'])) {
     </div>
 
     <div class="toolbar">
-        <div class="search-wrap">
-            <i class="bi bi-search"></i>
-            <input type="text" class="search-input" id="searchInput" placeholder="Search engagements&hellip;">
-        </div>
         <div class="toolbar-flags">
             <button class="attention-link attention-link--setup" id="attentionLink">
                 <span class="swatch"></span>
@@ -1994,13 +2030,15 @@ if (!empty($_SESSION['name'])) {
     });
 
     // Dark mode toggle
-    const darkModeBtn = document.querySelector('.icon-btn[title="Dark mode"]');
+    const darkModeBtn = document.getElementById('darkModeItem');
     function updateDarkModeIcon(isDark) {
         const icon = darkModeBtn?.querySelector('i');
         if (icon) {
             icon.classList.toggle('bi-moon', !isDark);
             icon.classList.toggle('bi-sun', isDark);
         }
+        const state = document.getElementById('darkModeState');
+        if (state) state.textContent = isDark ? 'On' : 'Off';
     }
     const isDarkMode = localStorage.getItem('darkMode') === 'true';
     if (isDarkMode) document.body.classList.add('dark-mode');
@@ -2016,12 +2054,24 @@ if (!empty($_SESSION['name'])) {
     const profileDropdown = document.getElementById('profileDropdown');
     profileToggle?.addEventListener('click', (e) => {
         e.stopPropagation();
-        profileDropdown?.classList.toggle('active');
+        const open = profileDropdown?.classList.toggle('active');
+        profileToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
     document.addEventListener('click', (e) => {
         if (!profileToggle?.contains(e.target) && !profileDropdown?.contains(e.target)) {
             profileDropdown?.classList.remove('active');
+            profileToggle?.setAttribute('aria-expanded', 'false');
         }
+    });
+
+    // "/" jumps to the header search, unless you're already typing somewhere or a window is open.
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+        const t = e.target;
+        if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+        if (document.querySelector('.swal2-container, .drawer:not(.closed), .eng-wizard-scrim.open, .mtg-modal-scrim.open, .docs-modal-scrim.open')) return;
+        e.preventDefault();
+        document.getElementById('searchInput')?.focus();
     });
 
     // Search + status filtering. "Needs attention" (setup: no team/DOL) and
