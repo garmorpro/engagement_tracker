@@ -835,6 +835,13 @@ if (!empty($_SESSION['name'])) {
         .team3-detail-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 1.6rem; padding-top: 1.2rem; border-top: 1px solid var(--line); max-width: 560px; }
         .team3-remove-confirm { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-primary); background: var(--critical-tint); border-radius: 7px; padding: 8px 10px; }
         .team3-remove-confirm b { color: var(--critical); }
+        /* While confirming a removal the bar owns the whole row (the Save group steps aside), its text wraps on
+           WORD boundaries (the popup library otherwise lets text break anywhere, which split "Remove"/"Cancel"
+           mid-word), and the buttons never shrink or wrap. */
+        .team3-detail-actions.is-confirming > span { display: none !important; }
+        .team3-remove-confirm { flex: 1 1 auto; min-width: 0; flex-wrap: wrap; justify-content: space-between; row-gap: 8px; overflow-wrap: normal; word-break: normal; }
+        .team3-remove-confirm .team3-remove-confirm-text { flex: 1 1 200px; min-width: 0; line-height: 1.4; }
+        .team3-remove-confirm .team2-btn { flex-shrink: 0; white-space: nowrap; }
         /* Pill-shaped, not the app's default rectangular button, so Save/
            Cancel/Remove read as lighter-weight than a typical form submit. */
         .team3-detail-actions .team2-btn,
@@ -4093,10 +4100,10 @@ if (!empty($_SESSION['name'])) {
                     <div class="team3-dol-columns">${dolColumnsHtml}</div>
                     <div class="team2-tag-hint">e.g. CC1, CC2 — press Enter or comma to add a duty</div>
                 </div>
-                <div class="team3-detail-actions">
+                <div class="team3-detail-actions ${isConfirmingRemove ? 'is-confirming' : ''}">
                     ${isConfirmingRemove ? `
                         <div class="team3-remove-confirm">
-                            Remove <b>${escapeHtml(member.emp_name)}</b> from this engagement?
+                            <span class="team3-remove-confirm-text">Remove <b>${escapeHtml(member.emp_name)}</b> from this engagement?</span>
                             <button type="button" class="team2-btn team2-btn-secondary" id="team3_cancel_remove" style="padding:5px 10px;">Cancel</button>
                             <button type="button" class="team2-btn team3-fg" id="team3_confirm_remove" style="padding:5px 10px; background:var(--critical); --fg:#fff;">Remove</button>
                         </div>
