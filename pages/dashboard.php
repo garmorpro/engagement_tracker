@@ -131,6 +131,10 @@ const TIMELINE_DATE_COLUMNS = [
     'leadsheet_date', 'conclusion_memo_date', 'draft_report_due_date', 'final_report_date', 'archive_date',
 ];
 
+// DOL gets assigned in the internal planning call, so "DOL incomplete" isn't raised until this many
+// days after that call happened (ticked complete, else its scheduled date). Mirrored in the JS below.
+const DOL_GRACE_DAYS = 2;
+
 // Onboarding completeness for one engagement: team assigned, DOL assigned
 // for whatever audit types actually need it (see DOL_AUDIT_TYPE_COLUMNS —
 // PCI/ISO have no DOL column at all, so those are never flagged for
@@ -171,6 +175,16 @@ function getSetupInfo($eng, $teamLookup, $timelineLookup, $checklistLookup = [])
     if (!$hasTeam) $dolComplete = true;
 
     $timeline = $timelineLookup[$engIdno] ?? null;
+    // Too soon after the internal planning call (or no call on the timeline to count from)? Don't flag DOL yet.
+    $callDay = null;
+    if ($timeline) {
+        $raw = !empty($timeline['internal_planning_call_completed_at'])
+            ? $timeline['internal_planning_call_completed_at']
+            : ($timeline['internal_planning_call_date'] ?? '');
+        $callDay = $raw ? substr((string) $raw, 0, 10) : null;
+    }
+    $dolDue = $callDay && strtotime($callDay . ' +' . DOL_GRACE_DAYS . ' days') <= strtotime('today');
+    if (!$dolDue) $dolComplete = true;
     $hasTimeline = false;
     if ($timeline) {
         foreach (TIMELINE_DATE_COLUMNS as $col) {
@@ -3590,11 +3604,21 @@ if (!empty($_SESSION['name'])) {
     // PCI-only engagements: see the matching comment on PHP's getSetupInfo()
     // — neither timeline nor planning doc is independently required, only
     // having neither counts as missing.
+    const DOL_GRACE_DAYS = 2; // keep in step with PHP's DOL_GRACE_DAYS
     function drawerSetupStatus(team, auditTypes, timeline, hasPlanningDoc, checklist) {
         const hasTeam = team.length > 0;
         const isPciOnly = auditTypes.length === 1 && auditTypes[0] === 'PCI';
         const relevant = auditTypes.filter(t => DOL_AUDIT_TYPES.hasOwnProperty(t));
-        const dolComplete = !hasTeam || relevant.every(auditType => {
+        // DOL isn't flagged until DOL_GRACE_DAYS after the internal planning call (ticked, else its date).
+        const callRaw = timeline && (timeline.internal_planning_call_completed_at || timeline.internal_planning_call_date);
+        let dolDue = false;
+        if (callRaw) {
+            const d = new Date(String(callRaw).slice(0, 10) + 'T00:00:00');
+            d.setDate(d.getDate() + DOL_GRACE_DAYS);
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+            dolDue = d <= today;
+        }
+        const dolComplete = !hasTeam || !dolDue || relevant.every(auditType => {
             const field = DOL_AUDIT_TYPES[auditType];
             return team.some(m => !!m[field]);
         });
