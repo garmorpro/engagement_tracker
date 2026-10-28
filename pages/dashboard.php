@@ -1264,6 +1264,17 @@ if (!empty($_SESSION['name'])) {
         .wcall-ac-id { font-size: 10.5px; color: var(--text-muted); }
         .wcall-ac-empty { padding: 9px 10px; font-size: 12px; color: var(--text-muted); }
 
+        /* Moving between a client's engagements: the old one fades out, the new one's
+           sections rise in one after another. Opening from the list uses the same entrance. */
+        #drawerHeadText, .drawer-body { transition: opacity 0.14s ease, transform 0.14s ease; }
+        #drawerHeadText.is-leaving, .drawer-body.is-leaving { opacity: 0; transform: translateY(-4px); }
+        @keyframes drawerSectionIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+        .drawer-body.is-entering > *, #drawerHeadText.is-entering { animation: drawerSectionIn 0.34s cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: calc(var(--i, 0) * 45ms); }
+        @media (prefers-reduced-motion: reduce) {
+            #drawerHeadText, .drawer-body { transition: none; }
+            .drawer-body.is-entering > *, #drawerHeadText.is-entering { animation: none; }
+        }
+
         .drawer-loading { padding: 3rem 1rem; text-align: center; color: var(--text-muted); font-size: 13px; }
 
         @media (max-width: 640px) {
@@ -1690,7 +1701,7 @@ if (!empty($_SESSION['name'])) {
 <div class="drawer closed" id="drawer">
     <div class="drawer-header">
         <div class="drawer-header-top">
-            <div style="min-width:0;">
+            <div style="min-width:0;" id="drawerHeadText">
                 <div class="drawer-eng-id" id="drawerEngId"></div>
                 <h2 class="drawer-client-name" id="drawerClientName"></h2>
                 <div class="drawer-badge-row" id="drawerBadgeRow"></div>
@@ -2850,6 +2861,45 @@ if (!empty($_SESSION['name'])) {
         }
         drawerData = data;
         renderDrawer(data);
+        playDrawerEntrance();
+    }
+
+    // Staggered entrance for whatever renderDrawer just put in the body.
+    function playDrawerEntrance() {
+        const body = document.getElementById('drawerBody');
+        const head = document.getElementById('drawerHeadText');
+        body.scrollTop = 0;
+        [...body.children].forEach((el, i) => el.style.setProperty('--i', Math.min(i + 1, 8)));
+        head.style.setProperty('--i', 0);
+        body.classList.remove('is-entering'); head.classList.remove('is-entering');
+        void body.offsetWidth; // restart the animation if it was still running
+        body.classList.add('is-entering'); head.classList.add('is-entering');
+        setTimeout(() => { body.classList.remove('is-entering'); head.classList.remove('is-entering'); }, 900);
+    }
+
+    // Chip click inside the client strip: fade the current engagement out while the next one
+    // loads, then bring it in, rather than blanking to "Loading..." and popping.
+    let drawerSwitchToken = 0;
+    async function switchDrawerTo(id) {
+        const token = ++drawerSwitchToken;
+        const body = document.getElementById('drawerBody');
+        const head = document.getElementById('drawerHeadText');
+        body.classList.remove('is-entering'); head.classList.remove('is-entering');
+        body.classList.add('is-leaving'); head.classList.add('is-leaving');
+        const [data] = await Promise.all([
+            fetchEngagementData(id).catch(() => ({ success: false })),
+            new Promise(r => setTimeout(r, 150))
+        ]);
+        if (token !== drawerSwitchToken) return; // a newer click took over
+        if (!data.success) {
+            body.classList.remove('is-leaving'); head.classList.remove('is-leaving');
+            Swal.fire('Error', data.message || 'Failed to load engagement', 'error');
+            return;
+        }
+        drawerData = data;
+        renderDrawer(data);
+        body.classList.remove('is-leaving'); head.classList.remove('is-leaving');
+        playDrawerEntrance();
     }
 
     function closeDrawer() {
@@ -3058,7 +3108,7 @@ if (!empty($_SESSION['name'])) {
         if (checklistMode === 'only' || checklistMode === 'on') renderDrawerChecklist(data.checklist || {}, eng);
         renderPlanningDocRow(eng);
         document.querySelectorAll('.drawer-client-chip[data-open]').forEach(btn => {
-            btn.addEventListener('click', () => openDrawer(btn.dataset.open));
+            btn.addEventListener('click', () => switchDrawerTo(btn.dataset.open));
         });
         renderWeeklyStatusCallControl(timeline, eng.eng_idno, eng.eng_name, data.linked_calls || []);
 
