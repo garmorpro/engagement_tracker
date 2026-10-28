@@ -1275,6 +1275,11 @@ if (!empty($_SESSION['name'])) {
             .drawer-body.is-entering > *, #drawerHeadText.is-entering { animation: none; }
         }
 
+        .drawer-tl-item.is-saving { opacity: 0.6; transition: opacity 0.15s; }
+        @keyframes tlFlash { 0% { background: color-mix(in srgb, var(--ink) 16%, transparent); } 100% { background: transparent; } }
+        .drawer-tl-item.just-changed { animation: tlFlash 1.4s ease-out; border-radius: 8px; }
+        @media (prefers-reduced-motion: reduce) { .drawer-tl-item.just-changed { animation: none; } }
+
         .drawer-loading { padding: 3rem 1rem; text-align: center; color: var(--text-muted); font-size: 13px; }
 
         @media (max-width: 640px) {
@@ -2076,17 +2081,7 @@ if (!empty($_SESSION['name'])) {
     <?php endif; ?>
 
     // Row click -> quick-view drawer
-    document.querySelectorAll('.reg-row').forEach(row => {
-        row.addEventListener('click', () => openDrawer(row.dataset.id));
-    });
-    document.querySelectorAll('.row-actions button').forEach(btn => {
-        btn.addEventListener('click', (ev) => {
-            ev.stopPropagation();
-            const id = btn.closest('.reg-row').dataset.id;
-            if (btn.dataset.action === 'archive') archiveEngagement(id);
-            else if (btn.dataset.action === 'delete') deleteEngagement(id);
-        });
-    });
+    bindListRows();
 
     // Dark mode toggle
     const darkModeBtn = document.getElementById('darkModeItem');
@@ -2907,13 +2902,72 @@ if (!empty($_SESSION['name'])) {
         drawerScrimEl.classList.add('hidden');
     }
 
+    // Re-renders the open drawer from fresh data without losing your place in it.
     async function refreshDrawer() {
         if (!drawerData) return;
         const data = await fetchEngagementData(drawerData.engagement.eng_idno);
         if (data.success) {
+            const body = document.getElementById('drawerBody');
+            const top = body.scrollTop;
             drawerData = data;
             renderDrawer(data);
+            body.scrollTop = top;
         }
+    }
+
+    // The list behind the drawer (stat cards, flags, rows, the header's due badge) is
+    // server-rendered, so after a save we re-fetch the page and swap those pieces in place.
+    // That lets a change show up everywhere without a reload, which would close the
+    // drawer's scroll position and flash the whole page.
+    function bindListRows() {
+        document.querySelectorAll('.reg-row').forEach(row => {
+            row.addEventListener('click', () => openDrawer(row.dataset.id));
+        });
+        document.querySelectorAll('.row-actions button').forEach(btn => {
+            btn.addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                const id = btn.closest('.reg-row').dataset.id;
+                if (btn.dataset.action === 'archive') archiveEngagement(id);
+                else if (btn.dataset.action === 'delete') deleteEngagement(id);
+            });
+        });
+    }
+    async function refreshListBehind() {
+        try {
+            const res = await fetch(location.pathname + location.search, { credentials: 'same-origin', cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+            const cur = document.querySelector('.main-container');
+            const next = doc.querySelector('.main-container');
+            const toolbar = cur && cur.querySelector('.toolbar');
+            if (!cur || !next || !toolbar || !next.querySelector('.toolbar')) throw new Error('unexpected page');
+
+            const nextDue = doc.querySelector('.hdr-due');
+            const curDue = document.querySelector('.hdr-due');
+            if (nextDue && curDue) curDue.replaceWith(document.importNode(nextDue, true));
+            ['.page-sub', '.stat-row'].forEach(sel => {
+                const a = cur.querySelector(sel), b = next.querySelector(sel);
+                if (a && b) a.innerHTML = b.innerHTML;
+            });
+            ['#attentionLink', '#dueSoonLink'].forEach(sel => {
+                const a = cur.querySelector(sel + ' span:last-child'), b = next.querySelector(sel + ' span:last-child');
+                if (a && b) a.textContent = b.textContent;
+            });
+            while (toolbar.nextElementSibling) toolbar.nextElementSibling.remove();
+            for (let n = next.querySelector('.toolbar').nextElementSibling; n; n = n.nextElementSibling) {
+                cur.appendChild(document.importNode(n, true));
+            }
+            bindListRows();
+            applyFilters();
+        } catch (error) {
+            console.error('List refresh failed:', error);
+            location.reload(); // fall back to the old behaviour so the list is never left stale
+        }
+    }
+    // After a save inside the drawer: refresh the drawer where you are, the list behind it, then confirm.
+    async function applyDrawerUpdate(toastMessage) {
+        await Promise.all([refreshDrawer(), refreshListBehind()]);
+        if (toastMessage) showToast(toastMessage);
     }
 
     function reopenDrawerAfterReload(id, extraFlag) {
@@ -2933,9 +2987,7 @@ if (!empty($_SESSION['name'])) {
             });
             const data = await response.json();
             if (data.success) {
-                reopenDrawerAfterReload(engagementId);
-                sessionStorage.setItem('showEngagementUpdatedToast', 'true');
-                location.reload();
+                await applyDrawerUpdate('Engagement updated successfully');
             } else {
                 Swal.fire('Error', data.message || 'Failed to update status', 'error');
             }
@@ -3992,13 +4044,17 @@ if (!empty($_SESSION['name'])) {
                     });
                     const data = await response.json();
                     if (data.success) {
-                        // Reload (rather than just refreshing the drawer in
-                        // place) because completing a date — especially the
-                        // final report — can change the row's due state,
-                        // highlighting, and sort position in the list behind
-                        // the drawer, same reasoning as the status popover.
-                        reopenDrawerAfterReload(engagementId);
-                        location.reload();
+                        // Completing a date (especially the final report) can change the row's
+                        // due state and sort position in the list behind the drawer, so refresh
+                        // both in place; the changed step then flashes so the update is visible.
+                        item.classList.add('is-saving');
+                        await applyDrawerUpdate();
+                        const fresh = [...document.querySelectorAll('#drawerTimelineContent .drawer-tl-item')]
+                            .find(el => el.dataset.dateField === dateField);
+                        if (fresh) {
+                            fresh.classList.add('just-changed');
+                            setTimeout(() => fresh.classList.remove('just-changed'), 1400);
+                        }
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
                     }
@@ -4071,8 +4127,8 @@ if (!empty($_SESSION['name'])) {
                 });
             },
             willClose: () => {
-                reopenDrawerAfterReload(engagementId);
-                location.reload();
+                // Only the team changed, but its badges and the Needs Attention counts show elsewhere too.
+                applyDrawerUpdate();
             }
         });
 
@@ -4673,9 +4729,7 @@ if (!empty($_SESSION['name'])) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        reopenDrawerAfterReload(engagementId);
-                        sessionStorage.setItem('showTimelineToast', 'true');
-                        location.reload();
+                        applyDrawerUpdate('Timeline updated successfully');
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update timeline', 'error');
                     }
@@ -4911,9 +4965,7 @@ if (!empty($_SESSION['name'])) {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        reopenDrawerAfterReload(engagementId);
-                        sessionStorage.setItem('showEngagementUpdatedToast', 'true');
-                        location.reload();
+                        applyDrawerUpdate('Engagement updated successfully');
                     } else {
                         Swal.fire('Error', data.message || 'Failed to update engagement', 'error');
                     }
