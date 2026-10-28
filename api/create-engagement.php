@@ -145,6 +145,19 @@ try {
     // Commit transaction
     $conn->commit();
 
+    // The client name (groups related engagements) is saved on its own for the same reason.
+    $eng_client = trim((string) ($data['eng_client'] ?? ''));
+    if ($eng_client !== '') {
+        try {
+            $clientStmt = $conn->prepare("UPDATE engagements SET eng_client = ? WHERE eng_idno = ?");
+            $clientStmt->bind_param('ss', $eng_client, $eng_idno);
+            $clientStmt->execute();
+            $clientStmt->close();
+        } catch (Throwable $e) {
+            error_log('create-engagement.php: could not save eng_client: ' . $e->getMessage());
+        }
+    }
+
     // The PCI ROC delivery date is saved on its own so creating an engagement
     // still works on a server that hasn't run the migration yet.
     $eng_roc_delivery_date = ($data['eng_roc_delivery_date'] ?? null) ?: null;

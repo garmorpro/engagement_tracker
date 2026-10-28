@@ -67,6 +67,7 @@ try {
         'notes' => $notes,
         'linked_calls' => $linkedCalls,
         'checklist' => getChecklistMap($conn, $engagementId),
+        'siblings' => getEngagementSiblings($conn, $engagementId),
     ]);
 } catch (Exception $e) {
     http_response_code(500);

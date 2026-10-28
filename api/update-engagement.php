@@ -91,6 +91,18 @@ try {
     if ($stmt->execute()) {
         // The PCI ROC delivery date is saved on its own so a server that hasn't
         // run the migration yet can still save every other edit.
+        if (array_key_exists('eng_client', $data)) {
+            try {
+                $client = trim((string) $data['eng_client']);
+                $client = $client === '' ? null : $client;
+                $clientStmt = $conn->prepare("UPDATE engagements SET eng_client = ? WHERE eng_idno = ?");
+                $clientStmt->bind_param('ss', $client, $engagement_id);
+                $clientStmt->execute();
+                $clientStmt->close();
+            } catch (Throwable $e) {
+                error_log('update-engagement.php: could not save eng_client: ' . $e->getMessage());
+            }
+        }
         if (array_key_exists('eng_roc_delivery_date', $data)) {
             try {
                 $roc = ($data['eng_roc_delivery_date'] === '' || $data['eng_roc_delivery_date'] === null) ? null : $data['eng_roc_delivery_date'];

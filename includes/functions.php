@@ -657,17 +657,64 @@ function logActivity(mysqli $conn, string $eventType, ?string $targetType, ?stri
 // their whole table and let callers filter in PHP) since this table only
 // grows over an engagement's lifetime and has no natural per-engagement
 // cap the way team membership does.
+//
+// Includes client-wide notes: if this engagement belongs to a client (eng_client)
+// the log also shows every note with note_scope = 'client' that was logged on
+// ANY engagement of that client (each carries source_name, the engagement it was
+// logged on). Falls back to just this engagement's own notes if the client
+// columns haven't been migrated yet.
 function getEngagementNotes(mysqli $conn, string $engagementIdno): array
 {
-    $stmt = $conn->prepare("SELECT * FROM engagement_notes WHERE engagement_idno = ? ORDER BY created_at DESC, note_id DESC");
-    if (!$stmt) {
+    try {
+        $stmt = $conn->prepare("SELECT eng_client FROM engagements WHERE eng_idno = ?");
+        $stmt->bind_param('s', $engagementIdno);
+        $stmt->execute();
+        $client = trim((string) ($stmt->get_result()->fetch_assoc()['eng_client'] ?? ''));
+        $stmt->close();
+
+        $stmt = $conn->prepare("SELECT n.*, e.eng_name AS source_name
+                                FROM engagement_notes n
+                                LEFT JOIN engagements e ON e.eng_idno = n.engagement_idno
+                                WHERE n.engagement_idno = ?
+                                   OR (? <> '' AND n.note_scope = 'client' AND e.eng_client = ?)
+                                ORDER BY n.created_at DESC, n.note_id DESC");
+        $stmt->bind_param('sss', $engagementIdno, $client, $client);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $rows;
+    } catch (\Throwable $e) {
+        $stmt = $conn->prepare("SELECT * FROM engagement_notes WHERE engagement_idno = ? ORDER BY created_at DESC, note_id DESC");
+        if (!$stmt) {
+            return [];
+        }
+        $stmt->bind_param('s', $engagementIdno);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $rows;
+    }
+}
+
+// The other active engagements of the same client (empty if this one has no client
+// or the column isn't migrated yet): idno, name, audit type, status.
+function getEngagementSiblings(mysqli $conn, string $engagementIdno): array
+{
+    try {
+        $stmt = $conn->prepare("SELECT s.eng_idno, s.eng_name, s.eng_audit_type, s.eng_status
+                                FROM engagements me
+                                JOIN engagements s ON s.eng_client = me.eng_client AND s.eng_idno <> me.eng_idno
+                                WHERE me.eng_idno = ? AND me.eng_client IS NOT NULL AND TRIM(me.eng_client) <> ''
+                                  AND s.eng_status <> 'archived'
+                                ORDER BY s.eng_name");
+        $stmt->bind_param('s', $engagementIdno);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $rows;
+    } catch (\Throwable $e) {
         return [];
     }
-    $stmt->bind_param('s', $engagementIdno);
-    $stmt->execute();
-    $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-    return $rows;
 }
 
 

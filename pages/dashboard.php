@@ -31,6 +31,15 @@ foreach ($allTeamData as $row) {
 $engagements = array_filter($allEngagements, fn($e) => $e['eng_status'] !== 'archived');
 $activeCount = count($engagements);
 
+// Existing client names (engagements.eng_client), for the autocomplete on the Client fields.
+$clientNames = [];
+foreach ($allEngagements as $e) {
+    $c = trim((string) ($e['eng_client'] ?? ''));
+    if ($c !== '') $clientNames[strtolower($c)] = $c;
+}
+$clientNames = array_values($clientNames);
+sort($clientNames, SORT_NATURAL | SORT_FLAG_CASE);
+
 $statusMeta = [
     'in-review'   => ['label' => 'In Review',   'var' => '--ink-soft'],
     'in-progress' => ['label' => 'In Progress', 'var' => '--ink'],
@@ -1115,6 +1124,19 @@ if (!empty($_SESSION['name'])) {
         .note-entry.t-general .note-type-rail { background: var(--line-strong); }
         .note-entry-body { flex: 1; min-width: 0; }
         .note-entry-head { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.3rem; flex-wrap: wrap; }
+        .note-scope-tag { font-size: 10.5px; font-weight: 700; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 1px 8px; }
+        .drawer-client-strip { margin: 0 0 1rem; padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+        .drawer-client-label { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.55rem; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+        .drawer-client-label .n { font-weight: 600; letter-spacing: 0; text-transform: none; }
+        .drawer-client-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+        .drawer-client-chip { font-family: inherit; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); color: var(--text); cursor: pointer; }
+        .drawer-client-chip:hover { border-color: var(--line-strong); }
+        .drawer-client-chip.current { background: var(--ink); color: var(--card); border-color: var(--ink); cursor: default; }
+        .mtg-scope { margin-top: 1.1rem; }
+        .mtg-scope-seg { display: inline-flex; flex-wrap: wrap; background: var(--paper); border-radius: 8px; padding: 2px; gap: 2px; border: 1px solid var(--line); }
+        .mtg-scope-seg button { border: none; background: transparent; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; font-family: inherit; }
+        .mtg-scope-seg button.active { background: var(--card); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.14); }
+        .mtg-scope-hint { font-size: 11.5px; color: var(--text-muted); margin-top: 0.45rem; }
         .note-type-label { font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
         .note-entry.t-planning .note-type-label { color: var(--manager); }
         .note-entry.t-client .note-type-label { color: var(--senior); }
@@ -1314,6 +1336,12 @@ if (!empty($_SESSION['name'])) {
     </div>
 </div>
 
+<datalist id="clientNames">
+<?php foreach ($clientNames as $c): ?>
+    <option value="<?php echo htmlspecialchars($c); ?>">
+<?php endforeach; ?>
+</datalist>
+
 <!-- ========== MAIN CONTENT ========== -->
 <div class="main-container">
 
@@ -1390,7 +1418,7 @@ if (!empty($_SESSION['name'])) {
                 $setupReason = $setup['missing'][0];
                 $setupFlagHtml = '<span class="reg-setup-flag"><i class="bi bi-exclamation-triangle-fill"></i> ' . htmlspecialchars($setupReason) . '</span>';
             }
-            $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? '') . ' ' . $eng['eng_idno'] . ' ' . ($eng['eng_poc'] ?? '') . ' ' . ($eng['eng_audit_type'] ?? ''));
+            $searchBlob = strtolower($eng['eng_name'] . ' ' . ($eng['eng_manager'] ?? '') . ' ' . $eng['eng_idno'] . ' ' . ($eng['eng_poc'] ?? '') . ' ' . ($eng['eng_audit_type'] ?? '') . ' ' . ($eng['eng_client'] ?? ''));
 
             $dueHtml = '<div class="reg-due">&mdash;</div>';
             if ($dueState === 'archive_ready') {
@@ -1529,6 +1557,10 @@ if (!empty($_SESSION['name'])) {
                 <div class="eng-field">
                     <label>Point of Contact</label>
                     <input type="text" id="new_eng_poc" class="eng-input" placeholder="Enter point of contact">
+                </div>
+                <div class="eng-field">
+                    <label>Client <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);">(optional: pick an existing one if this is another entity of the same client)</span></label>
+                    <input type="text" id="new_eng_client" class="eng-input" list="clientNames" placeholder="e.g. PCMI" autocomplete="off">
                 </div>
                 <div class="eng-field">
                     <label>Manager</label>
@@ -2399,7 +2431,7 @@ if (!empty($_SESSION['name'])) {
         }
 
         function resetWizard() {
-            ['new_eng_name', 'new_eng_location', 'new_eng_poc', 'new_eng_tsc', 'new_eng_scope', 'new_eng_notes',
+            ['new_eng_name', 'new_eng_location', 'new_eng_poc', 'new_eng_client', 'new_eng_tsc', 'new_eng_scope', 'new_eng_notes',
              'new_soc_as_of_date', 'new_soc_start_period', 'new_soc_end_period', 'new_roc_delivery_date'].forEach(id => {
                 document.getElementById(id).value = '';
             });
@@ -2516,6 +2548,7 @@ if (!empty($_SESSION['name'])) {
                 <div class="eng-review-row"><dt>Team</dt><dd>${teamNames.length ? teamNames.map(escapeHtml).join(', ') : 'None added'}</dd></div>
                 <div class="eng-review-row"><dt>Status</dt><dd>${escapeHtml(STATUS_LABELS[status] || status)}</dd></div>
                 <div class="eng-review-row"><dt>Audit Types</dt><dd>${escapeHtml(types)}</dd></div>
+                ${document.getElementById('new_eng_client').value.trim() ? `<div class="eng-review-row"><dt>Client</dt><dd>${escapeHtml(document.getElementById('new_eng_client').value.trim())}</dd></div>` : ''}
                 <div class="eng-review-row"><dt>TSC</dt><dd>${escapeHtml(tsc)}</dd></div>
                 ${pickedTypes.includes('PCI') ? `<div class="eng-review-row"><dt>ROC Delivery</dt><dd>${escapeHtml(fmtDate(document.getElementById('new_roc_delivery_date').value) || '\u2014')}</dd></div>` : ''}
             `;
@@ -2572,6 +2605,7 @@ if (!empty($_SESSION['name'])) {
                 eng_name: engName,
                 eng_location: document.getElementById('new_eng_location').value || null,
                 eng_poc: document.getElementById('new_eng_poc').value || null,
+                eng_client: (document.getElementById('new_eng_client').value || '').trim() || null,
                 eng_status: getSegmentedValue('new_eng_status_segment') || 'planning',
                 eng_scope: document.getElementById('new_eng_scope').value || null,
                 eng_repeat: document.getElementById('new_eng_repeat').checked ? 'Y' : 'N',
@@ -2917,8 +2951,20 @@ if (!empty($_SESSION['name'])) {
             : '';
 
         const checklistMode = pciChecklistMode(eng);
+        // Other engagements of the same client (eng_client): one click opens that entity's own drawer,
+        // with its own timeline, dates, team and DOL. Only shown when there are siblings.
+        const siblings = data.siblings || [];
+        const clientStripHtml = (eng.eng_client && siblings.length) ? `
+            <div class="drawer-client-strip">
+                <div class="drawer-client-label"><i class="bi bi-diagram-3" aria-hidden="true"></i> ${escapeHtml(eng.eng_client)} <span class="n">&middot; ${siblings.length + 1} engagements</span></div>
+                <div class="drawer-client-chips">
+                    <span class="drawer-client-chip current" aria-current="true">${escapeHtml(eng.eng_name)}</span>
+                    ${siblings.map(sib => `<button type="button" class="drawer-client-chip" data-open="${escAttr(sib.eng_idno)}" title="${escAttr(sib.eng_audit_type || '')}">${escapeHtml(sib.eng_name)}</button>`).join('')}
+                </div>
+            </div>` : '';
         document.getElementById('drawerBody').innerHTML = `
             <div id="drawerSetupBanner"></div>
+            ${clientStripHtml}
             <div class="drawer-section">
                 <div class="drawer-section-head"><div class="drawer-section-title"><span class="dot" style="background:var(--ink)"></span>Overview</div></div>
                 <div class="drawer-info-grid">
@@ -3011,6 +3057,9 @@ if (!empty($_SESSION['name'])) {
         if (checklistMode !== 'only') renderDrawerTimeline(timeline, eng.eng_idno);
         if (checklistMode === 'only' || checklistMode === 'on') renderDrawerChecklist(data.checklist || {}, eng);
         renderPlanningDocRow(eng);
+        document.querySelectorAll('.drawer-client-chip[data-open]').forEach(btn => {
+            btn.addEventListener('click', () => openDrawer(btn.dataset.open));
+        });
         renderWeeklyStatusCallControl(timeline, eng.eng_idno, eng.eng_name, data.linked_calls || []);
 
         document.getElementById('drawerManageTeamBtn').addEventListener('click', openManageTeamModal);
@@ -3612,12 +3661,20 @@ if (!empty($_SESSION['name'])) {
                     }).join('') + '</div>';
                 }
             }
+            // A client-wide note: say so, and which engagement it was logged on if that isn't this one.
+            let scopeTag = '';
+            if (note.note_scope === 'client' && drawerData?.engagement?.eng_client) {
+                const from = (note.engagement_idno && note.engagement_idno !== drawerData.engagement.eng_idno)
+                    ? ' &middot; from ' + escapeHtml(note.source_name || note.engagement_idno) : '';
+                scopeTag = `<span class="note-scope-tag"><i class="bi bi-people" aria-hidden="true"></i> All ${escapeHtml(drawerData.engagement.eng_client)}${from}</span>`;
+            }
             return `
                 <div class="note-entry t-${escAttr(note.note_type)}">
                     <div class="note-type-rail"></div>
                     <div class="note-entry-body">
                         <div class="note-entry-head">
                             <span class="note-type-label"><i class="bi ${meta.icon}"></i> ${meta.label}</span>
+                            ${scopeTag}
                             <span class="note-meta">${escapeHtml(note.author_name || 'Unknown')} &middot; ${fmtDateTime(note.created_at) || ''}</span>
                         </div>
                         <div class="note-text">${escapeHtml(note.note_text)}</div>
@@ -3705,7 +3762,41 @@ if (!empty($_SESSION['name'])) {
             paint();
         }
 
+        // "Who should see this?" — only offered when this engagement belongs to a client with other
+        // engagements. Weekly Status and general Notes default to the whole client; Planning and
+        // Client Planning default to this engagement (they mark its own timeline).
+        const mtgScope = {};
+        function renderMeetingScope(type) {
+            const body = document.querySelector('#' + MTG_CONFIG[type].scrim + ' .mtg-modal-body');
+            body.querySelector('.mtg-scope')?.remove();
+            const eng = drawerData?.engagement;
+            const sibs = drawerData?.siblings || [];
+            mtgScope[type] = 'engagement';
+            if (!eng?.eng_client || !sibs.length) return;
+            mtgScope[type] = (type === 'weekly' || type === 'general') ? 'client' : 'engagement';
+            const box = document.createElement('div');
+            box.className = 'mtg-scope';
+            box.innerHTML = `
+                <label class="mtg-field-label">Who should see this?</label>
+                <div class="mtg-scope-seg" role="group" aria-label="Who should see this note">
+                    <button type="button" data-scope="engagement">This engagement only</button>
+                    <button type="button" data-scope="client">All ${escapeHtml(eng.eng_client)} engagements (${sibs.length + 1})</button>
+                </div>
+                <div class="mtg-scope-hint"></div>`;
+            const paint = () => {
+                box.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.scope === mtgScope[type]));
+                const names = [eng.eng_name, ...sibs.map(x => x.eng_name)].join(', ');
+                box.querySelector('.mtg-scope-hint').textContent = mtgScope[type] === 'client'
+                    ? 'Shown on ' + names + '.' + ((type === 'planning' || type === 'client') ? ' Only this engagement\'s timeline is marked complete.' : '')
+                    : 'Only shown on ' + eng.eng_name + '.';
+            };
+            box.querySelectorAll('button').forEach(b => b.addEventListener('click', () => { mtgScope[type] = b.dataset.scope; paint(); }));
+            paint();
+            body.querySelector('.mtg-textarea').insertAdjacentElement('afterend', box);
+        }
+
         function openMeetingModal(type) {
+            renderMeetingScope(type);
             if (type === 'planning') renderPlanningIndepList();
             document.getElementById(MTG_CONFIG[type].scrim).classList.add('open');
         }
@@ -3749,6 +3840,7 @@ if (!empty($_SESSION['name'])) {
                 engagement_idno: drawerData.engagement.eng_idno,
                 note_type: type,
                 note_text: text,
+                note_scope: mtgScope[type] || 'engagement',
             };
             if (type === 'planning') {
                 payload.independence = planningIndepMembers.map(m => ({
@@ -4554,6 +4646,7 @@ if (!empty($_SESSION['name'])) {
             eng_name:         eng.eng_name || '',
             eng_location:     eng.eng_location || '',
             eng_poc:          eng.eng_poc || '',
+            eng_client:       eng.eng_client || '',
             eng_status:       eng.eng_status || '',
             eng_tsc:          eng.eng_tsc || '',
             eng_audit_type:   eng.eng_audit_type || '',
@@ -4582,6 +4675,11 @@ if (!empty($_SESSION['name'])) {
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Point of Contact</label>
                         <input type="text" id="edit_eng_poc" class="swal2-input" value="${escAttr(engagementData.eng_poc)}" style="width: 100%;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Client (optional)</label>
+                        <input type="text" id="edit_eng_client" class="swal2-input" list="clientNames" value="${escAttr(engagementData.eng_client)}" placeholder="e.g. PCMI" autocomplete="off" style="width: 100%;">
+                        <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 0.35rem;">Engagements with the same client name show each other in the drawer and can share notes.</div>
                     </div>
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Status</label>
@@ -4740,6 +4838,7 @@ if (!empty($_SESSION['name'])) {
                     eng_name:         document.getElementById('edit_eng_name').value,
                     eng_location:     document.getElementById('edit_eng_location').value,
                     eng_poc:          document.getElementById('edit_eng_poc').value,
+                    eng_client:       document.getElementById('edit_eng_client').value.trim(),
                     eng_status:       document.getElementById('edit_eng_status').value,
                     eng_tsc:          document.getElementById('edit_eng_tsc').value,
                     eng_audit_type:   selectedAuditTypes,

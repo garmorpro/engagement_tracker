@@ -85,11 +85,35 @@ try {
     $authorUserId = $_SESSION['user_id'] ?? null;
     $authorName = $_SESSION['name'] ?? 'Unknown';
 
-    $stmt = $conn->prepare("INSERT INTO engagement_notes
-        (engagement_idno, note_type, note_text, independence_snapshot, author_user_id, author_name, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, NOW())");
-    if (!$stmt) throw new Exception('Prepare failed (insert note): ' . $conn->error);
-    $stmt->bind_param('ssssis', $engagementIdno, $noteType, $noteText, $independenceSnapshot, $authorUserId, $authorName);
+    // 'client' = visible on every engagement of the same client. Only meaningful if
+    // this engagement HAS a client and the columns are migrated; otherwise it is
+    // saved as a normal per-engagement note.
+    $noteScope = 'engagement';
+    $hasScopeColumn = $conn->query("SHOW COLUMNS FROM engagement_notes LIKE 'note_scope'")->num_rows > 0;
+    if ($hasScopeColumn && ($data['note_scope'] ?? '') === 'client') {
+        $stmt = $conn->prepare("SELECT eng_client FROM engagements WHERE eng_idno = ?");
+        $stmt->bind_param('s', $engagementIdno);
+        $stmt->execute();
+        $client = trim((string) ($stmt->get_result()->fetch_assoc()['eng_client'] ?? ''));
+        $stmt->close();
+        if ($client !== '') {
+            $noteScope = 'client';
+        }
+    }
+
+    if ($hasScopeColumn) {
+        $stmt = $conn->prepare("INSERT INTO engagement_notes
+            (engagement_idno, note_type, note_text, independence_snapshot, author_user_id, author_name, note_scope, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+        if (!$stmt) throw new Exception('Prepare failed (insert note): ' . $conn->error);
+        $stmt->bind_param('ssssiss', $engagementIdno, $noteType, $noteText, $independenceSnapshot, $authorUserId, $authorName, $noteScope);
+    } else {
+        $stmt = $conn->prepare("INSERT INTO engagement_notes
+            (engagement_idno, note_type, note_text, independence_snapshot, author_user_id, author_name, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, NOW())");
+        if (!$stmt) throw new Exception('Prepare failed (insert note): ' . $conn->error);
+        $stmt->bind_param('ssssis', $engagementIdno, $noteType, $noteText, $independenceSnapshot, $authorUserId, $authorName);
+    }
     if (!$stmt->execute()) throw new Exception($stmt->error);
     $noteId = $conn->insert_id;
     $stmt->close();
@@ -106,7 +130,7 @@ try {
     $conn->commit();
 
     $label = ['planning' => 'Planning Meeting', 'client' => 'Client Planning Meeting', 'weekly' => 'Weekly Status Call', 'general' => 'Note'][$noteType];
-    logActivity($conn, 'engagement_note_added', 'engagement', $engagementIdno, "Logged a {$label} on {$engagementIdno}");
+    logActivity($conn, 'engagement_note_added', 'engagement', $engagementIdno, "Logged a {$label} on {$engagementIdno}" . ($noteScope === 'client' ? ' (shared with the whole client)' : ''));
 
     echo json_encode(['success' => true, 'note_id' => $noteId]);
 } catch (Exception $e) {

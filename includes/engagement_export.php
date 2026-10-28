@@ -79,8 +79,31 @@ function exportLoadData(mysqli $conn, string $idno): ?array
         'team'       => exportRows($conn, "SELECT * FROM engagement_team WHERE engagement_idno = ? ORDER BY emp_name", $idno),
         'milestones' => exportRows($conn, "SELECT milestone_type, due_date, is_completed FROM engagement_milestones WHERE engagement_idno = ? ORDER BY due_date, ms_id", $idno),
         'checklist'  => exportChecklistRows($conn, $idno),
-        'notes'      => exportRows($conn, "SELECT note_type, note_text, author_name, created_at FROM engagement_notes WHERE engagement_idno = ? ORDER BY created_at, note_id", $idno),
+        'notes'      => exportNotes($conn, $idno),
     ];
+}
+
+// The notes shown in the engagement's log, oldest first: its own plus, if it belongs
+// to a client, the client-wide ones logged on that client's other engagements. Falls
+// back to just its own if the client columns aren't migrated yet.
+function exportNotes(mysqli $conn, string $idno): array
+{
+    try {
+        $client = trim((string) (exportRows($conn, "SELECT eng_client FROM engagements WHERE eng_idno = ?", $idno)[0]['eng_client'] ?? ''));
+        $stmt = $conn->prepare("SELECT n.note_type, n.note_text, n.author_name, n.created_at, n.note_scope, n.engagement_idno, e.eng_name AS source_name
+                                FROM engagement_notes n
+                                LEFT JOIN engagements e ON e.eng_idno = n.engagement_idno
+                                WHERE n.engagement_idno = ?
+                                   OR (? <> '' AND n.note_scope = 'client' AND e.eng_client = ?)
+                                ORDER BY n.created_at, n.note_id");
+        $stmt->bind_param('sss', $idno, $client, $client);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $rows;
+    } catch (Throwable $e) {
+        return exportRows($conn, "SELECT note_type, note_text, author_name, created_at FROM engagement_notes WHERE engagement_idno = ? ORDER BY created_at, note_id", $idno);
+    }
 }
 
 // step key => completed_at (empty if nothing ticked, or the checklist table doesn't exist yet).
@@ -534,6 +557,13 @@ function exportBuildPdf(array $data, string $exportedBy = ''): string
         if (!empty($n['author_name'])) {
             $head .= '   |   ' . $n['author_name'];
         }
+        // client-wide note: say so, and which engagement it was logged on if not this one
+        if (($n['note_scope'] ?? '') === 'client') {
+            $head .= '   |   All ' . trim((string) ($eng['eng_client'] ?? 'client')) . ' engagements';
+            if (($n['engagement_idno'] ?? '') !== ($eng['eng_idno'] ?? '') && !empty($n['source_name'])) {
+                $head .= ' (from ' . $n['source_name'] . ')';
+            }
+        }
         $pdf->SetFont('Helvetica', 'B', 9.5);
         $pdf->SetTextColor(22, 32, 43);
         $pdf->MultiCell(0, 5.2, exportText($head));
@@ -649,8 +679,28 @@ function exportRemoveEngagement(mysqli $conn, string $idno): string
         throw new Exception("Engagement $idno not found.");
     }
     $hasChecklistTable = $conn->query("SHOW TABLES LIKE 'engagement_checklist'")->num_rows > 0;
+    $hasClientColumns = $conn->query("SHOW COLUMNS FROM engagements LIKE 'eng_client'")->num_rows > 0
+        && $conn->query("SHOW COLUMNS FROM engagement_notes LIKE 'note_scope'")->num_rows > 0;
     $conn->begin_transaction();
     try {
+        // Client-wide notes logged on this engagement still belong to the client's other
+        // engagements: hand them to a remaining sibling instead of deleting them with this one.
+        if ($hasClientColumns) {
+            $client = trim((string) (exportRows($conn, "SELECT eng_client FROM engagements WHERE eng_idno = ?", $idno)[0]['eng_client'] ?? ''));
+            if ($client !== '') {
+                $stmt = $conn->prepare("SELECT eng_idno FROM engagements WHERE eng_client = ? AND eng_idno <> ? AND eng_status <> 'archived' ORDER BY eng_idno LIMIT 1");
+                $stmt->bind_param('ss', $client, $idno);
+                $stmt->execute();
+                $sibling = $stmt->get_result()->fetch_assoc()['eng_idno'] ?? null;
+                $stmt->close();
+                if ($sibling) {
+                    $stmt = $conn->prepare("UPDATE engagement_notes SET engagement_idno = ? WHERE engagement_idno = ? AND note_scope = 'client'");
+                    $stmt->bind_param('ss', $sibling, $idno);
+                    $stmt->execute();
+                    $stmt->close();
+                }
+            }
+        }
         foreach (array_merge($hasChecklistTable ? ["DELETE FROM engagement_checklist WHERE engagement_idno = ?"] : [], [
             "DELETE FROM engagement_notes WHERE engagement_idno = ?",
             "DELETE FROM engagement_timeline WHERE engagement_idno = ?",
