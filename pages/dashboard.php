@@ -1277,8 +1277,8 @@ if (!empty($_SESSION['name'])) {
 
         .drawer-tl-item.is-saving { opacity: 0.6; transition: opacity 0.15s; }
         @keyframes tlFlash { 0% { background: color-mix(in srgb, var(--ink) 16%, transparent); } 100% { background: transparent; } }
-        .drawer-tl-item.just-changed { animation: tlFlash 1.4s ease-out; border-radius: 8px; }
-        @media (prefers-reduced-motion: reduce) { .drawer-tl-item.just-changed { animation: none; } }
+        .drawer-tl-item.just-changed, .drawer-ck-item.just-changed { animation: tlFlash 1.4s ease-out; border-radius: 8px; }
+        @media (prefers-reduced-motion: reduce) { .drawer-tl-item.just-changed, .drawer-ck-item.just-changed { animation: none; } }
 
         .drawer-loading { padding: 3rem 1rem; text-align: center; color: var(--text-muted); font-size: 13px; }
 
@@ -2902,9 +2902,12 @@ if (!empty($_SESSION['name'])) {
         drawerScrimEl.classList.add('hidden');
     }
 
-    // Re-renders the open drawer from fresh data without losing your place in it.
+    // Re-renders the open drawer from fresh data without losing your place in it, and
+    // quietly refreshes the list behind it too (anything saved from the drawer can change
+    // a row, a count or the due badge). The drawer doesn't wait for the list.
     async function refreshDrawer() {
         if (!drawerData) return;
+        const listDone = refreshListBehind();
         const data = await fetchEngagementData(drawerData.engagement.eng_idno);
         if (data.success) {
             const body = document.getElementById('drawerBody');
@@ -2913,6 +2916,7 @@ if (!empty($_SESSION['name'])) {
             renderDrawer(data);
             body.scrollTop = top;
         }
+        return listDone;
     }
 
     // The list behind the drawer (stat cards, flags, rows, the header's due badge) is
@@ -2932,7 +2936,17 @@ if (!empty($_SESSION['name'])) {
             });
         });
     }
-    async function refreshListBehind() {
+    // One list refresh at a time; a request made while one is running triggers a single re-run after it.
+    let listRefreshing = null, listRefreshAgain = false;
+    function refreshListBehind() {
+        if (listRefreshing) { listRefreshAgain = true; return listRefreshing; }
+        listRefreshing = doRefreshListBehind().finally(() => {
+            listRefreshing = null;
+            if (listRefreshAgain) { listRefreshAgain = false; refreshListBehind(); }
+        });
+        return listRefreshing;
+    }
+    async function doRefreshListBehind() {
         try {
             const res = await fetch(location.pathname + location.search, { credentials: 'same-origin', cache: 'no-store' });
             if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -2966,7 +2980,7 @@ if (!empty($_SESSION['name'])) {
     }
     // After a save inside the drawer: refresh the drawer where you are, the list behind it, then confirm.
     async function applyDrawerUpdate(toastMessage) {
-        await Promise.all([refreshDrawer(), refreshListBehind()]);
+        await refreshDrawer();
         if (toastMessage) showToast(toastMessage);
     }
 
@@ -3191,10 +3205,8 @@ if (!empty($_SESSION['name'])) {
     }
 
     // The PCI checklist: phases of steps, each a checkbox that records the date it
-    // was completed. Ticking saves immediately; the drawer refreshes in place, and
-    // the page reloads only when the list row behind it would change in a way that
-    // can't be patched (first/last tick for Needs Attention, or the final ROC step
-    // flipping the row to / from Archive Ready).
+    // was completed. Ticking saves immediately; the drawer and the list behind it
+    // both refresh in place (see refreshDrawer / refreshListBehind), no page reload.
     function renderDrawerChecklist(checklist, eng) {
         const el = document.getElementById('drawerChecklistContent');
         if (!el) return;
@@ -3235,6 +3247,7 @@ if (!empty($_SESSION['name'])) {
             item.addEventListener('click', async () => {
                 const key = item.dataset.step;
                 const wasDone = item.dataset.done === '1';
+                item.classList.toggle('done', !wasDone); // show the tick right away; the refresh below confirms it
                 try {
                     const res = await fetch('../api/update-checklist-step.php', {
                         method: 'POST',
@@ -3243,21 +3256,16 @@ if (!empty($_SESSION['name'])) {
                     });
                     const data = await res.json();
                     if (!data.success) throw new Error(data.message || 'Failed to update the checklist');
-                    const now = data.checklist || {};
-                    const nowCount = allKeys.filter(k => now[k]).length;
-                    const finalFlipped = !!checklist[PCI_FINAL_STEP] !== !!now[PCI_FINAL_STEP];
-                    const emptinessFlipped = (doneCount === 0) !== (nowCount === 0);
-                    if (pciChecklistMode(eng) === 'only' && (finalFlipped || emptinessFlipped)) {
-                        reopenDrawerAfterReload(eng.eng_idno);
-                        location.reload();
-                        return;
-                    }
+                    // Re-render the drawer in place (scroll kept) and refresh the list behind it:
+                    // "N of 12 steps", Archive Ready and Needs Attention all update without a reload.
                     await refreshDrawer();
-                    // keep the "N of 12 steps" in the list row behind the drawer current
-                    const rowDue = document.querySelector('.reg-row[data-id="' + CSS.escape(eng.eng_idno) + '"] .reg-due');
-                    const stepsEl = rowDue && rowDue.querySelector('.steps');
-                    if (stepsEl && pciChecklistMode(eng) === 'only') stepsEl.textContent = nowCount + ' of ' + allKeys.length + ' steps';
+                    const fresh = document.querySelector('#drawerChecklistContent .drawer-ck-item[data-step="' + CSS.escape(key) + '"]');
+                    if (fresh) {
+                        fresh.classList.add('just-changed');
+                        setTimeout(() => fresh.classList.remove('just-changed'), 1400);
+                    }
                 } catch (err) {
+                    refreshDrawer(); // put the checklist back to what the server has
                     console.error('Error:', err);
                     Swal.fire('Error', (err && err.message) || 'Failed to update the checklist', 'error');
                 }
