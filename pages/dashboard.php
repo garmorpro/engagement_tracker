@@ -1576,7 +1576,7 @@ if (!empty($_SESSION['name'])) {
                 </div>
                 <div class="eng-field">
                     <label>Client <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);">(optional: pick an existing one if this is another entity of the same client)</span></label>
-                    <input type="text" id="new_eng_client" class="eng-input" list="clientNames" placeholder="e.g. PCMI" autocomplete="off">
+                    <input type="text" id="new_eng_client" class="eng-input" list="clientNames" autocomplete="off">
                 </div>
                 <div class="eng-field">
                     <label>Manager</label>
@@ -4790,7 +4790,7 @@ if (!empty($_SESSION['name'])) {
                     </div>
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Client (optional)</label>
-                        <input type="text" id="edit_eng_client" class="swal2-input" list="clientNames" value="${escAttr(engagementData.eng_client)}" placeholder="e.g. PCMI" autocomplete="off" style="width: 100%;">
+                        <input type="text" id="edit_eng_client" class="swal2-input" list="clientNames" value="${escAttr(engagementData.eng_client)}" autocomplete="off" style="width: 100%;">
                         <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 0.35rem;">Engagements with the same client name show each other in the drawer and can share notes.</div>
                     </div>
                     <div style="margin-bottom: 1rem;">
