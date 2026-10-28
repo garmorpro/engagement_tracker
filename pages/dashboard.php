@@ -2840,16 +2840,25 @@ if (!empty($_SESSION['name'])) {
         if (isNaN(d.getTime())) return null;
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
-    // YYYY-MM-DD three calendar months before `raw` (YYYY-MM-DD), clamped to the end of a shorter month
-    // (May 31 -> Feb 28, not Mar 3). null when `raw` isn't a usable date.
-    function threeMonthsBefore(raw) {
+    // First day of the 3-month window that ends on `raw` (YYYY-MM-DD, the as-of date), as YYYY-MM-DD.
+    // A month-end as-of date starts on the 1st two months earlier (Nov 30 -> Sep 1, Mar 31 -> Jan 1);
+    // any other date starts the day after it falls three months back (Nov 15 -> Aug 16).
+    // null when `raw` isn't a usable date.
+    function threeMonthWindowStart(raw) {
         const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(raw || '');
         if (!m || raw === '0000-00-00') return null;
         const y = +m[1], mo = +m[2] - 1, day = +m[3];
-        const first = new Date(y, mo - 3, 1);
-        const lastDay = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+        const monthEnd = new Date(y, mo + 1, 0).getDate();
+        let start;
+        if (day === monthEnd) {
+            start = new Date(y, mo - 2, 1);
+        } else {
+            const back = new Date(y, mo - 3, 1);
+            const backEnd = new Date(back.getFullYear(), back.getMonth() + 1, 0).getDate();
+            start = new Date(back.getFullYear(), back.getMonth(), Math.min(day, backEnd) + 1);
+        }
         const pad = n => String(n).padStart(2, '0');
-        return `${first.getFullYear()}-${pad(first.getMonth() + 1)}-${pad(Math.min(day, lastDay))}`;
+        return `${start.getFullYear()}-${pad(start.getMonth() + 1)}-${pad(start.getDate())}`;
     }
     // Date + time, for note/meeting timestamps (fmtDate above is date-only).
     // Built from two separate toLocaleString calls rather than one combined
@@ -3088,9 +3097,9 @@ if (!empty($_SESSION['name'])) {
             period = `${fmtDate(eng.eng_start_period) || 'N/A'} – ${fmtDate(eng.eng_end_period) || 'N/A'}`;
         } else if (eng.eng_as_of_date) {
             period = 'As of ' + (fmtDate(eng.eng_as_of_date) || 'N/A');
-            // Small reference line: the date three months before the as-of date.
-            const before = fmtDate(threeMonthsBefore(eng.eng_as_of_date));
-            if (before) periodNote = `<div class="drawer-info-sub">3 months prior: ${escapeHtml(before)}</div>`;
+            // Small reference line: where the 3-month window ending on the as-of date begins.
+            const winStart = fmtDate(threeMonthWindowStart(eng.eng_as_of_date));
+            if (winStart) periodNote = `<div class="drawer-info-sub">3-month period starts ${escapeHtml(winStart)}</div>`;
         }
         const reportTypeRow = eng.eng_soc_type
             ? `<div class="drawer-info-item"><div class="drawer-info-label">Report Type</div><div class="drawer-info-value">${escapeHtml(eng.eng_soc_type === 'Type 1' ? 'Type I' : (eng.eng_soc_type === 'Type 2' ? 'Type II' : eng.eng_soc_type))}</div></div>`
