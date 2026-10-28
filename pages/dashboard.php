@@ -1112,6 +1112,7 @@ if (!empty($_SESSION['name'])) {
         .drawer-info-item { min-width: 0; }
         .drawer-info-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem; }
         .drawer-info-value { font-size: 13.5px; font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
+        .drawer-info-sub { font-size: 11px; font-weight: 500; color: var(--text-muted); margin-top: 0.15rem; }
         .drawer-info-value.muted { font-weight: 500; color: var(--text-muted); }
         .drawer-detail-scope { grid-column: 1 / -1; }
         .drawer-detail-scope .drawer-info-value { line-height: 1.5; font-weight: 500; font-size: 13px; color: var(--text-muted); white-space: pre-line; }
@@ -2839,6 +2840,17 @@ if (!empty($_SESSION['name'])) {
         if (isNaN(d.getTime())) return null;
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
+    // YYYY-MM-DD three calendar months before `raw` (YYYY-MM-DD), clamped to the end of a shorter month
+    // (May 31 -> Feb 28, not Mar 3). null when `raw` isn't a usable date.
+    function threeMonthsBefore(raw) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(raw || '');
+        if (!m || raw === '0000-00-00') return null;
+        const y = +m[1], mo = +m[2] - 1, day = +m[3];
+        const first = new Date(y, mo - 3, 1);
+        const lastDay = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+        const pad = n => String(n).padStart(2, '0');
+        return `${first.getFullYear()}-${pad(first.getMonth() + 1)}-${pad(Math.min(day, lastDay))}`;
+    }
     // Date + time, for note/meeting timestamps (fmtDate above is date-only).
     // Built from two separate toLocaleString calls rather than one combined
     // string with a comma-replace — combining date and time options in one
@@ -3071,10 +3083,14 @@ if (!empty($_SESSION['name'])) {
         });
 
         let period = 'N/A';
+        let periodNote = '';
         if (eng.eng_start_period && eng.eng_end_period) {
             period = `${fmtDate(eng.eng_start_period) || 'N/A'} – ${fmtDate(eng.eng_end_period) || 'N/A'}`;
         } else if (eng.eng_as_of_date) {
             period = 'As of ' + (fmtDate(eng.eng_as_of_date) || 'N/A');
+            // Type 2 reports cover a stretch of time ending on the as-of date, so show where 3 months back lands.
+            const before = eng.eng_soc_type === 'Type 1' ? null : fmtDate(threeMonthsBefore(eng.eng_as_of_date));
+            if (before) periodNote = `<div class="drawer-info-sub">3 months prior: ${escapeHtml(before)}</div>`;
         }
         const reportTypeRow = eng.eng_soc_type
             ? `<div class="drawer-info-item"><div class="drawer-info-label">Report Type</div><div class="drawer-info-value">${escapeHtml(eng.eng_soc_type === 'Type 1' ? 'Type I' : (eng.eng_soc_type === 'Type 2' ? 'Type II' : eng.eng_soc_type))}</div></div>`
@@ -3099,7 +3115,7 @@ if (!empty($_SESSION['name'])) {
                 <div class="drawer-section-head"><div class="drawer-section-title"><span class="dot" style="background:var(--ink)"></span>Overview</div></div>
                 <div class="drawer-info-grid">
                     <div class="drawer-info-item"><div class="drawer-info-label">Location</div><div class="drawer-info-value">${escapeHtml(eng.eng_location || 'N/A')}</div></div>
-                    <div class="drawer-info-item"><div class="drawer-info-label">Review Period</div><div class="drawer-info-value">${escapeHtml(period)}</div></div>
+                    <div class="drawer-info-item"><div class="drawer-info-label">Review Period</div><div class="drawer-info-value">${escapeHtml(period)}</div>${periodNote}</div>
                     <div class="drawer-info-item"><div class="drawer-info-label">Audit Type</div><div class="drawer-info-value">${escapeHtml(auditTypes.join(', ') || 'N/A')}</div></div>
                     ${reportTypeRow}
                     ${auditTypes.includes('PCI') ? `<div class="drawer-info-item"><div class="drawer-info-label">ROC Delivery</div><div class="drawer-info-value">${escapeHtml(fmtDate(eng.eng_roc_delivery_date) || 'Not set')}</div></div>` : ''}
