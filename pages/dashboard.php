@@ -3088,8 +3088,8 @@ if (!empty($_SESSION['name'])) {
             period = `${fmtDate(eng.eng_start_period) || 'N/A'} – ${fmtDate(eng.eng_end_period) || 'N/A'}`;
         } else if (eng.eng_as_of_date) {
             period = 'As of ' + (fmtDate(eng.eng_as_of_date) || 'N/A');
-            // Type 2 reports cover a stretch of time ending on the as-of date, so show where 3 months back lands.
-            const before = eng.eng_soc_type === 'Type 1' ? null : fmtDate(threeMonthsBefore(eng.eng_as_of_date));
+            // Small reference line: the date three months before the as-of date.
+            const before = fmtDate(threeMonthsBefore(eng.eng_as_of_date));
             if (before) periodNote = `<div class="drawer-info-sub">3 months prior: ${escapeHtml(before)}</div>`;
         }
         const reportTypeRow = eng.eng_soc_type
