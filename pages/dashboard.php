@@ -3140,6 +3140,7 @@ if (!empty($_SESSION['name'])) {
                     <div class="drawer-info-item"><div class="drawer-info-label">Last Updated</div><div class="drawer-info-value muted">${fmtDate(eng.eng_updated) || 'N/A'}</div></div>
                     <div class="drawer-info-item"><div class="drawer-info-label">Archive Date</div><div class="drawer-info-value muted">${fmtDate(eng.eng_archive) || 'Not archived'}</div></div>
                     <div class="drawer-info-item drawer-detail-scope"><div class="drawer-info-label">Scope</div><div class="drawer-info-value">${escapeHtml(eng.eng_scope || 'N/A')}</div></div>
+                    ${(eng.eng_tsc || auditTypes.includes('SOC 2')) ? `<div class="drawer-info-item drawer-detail-scope"><div class="drawer-info-label">Trust Services Criteria</div><div class="drawer-info-value">${escapeHtml(eng.eng_tsc || 'N/A')}</div></div>` : ''}
                 </div>
             </div>
 
