@@ -3251,7 +3251,7 @@ if (!empty($_SESSION['name'])) {
     // Saves go through applyDrawerUpdate(), so the drawer refreshes in place.
     // ===================================================================
     // Suggested tasks for the Task field (you can still type anything). Keep in step with LOG_TIME_TASKS in the Desk Ctrl Panel's config.js.
-    const TIME_TASKS = ['Admin', 'Meeting', 'Documentation', 'Memos', 'IRL', 'Planning calls', 'FW calls', 'Draft report', 'Final report', 'Other'];
+    const TIME_TASKS = ['Internal Planning Call', 'Planning Memo', 'IRL', 'Client Planning Call', 'FW Calls', 'FW Documentation', 'Admin', 'Meetings', 'Conclusion Memo', 'Draft Report', 'Other'];
 
     function fmtLoggedHours(minutes) {
         return String(+(Number(minutes || 0) / 60).toFixed(2));
