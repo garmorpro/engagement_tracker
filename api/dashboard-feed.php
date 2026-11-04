@@ -89,9 +89,43 @@ try {
         $clients[$slug] = ['id' => $slug, 'name' => $row['eng_name']];
     }
 
+    // Time logged today (engagement_time_entries), for the dashboard's "Time today" button.
+    // Stays empty if the table (or its task column) doesn't exist yet.
+    $names = [];
+    foreach ($engagements as $e) {
+        $names[$e['id']] = $e['client'];
+    }
+    $today = date('Y-m-d');
+    $timeToday = ['date' => $today, 'minutes' => 0, 'entries' => []];
+    try {
+        $check = $conn->query("SHOW TABLES LIKE 'engagement_time_entries'");
+        if ($check && $check->num_rows > 0) {
+            $stmt = $conn->prepare("SELECT engagement_idno, task, SUM(minutes) AS minutes
+                                    FROM engagement_time_entries
+                                    WHERE entry_date = ?
+                                    GROUP BY engagement_idno, task
+                                    ORDER BY minutes DESC");
+            $stmt->bind_param('s', $today);
+            $stmt->execute();
+            foreach ($stmt->get_result()->fetch_all(MYSQLI_ASSOC) as $r) {
+                $timeToday['minutes'] += (int) $r['minutes'];
+                $timeToday['entries'][] = [
+                    'engagementId' => $r['engagement_idno'],
+                    'client' => $names[$r['engagement_idno']] ?? $r['engagement_idno'],
+                    'task' => ($r['task'] !== null && $r['task'] !== '') ? $r['task'] : 'No task',
+                    'minutes' => (int) $r['minutes'],
+                ];
+            }
+            $stmt->close();
+        }
+    } catch (Throwable $e) {
+        error_log('dashboard-feed time today: ' . $e->getMessage());
+    }
+
     echo json_encode([
         'success' => true,
         'generatedAt' => date('c'),
+        'timeToday' => $timeToday,
         'clients' => array_values($clients),
         'engagements' => $engagements,
     ]);
