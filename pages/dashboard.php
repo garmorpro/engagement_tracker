@@ -272,6 +272,9 @@ try {
     // the badge is a convenience; the popup itself still works
 }
 
+// Header "Notes" badge: notes sent in by the other app that haven't been read yet.
+$inboxUnread = getInboxUnreadCount($conn);
+
 $roleLabels = ['super_admin' => 'Super admin', 'admin' => 'Admin'];
 $roleLabel = $roleLabels[$_SESSION['role'] ?? ''] ?? ucfirst(str_replace('_', ' ', $_SESSION['role'] ?? 'user'));
 
@@ -372,6 +375,7 @@ if (!empty($_SESSION['name'])) {
         .hdr-search kbd { font-family: inherit; font-size: 11px; font-weight: 600; color: var(--text-muted); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; background: var(--card); }
         .hdr-search:focus-within kbd { display: none; }
         .hdr-due { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px; border-radius: 19px; border: 1px solid var(--line); background: var(--card); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+        a.hdr-due { text-decoration: none; }
         .hdr-due:hover { border-color: var(--line-strong); background: var(--paper); }
         .hdr-due i { font-size: 15px; }
         .hdr-badge { min-width: 20px; height: 20px; border-radius: 10px; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 6px; box-sizing: border-box; margin-right: -4px; }
@@ -1137,6 +1141,7 @@ if (!empty($_SESSION['name'])) {
         .note-entry.t-client .note-type-rail { background: var(--senior); }
         .note-entry.t-weekly .note-type-rail { background: var(--staff); }
         .note-entry.t-general .note-type-rail { background: var(--line-strong); }
+        .note-entry.t-inbox .note-type-rail { background: var(--caution); }
         .note-entry-body { flex: 1; min-width: 0; }
         .note-entry-head { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.3rem; flex-wrap: wrap; }
         .note-scope-tag { font-size: 10.5px; font-weight: 700; color: var(--text-muted); display: inline-flex; align-items: center; gap: 4px; background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 1px 8px; }
@@ -1156,6 +1161,7 @@ if (!empty($_SESSION['name'])) {
         .note-entry.t-planning .note-type-label { color: var(--manager); }
         .note-entry.t-client .note-type-label { color: var(--senior); }
         .note-entry.t-weekly .note-type-label { color: var(--staff); }
+        .note-entry.t-inbox .note-type-label { color: var(--caution); }
         .note-entry.t-general .note-type-label { color: var(--text-muted); }
         .note-meta { font-size: 11px; color: var(--text-muted); }
         .note-text { font-size: 13px; line-height: 1.55; color: var(--text); white-space: pre-line; }
@@ -1306,6 +1312,13 @@ if (!empty($_SESSION['name'])) {
                 <span class="hdr-badge <?php echo $dueItemsOverdue > 0 ? 'overdue' : 'upcoming'; ?>"><?php echo $dueItemsTotal; ?></span>
                 <?php endif; ?>
             </button>
+            <a href="notes.php" class="hdr-due" aria-label="Notes<?php echo $inboxUnread ? ': ' . $inboxUnread . ' unread' : ''; ?>">
+                <i class="bi bi-inbox" aria-hidden="true"></i>
+                <span class="hdr-label">Notes</span>
+                <?php if ($inboxUnread > 0): ?>
+                <span class="hdr-badge upcoming"><?php echo $inboxUnread; ?></span>
+                <?php endif; ?>
+            </a>
             <button type="button" class="btn-new-engagement">
                 <i class="bi bi-plus-lg" aria-hidden="true"></i><span class="hdr-label">Onboard Client</span>
             </button>
@@ -3597,6 +3610,7 @@ if (!empty($_SESSION['name'])) {
         client:   { label: 'Client Planning',  icon: 'bi-camera-video' },
         weekly:   { label: 'Weekly Status',    icon: 'bi-arrow-repeat' },
         general:  { label: 'Note',             icon: 'bi-pencil' },
+        inbox:    { label: 'From Inbox',       icon: 'bi-inbox' },
     };
 
     function renderNoteLog(notes) {

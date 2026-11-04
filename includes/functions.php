@@ -663,7 +663,59 @@ function logActivity(mysqli $conn, string $eventType, ?string $targetType, ?stri
 // ANY engagement of that client (each carries source_name, the engagement it was
 // logged on). Falls back to just this engagement's own notes if the client
 // columns haven't been migrated yet.
+// Notes sent in by another app (inbox_notes, see api/receive-note.php) that are attached to this
+// engagement, shaped like engagement_notes rows (note_type 'inbox') so the drawer log and the PDF
+// show them alongside the rest. Empty if the table isn't migrated yet.
+function getInboxNotesForEngagement(mysqli $conn, string $engagementIdno): array
+{
+    try {
+        $stmt = $conn->prepare("SELECT note_id, note_title, note_text, source, created_at, engagement_idno
+                                FROM inbox_notes WHERE engagement_idno = ?");
+        $stmt->bind_param('s', $engagementIdno);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+    } catch (\Throwable $e) {
+        return [];
+    }
+    return array_map(function ($r) {
+        $title = trim((string) $r['note_title']);
+        return [
+            'note_id' => 'inbox-' . $r['note_id'],
+            'engagement_idno' => $r['engagement_idno'],
+            'note_type' => 'inbox',
+            'note_text' => ($title !== '' ? $title . "\n" : '') . $r['note_text'],
+            'independence_snapshot' => null,
+            'author_name' => trim((string) $r['source']) !== '' ? $r['source'] : 'Inbox',
+            'created_at' => $r['created_at'],
+            'note_scope' => 'engagement',
+        ];
+    }, $rows);
+}
+
+// Unread notes in the Notes page inbox (0 if the table isn't migrated yet).
+function getInboxUnreadCount(mysqli $conn): int
+{
+    try {
+        $res = $conn->query("SELECT COUNT(*) FROM inbox_notes WHERE is_read = 0");
+        return $res ? (int) $res->fetch_row()[0] : 0;
+    } catch (\Throwable $e) {
+        return 0;
+    }
+}
+
+// An engagement's Notes & Meetings log: its own notes, the client-wide ones from the client's other
+// engagements, and any inbox notes attached to it, newest first.
 function getEngagementNotes(mysqli $conn, string $engagementIdno): array
+{
+    $rows = array_merge(getEngagementNotesCore($conn, $engagementIdno), getInboxNotesForEngagement($conn, $engagementIdno));
+    usort($rows, function ($a, $b) {
+        return strcmp((string) $b['created_at'], (string) $a['created_at']);
+    });
+    return $rows;
+}
+
+function getEngagementNotesCore(mysqli $conn, string $engagementIdno): array
 {
     try {
         $stmt = $conn->prepare("SELECT eng_client FROM engagements WHERE eng_idno = ?");

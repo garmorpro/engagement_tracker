@@ -228,6 +228,9 @@ function mergeGroup(mysqli $conn, array $rows, bool $dryRun): void
                 }
             }
             $movedNotes += mergeExec($conn, "UPDATE engagement_notes SET engagement_idno = ? WHERE engagement_idno = ?", 'ss', $keepId, $sibId);
+            if ($conn->query("SHOW TABLES LIKE 'inbox_notes'")->num_rows > 0) {
+                mergeExec($conn, "UPDATE inbox_notes SET engagement_idno = ? WHERE engagement_idno = ?", 'ss', $keepId, $sibId);
+            }
             $movedMs += mergeExec($conn, "UPDATE engagement_milestones SET engagement_idno = ? WHERE engagement_idno = ?", 'ss', $keepId, $sibId);
 
             // The sibling is now empty of anything worth keeping.

@@ -21,6 +21,7 @@ const EXPORT_NOTE_LABELS = [
     'planning' => 'Planning Meeting',
     'client'   => 'Client Planning Meeting',
     'weekly'   => 'Weekly Status Call',
+    'inbox'    => 'Note from Inbox',
     'general'  => 'Note',
 ];
 const EXPORT_ROLE_ORDER = ['manager' => 0, 'senior' => 1, 'staff' => 2, 'intern' => 3];
@@ -87,6 +88,18 @@ function exportLoadData(mysqli $conn, string $idno): ?array
 // to a client, the client-wide ones logged on that client's other engagements. Falls
 // back to just its own if the client columns aren't migrated yet.
 function exportNotes(mysqli $conn, string $idno): array
+{
+    $rows = exportNotesCore($conn, $idno);
+    foreach (getInboxNotesForEngagement($conn, $idno) as $n) {
+        $rows[] = $n;
+    }
+    usort($rows, function ($a, $b) {
+        return strcmp((string) $a['created_at'], (string) $b['created_at']);
+    });
+    return $rows;
+}
+
+function exportNotesCore(mysqli $conn, string $idno): array
 {
     try {
         $client = trim((string) (exportRows($conn, "SELECT eng_client FROM engagements WHERE eng_idno = ?", $idno)[0]['eng_client'] ?? ''));
@@ -679,6 +692,7 @@ function exportRemoveEngagement(mysqli $conn, string $idno): string
         throw new Exception("Engagement $idno not found.");
     }
     $hasChecklistTable = $conn->query("SHOW TABLES LIKE 'engagement_checklist'")->num_rows > 0;
+    $hasInboxTable = $conn->query("SHOW TABLES LIKE 'inbox_notes'")->num_rows > 0;
     $hasClientColumns = $conn->query("SHOW COLUMNS FROM engagements LIKE 'eng_client'")->num_rows > 0
         && $conn->query("SHOW COLUMNS FROM engagement_notes LIKE 'note_scope'")->num_rows > 0;
     $conn->begin_transaction();
@@ -703,6 +717,7 @@ function exportRemoveEngagement(mysqli $conn, string $idno): string
         }
         foreach (array_merge($hasChecklistTable ? ["DELETE FROM engagement_checklist WHERE engagement_idno = ?"] : [], [
             "DELETE FROM engagement_notes WHERE engagement_idno = ?",
+        ], $hasInboxTable ? ["DELETE FROM inbox_notes WHERE engagement_idno = ?"] : [], [
             "DELETE FROM engagement_timeline WHERE engagement_idno = ?",
             "DELETE FROM engagement_milestones WHERE engagement_idno = ?",
             "DELETE FROM engagement_team WHERE engagement_idno = ?",

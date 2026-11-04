@@ -140,6 +140,15 @@ All four post to `api/add-engagement-note.php`, one transaction rather than chai
 
 Any pre-existing `eng_notes` content isn't migrated automatically (no reliable author/timestamp to attribute it to) — the drawer shows it read-only in a "From before this log existed" callout above the log instead of silently dropping it.
 
+## Notes page / inbox (2026-11-04)
+
+A "Notes" button in the dashboard header (amber badge = unread count, `getInboxUnreadCount()`) opens `pages/notes.php`: an inbox of notes another app sends in. **Standalone page with its own copy of the header bar** (Engagements / Notes / account menu), like the other non-dashboard pages.
+
+- **Receiving**: `api/receive-note.php`, NOT session-based. The sender POSTs JSON (or a form) with a shared secret in `X-API-Key` (or `Authorization: Bearer`, which PHP-FPM may drop, so `X-API-Key` is the reliable one) matching `NOTES_API_KEY` in the Pi's `.env` (16+ chars, else the endpoint answers 503; documented in `.env.example`). Bad keys are rate limited per IP via `login_attempts` (type `notes_api`, 10 per 15 min). Fields: `text` (required, 20k max), `title`, `source` (which app, shown as a tag), `engagement` (ENG id, engagement name, or client name) and `external_id` (same `source` + `external_id` twice = ignored, so retries are safe).
+- **Attaching**: a note is tied to an engagement only when `engagement` matches exactly one non-archived engagement (ENG id first, then name, then client name); otherwise it stays unattached in the inbox, the text sent kept as `engagement_hint` ("Sent for 'Acme', not matched"). Notes with no engagement are just quick notes. On the page you can attach / change / detach (`api/update-inbox-note.php`, actions `read`, `read_all`, `attach`, `delete`; attaching marks it read), mark read/unread, delete, search, and filter All / Unread / No engagement. Actions update the page in place.
+- **Storage**: `inbox_notes` (`includes/migrate_create_inbox_notes_table.php`, **must be run once on the Pi**; every reader degrades to empty before then). Attached inbox notes are merged into that engagement's Notes & Meetings log as note type `inbox` ("From Inbox", amber rail; `getInboxNotesForEngagement()` feeds both `getEngagementNotes()` and the export PDF "Note from Inbox"). They are deleted with the engagement on Archive & Export removal (they're in the PDF by then), and `merge_engagements_by_client.php` moves them to the surviving engagement.
+- The page lists the newest 500. No attachments or original timestamps from the sender yet: `created_at` is when the note arrived.
+
 ## Archive & Export (2026-10-27)
 
 There is no archived state to browse. Clicking **Archive & Export** (row action, drawer button, or the details page) runs a two-step flow from `archiveEngagement()` in `pages/dashboard.php` and `pages/engagement-details.php` (each page has its own copy of the JS):
