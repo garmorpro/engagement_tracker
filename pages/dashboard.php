@@ -3250,6 +3250,9 @@ if (!empty($_SESSION['name'])) {
     // section, or from the Desk Ctrl Panel's Log time button (source 'desk panel').
     // Saves go through applyDrawerUpdate(), so the drawer refreshes in place.
     // ===================================================================
+    // Suggested tasks for the Task field (you can still type anything). Keep in step with LOG_TIME_TASKS in the Desk Ctrl Panel's config.js.
+    const TIME_TASKS = ['Admin', 'Meeting', 'Documentation', 'Memos', 'IRL', 'Planning calls', 'FW calls', 'Draft report', 'Final report', 'Other'];
+
     function fmtLoggedHours(minutes) {
         return String(+(Number(minutes || 0) / 60).toFixed(2));
     }
@@ -3279,7 +3282,7 @@ if (!empty($_SESSION['name'])) {
                 <div class="time-entry-date">${escapeHtml(fmtDate(e.entry_date) || e.entry_date)}</div>
                 <div class="time-entry-hrs">${fmtLoggedHours(e.minutes)} h</div>
                 <div class="time-entry-main">
-                    <div class="time-entry-note">${e.note ? escapeHtml(e.note) : '<span style="color:var(--text-muted)">No note</span>'}</div>
+                    <div class="time-entry-note">${e.task ? `<strong>${escapeHtml(e.task)}</strong>` : ''}${e.task && e.note ? ' &middot; ' : ''}${e.note ? escapeHtml(e.note) : (e.task ? '' : '<span style="color:var(--text-muted)">No task or note</span>')}</div>
                     <div class="time-entry-by">${escapeHtml(e.author_name || 'Unknown')}${e.source === 'desk panel' ? '<span class="time-tag">Desk panel</span>' : ''}</div>
                 </div>
                 <button class="time-icon-btn" type="button" data-time-edit="${escAttr(String(e.entry_id))}" aria-label="Edit"><i class="bi bi-pencil"></i></button>
@@ -3305,6 +3308,9 @@ if (!empty($_SESSION['name'])) {
                     <label class="time-lbl" for="time_hours">Hours</label>
                     <input id="time_hours" type="number" class="swal2-input" min="0.25" max="24" step="0.25" inputmode="decimal" placeholder="e.g. 1.5" value="${entry ? fmtLoggedHours(entry.minutes) : ''}" style="width:100%;margin:0 0 0.5rem">
                     <div class="time-chips">${[0.25, 0.5, 1, 2, 4].map(h => `<button type="button" class="time-chip" data-h="${h}">${h}</button>`).join('')}</div>
+                    <label class="time-lbl" for="time_task">Task</label>
+                    <input id="time_task" list="time_task_list" class="swal2-input" maxlength="60" placeholder="Pick or type a task" value="${escAttr(entry ? (entry.task || '') : '')}" style="width:100%;margin:0 0 0.8rem">
+                    <datalist id="time_task_list">${TIME_TASKS.map(t => `<option value="${escAttr(t)}"></option>`).join('')}</datalist>
                     <label class="time-lbl" for="time_note">Note (optional)</label>
                     <input id="time_note" type="text" class="swal2-input" maxlength="500" value="${escAttr(entry ? (entry.note || '') : '')}" style="width:100%;margin:0">
                 </div>`,
@@ -3322,7 +3328,7 @@ if (!empty($_SESSION['name'])) {
                 const date = document.getElementById('time_date').value;
                 if (!date) { Swal.showValidationMessage('Pick a date'); return false; }
                 if (!(hours > 0 && hours <= 24)) { Swal.showValidationMessage('Enter hours between 0.25 and 24'); return false; }
-                return { hours, entry_date: date, note: document.getElementById('time_note').value.trim() };
+                return { hours, entry_date: date, task: document.getElementById('time_task').value.trim(), note: document.getElementById('time_note').value.trim() };
             }
         });
         if (!result.isConfirmed) return;

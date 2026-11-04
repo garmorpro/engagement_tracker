@@ -1,7 +1,7 @@
 <?php
 // api/update-time-entry.php
 // Edits one time entry. Only its author (or an admin) may change it.
-// POST JSON: { entry_id, entry_date, hours, note? }
+// POST JSON: { entry_id, entry_date, hours, task?, note? }
 require_once '../path.php';
 require_once '../includes/functions.php';
 requireApiAuth();
@@ -17,7 +17,7 @@ if ($entryId <= 0) {
 }
 
 try {
-    [$date, $minutes, $note] = validateTimeEntryInput($data);
+    [$date, $minutes, $note, $task] = validateTimeEntryInput($data);
 
     $stmt = $conn->prepare('SELECT engagement_idno, author_user_id FROM engagement_time_entries WHERE entry_id = ?');
     $stmt->bind_param('i', $entryId);
@@ -37,8 +37,9 @@ try {
     }
 
     $noteOrNull = $note !== '' ? $note : null;
-    $stmt = $conn->prepare('UPDATE engagement_time_entries SET entry_date = ?, minutes = ?, note = ? WHERE entry_id = ?');
-    $stmt->bind_param('sisi', $date, $minutes, $noteOrNull, $entryId);
+    $taskOrNull = $task !== '' ? $task : null;
+    $stmt = $conn->prepare('UPDATE engagement_time_entries SET entry_date = ?, minutes = ?, task = ?, note = ? WHERE entry_id = ?');
+    $stmt->bind_param('sissi', $date, $minutes, $taskOrNull, $noteOrNull, $entryId);
     $stmt->execute();
     $stmt->close();
 

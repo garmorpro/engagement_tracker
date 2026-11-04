@@ -28,6 +28,7 @@ $sql = "
         engagement_idno VARCHAR(64) NOT NULL,
         entry_date DATE NOT NULL,
         minutes INT NOT NULL,
+        task VARCHAR(60) NULL,
         note VARCHAR(500) NULL,
         author_user_id INT NULL,
         author_name VARCHAR(255) NULL,
@@ -43,4 +44,10 @@ if (!$conn->query($sql)) {
     exit(1);
 }
 
-echo "engagement_time_entries table ready.\n";
+// Servers that ran the first version of this migration don't have the task column yet.
+if (!$conn->query("ALTER TABLE engagement_time_entries ADD COLUMN IF NOT EXISTS task VARCHAR(60) NULL AFTER minutes")) {
+    fwrite(STDERR, "Failed to add the task column: " . $conn->error . PHP_EOL);
+    exit(1);
+}
+
+echo "engagement_time_entries table ready (with task column).\n";

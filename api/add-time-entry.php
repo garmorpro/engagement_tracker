@@ -1,7 +1,7 @@
 <?php
 // api/add-time-entry.php
 // Logs time against an engagement (the drawer's Time section).
-// POST JSON: { engagement_idno, entry_date: "YYYY-MM-DD", hours: 1.5, note?: "..." }
+// POST JSON: { engagement_idno, entry_date: "YYYY-MM-DD", hours: 1.5, task?: "Fieldwork", note?: "..." }
 require_once '../path.php';
 require_once '../includes/functions.php';
 requireApiAuth();
@@ -18,7 +18,7 @@ if (!is_array($data)) {
 $engagementIdno = trim((string) ($data['engagement_idno'] ?? ''));
 try {
     if ($engagementIdno === '') throw new InvalidArgumentException('Missing engagement');
-    [$date, $minutes, $note] = validateTimeEntryInput($data);
+    [$date, $minutes, $note, $task] = validateTimeEntryInput($data);
 
     $stmt = $conn->prepare('SELECT 1 FROM engagements WHERE eng_idno = ? LIMIT 1');
     $stmt->bind_param('s', $engagementIdno);
@@ -34,9 +34,10 @@ try {
     $authorUserId = $_SESSION['user_id'] ?? null;
     $authorName = $_SESSION['name'] ?? 'Unknown';
     $noteOrNull = $note !== '' ? $note : null;
-    $stmt = $conn->prepare("INSERT INTO engagement_time_entries (engagement_idno, entry_date, minutes, note, author_user_id, author_name, source, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, 'tracker', NOW())");
-    $stmt->bind_param('ssisis', $engagementIdno, $date, $minutes, $noteOrNull, $authorUserId, $authorName);
+    $taskOrNull = $task !== '' ? $task : null;
+    $stmt = $conn->prepare("INSERT INTO engagement_time_entries (engagement_idno, entry_date, minutes, task, note, author_user_id, author_name, source, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, 'tracker', NOW())");
+    $stmt->bind_param('ssissis', $engagementIdno, $date, $minutes, $taskOrNull, $noteOrNull, $authorUserId, $authorName);
     $stmt->execute();
     $entryId = (int) $conn->insert_id;
     $stmt->close();

@@ -911,7 +911,7 @@ function getEngagementTimeEntries(mysqli $conn, string $engagementIdno): array
         if (!$check || $check->num_rows === 0) {
             return [];
         }
-        $stmt = $conn->prepare("SELECT entry_id, entry_date, minutes, note, author_user_id, author_name, source, created_at
+        $stmt = $conn->prepare("SELECT *
                                 FROM engagement_time_entries
                                 WHERE engagement_idno = ?
                                 ORDER BY entry_date DESC, entry_id DESC");
@@ -926,7 +926,7 @@ function getEngagementTimeEntries(mysqli $conn, string $engagementIdno): array
     }
 }
 
-// Shared validation for the time endpoints. Returns [date 'Y-m-d', minutes, note] or throws InvalidArgumentException.
+// Shared validation for the time endpoints. Returns [date 'Y-m-d', minutes, note, task] or throws InvalidArgumentException.
 function validateTimeEntryInput(array $data): array
 {
     $date = trim((string) ($data['entry_date'] ?? ''));
@@ -941,5 +941,6 @@ function validateTimeEntryInput(array $data): array
         throw new InvalidArgumentException('Enter between 1 minute and 24 hours');
     }
     $note = mb_substr(trim((string) ($data['note'] ?? '')), 0, 500);
-    return [$date, $minutes, $note];
+    $task = mb_substr(trim((string) ($data['task'] ?? '')), 0, 60);
+    return [$date, $minutes, $note, $task];
 }

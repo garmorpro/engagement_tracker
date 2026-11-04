@@ -1,7 +1,7 @@
 <?php
 // api/dashboard-log-time.php
 // The Desk Ctrl Panel's Log time button (via n8n) writes a time entry here.
-// POST JSON: { engagement: "ENG-2026-001", minutes: 30, note?: "..." }
+// POST JSON: { engagement: "ENG-2026-001", minutes: 30, task?: "Fieldwork", note?: "..." }
 //
 // Same safeguards as dashboard-feed.php / dashboard-open-token.php:
 //   1. Home network only: anything forwarded by Cloudflare (CF-* headers) is refused.
@@ -34,6 +34,7 @@ $data = json_decode((string) file_get_contents('php://input'), true);
 $engagementIdno = is_array($data) ? trim((string) ($data['engagement'] ?? '')) : '';
 $minutes = is_array($data) ? (int) ($data['minutes'] ?? 0) : 0;
 $note = is_array($data) ? mb_substr(trim((string) ($data['note'] ?? '')), 0, 500) : '';
+$task = is_array($data) ? mb_substr(trim((string) ($data['task'] ?? '')), 0, 60) : '';
 $userId = (int) ($_ENV['DASH_LOGIN_USER_ID'] ?? 0);
 
 if (!preg_match('/^[A-Za-z0-9_-]{1,40}$/', $engagementIdno) || $minutes < 1 || $minutes > 720 || $userId <= 0) {
@@ -56,10 +57,11 @@ try {
     if (!$account) logTimeReply(500, ['success' => false, 'message' => 'Account not found']);
 
     $noteOrNull = $note !== '' ? $note : null;
+    $taskOrNull = $task !== '' ? $task : null;
     $today = date('Y-m-d');
-    $stmt = $conn->prepare("INSERT INTO engagement_time_entries (engagement_idno, entry_date, minutes, note, author_user_id, author_name, source, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, 'desk panel', NOW())");
-    $stmt->bind_param('ssisis', $engagementIdno, $today, $minutes, $noteOrNull, $userId, $account['name']);
+    $stmt = $conn->prepare("INSERT INTO engagement_time_entries (engagement_idno, entry_date, minutes, task, note, author_user_id, author_name, source, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, 'desk panel', NOW())");
+    $stmt->bind_param('ssissis', $engagementIdno, $today, $minutes, $taskOrNull, $noteOrNull, $userId, $account['name']);
     $stmt->execute();
     $entryId = (int) $conn->insert_id;
     $stmt->close();
