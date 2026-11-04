@@ -40,7 +40,7 @@ $sql = "
         UNIQUE KEY uniq_source_external (source, external_id),
         INDEX idx_read_created (is_read, created_at),
         INDEX idx_engagement (engagement_idno)
-    ) DEFAULT CHARSET=utf8mb4
+    ) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
 ";
 
 if (!$conn->query($sql)) {

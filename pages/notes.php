@@ -4,28 +4,34 @@ require_once '../path.php';
 require_once '../includes/functions.php';
 
 // Notes sent in by another app (api/receive-note.php), newest first. A missing table just means
-// the migration hasn't been run yet.
+// the migration hasn't been run yet. Engagement names are looked up separately rather than JOINed:
+// inbox_notes and engagements can end up with different text collations, which MariaDB refuses to compare.
 $tableMissing = false;
 $notes = [];
 try {
-    $res = $conn->query("SELECT n.*, e.eng_name, e.eng_audit_type
-                         FROM inbox_notes n
-                         LEFT JOIN engagements e ON e.eng_idno = n.engagement_idno
-                         ORDER BY n.created_at DESC, n.note_id DESC
-                         LIMIT 500");
+    $res = $conn->query("SELECT * FROM inbox_notes ORDER BY created_at DESC, note_id DESC LIMIT 500");
     $notes = $res->fetch_all(MYSQLI_ASSOC);
 } catch (Throwable $e) {
+    error_log('notes.php: ' . $e->getMessage());
     $tableMissing = true;
 }
 
 $engagementOptions = [];
+$engagementNames = [];
 try {
-    $res = $conn->query("SELECT eng_idno, eng_name, eng_audit_type FROM engagements WHERE eng_status <> 'archived' ORDER BY eng_name");
+    $res = $conn->query("SELECT eng_idno, eng_name, eng_audit_type, eng_status FROM engagements ORDER BY eng_name");
     foreach ($res->fetch_all(MYSQLI_ASSOC) as $e) {
-        $engagementOptions[] = ['idno' => $e['eng_idno'], 'label' => $e['eng_idno'] . ' · ' . $e['eng_name'] . ($e['eng_audit_type'] ? ' (' . $e['eng_audit_type'] . ')' : '')];
+        $engagementNames[$e['eng_idno']] = $e['eng_name'];
+        if ($e['eng_status'] !== 'archived') {
+            $engagementOptions[] = ['idno' => $e['eng_idno'], 'label' => $e['eng_idno'] . ' · ' . $e['eng_name'] . ($e['eng_audit_type'] ? ' (' . $e['eng_audit_type'] . ')' : '')];
+        }
     }
 } catch (Throwable $e) {
 }
+foreach ($notes as &$n) {
+    $n['eng_name'] = $engagementNames[$n['engagement_idno'] ?? ''] ?? null;
+}
+unset($n);
 
 $total = count($notes);
 $unread = count(array_filter($notes, fn($n) => !(int) $n['is_read']));
