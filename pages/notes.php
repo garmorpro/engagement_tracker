@@ -33,18 +33,6 @@ foreach ($notes as &$n) {
 }
 unset($n);
 
-// Header "What's due" badge, same numbers as the dashboard's.
-$dueItemsOverdue = 0;
-$dueItemsTotal = 0;
-try {
-    $daysAheadSetting = getAppSetting($conn, 'due_popup_days_ahead');
-    $headerDaysAhead = ($daysAheadSetting !== null && ctype_digit($daysAheadSetting)) ? (int) $daysAheadSetting : 7;
-    $headerDue = getDueItemsSummary($conn, $headerDaysAhead);
-    $dueItemsOverdue = count($headerDue['overdue']);
-    $dueItemsTotal = $dueItemsOverdue + count($headerDue['upcoming']);
-} catch (Throwable $e) {
-}
-
 $total = count($notes);
 $unread = count(array_filter($notes, fn($n) => !(int) $n['is_read']));
 $unattached = count(array_filter($notes, fn($n) => empty($n['engagement_idno'])));
@@ -119,7 +107,6 @@ function noteWhen(string $raw): string
         .hdr-due i { font-size: 15px; }
         .hdr-badge { min-width: 20px; height: 20px; border-radius: 10px; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 6px; margin-right: -4px; background: color-mix(in srgb, var(--caution) 16%, transparent); color: var(--caution); }
         .hdr-badge[hidden] { display: none; }
-        .hdr-badge.overdue { background: var(--critical-tint-strong); color: var(--critical); }
         .hdr-search { display: flex; align-items: center; gap: 10px; flex: 1 1 260px; min-width: 0; max-width: 420px; margin: 0 auto; height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text-muted); }
         .hdr-search:focus-within { border-color: var(--ink); background: var(--card); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
         .hdr-search i { font-size: 14px; flex-shrink: 0; }
@@ -236,12 +223,9 @@ function noteWhen(string $raw): string
         </label>
 
         <div class="header-right">
-            <a href="dashboard.php?due=1" class="hdr-due" aria-label="What's due<?php echo $dueItemsTotal ? ': ' . $dueItemsTotal . ' item' . ($dueItemsTotal === 1 ? '' : 's') : ''; ?>">
-                <i class="bi bi-list-check" aria-hidden="true"></i>
-                <span class="hdr-label">What's due</span>
-                <?php if ($dueItemsTotal > 0): ?>
-                <span class="hdr-badge <?php echo $dueItemsOverdue > 0 ? 'overdue' : 'upcoming'; ?>"><?php echo $dueItemsTotal; ?></span>
-                <?php endif; ?>
+            <a href="dashboard.php" class="hdr-due">
+                <i class="bi bi-list-ul" aria-hidden="true"></i>
+                <span class="hdr-label">Engagements</span>
             </a>
             <a href="notes.php" class="hdr-due active" aria-current="page">
                 <i class="bi bi-inbox" aria-hidden="true"></i><span class="hdr-label">Notes</span>
