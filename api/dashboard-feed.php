@@ -30,8 +30,10 @@ $givenKey = (string) ($_SERVER['HTTP_X_DASH_KEY'] ?? '');
 if (strlen($expectedKey) < 24 || !hash_equals($expectedKey, $givenKey)) dashDeny();
 
 try {
-    // "Due" = the tracker's own overdue + due-within-7-days logic (key dates and milestones).
-    $summary = getDueItemsSummary($conn, 7);
+    // Look 120 days ahead so every engagement has a "next due" date. The "due" count and the
+    // item list only include what is overdue or due within DUE_SOON_DAYS (the tracker's own logic).
+    $dueSoonDays = 7;
+    $summary = getDueItemsSummary($conn, 120);
 
     $byEngagement = [];
     foreach (['overdue' => $summary['overdue'], 'upcoming' => $summary['upcoming']] as $kind => $items) {
@@ -39,13 +41,15 @@ try {
             $id = $item['engagement_idno'];
             $byEngagement[$id] ??= ['overdue' => 0, 'open' => 0, 'soonest' => null, 'minDays' => null, 'items' => []];
             $e = &$byEngagement[$id];
-            $e['open']++;
-            if ($kind === 'overdue') $e['overdue']++;
             if ($e['minDays'] === null || $item['days_until'] < $e['minDays']) {
                 $e['minDays'] = $item['days_until'];
                 $e['soonest'] = $item['due_date'];
             }
-            $e['items'][] = ['title' => $item['title'], 'dueDate' => $item['due_date'], 'daysUntil' => $item['days_until']];
+            if ($item['days_until'] <= $dueSoonDays) {
+                $e['open']++;
+                if ($kind === 'overdue') $e['overdue']++;
+                $e['items'][] = ['title' => $item['title'], 'dueDate' => $item['due_date'], 'daysUntil' => $item['days_until']];
+            }
             unset($e);
         }
     }
