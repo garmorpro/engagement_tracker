@@ -5052,6 +5052,16 @@ if (!empty($_SESSION['name'])) {
         });
     }
 
+    // Deep link (used by the Desk Ctrl Panel iPad dashboard): dashboard.php?open=ENG-2026-001
+    // opens that engagement's drawer. The id is checked before use, then dropped from the URL.
+    (function () {
+        const wanted = new URLSearchParams(location.search).get('open');
+        if (wanted && /^[A-Za-z0-9_-]{1,40}$/.test(wanted)) {
+            history.replaceState(null, '', location.pathname);
+            openDrawer(wanted);
+        }
+    })();
+
     function showToast(message) {
         const toast = document.createElement('div');
         toast.className = 'custom-toast';
