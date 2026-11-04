@@ -900,3 +900,46 @@ function getAllChecklistData(mysqli $conn): array
         return [];
     }
 }
+
+// TIME ENTRIES (engagement_time_entries, includes/migrate_create_time_entries_table.php)
+// Time logged against one engagement, newest day first. Returns [] before the table exists,
+// so the drawer keeps working on a server that hasn't run the migration yet.
+function getEngagementTimeEntries(mysqli $conn, string $engagementIdno): array
+{
+    try {
+        $check = $conn->query("SHOW TABLES LIKE 'engagement_time_entries'");
+        if (!$check || $check->num_rows === 0) {
+            return [];
+        }
+        $stmt = $conn->prepare("SELECT entry_id, entry_date, minutes, note, author_user_id, author_name, source, created_at
+                                FROM engagement_time_entries
+                                WHERE engagement_idno = ?
+                                ORDER BY entry_date DESC, entry_id DESC");
+        $stmt->bind_param('s', $engagementIdno);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+        return $rows;
+    } catch (\Throwable $e) {
+        error_log('getEngagementTimeEntries: ' . $e->getMessage());
+        return [];
+    }
+}
+
+// Shared validation for the time endpoints. Returns [date 'Y-m-d', minutes, note] or throws InvalidArgumentException.
+function validateTimeEntryInput(array $data): array
+{
+    $date = trim((string) ($data['entry_date'] ?? ''));
+    if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $m) || !checkdate((int) $m[2], (int) $m[3], (int) $m[1])) {
+        throw new InvalidArgumentException('Enter a valid date');
+    }
+    if ($date > date('Y-m-d')) {
+        throw new InvalidArgumentException('The date cannot be in the future');
+    }
+    $minutes = (int) round(((float) ($data['hours'] ?? 0)) * 60);
+    if ($minutes < 1 || $minutes > 1440) {
+        throw new InvalidArgumentException('Enter between 1 minute and 24 hours');
+    }
+    $note = mb_substr(trim((string) ($data['note'] ?? '')), 0, 500);
+    return [$date, $minutes, $note];
+}

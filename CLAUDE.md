@@ -149,6 +149,14 @@ A "Notes" button in the dashboard header (amber badge = unread count, `getInboxU
 - **Storage**: `inbox_notes` (`includes/migrate_create_inbox_notes_table.php`, **must be run once on the Pi**; every reader degrades to empty before then). Attached inbox notes are merged into that engagement's Notes & Meetings log as note type `inbox` ("From Inbox", amber rail; `getInboxNotesForEngagement()` feeds both `getEngagementNotes()` and the export PDF "Note from Inbox"). They are deleted with the engagement on Archive & Export removal (they're in the PDF by then), and `merge_engagements_by_client.php` moves them to the surviving engagement.
 - The page lists the newest 500. No attachments or original timestamps from the sender yet: `created_at` is when the note arrived.
 
+## Time entries (2026-11-04)
+
+Hours logged against an engagement, shown in a **Time** section of the drawer (between Notes & Meetings and Team): total logged, a bar against the hours budgeted across the team (`engagement_team.budgeted_hours`, amber when over), and a list (date, hours, note, who, a "Desk panel" tag for entries that came from the iPad) with edit and delete per entry. "+ Add time" opens a SweetAlert2 form: date (not in the future), hours (0.25 to 24, with quick chips) and an optional note.
+
+- **Storage**: `engagement_time_entries` (`includes/migrate_create_time_entries_table.php`, **must be run once on the Pi**; `getEngagementTimeEntries()` returns `[]` before then). Stored in whole **minutes** so quarter hours never round. `source` is `tracker` or `desk panel`. Joins avoided on purpose (the Notes page hit a collation mismatch).
+- **Endpoints** (session auth, `requireApiAuth()`): `api/add-time-entry.php`, `api/update-time-entry.php`, `api/delete-time-entry.php`. Validation is shared in `validateTimeEntryInput()` (functions.php). Only the author or an admin/super_admin can edit or delete an entry. Each action is written to the activity log (`time_entry_added/updated/deleted`). `api/get-engagement-details.php` returns them as `time`.
+- **Desk Ctrl Panel**: `api/dashboard-log-time.php`, NOT session based: home network only (refuses anything with Cloudflare `CF-*` headers) plus the `X-Dash-Key` header matching `DASH_API_KEY`. Writes today's entry as the account in `DASH_LOGIN_USER_ID`, `source = 'desk panel'`. Same two safeguards as `dashboard-feed.php` / `dashboard-open-token.php`.
+
 ## Archive & Export (2026-10-27)
 
 There is no archived state to browse. Clicking **Archive & Export** (row action, drawer button, or the details page) runs a two-step flow from `archiveEngagement()` in `pages/dashboard.php` and `pages/engagement-details.php` (each page has its own copy of the JS):

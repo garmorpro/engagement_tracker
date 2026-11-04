@@ -1121,6 +1121,28 @@ if (!empty($_SESSION['name'])) {
         .drawer-detail-scope { grid-column: 1 / -1; }
         .drawer-detail-scope .drawer-info-value { line-height: 1.5; font-weight: 500; font-size: 13px; color: var(--text-muted); white-space: pre-line; }
 
+        /* ---------- Time: hours logged against the engagement (engagement_time_entries) ---------- */
+        .time-summary { display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap; }
+        .time-total { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
+        .time-unit, .time-budget { font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+        .time-bar { height: 6px; background: var(--line); border-radius: 6px; margin: 0.5rem 0 0.9rem; overflow: hidden; }
+        .time-bar i { display: block; height: 100%; background: var(--good); border-radius: 6px; }
+        .time-bar i.over { background: var(--caution); }
+        .time-empty { color: var(--text-muted); font-size: 13px; padding: 0.4rem 0; }
+        .time-entry { display: flex; align-items: center; gap: 0.75rem; padding: 0.55rem 0; border-top: 1px solid var(--line); }
+        .time-entry-date { flex: none; width: 5.2rem; font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+        .time-entry-hrs { flex: none; width: 3.4rem; font-weight: 700; color: var(--ink); }
+        .time-entry-main { flex: 1; min-width: 0; font-size: 13px; }
+        .time-entry-note { color: var(--ink); overflow-wrap: anywhere; }
+        .time-entry-by { color: var(--text-muted); font-size: 11.5px; }
+        .time-tag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 6px; background: var(--line); color: var(--text-muted); margin-left: 4px; }
+        .time-icon-btn { border: 0; background: transparent; color: var(--text-muted); cursor: pointer; padding: 4px 6px; border-radius: 6px; }
+        .time-icon-btn:hover { background: var(--line); color: var(--ink); }
+        .time-lbl { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; margin: 0 0 0.25rem; }
+        .time-chips { display: flex; gap: 0.4rem; margin: 0 0 0.8rem; }
+        .time-chip { border: 1px solid #d5dbe3; background: #f4f6f9; border-radius: 8px; padding: 0.3rem 0.7rem; font-weight: 600; cursor: pointer; }
+        .time-chip:hover { background: #e7ecf2; }
+
         /* ---------- Notes & Meetings: a running log fed by 4 buttons,
            replacing the old single eng_notes textarea + the old per-person
            independence popup. Ported from the mockup Garrett approved. ---------- */
@@ -3158,6 +3180,14 @@ if (!empty($_SESSION['name'])) {
 
             <div class="drawer-section">
                 <div class="drawer-section-head">
+                    <div class="drawer-section-title"><span class="dot" style="background:var(--good)"></span>Time</div>
+                    <button class="drawer-link-btn" id="drawerAddTimeBtn" type="button">+ Add time</button>
+                </div>
+                <div id="drawerTimeContent"></div>
+            </div>
+
+            <div class="drawer-section">
+                <div class="drawer-section-head">
                     <div class="drawer-section-title"><span class="dot" style="background:var(--manager)"></span>Team (DOL)</div>
                     <button class="drawer-link-btn" id="drawerManageTeamBtn">Manage Team</button>
                 </div>
@@ -3193,6 +3223,7 @@ if (!empty($_SESSION['name'])) {
 
         updateDrawerSetupBanner(eng, team, auditTypes, timeline, data.checklist || {});
         renderDrawerTeam(team, auditTypes);
+        renderDrawerTime(data.time || [], team);
         renderNoteLog(data.notes || []);
         wireMeetingButtons();
         if (checklistMode !== 'only') renderDrawerTimeline(timeline, eng.eng_idno);
@@ -3203,12 +3234,128 @@ if (!empty($_SESSION['name'])) {
         });
 
         document.getElementById('drawerManageTeamBtn').addEventListener('click', openManageTeamModal);
+        document.getElementById('drawerAddTimeBtn')?.addEventListener('click', () => openTimeEntryModal());
         document.getElementById('drawerEditTimelineBtn')?.addEventListener('click', () => openEditTimelineModal());
         document.getElementById('drawerImportTimelineBtn')?.addEventListener('click', () => {
             document.getElementById('timelineImportFileInput').click();
         });
         document.getElementById('drawerAddChecklistBtn')?.addEventListener('click', () => setPciChecklist(eng.eng_idno, true));
         document.getElementById('drawerRemoveChecklistBtn')?.addEventListener('click', () => setPciChecklist(eng.eng_idno, false));
+    }
+
+    // ===================================================================
+    // TIME (engagement_time_entries)
+    // Hours logged against this engagement, compared with the hours budgeted
+    // across its team (engagement_team.budgeted_hours). Entries come from this
+    // section, or from the Desk Ctrl Panel's Log time button (source 'desk panel').
+    // Saves go through applyDrawerUpdate(), so the drawer refreshes in place.
+    // ===================================================================
+    function fmtLoggedHours(minutes) {
+        return String(+(Number(minutes || 0) / 60).toFixed(2));
+    }
+
+    function renderDrawerTime(entries, team) {
+        const el = document.getElementById('drawerTimeContent');
+        if (!el) return;
+        const totalMin = entries.reduce((n, e) => n + Number(e.minutes || 0), 0);
+        const hrs = +(totalMin / 60).toFixed(2);
+        const budget = (team || []).reduce((n, m) => n + (parseFloat(m.budgeted_hours) || 0), 0);
+
+        let summary = `<div class="time-summary"><span class="time-total">${hrs}</span><span class="time-unit">hrs logged</span>`;
+        if (budget > 0) {
+            const pct = Math.min(100, Math.round((hrs / budget) * 100));
+            summary += `<span class="time-budget">of ${+budget.toFixed(2)} hrs budgeted</span></div>`;
+            summary += `<div class="time-bar"><i class="${hrs > budget ? 'over' : ''}" style="width:${pct}%"></i></div>`;
+        } else {
+            summary += `<span class="time-budget">(no hours budgeted)</span></div><div class="time-bar"><i style="width:0"></i></div>`;
+        }
+
+        if (!entries.length) {
+            el.innerHTML = summary + '<div class="time-empty">No time logged yet.</div>';
+            return;
+        }
+        el.innerHTML = summary + entries.map(e => `
+            <div class="time-entry">
+                <div class="time-entry-date">${escapeHtml(fmtDate(e.entry_date) || e.entry_date)}</div>
+                <div class="time-entry-hrs">${fmtLoggedHours(e.minutes)} h</div>
+                <div class="time-entry-main">
+                    <div class="time-entry-note">${e.note ? escapeHtml(e.note) : '<span style="color:var(--text-muted)">No note</span>'}</div>
+                    <div class="time-entry-by">${escapeHtml(e.author_name || 'Unknown')}${e.source === 'desk panel' ? '<span class="time-tag">Desk panel</span>' : ''}</div>
+                </div>
+                <button class="time-icon-btn" type="button" data-time-edit="${escAttr(String(e.entry_id))}" aria-label="Edit"><i class="bi bi-pencil"></i></button>
+                <button class="time-icon-btn" type="button" data-time-del="${escAttr(String(e.entry_id))}" aria-label="Delete"><i class="bi bi-trash"></i></button>
+            </div>
+        `).join('');
+        el.querySelectorAll('[data-time-edit]').forEach(btn => btn.addEventListener('click', () => {
+            openTimeEntryModal(entries.find(x => String(x.entry_id) === btn.dataset.timeEdit));
+        }));
+        el.querySelectorAll('[data-time-del]').forEach(btn => btn.addEventListener('click', () => deleteTimeEntry(btn.dataset.timeDel)));
+    }
+
+    async function openTimeEntryModal(entry) {
+        const eng = drawerData.engagement;
+        const now = new Date();
+        const today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+        const result = await Swal.fire({
+            title: entry ? 'Edit time' : 'Add time',
+            html: `
+                <div style="text-align:left">
+                    <label class="time-lbl" for="time_date">Date</label>
+                    <input id="time_date" type="date" class="swal2-input" max="${today}" value="${escAttr(entry ? entry.entry_date : today)}" style="width:100%;margin:0 0 0.8rem">
+                    <label class="time-lbl" for="time_hours">Hours</label>
+                    <input id="time_hours" type="number" class="swal2-input" min="0.25" max="24" step="0.25" inputmode="decimal" placeholder="e.g. 1.5" value="${entry ? fmtLoggedHours(entry.minutes) : ''}" style="width:100%;margin:0 0 0.5rem">
+                    <div class="time-chips">${[0.25, 0.5, 1, 2, 4].map(h => `<button type="button" class="time-chip" data-h="${h}">${h}</button>`).join('')}</div>
+                    <label class="time-lbl" for="time_note">Note (optional)</label>
+                    <input id="time_note" type="text" class="swal2-input" maxlength="500" value="${escAttr(entry ? (entry.note || '') : '')}" style="width:100%;margin:0">
+                </div>`,
+            showCancelButton: true,
+            confirmButtonText: entry ? 'Save' : 'Add time',
+            focusConfirm: false,
+            didOpen: () => {
+                document.querySelectorAll('.time-chip').forEach(chip => chip.addEventListener('click', () => {
+                    document.getElementById('time_hours').value = chip.dataset.h;
+                }));
+                document.getElementById('time_hours').focus();
+            },
+            preConfirm: () => {
+                const hours = parseFloat(document.getElementById('time_hours').value);
+                const date = document.getElementById('time_date').value;
+                if (!date) { Swal.showValidationMessage('Pick a date'); return false; }
+                if (!(hours > 0 && hours <= 24)) { Swal.showValidationMessage('Enter hours between 0.25 and 24'); return false; }
+                return { hours, entry_date: date, note: document.getElementById('time_note').value.trim() };
+            }
+        });
+        if (!result.isConfirmed) return;
+        try {
+            const payload = entry ? { entry_id: entry.entry_id, ...result.value } : { engagement_idno: eng.eng_idno, ...result.value };
+            const res = await fetch(entry ? '../api/update-time-entry.php' : '../api/add-time-entry.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Could not save the time entry');
+            await applyDrawerUpdate(entry ? 'Time updated' : 'Time added');
+        } catch (err) {
+            Swal.fire('Error', (err && err.message) || 'Could not save the time entry', 'error');
+        }
+    }
+
+    async function deleteTimeEntry(entryId) {
+        const ok = await Swal.fire({ title: 'Delete this time entry?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete' });
+        if (!ok.isConfirmed) return;
+        try {
+            const res = await fetch('../api/delete-time-entry.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ entry_id: Number(entryId) })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Could not delete the time entry');
+            await applyDrawerUpdate('Time entry deleted');
+        } catch (err) {
+            Swal.fire('Error', (err && err.message) || 'Could not delete the time entry', 'error');
+        }
     }
 
     // "Add PCI checklist" / "Remove" on an engagement that has PCI plus other types.

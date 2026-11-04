@@ -65,6 +65,7 @@ try {
         'timeline' => $timeline,
         'team' => $team,
         'notes' => $notes,
+        'time' => getEngagementTimeEntries($conn, $engagementId),
         'linked_calls' => $linkedCalls,
         'checklist' => getChecklistMap($conn, $engagementId),
         'siblings' => getEngagementSiblings($conn, $engagementId),
