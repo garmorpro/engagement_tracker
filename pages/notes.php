@@ -33,6 +33,18 @@ foreach ($notes as &$n) {
 }
 unset($n);
 
+// Header "What's due" badge, same numbers as the dashboard's.
+$dueItemsOverdue = 0;
+$dueItemsTotal = 0;
+try {
+    $daysAheadSetting = getAppSetting($conn, 'due_popup_days_ahead');
+    $headerDaysAhead = ($daysAheadSetting !== null && ctype_digit($daysAheadSetting)) ? (int) $daysAheadSetting : 7;
+    $headerDue = getDueItemsSummary($conn, $headerDaysAhead);
+    $dueItemsOverdue = count($headerDue['overdue']);
+    $dueItemsTotal = $dueItemsOverdue + count($headerDue['upcoming']);
+} catch (Throwable $e) {
+}
+
 $total = count($notes);
 $unread = count(array_filter($notes, fn($n) => !(int) $n['is_read']));
 $unattached = count(array_filter($notes, fn($n) => empty($n['engagement_idno'])));
@@ -96,7 +108,7 @@ function noteWhen(string $raw): string
 
         /* ---------- header (same bar as the dashboard) ---------- */
         .top-header { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; width: 100%; display: grid; grid-template-columns: minmax(1.75rem, 1fr) minmax(0, 1200px) minmax(1.75rem, 1fr); }
-        .header-inner { grid-column: 2; min-width: 0; height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+        .header-inner { grid-column: 2; min-width: 0; height: 68px; display: flex; align-items: center; justify-content: flex-start; gap: 2rem; }
         .brand { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; text-decoration: none; }
         .brand-icon { width: 26px; height: 26px; border-radius: 7px; background: var(--ink); color: var(--card); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
         .brand-mark { font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
@@ -107,6 +119,16 @@ function noteWhen(string $raw): string
         .hdr-due i { font-size: 15px; }
         .hdr-badge { min-width: 20px; height: 20px; border-radius: 10px; font-size: 11.5px; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 6px; margin-right: -4px; background: color-mix(in srgb, var(--caution) 16%, transparent); color: var(--caution); }
         .hdr-badge[hidden] { display: none; }
+        .hdr-badge.overdue { background: var(--critical-tint-strong); color: var(--critical); }
+        .hdr-search { display: flex; align-items: center; gap: 10px; flex: 1 1 260px; min-width: 0; max-width: 420px; margin: 0 auto; height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text-muted); }
+        .hdr-search:focus-within { border-color: var(--ink); background: var(--card); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
+        .hdr-search i { font-size: 14px; flex-shrink: 0; }
+        .hdr-search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font: inherit; font-size: 13px; color: var(--text); }
+        .hdr-search input::placeholder { color: var(--text-muted); }
+        .hdr-search kbd { font-family: inherit; font-size: 11px; font-weight: 600; color: var(--text-muted); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; background: var(--card); }
+        .hdr-search:focus-within kbd { display: none; }
+        .btn-new-engagement { background: var(--ink); color: var(--card); border: none; height: 40px; padding: 0 18px; border-radius: 10px; font-size: 13px; font-weight: 600; font-family: inherit; display: flex; align-items: center; gap: 8px; flex-shrink: 0; cursor: pointer; text-decoration: none; }
+        .btn-new-engagement:hover { opacity: 0.92; }
         .hdr-sep { width: 1px; height: 26px; background: var(--line); margin: 0 0.25rem; }
         .profile-section { position: relative; }
         .profile-wrapper { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px 0 5px; border-radius: 19px; border: 1px solid var(--line); background: var(--paper); color: var(--text-muted); cursor: pointer; font-family: inherit; }
@@ -141,10 +163,7 @@ function noteWhen(string $raw): string
         .btn-danger { border-color: var(--critical); color: var(--critical); }
         .btn-danger:hover { background: var(--critical-tint-strong); border-color: var(--critical); }
 
-        .toolbar { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0 1rem; }
-        .search { display: flex; align-items: center; gap: 10px; flex: 1 1 240px; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--text-muted); }
-        .search:focus-within { border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 14%, transparent); }
-        .search input { flex: 1; min-width: 0; border: none; outline: none; background: transparent; font: inherit; font-size: 13px; color: var(--text); }
+        .toolbar { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin: 1.25rem 0 1rem; }
         .chips { display: flex; gap: 6px; flex-wrap: wrap; }
         .chip { height: 32px; padding: 0 12px; border-radius: 16px; border: 1px solid var(--line); background: var(--card); color: var(--text-muted); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
         .chip:hover { border-color: var(--line-strong); }
@@ -185,11 +204,14 @@ function noteWhen(string $raw): string
         .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); background: var(--text); color: var(--paper); padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 500; }
         .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-        @media (max-width: 900px) { .hdr-label { display: none; } .hdr-due { padding: 0 10px; } }
+        @media (max-width: 900px) { .header-inner { gap: 1rem; } .hdr-label { display: none; } .hdr-due { padding: 0 10px; } .btn-new-engagement { padding: 0 12px; } }
         @media (max-width: 480px) {
             .top-header { grid-template-columns: 1rem minmax(0, 1fr) 1rem; }
             .header-inner { gap: 0.6rem; height: 64px; }
             .brand-mark, .hdr-sep { display: none; }
+            .hdr-search kbd { display: none; }
+            .hdr-search { padding: 0 10px; gap: 8px; }
+            .profile-wrapper { padding: 0 8px 0 4px; gap: 5px; }
             .header-right { gap: 0.35rem; }
             .page { padding-top: 1.25rem; }
             .note-when { margin-left: 0; width: 100%; }
@@ -206,13 +228,27 @@ function noteWhen(string $raw): string
             <span class="brand-mark">Engagement Tracker</span>
         </a>
 
+        <label class="hdr-search">
+            <i class="bi bi-search" aria-hidden="true"></i>
+            <span class="sr-only">Search notes</span>
+            <input type="search" id="noteSearch" placeholder="Search notes" autocomplete="off"<?php echo $tableMissing ? ' disabled' : ''; ?>>
+            <kbd title="Press / to search">/</kbd>
+        </label>
+
         <div class="header-right">
-            <a href="dashboard.php" class="hdr-due">
-                <i class="bi bi-list-check" aria-hidden="true"></i><span class="hdr-label">Engagements</span>
+            <a href="dashboard.php?due=1" class="hdr-due" aria-label="What's due<?php echo $dueItemsTotal ? ': ' . $dueItemsTotal . ' item' . ($dueItemsTotal === 1 ? '' : 's') : ''; ?>">
+                <i class="bi bi-list-check" aria-hidden="true"></i>
+                <span class="hdr-label">What's due</span>
+                <?php if ($dueItemsTotal > 0): ?>
+                <span class="hdr-badge <?php echo $dueItemsOverdue > 0 ? 'overdue' : 'upcoming'; ?>"><?php echo $dueItemsTotal; ?></span>
+                <?php endif; ?>
             </a>
             <a href="notes.php" class="hdr-due active" aria-current="page">
                 <i class="bi bi-inbox" aria-hidden="true"></i><span class="hdr-label">Notes</span>
                 <span class="hdr-badge" id="navBadge" <?php echo $unread ? '' : 'hidden'; ?>><?php echo $unread; ?></span>
+            </a>
+            <a href="dashboard.php?onboard=1" class="btn-new-engagement">
+                <i class="bi bi-plus-lg" aria-hidden="true"></i><span class="hdr-label">Onboard Client</span>
             </a>
             <span class="hdr-sep" aria-hidden="true"></span>
 
@@ -267,11 +303,6 @@ function noteWhen(string $raw): string
     <?php endif; ?>
 
     <div class="toolbar">
-        <label class="search">
-            <i class="bi bi-search" aria-hidden="true"></i>
-            <span class="sr-only">Search notes</span>
-            <input type="search" id="noteSearch" placeholder="Search notes, sources, engagements" autocomplete="off">
-        </label>
         <div class="chips" role="group" aria-label="Filter notes">
             <button type="button" class="chip on" data-filter="all">All <span class="n" id="cAll"><?php echo $total; ?></span></button>
             <button type="button" class="chip" data-filter="unread">Unread <span class="n" id="cUnread"><?php echo $unread; ?></span></button>
@@ -477,6 +508,14 @@ function noteWhen(string $raw): string
         refresh();
     }));
     document.getElementById('noteSearch')?.addEventListener('input', refresh);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+        const t = e.target;
+        if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+        e.preventDefault();
+        document.getElementById('noteSearch')?.focus();
+    });
 
     cards().forEach(paintCard);
     refresh();

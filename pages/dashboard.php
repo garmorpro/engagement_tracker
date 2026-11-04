@@ -5068,11 +5068,20 @@ if (!empty($_SESSION['name'])) {
 
     // Deep link (used by the Desk Ctrl Panel iPad dashboard): dashboard.php?open=ENG-2026-001
     // opens that engagement's drawer. The id is checked before use, then dropped from the URL.
+    // dashboard.php?due=1 / ?onboard=1 open the "What's due" popup / Onboard Client wizard (the Notes
+    // page's header has the same buttons).
     (function () {
-        const wanted = new URLSearchParams(location.search).get('open');
+        const params = new URLSearchParams(location.search);
+        const wanted = params.get('open');
         if (wanted && /^[A-Za-z0-9_-]{1,40}$/.test(wanted)) {
             history.replaceState(null, '', location.pathname);
             openDrawer(wanted);
+        } else if (params.get('due') === '1') {
+            history.replaceState(null, '', location.pathname);
+            openDuePopup();
+        } else if (params.get('onboard') === '1') {
+            history.replaceState(null, '', location.pathname);
+            document.querySelector('.btn-new-engagement')?.click();
         }
     })();
 
