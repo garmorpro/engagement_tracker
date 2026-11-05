@@ -1138,10 +1138,66 @@ if (!empty($_SESSION['name'])) {
         .time-tag { display: inline-block; font-size: 10.5px; font-weight: 700; padding: 1px 6px; border-radius: 6px; background: var(--line); color: var(--text-muted); margin-left: 4px; }
         .time-icon-btn { border: 0; background: transparent; color: var(--text-muted); cursor: pointer; padding: 4px 6px; border-radius: 6px; }
         .time-icon-btn:hover { background: var(--line); color: var(--ink); }
-        .time-lbl { display: block; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #64748b; margin: 0 0 0.25rem; }
-        .time-chips { display: flex; gap: 0.4rem; margin: 0 0 0.8rem; }
-        .time-chip { border: 1px solid #d5dbe3; background: #f4f6f9; border-radius: 8px; padding: 0.3rem 0.7rem; font-weight: 600; cursor: pointer; }
-        .time-chip:hover { background: #e7ecf2; }
+        /* Add / Edit time window. Spacing comes from grid gaps: the global .swal2-input rule sets
+           margin: 0 !important, so inline margins on the inputs never applied (that is what made
+           the old form look jammed together). */
+        .time-modal-popup { max-width: 460px !important; }
+        .time-form { display: grid; gap: 18px; text-align: left; }
+        .time-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .time-field { display: grid; gap: 7px; min-width: 0; }
+        .swal2-html-container .time-form .time-lbl { font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted) !important; }
+        .swal2-html-container .time-form .time-lbl small { text-transform: none; letter-spacing: 0; font-weight: 500; }
+        .time-form .swal2-input, .time-form select.swal2-input { height: 42px !important; font-size: 14px !important; }
+        .time-form input[type=number]::-webkit-outer-spin-button,
+        .time-form input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .time-form input[type=number] { -moz-appearance: textfield; }
+        .time-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .swal2-html-container .time-form .time-chip { border: 1px solid var(--line); background: var(--paper); color: var(--text) !important; border-radius: 16px; padding: 4px 12px; font-size: 12.5px; font-weight: 600; font-family: inherit; cursor: pointer; }
+        .swal2-html-container .time-form .time-chip:hover { border-color: var(--line-strong); background: var(--card); }
+        .swal2-html-container .time-form .time-chip.on { background: var(--ink); border-color: var(--ink); color: var(--card) !important; }
+
+        /* ---------- Time view (week timesheet) ---------- */
+        .ts-popup { max-width: 1080px; max-height: 90vh; }
+        .ts-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 1.1rem 1.4rem; border-bottom: 1px solid var(--line); }
+        .ts-head h3 { font-size: 16px; font-weight: 700; margin: 0; margin-right: auto; }
+        .ts-nav { display: inline-flex; align-items: center; gap: 6px; }
+        .ts-nav button, .ts-btn { height: 34px; padding: 0 12px; border-radius: 17px; border: 1px solid var(--line); background: var(--card); color: var(--text); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .ts-nav button:hover, .ts-btn:hover { border-color: var(--line-strong); background: var(--paper); }
+        .ts-nav button.icon { width: 34px; padding: 0; justify-content: center; }
+        .ts-btn.primary { background: var(--ink); border-color: var(--ink); color: var(--card); }
+        .ts-btn.primary:hover { background: var(--ink-soft); border-color: var(--ink-soft); }
+        .ts-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+        .ts-week { min-width: 12.5rem; text-align: center; font-weight: 700; font-size: 14px; }
+        .ts-week small { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); }
+        .ts-body { overflow: auto; padding: 0.4rem 1.4rem 1.4rem; }
+        .ts-total { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+        .ts-total b { color: var(--text); font-size: 15px; }
+        .ts-empty { padding: 3rem 1rem; text-align: center; color: var(--text-muted); font-size: 13px; }
+        .ts-grid { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 0.6rem; }
+        .ts-grid th { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); text-align: right; padding: 0.5rem 0.55rem; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+        .ts-grid th:first-child { text-align: left; }
+        .ts-grid th.today { color: var(--ink); }
+        .ts-grid th i { display: block; font-style: normal; font-size: 13px; letter-spacing: 0; color: var(--text); font-weight: 700; }
+        .ts-grid td { padding: 0.45rem 0.55rem; text-align: right; border-bottom: 1px solid var(--line); }
+        .ts-grid td:first-child { text-align: left; }
+        .ts-grid td.today, .ts-grid th.today { background: color-mix(in srgb, var(--ink) 6%, transparent); }
+        .ts-grid .zero { color: var(--line-strong); }
+        .ts-grid tr.ts-eng td { padding-top: 0.9rem; font-weight: 700; border-bottom: none; }
+        .ts-grid tr.ts-eng td:first-child { display: flex; align-items: baseline; gap: 8px; }
+        .ts-grid tr.ts-eng .ts-id { font-family: ui-monospace, Menlo, monospace; font-size: 11px; font-weight: 500; color: var(--text-muted); }
+        .ts-grid tr.ts-task td:first-child { padding-left: 1.1rem; color: var(--text); }
+        .ts-grid tr.ts-task td.sum, .ts-grid td.sum { font-weight: 700; }
+        .ts-grid tr.ts-foot td { font-weight: 800; border-top: 2px solid var(--line-strong); border-bottom: none; padding-top: 0.7rem; }
+        .ts-section { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin: 1.6rem 0 0.2rem; }
+        .ts-entry { display: grid; grid-template-columns: 5.6rem 3.4rem minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 0.55rem 0; border-top: 1px solid var(--line); font-size: 13px; }
+        .ts-entry-date { font-weight: 600; color: var(--text-muted); font-size: 12.5px; }
+        .ts-entry-hrs { font-weight: 700; }
+        .ts-entry-main { min-width: 0; overflow-wrap: anywhere; }
+        .ts-entry-main small { display: block; color: var(--text-muted); font-size: 11.5px; }
+        @media (max-width: 720px) {
+            .ts-grid { font-size: 12px; }
+            .ts-entry { grid-template-columns: 4.6rem 3rem minmax(0, 1fr) auto; gap: 8px; }
+        }
 
         /* ---------- Notes & Meetings: a running log fed by 4 buttons,
            replacing the old single eng_notes textarea + the old per-person
@@ -1341,6 +1397,10 @@ if (!empty($_SESSION['name'])) {
                 <span class="hdr-badge upcoming"><?php echo $inboxUnread; ?></span>
                 <?php endif; ?>
             </a>
+            <button type="button" class="hdr-due" id="timeViewBtn" onclick="openTimesheet()" aria-label="Time: this week's hours by engagement and task">
+                <i class="bi bi-clock" aria-hidden="true"></i>
+                <span class="hdr-label">Time</span>
+            </button>
             <button type="button" class="btn-new-engagement">
                 <i class="bi bi-plus-lg" aria-hidden="true"></i><span class="hdr-label">Onboard Client</span>
             </button>
@@ -1556,6 +1616,25 @@ if (!empty($_SESSION['name'])) {
         <div class="due-popup-body" id="duePopupBody">
             <div class="due-popup-empty">Loading&hellip;</div>
         </div>
+    </div>
+</div>
+
+<!-- ========== TIME VIEW (week timesheet) ========== -->
+<div class="due-popup-scrim" id="timesheetScrim" role="dialog" aria-modal="true" aria-labelledby="tsTitle">
+    <div class="due-popup ts-popup">
+        <div class="ts-head">
+            <h3 id="tsTitle">Time</h3>
+            <div class="ts-nav">
+                <button type="button" class="icon" id="tsPrev" aria-label="Previous week"><i class="bi bi-chevron-left"></i></button>
+                <div class="ts-week" id="tsWeekLabel" aria-live="polite"></div>
+                <button type="button" class="icon" id="tsNext" aria-label="Next week"><i class="bi bi-chevron-right"></i></button>
+                <button type="button" id="tsThisWeek">This week</button>
+            </div>
+            <button type="button" class="ts-btn" id="tsCopy" title="Copy the week as tab-separated text (paste into a spreadsheet or timesheet)"><i class="bi bi-clipboard"></i>Copy</button>
+            <button type="button" class="ts-btn primary" id="tsAdd"><i class="bi bi-plus-lg"></i>Add time</button>
+            <button class="due-popup-close" type="button" onclick="closeTimesheet()" aria-label="Close">&times;</button>
+        </div>
+        <div class="ts-body" id="tsBody"><div class="ts-empty">Loading&hellip;</div></div>
     </div>
 </div>
 
@@ -3295,45 +3374,79 @@ if (!empty($_SESSION['name'])) {
         el.querySelectorAll('[data-time-del]').forEach(btn => btn.addEventListener('click', () => deleteTimeEntry(btn.dataset.timeDel)));
     }
 
-    async function openTimeEntryModal(entry) {
-        const eng = drawerData.engagement;
-        const now = new Date();
-        const today = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    function localYmd(d) {
+        return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
+    // ctx (all optional): engagements = [{id, name}] shows an engagement picker (adding from the Time view);
+    // defaultDate = date pre-filled when adding; onSaved(message) replaces the default drawer refresh.
+    async function openTimeEntryModal(entry, ctx = {}) {
+        const today = localYmd(new Date());
+        const picker = !entry && Array.isArray(ctx.engagements) && ctx.engagements.length;
+        const defaultDate = entry ? entry.entry_date : (ctx.defaultDate || today);
         const result = await Swal.fire({
             title: entry ? 'Edit time' : 'Add time',
+            customClass: { popup: 'time-modal-popup' },
             html: `
-                <div style="text-align:left">
-                    <label class="time-lbl" for="time_date">Date</label>
-                    <input id="time_date" type="date" class="swal2-input" max="${today}" value="${escAttr(entry ? entry.entry_date : today)}" style="width:100%;margin:0 0 0.8rem">
-                    <label class="time-lbl" for="time_hours">Hours</label>
-                    <input id="time_hours" type="number" class="swal2-input" min="0.25" max="24" step="0.25" inputmode="decimal" placeholder="e.g. 1.5" value="${entry ? fmtLoggedHours(entry.minutes) : ''}" style="width:100%;margin:0 0 0.5rem">
-                    <div class="time-chips">${[0.25, 0.5, 1, 2, 4].map(h => `<button type="button" class="time-chip" data-h="${h}">${h}</button>`).join('')}</div>
-                    <label class="time-lbl" for="time_task">Task</label>
-                    <input id="time_task" list="time_task_list" class="swal2-input" maxlength="60" placeholder="Pick or type a task" value="${escAttr(entry ? (entry.task || '') : '')}" style="width:100%;margin:0 0 0.8rem">
-                    <datalist id="time_task_list">${TIME_TASKS.map(t => `<option value="${escAttr(t)}"></option>`).join('')}</datalist>
-                    <label class="time-lbl" for="time_note">Note (optional)</label>
-                    <input id="time_note" type="text" class="swal2-input" maxlength="500" value="${escAttr(entry ? (entry.note || '') : '')}" style="width:100%;margin:0">
+                <div class="time-form">
+                    ${picker ? `
+                    <div class="time-field">
+                        <label class="time-lbl" for="time_eng">Engagement</label>
+                        <select id="time_eng" class="swal2-input">
+                            <option value="">Choose an engagement</option>
+                            ${ctx.engagements.map(e => `<option value="${escAttr(e.id)}">${escapeHtml(e.name)} (${escapeHtml(e.id)})</option>`).join('')}
+                        </select>
+                    </div>` : ''}
+                    <div class="time-form-row">
+                        <div class="time-field">
+                            <label class="time-lbl" for="time_date">Date</label>
+                            <input id="time_date" type="date" class="swal2-input" max="${today}" value="${escAttr(defaultDate)}">
+                        </div>
+                        <div class="time-field">
+                            <label class="time-lbl" for="time_hours">Hours</label>
+                            <input id="time_hours" type="number" class="swal2-input" min="0.25" max="24" step="0.25" inputmode="decimal" placeholder="e.g. 1.5" value="${entry ? fmtLoggedHours(entry.minutes) : ''}">
+                        </div>
+                    </div>
+                    <div class="time-chips" aria-label="Quick hours">${[0.25, 0.5, 1, 2, 4, 8].map(h => `<button type="button" class="time-chip" data-h="${h}">${h} h</button>`).join('')}</div>
+                    <div class="time-field">
+                        <label class="time-lbl" for="time_task">Task</label>
+                        <input id="time_task" list="time_task_list" class="swal2-input" maxlength="60" placeholder="Pick or type a task" value="${escAttr(entry ? (entry.task || '') : '')}">
+                        <datalist id="time_task_list">${TIME_TASKS.map(t => `<option value="${escAttr(t)}"></option>`).join('')}</datalist>
+                    </div>
+                    <div class="time-field">
+                        <label class="time-lbl" for="time_note">Note <small>(optional)</small></label>
+                        <input id="time_note" type="text" class="swal2-input" maxlength="500" value="${escAttr(entry ? (entry.note || '') : '')}">
+                    </div>
                 </div>`,
             showCancelButton: true,
             confirmButtonText: entry ? 'Save' : 'Add time',
             focusConfirm: false,
             didOpen: () => {
+                const hoursEl = document.getElementById('time_hours');
+                const syncChips = () => document.querySelectorAll('.time-chip').forEach(c => c.classList.toggle('on', parseFloat(hoursEl.value) === parseFloat(c.dataset.h)));
                 document.querySelectorAll('.time-chip').forEach(chip => chip.addEventListener('click', () => {
-                    document.getElementById('time_hours').value = chip.dataset.h;
+                    hoursEl.value = chip.dataset.h;
+                    syncChips();
                 }));
-                document.getElementById('time_hours').focus();
+                hoursEl.addEventListener('input', syncChips);
+                syncChips();
+                (picker ? document.getElementById('time_eng') : hoursEl).focus();
             },
             preConfirm: () => {
                 const hours = parseFloat(document.getElementById('time_hours').value);
                 const date = document.getElementById('time_date').value;
+                const engId = picker ? document.getElementById('time_eng').value : '';
+                if (picker && !engId) { Swal.showValidationMessage('Choose an engagement'); return false; }
                 if (!date) { Swal.showValidationMessage('Pick a date'); return false; }
                 if (!(hours > 0 && hours <= 24)) { Swal.showValidationMessage('Enter hours between 0.25 and 24'); return false; }
-                return { hours, entry_date: date, task: document.getElementById('time_task').value.trim(), note: document.getElementById('time_note').value.trim() };
+                return { hours, entry_date: date, engagement_idno: engId, task: document.getElementById('time_task').value.trim(), note: document.getElementById('time_note').value.trim() };
             }
         });
         if (!result.isConfirmed) return;
         try {
-            const payload = entry ? { entry_id: entry.entry_id, ...result.value } : { engagement_idno: eng.eng_idno, ...result.value };
+            const { engagement_idno: pickedEng, ...fields } = result.value;
+            const engId = ctx.engagementId || pickedEng || (drawerData && drawerData.engagement && drawerData.engagement.eng_idno);
+            const payload = entry ? { entry_id: entry.entry_id, ...fields } : { engagement_idno: engId, ...fields };
             const res = await fetch(entry ? '../api/update-time-entry.php' : '../api/add-time-entry.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -3341,13 +3454,14 @@ if (!empty($_SESSION['name'])) {
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.message || 'Could not save the time entry');
-            await applyDrawerUpdate(entry ? 'Time updated' : 'Time added');
+            const msg = entry ? 'Time updated' : 'Time added';
+            if (ctx.onSaved) await ctx.onSaved(msg); else await applyDrawerUpdate(msg);
         } catch (err) {
             Swal.fire('Error', (err && err.message) || 'Could not save the time entry', 'error');
         }
     }
 
-    async function deleteTimeEntry(entryId) {
+    async function deleteTimeEntry(entryId, onDone) {
         const ok = await Swal.fire({ title: 'Delete this time entry?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete' });
         if (!ok.isConfirmed) return;
         try {
@@ -3358,11 +3472,182 @@ if (!empty($_SESSION['name'])) {
             });
             const data = await res.json();
             if (!data.success) throw new Error(data.message || 'Could not delete the time entry');
-            await applyDrawerUpdate('Time entry deleted');
+            if (onDone) await onDone('Time entry deleted'); else await applyDrawerUpdate('Time entry deleted');
         } catch (err) {
             Swal.fire('Error', (err && err.message) || 'Could not delete the time entry', 'error');
         }
     }
+
+    // ===================================================================
+    // TIME VIEW: the header's Time button. One Monday-to-Sunday week of
+    // entries from api/get-time-week.php, as a grid (engagement > task by
+    // day) plus the entry list underneath for editing. Prev/next/This week
+    // move between weeks; Copy puts the grid on the clipboard as tab-
+    // separated text for pasting into a work timesheet.
+    // ===================================================================
+    let tsWeekStart = null;   // Date, a Monday (local time)
+    let tsData = null;
+
+    function tsMondayOf(d) {
+        const m = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        m.setDate(m.getDate() - ((m.getDay() + 6) % 7));
+        return m;
+    }
+    function tsAddDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
+
+    function openTimesheet() {
+        if (!tsWeekStart) tsWeekStart = tsMondayOf(new Date());
+        document.getElementById('timesheetScrim').classList.add('open');
+        loadTimesheet();
+    }
+    function closeTimesheet() {
+        document.getElementById('timesheetScrim').classList.remove('open');
+    }
+
+    async function loadTimesheet() {
+        const body = document.getElementById('tsBody');
+        try {
+            const res = await fetch('../api/get-time-week.php?start=' + localYmd(tsWeekStart));
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Could not load the week');
+            tsData = data;
+            renderTimesheet();
+        } catch (err) {
+            console.error('Error:', err);
+            tsData = null;
+            body.innerHTML = '<div class="ts-empty">Couldn\'t load this week. Try again in a moment.</div>';
+        }
+    }
+
+    function tsHrs(min) { return String(+(min / 60).toFixed(2)); }
+
+    function renderTimesheet() {
+        const days = Array.from({ length: 7 }, (_, i) => tsAddDays(tsWeekStart, i));
+        const ymds = days.map(localYmd);
+        const todayYmd = localYmd(new Date());
+        const entries = tsData.entries || [];
+
+        // Week label
+        const fmt = (d, o) => d.toLocaleDateString('en-US', o);
+        const sameMonth = days[0].getMonth() === days[6].getMonth();
+        const label = fmt(days[0], { month: 'short', day: 'numeric' }) + ' – ' + (sameMonth ? fmt(days[6], { day: 'numeric' }) : fmt(days[6], { month: 'short', day: 'numeric' })) + ', ' + days[6].getFullYear();
+        const thisMonday = localYmd(tsMondayOf(new Date()));
+        const rel = ymds[0] === thisMonday ? 'This week' : (ymds[0] < thisMonday ? 'Past week' : 'Upcoming week');
+        document.getElementById('tsWeekLabel').innerHTML = escapeHtml(label) + '<small>' + rel + '</small>';
+        document.getElementById('tsThisWeek').style.visibility = ymds[0] === thisMonday ? 'hidden' : 'visible';
+        // Nothing can be logged for a day that has not happened yet.
+        document.getElementById('tsAdd').disabled = ymds[0] > todayYmd;
+        document.getElementById('tsCopy').disabled = !entries.length;
+
+        const body = document.getElementById('tsBody');
+        const totalMin = entries.reduce((n, e) => n + e.minutes, 0);
+        if (!entries.length) {
+            body.innerHTML = `<div class="ts-empty">${ymds[0] > todayYmd ? 'Nothing is logged for this week yet.' : 'No time logged this week.'}</div>`;
+            return;
+        }
+
+        // engagement -> task -> minutes per day
+        const engs = new Map();
+        for (const e of entries) {
+            if (!engs.has(e.engagement_idno)) engs.set(e.engagement_idno, { id: e.engagement_idno, name: e.name, tasks: new Map() });
+            const g = engs.get(e.engagement_idno);
+            const task = e.task || 'No task';
+            if (!g.tasks.has(task)) g.tasks.set(task, Array(7).fill(0));
+            const di = ymds.indexOf(e.entry_date);
+            if (di >= 0) g.tasks.get(task)[di] += e.minutes;
+        }
+        const sum = a => a.reduce((n, v) => n + v, 0);
+        const cell = (v, cls = '') => `<td class="${cls}${v ? '' : ' zero'}">${v ? tsHrs(v) : '·'}</td>`;
+        const dayCls = i => (ymds[i] === todayYmd ? ' today' : '');
+        const dayTotals = Array(7).fill(0);
+
+        let rows = '';
+        [...engs.values()].sort((a, b) => a.name.localeCompare(b.name)).forEach(g => {
+            const engDay = Array(7).fill(0);
+            g.tasks.forEach(arr => arr.forEach((v, i) => { engDay[i] += v; dayTotals[i] += v; }));
+            rows += `<tr class="ts-eng"><td><span>${escapeHtml(g.name)}</span><span class="ts-id">${escapeHtml(g.id)}</span></td>${engDay.map((v, i) => cell(v, dayCls(i).trim())).join('')}<td class="sum">${tsHrs(sum(engDay))}</td></tr>`;
+            [...g.tasks.entries()].sort((a, b) => sum(b[1]) - sum(a[1])).forEach(([task, arr]) => {
+                rows += `<tr class="ts-task"><td>${escapeHtml(task)}</td>${arr.map((v, i) => cell(v, dayCls(i).trim())).join('')}<td class="sum">${tsHrs(sum(arr))}</td></tr>`;
+            });
+        });
+
+        const head = days.map((d, i) => `<th class="${dayCls(i).trim()}">${fmt(d, { weekday: 'short' })}<i>${d.getDate()}</i></th>`).join('');
+        const foot = `<tr class="ts-foot"><td>Total</td>${dayTotals.map((v, i) => cell(v, dayCls(i).trim())).join('')}<td class="sum">${tsHrs(totalMin)}</td></tr>`;
+
+        const list = entries.slice().sort((a, b) => a.entry_date.localeCompare(b.entry_date) || a.entry_id - b.entry_id).map(e => `
+            <div class="ts-entry">
+                <div class="ts-entry-date">${escapeHtml(fmt(new Date(e.entry_date + 'T00:00:00'), { weekday: 'short', month: 'short', day: 'numeric' }))}</div>
+                <div class="ts-entry-hrs">${tsHrs(e.minutes)} h</div>
+                <div class="ts-entry-main"><strong>${escapeHtml(e.name)}</strong> &middot; ${e.task ? escapeHtml(e.task) : '<span style="color:var(--text-muted)">No task</span>'}${e.note ? `<small>${escapeHtml(e.note)}</small>` : ''}</div>
+                <div>${e.can_edit ? `<button class="time-icon-btn" type="button" data-ts-edit="${e.entry_id}" aria-label="Edit"><i class="bi bi-pencil"></i></button><button class="time-icon-btn" type="button" data-ts-del="${e.entry_id}" aria-label="Delete"><i class="bi bi-trash"></i></button>` : ''}</div>
+            </div>`).join('');
+
+        body.innerHTML = `
+            <div class="ts-total"><b>${tsHrs(totalMin)} hrs</b> across ${engs.size} engagement${engs.size === 1 ? '' : 's'}</div>
+            <div style="overflow-x:auto"><table class="ts-grid">
+                <thead><tr><th>Engagement / task</th>${head}<th>Total</th></tr></thead>
+                <tbody>${rows}${foot}</tbody>
+            </table></div>
+            <div class="ts-section">Entries</div>
+            ${list}`;
+
+        body.querySelectorAll('[data-ts-edit]').forEach(btn => btn.addEventListener('click', () => {
+            const entry = entries.find(x => String(x.entry_id) === btn.dataset.tsEdit);
+            if (entry) openTimeEntryModal(entry, { onSaved: tsSaved });
+        }));
+        body.querySelectorAll('[data-ts-del]').forEach(btn => btn.addEventListener('click', () => deleteTimeEntry(btn.dataset.tsDel, tsSaved)));
+    }
+
+    async function tsSaved(message) {
+        await loadTimesheet();
+        if (message) showToast(message);
+    }
+
+    function tsCopyWeek() {
+        if (!tsData || !tsData.entries.length) return;
+        const days = Array.from({ length: 7 }, (_, i) => tsAddDays(tsWeekStart, i));
+        const ymds = days.map(localYmd);
+        const map = new Map();
+        for (const e of tsData.entries) {
+            const key = e.engagement_idno + '\u0000' + (e.task || 'No task');
+            if (!map.has(key)) map.set(key, { name: e.name, id: e.engagement_idno, task: e.task || 'No task', mins: Array(7).fill(0) });
+            const di = ymds.indexOf(e.entry_date);
+            if (di >= 0) map.get(key).mins[di] += e.minutes;
+        }
+        const lines = [['Engagement', 'ID', 'Task', ...days.map(d => d.toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' })), 'Total'].join('\t')];
+        [...map.values()].sort((a, b) => a.name.localeCompare(b.name) || a.task.localeCompare(b.task)).forEach(r => {
+            lines.push([r.name, r.id, r.task, ...r.mins.map(m => (m ? tsHrs(m) : '')), tsHrs(r.mins.reduce((n, v) => n + v, 0))].join('\t'));
+        });
+        const text = lines.join('\n');
+        const done = () => showToast('Week copied');
+        const fallback = () => {
+            const ta = document.createElement('textarea');
+            ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+            document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); done(); } catch (e) { showToast('Couldn\'t copy'); }
+            ta.remove();
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
+    }
+
+    document.getElementById('tsPrev').addEventListener('click', () => { tsWeekStart = tsAddDays(tsWeekStart, -7); loadTimesheet(); });
+    document.getElementById('tsNext').addEventListener('click', () => { tsWeekStart = tsAddDays(tsWeekStart, 7); loadTimesheet(); });
+    document.getElementById('tsThisWeek').addEventListener('click', () => { tsWeekStart = tsMondayOf(new Date()); loadTimesheet(); });
+    document.getElementById('tsCopy').addEventListener('click', tsCopyWeek);
+    document.getElementById('tsAdd').addEventListener('click', () => {
+        if (!tsData) return;
+        const todayYmd = localYmd(new Date());
+        const ymds = Array.from({ length: 7 }, (_, i) => localYmd(tsAddDays(tsWeekStart, i)));
+        // Today if it is in this week, otherwise the week's Friday (work week).
+        const defaultDate = ymds.includes(todayYmd) ? todayYmd : ymds[4];
+        openTimeEntryModal(null, { engagements: tsData.engagements, defaultDate, onSaved: tsSaved });
+    });
+    document.getElementById('timesheetScrim').addEventListener('click', (ev) => {
+        if (ev.target.id === 'timesheetScrim') closeTimesheet();
+    });
+    document.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape' && document.getElementById('timesheetScrim').classList.contains('open') && !document.querySelector('.swal2-container')) closeTimesheet();
+    });
 
     // "Add PCI checklist" / "Remove" on an engagement that has PCI plus other types.
     async function setPciChecklist(engagementId, enabled) {
