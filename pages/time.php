@@ -117,42 +117,42 @@ if (!empty($_SESSION['name'])) {
         .week-label { min-width: 13rem; text-align: center; font-size: 15px; font-weight: 700; line-height: 1.25; }
         .week-label small { display: block; font-size: 11.5px; font-weight: 600; color: var(--text-muted); }
 
-        .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 1.25rem; }
-        .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0.9rem 1.1rem; }
-        .stat b { display: block; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-        .stat span { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
-
         .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 0.4rem 1.1rem 1rem; margin-bottom: 1.25rem; }
         .card-title { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); padding: 0.9rem 0 0.2rem; }
         .empty { text-align: center; color: var(--text-muted); font-size: 13.5px; padding: 3rem 1rem; border: 1px dashed var(--line-strong); border-radius: 12px; }
         .empty i { font-size: 28px; display: block; margin-bottom: 0.5rem; }
 
         .ts-scroll { overflow-x: auto; }
-        .ts-grid { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; min-width: 640px; }
-        .ts-grid th { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); text-align: right; padding: 0.5rem 0.65rem; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
-        .ts-grid th:first-child { text-align: left; }
+        .ts-grid { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; min-width: 920px; }
+        .ts-grid th { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); text-align: center; padding: 0.55rem 0.4rem; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+        .ts-grid th.l { text-align: left; }
         .ts-grid th.today { color: var(--ink); }
         .ts-grid th i { display: block; font-style: normal; font-size: 13px; letter-spacing: 0; color: var(--text); font-weight: 700; }
-        .ts-grid td { padding: 0.45rem 0.65rem; text-align: right; border-bottom: 1px solid var(--line); }
-        .ts-grid td:first-child { text-align: left; }
+        .ts-grid td { padding: 5px 4px; text-align: center; border-bottom: 1px solid var(--line); vertical-align: middle; }
+        .ts-grid td.l { text-align: left; padding-left: 0.4rem; padding-right: 0.8rem; }
         .ts-grid td.today, .ts-grid th.today { background: color-mix(in srgb, var(--ink) 6%, transparent); }
-        .ts-grid .zero { color: var(--line-strong); }
-        .ts-grid td.cell { cursor: pointer; transition: background-color 0.12s ease; }
-        .ts-grid td.cell:hover, .ts-grid td.cell:focus-visible { background: color-mix(in srgb, var(--ink) 11%, transparent); outline: none; }
-        .ts-grid td.cell.zero:hover::after, .ts-grid td.cell.zero:focus-visible::after { content: '+'; color: var(--ink); font-weight: 700; }
-        .ts-grid td.cell.zero:hover, .ts-grid td.cell.zero:focus-visible { font-size: 0; }
-        .ts-grid td.cell.zero:hover::after, .ts-grid td.cell.zero:focus-visible::after { font-size: 15px; }
-        .ts-grid td.cell.future { cursor: default; }
-        .ts-grid td.cell.future:hover { background: transparent; }
-        .ts-grid td.cell.future.zero:hover::after { content: none; }
-        .ts-grid td.cell.future.zero:hover { font-size: 13px; }
+        .ts-proj { min-width: 11rem; }
+        .ts-proj b { font-weight: 600; }
+        .ts-proj small { display: block; font-size: 11px; color: var(--text-muted); font-family: ui-monospace, Menlo, monospace; }
+        .ts-task { min-width: 10rem; }
+        .ts-task small { display: block; font-size: 11px; font-weight: 600; color: var(--ink); }
+        .ts-grid td.num, .ts-grid th.num { width: 4.2rem; }
+        input.cellin { width: 62px; height: 32px; text-align: center; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--card); color: var(--text); font: inherit; font-size: 13px; font-variant-numeric: tabular-nums; padding: 0 4px; }
+        input.cellin:hover:not(:disabled) { border-color: var(--ink-soft); }
+        input.cellin:focus { outline: none; border-color: var(--ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink) 16%, transparent); }
+        input.cellin:disabled { background: transparent; border-color: var(--line); cursor: default; }
+        input.cellin.multi { cursor: pointer; background: color-mix(in srgb, var(--ink) 7%, var(--card)); font-weight: 700; }
+        input.cellin.saving { opacity: 0.5; }
+        input.cellin.bad { border-color: var(--critical); }
+        .ts-grid .sum { font-weight: 700; }
+        .ts-grid .pct { color: var(--text-muted); }
+        .ts-grid tr.ts-foot td { border-top: 2px solid var(--line-strong); border-bottom: none; font-weight: 800; padding-top: 0.7rem; }
+        .ts-x { border: 0; background: transparent; color: var(--text-muted); cursor: pointer; width: 26px; height: 26px; border-radius: 50%; }
+        .ts-x:hover { background: var(--line); color: var(--critical); }
+        .date-in { height: 36px; border-radius: 9px; border: 1px solid var(--line); background: var(--card); color: var(--text); font: inherit; font-size: 12.5px; padding: 0 8px; }
         .ts-hint { font-size: 12px; color: var(--text-muted); padding: 0.4rem 0 0.7rem; }
-        .ts-grid tr.ts-eng td { padding-top: 0.9rem; font-weight: 700; border-bottom: none; }
-        .ts-grid tr.ts-eng td:first-child { display: flex; align-items: baseline; gap: 8px; }
-        .ts-grid tr.ts-eng .ts-id { font-family: ui-monospace, Menlo, monospace; font-size: 11px; font-weight: 500; color: var(--text-muted); }
-        .ts-grid tr.ts-task td:first-child { padding-left: 1.1rem; }
-        .ts-grid td.sum { font-weight: 700; }
-        .ts-grid tr.ts-foot td { font-weight: 800; border-top: 2px solid var(--line-strong); border-bottom: none; padding-top: 0.7rem; }
+        .map-list { display: grid; gap: 10px; max-height: 52vh; overflow-y: auto; padding: 2px; }
+        .map-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 10px; align-items: center; font-size: 13px; text-align: left; }
         .ts-entry { display: grid; grid-template-columns: 7rem 3.6rem minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 0.6rem 0; border-top: 1px solid var(--line); font-size: 13px; }
         .ts-entry-date { font-weight: 600; color: var(--text-muted); font-size: 12.5px; }
         .ts-entry-hrs { font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -261,9 +261,6 @@ if (!empty($_SESSION['name'])) {
 
         @media (max-width: 900px) { .header-inner { gap: 1rem; } .hdr-label { display: none; } .hdr-due { padding: 0 10px; } .btn-new-engagement { padding: 0 12px; } }
         @media (max-width: 720px) {
-            .stats { gap: 8px; }
-            .stat { padding: 0.7rem 0.8rem; }
-            .stat b { font-size: 20px; }
             .ts-entry { grid-template-columns: 4.6rem 3rem minmax(0, 1fr) auto; gap: 8px; }
         }
         @media (max-width: 480px) {
@@ -347,18 +344,23 @@ if (!empty($_SESSION['name'])) {
     <div class="page-head">
         <div>
             <h1>Time</h1>
-            <p class="page-sub">Hours by engagement and task, one week at a time.</p>
+            <p class="page-sub">Laid out like the work timesheet, so you can enter it cell by cell. Type half hours; they save as you go.</p>
         </div>
         <div class="head-actions">
-            <button type="button" class="btn" id="tsCopy" title="Copy the week as tab-separated text (paste into a spreadsheet or timesheet)"><i class="bi bi-clipboard" aria-hidden="true"></i> Copy week</button>
-            <button type="button" class="btn btn-primary" id="tsAdd"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add time</button>
+            <button type="button" class="btn" id="tsMap" title="Set what each task is called in the work timesheet"><i class="bi bi-arrow-left-right" aria-hidden="true"></i> Task names</button>
+            <button type="button" class="btn" id="tsCopy" title="Copy the week as tab-separated text"><i class="bi bi-clipboard" aria-hidden="true"></i> Copy week</button>
+            <button type="button" class="btn btn-primary" id="tsAdd" title="Add an entry with a note"><i class="bi bi-plus-lg" aria-hidden="true"></i> Add time</button>
         </div>
     </div>
 
     <div class="weekbar">
+        <button type="button" class="btn" id="tsAddRow"><i class="bi bi-plus-circle" aria-hidden="true"></i> Add task row</button>
+        <button type="button" class="btn" id="tsCopyLast" title="Bring last week's engagement and task rows into this week (no hours)"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Copy last week</button>
+        <span style="flex:1 1 1rem"></span>
         <button type="button" class="btn icon" id="tsPrev" aria-label="Previous week"><i class="bi bi-chevron-left"></i></button>
         <div class="week-label" id="tsWeekLabel" aria-live="polite">&nbsp;</div>
         <button type="button" class="btn icon" id="tsNext" aria-label="Next week"><i class="bi bi-chevron-right"></i></button>
+        <input type="date" class="date-in" id="tsDate" aria-label="Go to the week of">
         <button type="button" class="btn" id="tsThisWeek">This week</button>
     </div>
 
@@ -493,13 +495,22 @@ if (!empty($_SESSION['name'])) {
     }
 
     // ===================================================================
-    // The week: api/get-time-week.php returns every entry for one Monday-to-
-    // Sunday week. Shown as a grid (engagement > task by day) plus the entry
-    // list for editing. The week is kept in the address (?week=YYYY-MM-DD).
+    // The week, laid out like the work timesheet: one row per engagement +
+    // task, a typed cell per day, Total and %. api/get-time-week.php returns
+    // every entry for the Monday-to-Sunday week. Typing a half-hour value in a
+    // cell saves it (a cell with one entry is changed, an empty one gets a new
+    // entry, a cell with several opens a picker). Rows with no time yet
+    // ("Add task row", "Copy last week") live only on this page until a value
+    // is typed. The week is kept in the address (?week=YYYY-MM-DD).
     // ===================================================================
     let weekStart = null;   // Date, a Monday (local time)
     let data = null;
     let query = '';
+    let pending = [];       // rows with no entries yet: {id, name, audit, task}
+    let taskMap = {};       // tracker task -> its name in the work timesheet
+    let rowsView = [];      // rows currently drawn, same order as the table
+    const SEP = '\u0000';
+    const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
     function mondayOf(d) {
         const m = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -509,14 +520,21 @@ if (!empty($_SESSION['name'])) {
     function addDays(d, n) { return new Date(d.getFullYear(), d.getMonth(), d.getDate() + n); }
     function hrs(min) { return String(+(min / 60).toFixed(2)); }
     function fmt(d, o) { return d.toLocaleDateString('en-US', o); }
+    function weekYmds() { return Array.from({ length: 7 }, (_, i) => localYmd(addDays(weekStart, i))); }
+    const sum = a => a.reduce((n, v) => n + v, 0);
+
+    async function fetchWeek(start) {
+        const res = await fetch('../api/get-time-week.php?start=' + localYmd(start));
+        const json = await res.json();
+        if (!json.success) throw new Error(json.message || 'Could not load the week');
+        return json;
+    }
 
     async function load() {
         const body = document.getElementById('tsBody');
         try {
-            const res = await fetch('../api/get-time-week.php?start=' + localYmd(weekStart));
-            const json = await res.json();
-            if (!json.success) throw new Error(json.message || 'Could not load the week');
-            data = json;
+            data = await fetchWeek(weekStart);
+            taskMap = data.taskMap || {};
             try { history.replaceState(null, '', '?week=' + localYmd(weekStart)); } catch (e) {}
             render();
         } catch (err) {
@@ -526,112 +544,189 @@ if (!empty($_SESSION['name'])) {
         }
     }
 
+    function visibleEntries() {
+        const q = query.trim().toLowerCase();
+        const all = data.entries || [];
+        return q ? all.filter(e => ((e.name || '') + ' ' + e.engagement_idno + ' ' + e.task + ' ' + e.note + ' ' + (taskMap[e.task] || '')).toLowerCase().includes(q)) : all;
+    }
+    function entriesAt(id, task, ymd) {
+        return (data.entries || []).filter(e => e.engagement_idno === id && (e.task || '') === task && e.entry_date === ymd);
+    }
+
     function render() {
-        const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-        const ymds = days.map(localYmd);
+        const ymds = weekYmds();
+        const days = ymds.map(y => new Date(y + 'T00:00:00'));
         const todayYmd = localYmd(new Date());
         const thisMonday = localYmd(mondayOf(new Date()));
-        const all = data.entries || [];
-        const q = query.trim().toLowerCase();
-        const entries = q ? all.filter(e => (e.name + ' ' + e.engagement_idno + ' ' + e.task + ' ' + e.note).toLowerCase().includes(q)) : all;
+        const q = query.trim();
+        const entries = visibleEntries();
+        const isFuture = ymds[0] > todayYmd;
 
         const sameMonth = days[0].getMonth() === days[6].getMonth();
         const label = fmt(days[0], { month: 'short', day: 'numeric' }) + ' – ' + (sameMonth ? fmt(days[6], { day: 'numeric' }) : fmt(days[6], { month: 'short', day: 'numeric' })) + ', ' + days[6].getFullYear();
         const rel = ymds[0] === thisMonday ? 'This week' : (ymds[0] < thisMonday ? 'Past week' : 'Upcoming week');
         document.getElementById('tsWeekLabel').innerHTML = escapeHtml(label) + '<small>' + rel + '</small>';
+        document.getElementById('tsDate').value = ymds[0];
         document.getElementById('tsThisWeek').style.visibility = ymds[0] === thisMonday ? 'hidden' : 'visible';
         // Nothing can be logged for a day that has not happened yet.
-        document.getElementById('tsAdd').disabled = ymds[0] > todayYmd;
-        document.getElementById('tsCopy').disabled = !all.length;
+        document.getElementById('tsAdd').disabled = isFuture;
+        document.getElementById('tsAddRow').disabled = isFuture;
+        document.getElementById('tsCopyLast').disabled = isFuture;
+        document.getElementById('tsCopy').disabled = !(data.entries || []).length;
+
+        const map = new Map();
+        entries.forEach(e => {
+            const k = e.engagement_idno + SEP + (e.task || '');
+            if (!map.has(k)) map.set(k, { id: e.engagement_idno, name: e.name, audit: e.audit || '', task: e.task || '' });
+        });
+        if (!q) pending.forEach(r => { const k = r.id + SEP + r.task; if (!map.has(k)) map.set(k, r); });
+        rowsView = [...map.values()].sort((a, b) => a.name.localeCompare(b.name) || a.task.localeCompare(b.task));
 
         const body = document.getElementById('tsBody');
-        if (!entries.length) {
-            const msg = q ? 'Nothing this week matches your search.' : (ymds[0] > todayYmd ? 'Nothing is logged for this week yet.' : 'No time logged this week.');
+        if (!rowsView.length) {
+            const msg = q ? 'Nothing this week matches your search.' : (isFuture ? 'Nothing is logged for this week yet.' : 'No time logged this week. Use "Add task row" or "Copy last week" to start a timesheet.');
             body.innerHTML = `<div class="empty"><i class="bi bi-clock-history" aria-hidden="true"></i>${msg}</div>`;
             return;
         }
 
-        // engagement -> task -> minutes per day
-        const engs = new Map();
-        const dayTotals = Array(7).fill(0);
-        for (const e of entries) {
-            if (!engs.has(e.engagement_idno)) engs.set(e.engagement_idno, { id: e.engagement_idno, name: e.name, tasks: new Map() });
-            const g = engs.get(e.engagement_idno);
-            const task = e.task || 'No task';
-            if (!g.tasks.has(task)) g.tasks.set(task, Array(7).fill(0));
-            const di = ymds.indexOf(e.entry_date);
-            if (di >= 0) { g.tasks.get(task)[di] += e.minutes; dayTotals[di] += e.minutes; }
-        }
-        const sum = a => a.reduce((n, v) => n + v, 0);
-        const totalMin = sum(dayTotals);
-        const daysWorked = dayTotals.filter(v => v > 0).length;
-        const cell = (v, cls) => `<td class="${cls}${v ? '' : ' zero'}">${v ? hrs(v) : '·'}</td>`;
-        // A task row's day cell: click to add half hours there, or edit what is already logged.
-        const taskCell = (v, i, id, task) => `<td class="cell ${dayCls(i)}${v ? '' : ' zero'}${ymds[i] > todayYmd ? ' future' : ''}" tabindex="${ymds[i] > todayYmd ? -1 : 0}" data-eng="${escAttr(id)}" data-task="${escAttr(task === 'No task' ? '' : task)}" data-day="${ymds[i]}" title="${ymds[i] > todayYmd ? 'This day has not happened yet' : (v ? 'Click to change' : 'Click to add time')}">${v ? hrs(v) : '·'}</td>`;
-        const dayCls = i => (ymds[i] === todayYmd ? 'today' : '');
+        const head = days.map((d, i) => `<th class="num${ymds[i] === todayYmd ? ' today' : ''}">${fmt(d, { weekday: 'short' })}<i>${d.getDate()}</i></th>`).join('');
+        const rowsHtml = rowsView.map((r, ri) => {
+            const mapped = taskMap[r.task] || '';
+            const cells = ymds.map((ymd, di) => {
+                const here = entriesAt(r.id, r.task, ymd);
+                const mins = sum(here.map(e => e.minutes));
+                const multi = here.length > 1;
+                const locked = here.some(e => !e.can_edit);
+                const off = ymd > todayYmd || locked;
+                const title = ymd > todayYmd ? 'This day has not happened yet' : (multi ? here.length + ' entries. Click to choose one' : (locked ? 'Logged by someone else' : ''));
+                return `<td class="num${ymd === todayYmd ? ' today' : ''}"><input class="cellin${multi ? ' multi' : ''}" type="text" inputmode="decimal" autocomplete="off" value="${mins ? hrs(mins) : ''}" data-r="${ri}" data-day="${ymd}"${off ? ' disabled' : ''}${multi ? ' readonly' : ''}${title ? ` title="${escAttr(title)}"` : ''} aria-label="${escAttr(r.name + ', ' + (r.task || 'No task') + ', ' + DAY_NAMES[di])}"></td>`;
+            }).join('');
+            return `<tr data-r="${ri}">
+                <td class="l ts-proj"><b>${escapeHtml(r.name)}</b><small>${r.audit ? escapeHtml(r.audit) + ' · ' : ''}${escapeHtml(r.id)}</small></td>
+                <td class="l ts-task">${escapeHtml(r.task || 'No task')}${mapped ? `<small>&rarr; ${escapeHtml(mapped)}</small>` : ''}</td>
+                ${cells}
+                <td class="num sum rt">0</td><td class="num pct rp">0%</td>
+                <td class="num"><button type="button" class="ts-x rx" data-x="${ri}" aria-label="Remove this row" title="Remove this empty row"><i class="bi bi-x-circle"></i></button></td>
+            </tr>`;
+        }).join('');
+        const foot = ymds.map((y, i) => `<td class="num dt${y === todayYmd ? ' today' : ''}" data-d="${i}">0</td>`).join('');
 
-        let rows = '';
-        [...engs.values()].sort((a, b) => a.name.localeCompare(b.name)).forEach(g => {
-            const engDay = Array(7).fill(0);
-            g.tasks.forEach(arr => arr.forEach((v, i) => { engDay[i] += v; }));
-            rows += `<tr class="ts-eng"><td><span>${escapeHtml(g.name)}</span><span class="ts-id">${escapeHtml(g.id)}</span></td>${engDay.map((v, i) => cell(v, dayCls(i))).join('')}<td class="sum">${hrs(sum(engDay))}</td></tr>`;
-            [...g.tasks.entries()].sort((a, b) => sum(b[1]) - sum(a[1])).forEach(([task, arr]) => {
-                rows += `<tr class="ts-task"><td>${escapeHtml(task)}</td>${arr.map((v, i) => taskCell(v, i, g.id, task)).join('')}<td class="sum">${hrs(sum(arr))}</td></tr>`;
+        body.innerHTML = `
+            <div class="card">
+                <div class="ts-scroll"><table class="ts-grid">
+                    <thead><tr><th class="l">Project</th><th class="l">Task</th>${head}<th class="num">Total</th><th class="num">%</th><th class="num"></th></tr></thead>
+                    <tbody>${rowsHtml}<tr class="ts-foot"><td class="l" colspan="2">Totals</td>${foot}<td class="num" id="weekTot">0</td><td></td><td></td></tr></tbody>
+                </table></div>
+            </div>
+            <div class="card"><div class="card-title">Entries</div><div id="tsEntries"></div></div>`;
+        refreshDerived();
+    }
+
+    // Totals, %, the empty-row remove buttons and the entry list, recomputed from data.entries
+    // without redrawing the grid (so typing and tabbing between cells is never interrupted).
+    function refreshDerived() {
+        const body = document.getElementById('tsBody');
+        if (!body.querySelector('.ts-grid')) return;
+        const ymds = weekYmds();
+        const entries = visibleEntries();
+        const dayTot = Array(7).fill(0);
+        const perRow = rowsView.map(r => {
+            const m = Array(7).fill(0);
+            entries.forEach(e => {
+                if (e.engagement_idno === r.id && (e.task || '') === r.task) {
+                    const di = ymds.indexOf(e.entry_date);
+                    if (di >= 0) m[di] += e.minutes;
+                }
             });
+            return m;
         });
-        const head = days.map((d, i) => `<th class="${dayCls(i)}">${fmt(d, { weekday: 'short' })}<i>${d.getDate()}</i></th>`).join('');
-        const foot = `<tr class="ts-foot"><td>Total</td>${dayTotals.map((v, i) => cell(v, dayCls(i))).join('')}<td class="sum">${hrs(totalMin)}</td></tr>`;
+        perRow.forEach(m => m.forEach((v, i) => { dayTot[i] += v; }));
+        const week = sum(dayTot);
+        perRow.forEach((m, ri) => {
+            const tr = body.querySelector(`tr[data-r="${ri}"]`);
+            if (!tr) return;
+            const t = sum(m);
+            tr.querySelector('.rt').textContent = hrs(t);
+            tr.querySelector('.rp').textContent = (week ? Math.round(t / week * 100) : 0) + '%';
+            tr.querySelector('.rx').style.visibility = t > 0 ? 'hidden' : 'visible';
+        });
+        body.querySelectorAll('td.dt').forEach(td => { td.textContent = hrs(dayTot[Number(td.dataset.d)]); });
+        document.getElementById('weekTot').textContent = hrs(week);
+        renderEntries(entries);
+    }
 
-        const list = entries.slice().sort((a, b) => a.entry_date.localeCompare(b.entry_date) || a.entry_id - b.entry_id).map(e => `
+    function renderEntries(entries) {
+        const box = document.getElementById('tsEntries');
+        if (!box) return;
+        if (!entries.length) { box.innerHTML = '<div class="ts-hint">Nothing logged yet.</div>'; return; }
+        box.innerHTML = entries.slice().sort((a, b) => a.entry_date.localeCompare(b.entry_date) || a.entry_id - b.entry_id).map(e => `
             <div class="ts-entry">
                 <div class="ts-entry-date">${escapeHtml(fmt(new Date(e.entry_date + 'T00:00:00'), { weekday: 'short', month: 'short', day: 'numeric' }))}</div>
                 <div class="ts-entry-hrs">${hrs(e.minutes)} h</div>
                 <div class="ts-entry-main"><strong>${escapeHtml(e.name)}</strong> &middot; ${e.task ? escapeHtml(e.task) : '<span style="color:var(--text-muted)">No task</span>'}${e.source === 'desk panel' ? '<span class="ts-tag">Desk panel</span>' : ''}${e.note ? `<small>${escapeHtml(e.note)}</small>` : ''}</div>
                 <div>${e.can_edit ? `<button class="time-icon-btn" type="button" data-ts-edit="${e.entry_id}" aria-label="Edit"><i class="bi bi-pencil"></i></button><button class="time-icon-btn" type="button" data-ts-del="${e.entry_id}" aria-label="Delete"><i class="bi bi-trash"></i></button>` : ''}</div>
             </div>`).join('');
-
-        body.innerHTML = `
-            <div class="stats">
-                <div class="stat"><b>${hrs(totalMin)}</b><span>Hours${q ? ' (filtered)' : ''}</span></div>
-                <div class="stat"><b>${engs.size}</b><span>Engagement${engs.size === 1 ? '' : 's'}</span></div>
-                <div class="stat"><b>${daysWorked}</b><span>Day${daysWorked === 1 ? '' : 's'} with time</span></div>
-            </div>
-            <div class="card">
-                <div class="card-title">By engagement and task</div>
-                <div class="ts-hint">Click a day on a task row to add or change time in half hours.</div>
-                <div class="ts-scroll"><table class="ts-grid">
-                    <thead><tr><th>Engagement / task</th>${head}<th>Total</th></tr></thead>
-                    <tbody>${rows}${foot}</tbody>
-                </table></div>
-            </div>
-            <div class="card">
-                <div class="card-title">Entries</div>
-                ${list}
-            </div>`;
-
-        body.querySelectorAll('td.cell:not(.future)').forEach(td => {
-            const open = () => cellClick(td.dataset.eng, td.dataset.task, td.dataset.day);
-            td.addEventListener('click', open);
-            td.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
-        });
-        body.querySelectorAll('[data-ts-edit]').forEach(btn => btn.addEventListener('click', () => {
-            const entry = all.find(x => String(x.entry_id) === btn.dataset.tsEdit);
-            if (entry) openTimeEntryModal(entry, { onSaved: saved });
-        }));
-        body.querySelectorAll('[data-ts-del]').forEach(btn => btn.addEventListener('click', () => deleteTimeEntry(btn.dataset.tsDel, saved)));
     }
 
-    // A day cell on a task row. Empty: add time there (engagement, task and date filled in).
-    // One entry: edit it. Several: pick which, or add another.
-    async function cellClick(engId, task, day) {
-        const here = data.entries.filter(e => e.engagement_idno === engId && (e.task || '') === task && e.entry_date === day);
-        const name = (data.entries.find(e => e.engagement_idno === engId) || {}).name || engId;
-        const addCtx = { engagementId: engId, engagementName: name, task, defaultDate: day, hours: 0.5, onSaved: saved };
-        if (!here.length) return openTimeEntryModal(null, addCtx);
-        if (here.length === 1) return openTimeEntryModal(here[0], { onSaved: saved });
+    // Type a value into a cell and it is saved.
+    async function commitCell(input) {
+        const r = rowsView[Number(input.dataset.r)];
+        const day = input.dataset.day;
+        const here = entriesAt(r.id, r.task, day);
+        const current = sum(here.map(e => e.minutes)) / 60;
+        const showCurrent = () => { input.value = current ? String(+current.toFixed(2)) : ''; };
+        const raw = input.value.trim().replace(',', '.');
+        const next = raw === '' ? 0 : Number(raw);
+        if (!isFinite(next) || next < 0 || next > 24 || Math.round(next * 2) !== next * 2) {
+            input.classList.add('bad');
+            showToast('Use half hours: 0.5, 1, 1.5, 2 ...');
+            showCurrent();
+            setTimeout(() => input.classList.remove('bad'), 1200);
+            return;
+        }
+        if (next === current || here.length > 1) { showCurrent(); return; }
+        input.classList.add('saving');
+        input.readOnly = true;
+        const post = async (url, payload) => {
+            const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            const json = await res.json();
+            if (!json.success) throw new Error(json.message || 'Could not save');
+            return json;
+        };
+        try {
+            if (!here.length) {
+                const json = await post('../api/add-time-entry.php', { engagement_idno: r.id, entry_date: day, hours: next, task: r.task, note: '' });
+                data.entries.push({ entry_id: json.entry_id, engagement_idno: r.id, name: r.name, audit: r.audit, entry_date: day, minutes: Math.round(next * 60), task: r.task, note: '', author_name: '', source: 'tracker', can_edit: true });
+            } else if (next === 0) {
+                await post('../api/delete-time-entry.php', { entry_id: here[0].entry_id });
+                data.entries = data.entries.filter(e => e.entry_id !== here[0].entry_id);
+            } else {
+                await post('../api/update-time-entry.php', { entry_id: here[0].entry_id, entry_date: day, hours: next, task: here[0].task || '', note: here[0].note || '' });
+                here[0].minutes = Math.round(next * 60);
+            }
+            const now = entriesAt(r.id, r.task, day);
+            input.value = now.length ? hrs(sum(now.map(e => e.minutes))) : '';
+            refreshDerived();
+        } catch (err) {
+            input.classList.add('bad');
+            showToast((err && err.message) || 'Could not save');
+            showCurrent();
+            setTimeout(() => input.classList.remove('bad'), 1200);
+        } finally {
+            input.classList.remove('saving');
+            input.readOnly = false;
+        }
+    }
+
+    // A cell with several entries: pick which to edit, or add another.
+    async function cellPicker(input) {
+        const r = rowsView[Number(input.dataset.r)];
+        const day = input.dataset.day;
+        const here = entriesAt(r.id, r.task, day);
+        const addCtx = { engagementId: r.id, engagementName: r.name, task: r.task, defaultDate: day, hours: 0.5, onSaved: saved };
         const rowsHtml = here.map(e => `<button type="button" class="ts-pick" data-id="${e.entry_id}"><b>${hrs(e.minutes)} h</b><span>${escapeHtml(e.note || 'No note')}</span></button>`).join('');
-        const r = await Swal.fire({
-            title: escapeHtml(name), customClass: { popup: 'time-modal-popup' },
+        const res = await Swal.fire({
+            title: escapeHtml(r.name), customClass: { popup: 'time-modal-popup' },
             html: `<div class="time-form"><div class="time-lbl">${here.length} entries on ${escapeHtml(fmt(new Date(day + 'T00:00:00'), { weekday: 'short', month: 'short', day: 'numeric' }))}</div>${rowsHtml}</div>`,
             showCancelButton: true, confirmButtonText: 'Add another', cancelButtonText: 'Close',
             didOpen: () => document.querySelectorAll('.ts-pick').forEach(b => b.addEventListener('click', () => {
@@ -640,7 +735,7 @@ if (!empty($_SESSION['name'])) {
                 if (entry) openTimeEntryModal(entry, { onSaved: saved });
             }))
         });
-        if (r.isConfirmed) openTimeEntryModal(null, addCtx);
+        if (res.isConfirmed) openTimeEntryModal(null, addCtx);
     }
 
     async function saved(message) {
@@ -648,20 +743,105 @@ if (!empty($_SESSION['name'])) {
         if (message) showToast(message);
     }
 
+    function focusRow(id, task) {
+        const ri = rowsView.findIndex(r => r.id === id && r.task === task);
+        if (ri < 0) return;
+        const todayYmd = localYmd(new Date());
+        const inputs = [...document.querySelectorAll(`#tsBody input.cellin[data-r="${ri}"]:not(:disabled)`)];
+        (inputs.find(i => i.dataset.day === todayYmd) || inputs[0])?.focus();
+    }
+
+    async function addTaskRow() {
+        if (!data) return;
+        const used = [...new Set([...TIME_TASKS, ...(data.entries || []).map(e => e.task).filter(Boolean)])];
+        const res = await Swal.fire({
+            title: 'Add task row', customClass: { popup: 'time-modal-popup' },
+            html: `<div class="time-form">
+                <div class="time-field"><label class="time-lbl" for="tr_eng">Engagement</label>
+                    <select id="tr_eng" class="swal2-input"><option value="">Choose an engagement</option>${(data.engagements || []).map(e => `<option value="${escAttr(e.id)}">${escapeHtml(e.name)} (${escapeHtml(e.id)})</option>`).join('')}</select></div>
+                <div class="time-field"><label class="time-lbl" for="tr_task">Task</label>
+                    <input id="tr_task" list="tr_tasks" class="swal2-input" maxlength="60" placeholder="Pick or type a task">
+                    <datalist id="tr_tasks">${used.map(t => `<option value="${escAttr(t)}"></option>`).join('')}</datalist></div>
+            </div>`,
+            showCancelButton: true, confirmButtonText: 'Add row', focusConfirm: false,
+            didOpen: () => document.getElementById('tr_eng').focus(),
+            preConfirm: () => {
+                const id = document.getElementById('tr_eng').value;
+                const task = document.getElementById('tr_task').value.trim();
+                if (!id) { Swal.showValidationMessage('Choose an engagement'); return false; }
+                if (!task) { Swal.showValidationMessage('Pick or type a task'); return false; }
+                return { id, task };
+            }
+        });
+        if (!res.isConfirmed) return;
+        const eng = data.engagements.find(e => e.id === res.value.id);
+        if (!pending.some(r => r.id === eng.id && r.task === res.value.task)) pending.push({ id: eng.id, name: eng.name, audit: eng.audit || '', task: res.value.task });
+        render();
+        focusRow(eng.id, res.value.task);
+    }
+
+    // Bring last week's engagement + task rows into this week, with no hours, ready to fill in.
+    async function copyLastWeek() {
+        if (!data) return;
+        try {
+            const prev = await fetchWeek(addDays(weekStart, -7));
+            let added = 0;
+            prev.entries.forEach(e => {
+                const task = e.task || '';
+                const exists = data.entries.some(x => x.engagement_idno === e.engagement_idno && (x.task || '') === task) || pending.some(r => r.id === e.engagement_idno && r.task === task);
+                if (!exists) { pending.push({ id: e.engagement_idno, name: e.name, audit: e.audit || '', task }); added++; }
+            });
+            showToast(added ? 'Added ' + added + ' row' + (added === 1 ? '' : 's') + ' from last week' : (prev.entries.length ? 'Those rows are already here' : 'Nothing was logged last week'));
+            render();
+        } catch (err) {
+            showToast((err && err.message) || 'Could not load last week');
+        }
+    }
+
+    // What each tracker task is called in the work timesheet; shown under the task name.
+    async function editTaskNames() {
+        if (!data) return;
+        const tasks = [...new Set([...TIME_TASKS, ...Object.keys(taskMap), ...(data.entries || []).map(e => e.task).filter(Boolean), ...pending.map(r => r.task).filter(Boolean)])];
+        const known = ['Client Calls', 'Compose Conclusion Memo', 'Draft SOC 1 Report Due', 'Final Report Due', 'Prepare Documents for Archive'];
+        const res = await Swal.fire({
+            title: 'Task names', customClass: { popup: 'time-modal-popup' },
+            html: `<div class="time-form"><div class="ts-hint" style="padding:0;text-align:left">What each task is called in your work timesheet. It shows under the task name on this page.</div>
+                <div class="map-list">${tasks.map((t, i) => `<div class="map-row"><label for="map_${i}">${escapeHtml(t)}</label><input id="map_${i}" class="swal2-input" list="map_known" maxlength="100" data-task="${escAttr(t)}" placeholder="Same as tracker" value="${escAttr(taskMap[t] || '')}"></div>`).join('')}</div>
+                <datalist id="map_known">${known.map(k => `<option value="${escAttr(k)}"></option>`).join('')}</datalist></div>`,
+            showCancelButton: true, confirmButtonText: 'Save', focusConfirm: false,
+            preConfirm: () => {
+                const m = {};
+                document.querySelectorAll('.map-row input').forEach(i => { if (i.value.trim()) m[i.dataset.task] = i.value.trim(); });
+                return m;
+            }
+        });
+        if (!res.isConfirmed) return;
+        try {
+            const r = await fetch('../api/save-time-task-map.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ map: res.value }) });
+            const json = await r.json();
+            if (!json.success) throw new Error(json.message || 'Could not save');
+            taskMap = json.map || {};
+            data.taskMap = taskMap;
+            render();
+            showToast('Task names saved');
+        } catch (err) {
+            Swal.fire('Error', (err && err.message) || 'Could not save the task names', 'error');
+        }
+    }
+
     function copyWeek() {
         if (!data || !data.entries.length) return;
-        const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-        const ymds = days.map(localYmd);
+        const ymds = weekYmds();
         const map = new Map();
         for (const e of data.entries) {
-            const key = e.engagement_idno + '\u0000' + (e.task || 'No task');
-            if (!map.has(key)) map.set(key, { name: e.name, id: e.engagement_idno, task: e.task || 'No task', mins: Array(7).fill(0) });
+            const key = e.engagement_idno + SEP + (e.task || '');
+            if (!map.has(key)) map.set(key, { name: e.name, id: e.engagement_idno, task: e.task || 'No task', work: taskMap[e.task] || '', mins: Array(7).fill(0) });
             const di = ymds.indexOf(e.entry_date);
             if (di >= 0) map.get(key).mins[di] += e.minutes;
         }
-        const lines = [['Engagement', 'ID', 'Task', ...days.map(d => fmt(d, { weekday: 'short', month: 'numeric', day: 'numeric' })), 'Total'].join('\t')];
+        const lines = [['Engagement', 'ID', 'Task', 'Work timesheet task', ...ymds.map((y, i) => DAY_NAMES[i] + ' ' + Number(y.slice(8))), 'Total'].join('\t')];
         [...map.values()].sort((a, b) => a.name.localeCompare(b.name) || a.task.localeCompare(b.task)).forEach(r => {
-            lines.push([r.name, r.id, r.task, ...r.mins.map(m => (m ? hrs(m) : '')), hrs(r.mins.reduce((n, v) => n + v, 0))].join('\t'));
+            lines.push([r.name, r.id, r.task, r.work, ...r.mins.map(m => (m ? hrs(m) : '')), hrs(sum(r.mins))].join('\t'));
         });
         const text = lines.join('\n');
         const done = () => showToast('Week copied');
@@ -675,19 +855,55 @@ if (!empty($_SESSION['name'])) {
         if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
     }
 
-    function go(newStart) { weekStart = newStart; load(); }
+    function go(newStart) { weekStart = newStart; pending = []; load(); }
     document.getElementById('tsPrev').addEventListener('click', () => go(addDays(weekStart, -7)));
     document.getElementById('tsNext').addEventListener('click', () => go(addDays(weekStart, 7)));
     document.getElementById('tsThisWeek').addEventListener('click', () => go(mondayOf(new Date())));
+    document.getElementById('tsDate').addEventListener('change', (e) => { const d = e.target.value ? new Date(e.target.value + 'T00:00:00') : null; if (d && !isNaN(d)) go(mondayOf(d)); });
     document.getElementById('tsCopy').addEventListener('click', copyWeek);
+    document.getElementById('tsMap').addEventListener('click', editTaskNames);
+    document.getElementById('tsAddRow').addEventListener('click', addTaskRow);
+    document.getElementById('tsCopyLast').addEventListener('click', copyLastWeek);
     document.getElementById('tsAdd').addEventListener('click', () => {
         if (!data) return;
         const todayYmd = localYmd(new Date());
-        const ymds = Array.from({ length: 7 }, (_, i) => localYmd(addDays(weekStart, i)));
+        const ymds = weekYmds();
         // Today if it is in this week, otherwise that week's Friday.
         openTimeEntryModal(null, { engagements: data.engagements, defaultDate: ymds.includes(todayYmd) ? todayYmd : ymds[4], onSaved: saved });
     });
     document.getElementById('tsSearch').addEventListener('input', (e) => { query = e.target.value; if (data) render(); });
+
+    const tsBody = document.getElementById('tsBody');
+    tsBody.addEventListener('change', (e) => { if (e.target.matches('input.cellin')) commitCell(e.target); });
+    tsBody.addEventListener('focusin', (e) => { if (e.target.matches('input.cellin:not([readonly])')) e.target.select(); });
+    tsBody.addEventListener('click', (e) => {
+        const multi = e.target.closest('input.cellin.multi');
+        if (multi) { cellPicker(multi); return; }
+        const edit = e.target.closest('[data-ts-edit]');
+        if (edit) {
+            const entry = data.entries.find(x => String(x.entry_id) === edit.dataset.tsEdit);
+            if (entry) openTimeEntryModal(entry, { onSaved: saved });
+            return;
+        }
+        const del = e.target.closest('[data-ts-del]');
+        if (del) { deleteTimeEntry(del.dataset.tsDel, saved); return; }
+        const x = e.target.closest('[data-x]');
+        if (x) {
+            const r = rowsView[Number(x.dataset.x)];
+            pending = pending.filter(p => !(p.id === r.id && p.task === r.task));
+            render();
+        }
+    });
+    // Enter / arrow keys move down or up the same day's column, like a spreadsheet.
+    tsBody.addEventListener('keydown', (e) => {
+        const inp = e.target.closest && e.target.closest('input.cellin');
+        if (!inp || !['Enter', 'ArrowDown', 'ArrowUp'].includes(e.key)) return;
+        e.preventDefault();
+        const col = [...tsBody.querySelectorAll(`input.cellin[data-day="${inp.dataset.day}"]:not(:disabled)`)];
+        const next = col[col.indexOf(inp) + (e.key === 'ArrowUp' ? -1 : 1)];
+        if (e.key === 'Enter') inp.blur();
+        (next || inp).focus();
+    });
 
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey || e.metaKey || e.altKey || document.querySelector('.swal2-container')) return;

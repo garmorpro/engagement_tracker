@@ -5,6 +5,7 @@
 // Returns { success, weekStart, weekEnd, today, entries: [...], engagements: [...] }.
 //   entries      one per logged entry, with the engagement's name, and can_edit (author or admin)
 //   engagements  the non-archived engagements, for the "Add time" picker
+//   taskMap      { tracker task: name of the same task in the work timesheet }
 require_once '../path.php';
 require_once '../includes/functions.php';
 requireApiAuth();
@@ -26,11 +27,13 @@ try {
     // Engagement names are looked up separately (no JOIN: the tables have different collations).
     $names = [];
     $pickable = [];
-    $res = $conn->query("SELECT eng_idno, eng_name, eng_status FROM engagements ORDER BY eng_name");
+    $audits = [];
+    $res = $conn->query("SELECT eng_idno, eng_name, eng_audit_type, eng_status FROM engagements ORDER BY eng_name");
     while ($r = $res->fetch_assoc()) {
         $names[$r['eng_idno']] = $r['eng_name'];
+        $audits[$r['eng_idno']] = (string) ($r['eng_audit_type'] ?? '');
         if (($r['eng_status'] ?? '') !== 'archived') {
-            $pickable[] = ['id' => $r['eng_idno'], 'name' => $r['eng_name']];
+            $pickable[] = ['id' => $r['eng_idno'], 'name' => $r['eng_name'], 'audit' => (string) ($r['eng_audit_type'] ?? '')];
         }
     }
 
@@ -50,6 +53,7 @@ try {
                 'entry_id' => (int) $r['entry_id'],
                 'engagement_idno' => $r['engagement_idno'],
                 'name' => $names[$r['engagement_idno']] ?? $r['engagement_idno'],
+                'audit' => $audits[$r['engagement_idno']] ?? '',
                 'entry_date' => $r['entry_date'],
                 'minutes' => (int) $r['minutes'],
                 'task' => $r['task'] ?? '',
@@ -62,8 +66,19 @@ try {
         $stmt->close();
     }
 
+    // Saved names of the tracker's tasks in the work timesheet ("FW Calls" -> "Client Calls"); see api/save-time-task-map.php.
+    $taskMap = [];
+    try {
+        $decoded = json_decode((string) getAppSetting($conn, 'time_task_map'), true);
+        if (is_array($decoded)) {
+            $taskMap = $decoded;
+        }
+    } catch (Throwable $e) {
+    }
+
     echo json_encode([
         'success' => true,
+        'taskMap' => (object) $taskMap,
         'weekStart' => $weekStart,
         'weekEnd' => $weekEnd,
         'today' => date('Y-m-d'),
