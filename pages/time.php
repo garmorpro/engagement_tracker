@@ -137,6 +137,16 @@ if (!empty($_SESSION['name'])) {
         .ts-grid td:first-child { text-align: left; }
         .ts-grid td.today, .ts-grid th.today { background: color-mix(in srgb, var(--ink) 6%, transparent); }
         .ts-grid .zero { color: var(--line-strong); }
+        .ts-grid td.cell { cursor: pointer; transition: background-color 0.12s ease; }
+        .ts-grid td.cell:hover, .ts-grid td.cell:focus-visible { background: color-mix(in srgb, var(--ink) 11%, transparent); outline: none; }
+        .ts-grid td.cell.zero:hover::after, .ts-grid td.cell.zero:focus-visible::after { content: '+'; color: var(--ink); font-weight: 700; }
+        .ts-grid td.cell.zero:hover, .ts-grid td.cell.zero:focus-visible { font-size: 0; }
+        .ts-grid td.cell.zero:hover::after, .ts-grid td.cell.zero:focus-visible::after { font-size: 15px; }
+        .ts-grid td.cell.future { cursor: default; }
+        .ts-grid td.cell.future:hover { background: transparent; }
+        .ts-grid td.cell.future.zero:hover::after { content: none; }
+        .ts-grid td.cell.future.zero:hover { font-size: 13px; }
+        .ts-hint { font-size: 12px; color: var(--text-muted); padding: 0.4rem 0 0.7rem; }
         .ts-grid tr.ts-eng td { padding-top: 0.9rem; font-weight: 700; border-bottom: none; }
         .ts-grid tr.ts-eng td:first-child { display: flex; align-items: baseline; gap: 8px; }
         .ts-grid tr.ts-eng .ts-id { font-family: ui-monospace, Menlo, monospace; font-size: 11px; font-weight: 500; color: var(--text-muted); }
@@ -152,6 +162,9 @@ if (!empty($_SESSION['name'])) {
         .time-icon-btn { border: 0; background: transparent; color: var(--text-muted); cursor: pointer; padding: 4px 6px; border-radius: 6px; }
         .time-icon-btn:hover { background: var(--line); color: var(--text); }
 
+        .swal2-html-container .time-form .ts-pick { display: flex; align-items: baseline; gap: 12px; text-align: left; width: 100%; padding: 9px 12px; border-radius: 9px; border: 1px solid var(--line); background: var(--paper); font: inherit; font-size: 13px; cursor: pointer; color: var(--text) !important; }
+        .swal2-html-container .time-form .ts-pick:hover { border-color: var(--line-strong); background: var(--card); }
+        .swal2-html-container .time-form .ts-pick span { color: var(--text-muted) !important; min-width: 0; overflow-wrap: anywhere; }
         .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); background: var(--text); color: var(--paper); padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease; z-index: 3000; }
         .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
@@ -239,6 +252,8 @@ if (!empty($_SESSION['name'])) {
         .time-form input[type=number]::-webkit-outer-spin-button,
         .time-form input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         .time-form input[type=number] { -moz-appearance: textfield; }
+        .swal2-html-container .time-form .time-for { font-size: 13.5px; padding: 9px 12px; border-radius: 9px; background: var(--paper); border: 1px solid var(--line); }
+        .swal2-html-container .time-form .time-for span { color: var(--text-muted) !important; font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; margin-left: 6px; }
         .time-chips { display: flex; flex-wrap: wrap; gap: 6px; }
         .swal2-html-container .time-form .time-chip { border: 1px solid var(--line); background: var(--paper); color: var(--text) !important; border-radius: 16px; padding: 4px 12px; font-size: 12.5px; font-weight: 600; font-family: inherit; cursor: pointer; }
         .swal2-html-container .time-form .time-chip:hover { border-color: var(--line-strong); background: var(--card); }
@@ -386,6 +401,7 @@ if (!empty($_SESSION['name'])) {
             customClass: { popup: 'time-modal-popup' },
             html: `
                 <div class="time-form">
+                    ${!picker && !entry && ctx.engagementName ? `<div class="time-for"><strong>${escapeHtml(ctx.engagementName)}</strong> <span>${escapeHtml(ctx.engagementId || '')}</span></div>` : ''}
                     ${picker ? `
                     <div class="time-field">
                         <label class="time-lbl" for="time_eng">Engagement</label>
@@ -401,13 +417,13 @@ if (!empty($_SESSION['name'])) {
                         </div>
                         <div class="time-field">
                             <label class="time-lbl" for="time_hours">Hours</label>
-                            <input id="time_hours" type="number" class="swal2-input" min="0.25" max="24" step="0.25" inputmode="decimal" placeholder="e.g. 1.5" value="${entry ? fmtLoggedHours(entry.minutes) : ''}">
+                            <input id="time_hours" type="number" class="swal2-input" min="0.5" max="24" step="0.5" inputmode="decimal" placeholder="e.g. 1.5" value="${entry ? fmtLoggedHours(entry.minutes) : (ctx.hours || '')}">
                         </div>
                     </div>
-                    <div class="time-chips" aria-label="Quick hours">${[0.25, 0.5, 1, 2, 4, 8].map(h => `<button type="button" class="time-chip" data-h="${h}">${h} h</button>`).join('')}</div>
+                    <div class="time-chips" aria-label="Quick hours">${[0.5, 1, 1.5, 2, 4, 8].map(h => `<button type="button" class="time-chip" data-h="${h}">${h} h</button>`).join('')}</div>
                     <div class="time-field">
                         <label class="time-lbl" for="time_task">Task</label>
-                        <input id="time_task" list="time_task_list" class="swal2-input" maxlength="60" placeholder="Pick or type a task" value="${escAttr(entry ? (entry.task || '') : '')}">
+                        <input id="time_task" list="time_task_list" class="swal2-input" maxlength="60" placeholder="Pick or type a task" value="${escAttr(entry ? (entry.task || '') : (ctx.task || ''))}">
                         <datalist id="time_task_list">${TIME_TASKS.map(t => `<option value="${escAttr(t)}"></option>`).join('')}</datalist>
                     </div>
                     <div class="time-field">
@@ -435,7 +451,8 @@ if (!empty($_SESSION['name'])) {
                 const engId = picker ? document.getElementById('time_eng').value : '';
                 if (picker && !engId) { Swal.showValidationMessage('Choose an engagement'); return false; }
                 if (!date) { Swal.showValidationMessage('Pick a date'); return false; }
-                if (!(hours > 0 && hours <= 24)) { Swal.showValidationMessage('Enter hours between 0.25 and 24'); return false; }
+                if (!(hours >= 0.5 && hours <= 24)) { Swal.showValidationMessage('Enter hours between 0.5 and 24'); return false; }
+                if (Math.round(hours * 2) !== hours * 2) { Swal.showValidationMessage('Use half hours: 0.5, 1, 1.5, 2 ...'); return false; }
                 return { hours, entry_date: date, engagement_idno: engId, task: document.getElementById('time_task').value.trim(), note: document.getElementById('time_note').value.trim() };
             }
         });
@@ -549,6 +566,8 @@ if (!empty($_SESSION['name'])) {
         const totalMin = sum(dayTotals);
         const daysWorked = dayTotals.filter(v => v > 0).length;
         const cell = (v, cls) => `<td class="${cls}${v ? '' : ' zero'}">${v ? hrs(v) : '·'}</td>`;
+        // A task row's day cell: click to add half hours there, or edit what is already logged.
+        const taskCell = (v, i, id, task) => `<td class="cell ${dayCls(i)}${v ? '' : ' zero'}${ymds[i] > todayYmd ? ' future' : ''}" tabindex="${ymds[i] > todayYmd ? -1 : 0}" data-eng="${escAttr(id)}" data-task="${escAttr(task === 'No task' ? '' : task)}" data-day="${ymds[i]}" title="${ymds[i] > todayYmd ? 'This day has not happened yet' : (v ? 'Click to change' : 'Click to add time')}">${v ? hrs(v) : '·'}</td>`;
         const dayCls = i => (ymds[i] === todayYmd ? 'today' : '');
 
         let rows = '';
@@ -557,7 +576,7 @@ if (!empty($_SESSION['name'])) {
             g.tasks.forEach(arr => arr.forEach((v, i) => { engDay[i] += v; }));
             rows += `<tr class="ts-eng"><td><span>${escapeHtml(g.name)}</span><span class="ts-id">${escapeHtml(g.id)}</span></td>${engDay.map((v, i) => cell(v, dayCls(i))).join('')}<td class="sum">${hrs(sum(engDay))}</td></tr>`;
             [...g.tasks.entries()].sort((a, b) => sum(b[1]) - sum(a[1])).forEach(([task, arr]) => {
-                rows += `<tr class="ts-task"><td>${escapeHtml(task)}</td>${arr.map((v, i) => cell(v, dayCls(i))).join('')}<td class="sum">${hrs(sum(arr))}</td></tr>`;
+                rows += `<tr class="ts-task"><td>${escapeHtml(task)}</td>${arr.map((v, i) => taskCell(v, i, g.id, task)).join('')}<td class="sum">${hrs(sum(arr))}</td></tr>`;
             });
         });
         const head = days.map((d, i) => `<th class="${dayCls(i)}">${fmt(d, { weekday: 'short' })}<i>${d.getDate()}</i></th>`).join('');
@@ -579,6 +598,7 @@ if (!empty($_SESSION['name'])) {
             </div>
             <div class="card">
                 <div class="card-title">By engagement and task</div>
+                <div class="ts-hint">Click a day on a task row to add or change time in half hours.</div>
                 <div class="ts-scroll"><table class="ts-grid">
                     <thead><tr><th>Engagement / task</th>${head}<th>Total</th></tr></thead>
                     <tbody>${rows}${foot}</tbody>
@@ -589,11 +609,38 @@ if (!empty($_SESSION['name'])) {
                 ${list}
             </div>`;
 
+        body.querySelectorAll('td.cell:not(.future)').forEach(td => {
+            const open = () => cellClick(td.dataset.eng, td.dataset.task, td.dataset.day);
+            td.addEventListener('click', open);
+            td.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+        });
         body.querySelectorAll('[data-ts-edit]').forEach(btn => btn.addEventListener('click', () => {
             const entry = all.find(x => String(x.entry_id) === btn.dataset.tsEdit);
             if (entry) openTimeEntryModal(entry, { onSaved: saved });
         }));
         body.querySelectorAll('[data-ts-del]').forEach(btn => btn.addEventListener('click', () => deleteTimeEntry(btn.dataset.tsDel, saved)));
+    }
+
+    // A day cell on a task row. Empty: add time there (engagement, task and date filled in).
+    // One entry: edit it. Several: pick which, or add another.
+    async function cellClick(engId, task, day) {
+        const here = data.entries.filter(e => e.engagement_idno === engId && (e.task || '') === task && e.entry_date === day);
+        const name = (data.entries.find(e => e.engagement_idno === engId) || {}).name || engId;
+        const addCtx = { engagementId: engId, engagementName: name, task, defaultDate: day, hours: 0.5, onSaved: saved };
+        if (!here.length) return openTimeEntryModal(null, addCtx);
+        if (here.length === 1) return openTimeEntryModal(here[0], { onSaved: saved });
+        const rowsHtml = here.map(e => `<button type="button" class="ts-pick" data-id="${e.entry_id}"><b>${hrs(e.minutes)} h</b><span>${escapeHtml(e.note || 'No note')}</span></button>`).join('');
+        const r = await Swal.fire({
+            title: escapeHtml(name), customClass: { popup: 'time-modal-popup' },
+            html: `<div class="time-form"><div class="time-lbl">${here.length} entries on ${escapeHtml(fmt(new Date(day + 'T00:00:00'), { weekday: 'short', month: 'short', day: 'numeric' }))}</div>${rowsHtml}</div>`,
+            showCancelButton: true, confirmButtonText: 'Add another', cancelButtonText: 'Close',
+            didOpen: () => document.querySelectorAll('.ts-pick').forEach(b => b.addEventListener('click', () => {
+                Swal.close();
+                const entry = here.find(e => String(e.entry_id) === b.dataset.id);
+                if (entry) openTimeEntryModal(entry, { onSaved: saved });
+            }))
+        });
+        if (r.isConfirmed) openTimeEntryModal(null, addCtx);
     }
 
     async function saved(message) {

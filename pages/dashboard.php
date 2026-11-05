@@ -3332,10 +3332,10 @@ if (!empty($_SESSION['name'])) {
                         </div>
                         <div class="time-field">
                             <label class="time-lbl" for="time_hours">Hours</label>
-                            <input id="time_hours" type="number" class="swal2-input" min="0.25" max="24" step="0.25" inputmode="decimal" placeholder="e.g. 1.5" value="${entry ? fmtLoggedHours(entry.minutes) : ''}">
+                            <input id="time_hours" type="number" class="swal2-input" min="0.5" max="24" step="0.5" inputmode="decimal" placeholder="e.g. 1.5" value="${entry ? fmtLoggedHours(entry.minutes) : ''}">
                         </div>
                     </div>
-                    <div class="time-chips" aria-label="Quick hours">${[0.25, 0.5, 1, 2, 4, 8].map(h => `<button type="button" class="time-chip" data-h="${h}">${h} h</button>`).join('')}</div>
+                    <div class="time-chips" aria-label="Quick hours">${[0.5, 1, 1.5, 2, 4, 8].map(h => `<button type="button" class="time-chip" data-h="${h}">${h} h</button>`).join('')}</div>
                     <div class="time-field">
                         <label class="time-lbl" for="time_task">Task</label>
                         <input id="time_task" list="time_task_list" class="swal2-input" maxlength="60" placeholder="Pick or type a task" value="${escAttr(entry ? (entry.task || '') : '')}">
@@ -3364,7 +3364,8 @@ if (!empty($_SESSION['name'])) {
                 const hours = parseFloat(document.getElementById('time_hours').value);
                 const date = document.getElementById('time_date').value;
                 if (!date) { Swal.showValidationMessage('Pick a date'); return false; }
-                if (!(hours > 0 && hours <= 24)) { Swal.showValidationMessage('Enter hours between 0.25 and 24'); return false; }
+                if (!(hours >= 0.5 && hours <= 24)) { Swal.showValidationMessage('Enter hours between 0.5 and 24'); return false; }
+                if (Math.round(hours * 2) !== hours * 2) { Swal.showValidationMessage('Use half hours: 0.5, 1, 1.5, 2 ...'); return false; }
                 return { hours, entry_date: date, task: document.getElementById('time_task').value.trim(), note: document.getElementById('time_note').value.trim() };
             }
         });
