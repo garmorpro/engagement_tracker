@@ -25,7 +25,7 @@ try {
     $weekEnd = $sunday->format('Y-m-d');
 
     // Engagement names are looked up separately (no JOIN: the tables have different collations).
-    $names = [];
+    $names = [TIME_NO_ENGAGEMENT_ID => TIME_NO_ENGAGEMENT_NAME];
     $pickable = [];
     $audits = [];
     $res = $conn->query("SELECT eng_idno, eng_name, eng_audit_type, eng_status FROM engagements ORDER BY eng_name");
@@ -36,6 +36,8 @@ try {
             $pickable[] = ['id' => $r['eng_idno'], 'name' => $r['eng_name'], 'audit' => (string) ($r['eng_audit_type'] ?? '')];
         }
     }
+    // Time that belongs to no engagement can be added from the Time page too.
+    array_unshift($pickable, ['id' => TIME_NO_ENGAGEMENT_ID, 'name' => TIME_NO_ENGAGEMENT_NAME, 'audit' => '']);
 
     $entries = [];
     $check = $conn->query("SHOW TABLES LIKE 'engagement_time_entries'");

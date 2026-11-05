@@ -2,6 +2,7 @@
 // api/dashboard-log-time.php
 // The Desk Ctrl Panel's Log time button (via n8n) writes a time entry here.
 // POST JSON: { engagement: "ENG-2026-001", minutes: 30, task?: "Fieldwork", note?: "..." }
+// engagement "ADMIN" logs time that belongs to no engagement.
 //
 // Same safeguards as dashboard-feed.php / dashboard-open-token.php:
 //   1. Home network only: anything forwarded by Cloudflare (CF-* headers) is refused.
@@ -42,11 +43,15 @@ if (!preg_match('/^[A-Za-z0-9_-]{1,40}$/', $engagementIdno) || $minutes < 1 || $
 }
 
 try {
-    $stmt = $conn->prepare("SELECT 1 FROM engagements WHERE eng_idno = ? AND eng_status <> 'archived' LIMIT 1");
-    $stmt->bind_param('s', $engagementIdno);
-    $stmt->execute();
-    $exists = (bool) $stmt->get_result()->fetch_row();
-    $stmt->close();
+    // "ADMIN" is the reserved id for time that belongs to no engagement.
+    $exists = $engagementIdno === TIME_NO_ENGAGEMENT_ID;
+    if (!$exists) {
+        $stmt = $conn->prepare("SELECT 1 FROM engagements WHERE eng_idno = ? AND eng_status <> 'archived' LIMIT 1");
+        $stmt->bind_param('s', $engagementIdno);
+        $stmt->execute();
+        $exists = (bool) $stmt->get_result()->fetch_row();
+        $stmt->close();
+    }
     if (!$exists) logTimeReply(404, ['success' => false, 'message' => 'Engagement not found']);
 
     $stmt = $conn->prepare("SELECT `name` FROM `service_accounts` WHERE `user_id` = ? AND `status` = 'active' LIMIT 1");

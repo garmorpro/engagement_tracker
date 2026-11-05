@@ -91,7 +91,7 @@ try {
 
     // Time logged today (engagement_time_entries), for the dashboard's "Time today" button.
     // Stays empty if the table (or its task column) doesn't exist yet.
-    $names = [];
+    $names = [TIME_NO_ENGAGEMENT_ID => TIME_NO_ENGAGEMENT_NAME];
     foreach ($engagements as $e) {
         $names[$e['id']] = $e['client'];
     }

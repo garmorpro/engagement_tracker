@@ -926,6 +926,11 @@ function getEngagementTimeEntries(mysqli $conn, string $engagementIdno): array
     }
 }
 
+// Time that belongs to no engagement (admin work, internal tasks) is stored under this reserved id.
+// engagement_idno is plain text with no foreign key, so it needs no migration, and real ids look like ENG-2026-001.
+const TIME_NO_ENGAGEMENT_ID = 'ADMIN';
+const TIME_NO_ENGAGEMENT_NAME = 'Admin (no engagement)';
+
 // Shared validation for the time endpoints. Returns [date 'Y-m-d', minutes, note, task] or throws InvalidArgumentException.
 function validateTimeEntryInput(array $data): array
 {

@@ -20,11 +20,14 @@ try {
     if ($engagementIdno === '') throw new InvalidArgumentException('Missing engagement');
     [$date, $minutes, $note, $task] = validateTimeEntryInput($data);
 
-    $stmt = $conn->prepare('SELECT 1 FROM engagements WHERE eng_idno = ? LIMIT 1');
-    $stmt->bind_param('s', $engagementIdno);
-    $stmt->execute();
-    $exists = (bool) $stmt->get_result()->fetch_row();
-    $stmt->close();
+    $exists = $engagementIdno === TIME_NO_ENGAGEMENT_ID; // reserved id: time that belongs to no engagement
+    if (!$exists) {
+        $stmt = $conn->prepare('SELECT 1 FROM engagements WHERE eng_idno = ? LIMIT 1');
+        $stmt->bind_param('s', $engagementIdno);
+        $stmt->execute();
+        $exists = (bool) $stmt->get_result()->fetch_row();
+        $stmt->close();
+    }
     if (!$exists) {
         http_response_code(404);
         echo json_encode(['success' => false, 'message' => 'Engagement not found']);
