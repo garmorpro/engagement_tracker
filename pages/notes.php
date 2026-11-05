@@ -231,6 +231,9 @@ function noteWhen(string $raw): string
                 <i class="bi bi-inbox" aria-hidden="true"></i><span class="hdr-label">Notes</span>
                 <span class="hdr-badge" id="navBadge" <?php echo $unread ? '' : 'hidden'; ?>><?php echo $unread; ?></span>
             </a>
+            <a href="time.php" class="hdr-due">
+                <i class="bi bi-clock" aria-hidden="true"></i><span class="hdr-label">Time</span>
+            </a>
             <a href="dashboard.php?onboard=1" class="btn-new-engagement">
                 <i class="bi bi-plus-lg" aria-hidden="true"></i><span class="hdr-label">Onboard Client</span>
             </a>
