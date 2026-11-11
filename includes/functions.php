@@ -532,7 +532,13 @@ function getDueItemsSummary(mysqli $conn, int $daysAhead): array
     $tlResult = $conn->query($tlQuery);
     if ($tlResult) {
         while ($timeline = $tlResult->fetch_assoc()) {
+            // "Fieldwork" used to be one step and is now Client Calls + Documentation. The old single date stays in the
+            // table (and is never ticked once the drawer shows only the two new steps), so once either new date exists
+            // the old one no longer counts as due.
+            $hasSplitFieldwork = !empty($timeline['fieldwork_client_calls_end_date']) || !empty($timeline['fieldwork_documentation_end_date']);
+
             foreach ($dateFields as $dateCol => [$completedCol, $title]) {
+                if ($dateCol === 'fieldwork_date' && $hasSplitFieldwork) continue;
                 $dateValue = $timeline[$dateCol] ?? null;
                 if (!$dateValue || !empty($timeline[$completedCol])) continue;
 
