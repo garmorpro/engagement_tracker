@@ -1617,6 +1617,10 @@ if (!empty($_SESSION['name'])) {
                     <input type="text" id="new_eng_location" class="eng-input" placeholder="Enter location">
                 </div>
                 <div class="eng-field">
+                    <label>Client time zone <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted);">(optional, for setting call times)</span></label>
+                    <select id="new_eng_timezone" class="eng-input"></select>
+                </div>
+                <div class="eng-field">
                     <label>Point of Contact</label>
                     <input type="text" id="new_eng_poc" class="eng-input" placeholder="Enter point of contact">
                 </div>
@@ -2483,7 +2487,8 @@ if (!empty($_SESSION['name'])) {
         }
 
         function resetWizard() {
-            ['new_eng_name', 'new_eng_location', 'new_eng_poc', 'new_eng_client', 'new_eng_tsc', 'new_eng_scope', 'new_eng_notes',
+            document.getElementById('new_eng_timezone').innerHTML = tzOptionsHtml('');
+            ['new_eng_name', 'new_eng_location', 'new_eng_timezone', 'new_eng_poc', 'new_eng_client', 'new_eng_tsc', 'new_eng_scope', 'new_eng_notes',
              'new_soc_as_of_date', 'new_soc_start_period', 'new_soc_end_period', 'new_roc_delivery_date'].forEach(id => {
                 document.getElementById(id).value = '';
             });
@@ -2600,6 +2605,7 @@ if (!empty($_SESSION['name'])) {
                 <div class="eng-review-row"><dt>Team</dt><dd>${teamNames.length ? teamNames.map(escapeHtml).join(', ') : 'None added'}</dd></div>
                 <div class="eng-review-row"><dt>Status</dt><dd>${escapeHtml(STATUS_LABELS[status] || status)}</dd></div>
                 <div class="eng-review-row"><dt>Audit Types</dt><dd>${escapeHtml(types)}</dd></div>
+                ${document.getElementById('new_eng_timezone').value ? `<div class="eng-review-row"><dt>Time zone</dt><dd>${escapeHtml(tzLabel(document.getElementById('new_eng_timezone').value))}</dd></div>` : ''}
                 ${document.getElementById('new_eng_client').value.trim() ? `<div class="eng-review-row"><dt>Client</dt><dd>${escapeHtml(document.getElementById('new_eng_client').value.trim())}</dd></div>` : ''}
                 <div class="eng-review-row"><dt>TSC</dt><dd>${escapeHtml(tsc)}</dd></div>
                 ${pickedTypes.includes('PCI') ? `<div class="eng-review-row"><dt>ROC Delivery</dt><dd>${escapeHtml(fmtDate(document.getElementById('new_roc_delivery_date').value) || '\u2014')}</dd></div>` : ''}
@@ -2657,6 +2663,7 @@ if (!empty($_SESSION['name'])) {
                 eng_name: engName,
                 eng_location: document.getElementById('new_eng_location').value || null,
                 eng_poc: document.getElementById('new_eng_poc').value || null,
+                eng_timezone: document.getElementById('new_eng_timezone').value || null,
                 eng_client: (document.getElementById('new_eng_client').value || '').trim() || null,
                 eng_status: getSegmentedValue('new_eng_status_segment') || 'planning',
                 eng_scope: document.getElementById('new_eng_scope').value || null,
@@ -2879,6 +2886,60 @@ if (!empty($_SESSION['name'])) {
         if (isNaN(d.getTime())) return null;
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
+    // ---------- Client time zone (engagements.eng_timezone, an IANA name) ----------
+    const CLIENT_TIMEZONES = [
+        ['United States', [['America/New_York', 'Eastern (ET)'], ['America/Chicago', 'Central (CT)'], ['America/Denver', 'Mountain (MT)'], ['America/Phoenix', 'Arizona (MST, no daylight saving)'], ['America/Los_Angeles', 'Pacific (PT)'], ['America/Anchorage', 'Alaska (AKT)'], ['Pacific/Honolulu', 'Hawaii (HST)']]],
+        ['Elsewhere', [['Europe/London', 'UK (London)'], ['Europe/Berlin', 'Central Europe (Berlin)'], ['Asia/Kolkata', 'India (IST)'], ['Asia/Singapore', 'Singapore'], ['Australia/Sydney', 'Sydney']]]
+    ];
+    function tzLabel(tz) {
+        for (const [, zones] of CLIENT_TIMEZONES) {
+            const hit = zones.find(z => z[0] === tz);
+            if (hit) return hit[1];
+        }
+        return tz;
+    }
+    function tzOptionsHtml(selected) {
+        let html = `<option value="">Not set</option>`;
+        let known = false;
+        CLIENT_TIMEZONES.forEach(([group, zones]) => {
+            html += `<optgroup label="${escAttr(group)}">` + zones.map(([id, label]) => {
+                if (id === selected) known = true;
+                return `<option value="${escAttr(id)}"${id === selected ? ' selected' : ''}>${escapeHtml(label)}</option>`;
+            }).join('') + '</optgroup>';
+        });
+        if (selected && !known) html += `<option value="${escAttr(selected)}" selected>${escapeHtml(selected)}</option>`;
+        return html;
+    }
+    // Wall-clock time in a zone as a UTC-style millisecond count, so two zones can be subtracted.
+    function tzWallMs(tz, now) {
+        const p = {};
+        new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
+            .formatToParts(now).forEach(x => { p[x.type] = x.value; });
+        return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute);
+    }
+    // "Now 3:42 PM CST there · 1 hr ahead of you", or '' if the zone can't be read.
+    function tzNowNote(tz) {
+        try {
+            const now = new Date();
+            const time = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }).format(now);
+            const mine = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const diffMin = Math.round((tzWallMs(tz, now) - tzWallMs(mine, now)) / 60000);
+            let rel = 'same time as you';
+            if (diffMin !== 0) {
+                const h = Math.abs(diffMin) / 60;
+                rel = `${+h.toFixed(2)} hr${h === 1 ? '' : 's'} ${diffMin > 0 ? 'ahead of' : 'behind'} you`;
+            }
+            return `Now ${time} there · ${rel}`;
+        } catch (e) {
+            return '';
+        }
+    }
+    function tzOverviewRow(tz) {
+        if (!tz) return '';
+        const note = tzNowNote(tz);
+        return `<div class="drawer-info-item"><div class="drawer-info-label">Time Zone</div><div class="drawer-info-value">${escapeHtml(tzLabel(tz))}</div>${note ? `<div class="drawer-info-sub">${escapeHtml(note)}</div>` : ''}</div>`;
+    }
+
     // First day of the 3-month window that ends on `raw` (YYYY-MM-DD, the as-of date), as YYYY-MM-DD.
     // A month-end as-of date starts on the 1st two months earlier (Nov 30 -> Sep 1, Mar 31 -> Jan 1);
     // any other date starts the day after it falls three months back (Nov 15 -> Aug 16).
@@ -3163,6 +3224,7 @@ if (!empty($_SESSION['name'])) {
                 <div class="drawer-section-head"><div class="drawer-section-title"><span class="dot" style="background:var(--ink)"></span>Overview</div></div>
                 <div class="drawer-info-grid">
                     <div class="drawer-info-item"><div class="drawer-info-label">Location</div><div class="drawer-info-value">${escapeHtml(eng.eng_location || 'N/A')}</div></div>
+                    ${tzOverviewRow(eng.eng_timezone)}
                     <div class="drawer-info-item"><div class="drawer-info-label">Review Period</div><div class="drawer-info-value">${escapeHtml(period)}</div>${periodNote}</div>
                     <div class="drawer-info-item"><div class="drawer-info-label">Audit Type</div><div class="drawer-info-value">${escapeHtml(auditTypes.join(', ') || 'N/A')}</div></div>
                     ${reportTypeRow}
@@ -4814,6 +4876,7 @@ if (!empty($_SESSION['name'])) {
             eng_location:     eng.eng_location || '',
             eng_poc:          eng.eng_poc || '',
             eng_client:       eng.eng_client || '',
+            eng_timezone:     eng.eng_timezone || '',
             eng_status:       eng.eng_status || '',
             eng_tsc:          eng.eng_tsc || '',
             eng_audit_type:   eng.eng_audit_type || '',
@@ -4838,6 +4901,11 @@ if (!empty($_SESSION['name'])) {
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Location</label>
                         <input type="text" id="edit_eng_location" class="swal2-input" value="${escAttr(engagementData.eng_location)}" style="width: 100%;">
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Client time zone (optional)</label>
+                        <select id="edit_eng_timezone" class="swal2-input" style="width: 100%; padding: 0.6rem;">${tzOptionsHtml(engagementData.eng_timezone)}</select>
+                        <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 0.35rem;">Shown in the drawer with the client's current time, for setting call times.</div>
                     </div>
                     <div style="margin-bottom: 1rem;">
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">Point of Contact</label>
@@ -5006,6 +5074,7 @@ if (!empty($_SESSION['name'])) {
                     eng_location:     document.getElementById('edit_eng_location').value,
                     eng_poc:          document.getElementById('edit_eng_poc').value,
                     eng_client:       document.getElementById('edit_eng_client').value.trim(),
+                    eng_timezone:     document.getElementById('edit_eng_timezone').value,
                     eng_status:       document.getElementById('edit_eng_status').value,
                     eng_tsc:          document.getElementById('edit_eng_tsc').value,
                     eng_audit_type:   selectedAuditTypes,

@@ -158,6 +158,19 @@ try {
         }
     }
 
+    // The client's time zone (an IANA name such as America/Chicago), saved on its own too.
+    $eng_timezone = trim((string) ($data['eng_timezone'] ?? ''));
+    if ($eng_timezone !== '' && in_array($eng_timezone, timezone_identifiers_list(), true)) {
+        try {
+            $tzStmt = $conn->prepare("UPDATE engagements SET eng_timezone = ? WHERE eng_idno = ?");
+            $tzStmt->bind_param('ss', $eng_timezone, $eng_idno);
+            $tzStmt->execute();
+            $tzStmt->close();
+        } catch (Throwable $e) {
+            error_log('create-engagement.php: could not save eng_timezone: ' . $e->getMessage());
+        }
+    }
+
     // The PCI ROC delivery date is saved on its own so creating an engagement
     // still works on a server that hasn't run the migration yet.
     $eng_roc_delivery_date = ($data['eng_roc_delivery_date'] ?? null) ?: null;

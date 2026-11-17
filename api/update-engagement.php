@@ -103,6 +103,19 @@ try {
                 error_log('update-engagement.php: could not save eng_client: ' . $e->getMessage());
             }
         }
+        // The client's time zone (an IANA name such as America/Chicago), saved on its own for the same reason.
+        if (array_key_exists('eng_timezone', $data)) {
+            try {
+                $tz = trim((string) $data['eng_timezone']);
+                $tz = ($tz !== '' && in_array($tz, timezone_identifiers_list(), true)) ? $tz : null;
+                $tzStmt = $conn->prepare("UPDATE engagements SET eng_timezone = ? WHERE eng_idno = ?");
+                $tzStmt->bind_param('ss', $tz, $engagement_id);
+                $tzStmt->execute();
+                $tzStmt->close();
+            } catch (Throwable $e) {
+                error_log('update-engagement.php: could not save eng_timezone: ' . $e->getMessage());
+            }
+        }
         if (array_key_exists('eng_roc_delivery_date', $data)) {
             try {
                 $roc = ($data['eng_roc_delivery_date'] === '' || $data['eng_roc_delivery_date'] === null) ? null : $data['eng_roc_delivery_date'];
