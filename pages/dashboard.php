@@ -1670,7 +1670,9 @@ if (!empty($_SESSION['name'])) {
                     <div class="eng-segmented" id="new_soc_type_segment" style="margin-bottom: 0.9rem;">
                         <button type="button" data-value="Type 1">Type 1</button>
                         <button type="button" data-value="Type 2">Type 2</button>
+                        <button type="button" data-value="Readiness Assessment">Readiness Assessment</button>
                     </div>
+                    <div id="new_soc_ra_note" style="display: none; font-size: 12px; color: var(--text-muted);">No as-of date or review period for a Readiness Assessment. Evidence is normally taken from the last 90 days.</div>
                     <div id="new_soc_type1_dates" style="display: none;">
                         <div class="eng-field" style="margin-bottom: 0;">
                             <label>As Of Date</label>
@@ -2284,6 +2286,7 @@ if (!empty($_SESSION['name'])) {
             const val = getSegmentedValue('new_soc_type_segment');
             document.getElementById('new_soc_type1_dates').style.display = val === 'Type 1' ? 'block' : 'none';
             document.getElementById('new_soc_type2_dates').style.display = val === 'Type 2' ? 'flex' : 'none';
+            document.getElementById('new_soc_ra_note').style.display = val === 'Readiness Assessment' ? 'block' : 'none';
         }
         document.querySelectorAll('.new-audit-type-checkbox').forEach(cb => cb.addEventListener('change', updateAuditVisibility));
 
@@ -2506,6 +2509,7 @@ if (!empty($_SESSION['name'])) {
             document.getElementById('new_roc_section').style.display = 'none';
             document.getElementById('new_soc_type1_dates').style.display = 'none';
             document.getElementById('new_soc_type2_dates').style.display = 'none';
+            document.getElementById('new_soc_ra_note').style.display = 'none';
             document.getElementById('new_eng_manager_search').value = '';
             document.getElementById('new_eng_manager_ac_list').style.display = 'none';
             clearManagerSelection();
@@ -2663,6 +2667,7 @@ if (!empty($_SESSION['name'])) {
             // SOC type / period / as-of dates only mean something with a SOC
             // type ticked, and the TSC only with SOC 2.
             const hasSoc = noType || pickedTypes.includes('SOC 1') || pickedTypes.includes('SOC 2');
+            const isRA = getSegmentedValue('new_soc_type_segment') === 'Readiness Assessment';
             const payload = {
                 eng_name: engName,
                 eng_location: document.getElementById('new_eng_location').value || null,
@@ -2674,9 +2679,9 @@ if (!empty($_SESSION['name'])) {
                 eng_repeat: document.getElementById('new_eng_repeat').checked ? 'Y' : 'N',
                 eng_audit_type: noType ? null : pickedTypes.join(', '),
                 eng_soc_type: hasSoc ? getSegmentedValue('new_soc_type_segment') : null,
-                eng_as_of_date: hasSoc ? (document.getElementById('new_soc_as_of_date').value || null) : null,
-                eng_start_period: hasSoc ? (document.getElementById('new_soc_start_period').value || null) : null,
-                eng_end_period: hasSoc ? (document.getElementById('new_soc_end_period').value || null) : null,
+                eng_as_of_date: (hasSoc && !isRA) ? (document.getElementById('new_soc_as_of_date').value || null) : null,
+                eng_start_period: (hasSoc && !isRA) ? (document.getElementById('new_soc_start_period').value || null) : null,
+                eng_end_period: (hasSoc && !isRA) ? (document.getElementById('new_soc_end_period').value || null) : null,
                 eng_tsc: (noType || pickedTypes.includes('SOC 2')) ? (document.getElementById('new_eng_tsc').value || null) : null,
                 eng_roc_delivery_date: pickedTypes.includes('PCI') ? (document.getElementById('new_roc_delivery_date').value || null) : null,
                 eng_notes: document.getElementById('new_eng_notes').value || null
@@ -3205,9 +3210,12 @@ if (!empty($_SESSION['name'])) {
             // Small reference line: where the 3-month window ending on the as-of date begins.
             const winStart = fmtDate(threeMonthWindowStart(eng.eng_as_of_date));
             if (winStart) periodNote = `<div class="drawer-info-sub">3-month period starts ${escapeHtml(winStart)}</div>`;
+        } else if (eng.eng_soc_type === 'Readiness Assessment') {
+            period = 'No set period';
+            periodNote = `<div class="drawer-info-sub">Evidence from the last 90 days</div>`;
         }
         const reportTypeRow = eng.eng_soc_type
-            ? `<div class="drawer-info-item"><div class="drawer-info-label">Report Type</div><div class="drawer-info-value">${escapeHtml(eng.eng_soc_type === 'Type 1' ? 'Type I' : (eng.eng_soc_type === 'Type 2' ? 'Type II' : eng.eng_soc_type))}</div></div>`
+            ? `<div class="drawer-info-item"><div class="drawer-info-label">Report Type</div><div class="drawer-info-value">${escapeHtml(eng.eng_soc_type === 'Type 1' ? 'Type I' : (eng.eng_soc_type === 'Type 2' ? 'Type II' : (eng.eng_soc_type === 'Readiness Assessment' ? 'Readiness Assessment (RA)' : eng.eng_soc_type)))}</div></div>`
             : '';
 
         const checklistMode = pciChecklistMode(eng);
@@ -4983,7 +4991,12 @@ if (!empty($_SESSION['name'])) {
                                 <input type="radio" name="soc_type" value="Type 2" ${engagementData.eng_soc_type === 'Type 2' ? 'checked' : ''}>
                                 <span style="font-size: 13px; color: var(--text-primary);">Type 2</span>
                             </label>
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500; grid-column: 1 / -1;">
+                                <input type="radio" name="soc_type" value="Readiness Assessment" ${engagementData.eng_soc_type === 'Readiness Assessment' ? 'checked' : ''}>
+                                <span style="font-size: 13px; color: var(--text-primary);">Readiness Assessment (RA)</span>
+                            </label>
                         </div>
+                        <div id="soc_ra_note" style="display: none; font-size: 12px; color: var(--text-muted);">No as-of date or review period for a Readiness Assessment. Evidence is normally taken from the last 90 days.</div>
                         <div id="soc_type1_dates" style="display: none;">
                             <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
                             <input type="date" id="edit_soc_as_of_date" class="swal2-input" value="${engagementData.eng_as_of_date}" style="width: 100%;">
@@ -5045,6 +5058,7 @@ if (!empty($_SESSION['name'])) {
                 const socType1Dates   = document.getElementById('soc_type1_dates');
                 const socType2Dates   = document.getElementById('soc_type2_dates');
                 const pciRocSection   = document.getElementById('pci_roc_section');
+                const socRaNote       = document.getElementById('soc_ra_note');
 
                 function updateFormVisibility() {
                     const selectedTypes = Array.from(auditCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
@@ -5061,7 +5075,11 @@ if (!empty($_SESSION['name'])) {
                     } else if (selectedSocType === 'Type 2') {
                         socType1Dates.style.display = 'none';
                         socType2Dates.style.display = 'block';
+                    } else if (selectedSocType === 'Readiness Assessment') {
+                        socType1Dates.style.display = 'none';
+                        socType2Dates.style.display = 'none';
                     }
+                    socRaNote.style.display = selectedSocType === 'Readiness Assessment' ? 'block' : 'none';
                 }
                 auditCheckboxes.forEach(checkbox => checkbox.addEventListener('change', updateFormVisibility));
                 socTypeRadios.forEach(radio => radio.addEventListener('change', updateDateFields));
@@ -5072,6 +5090,7 @@ if (!empty($_SESSION['name'])) {
                 const selectedAuditTypes = Array.from(document.querySelectorAll('.audit-type-checkbox'))
                     .filter(cb => cb.checked).map(cb => cb.value).join(',');
                 const selectedSocType = document.querySelector('input[name="soc_type"]:checked')?.value || '';
+                const isRA = selectedSocType === 'Readiness Assessment';
 
                 const updatedData = {
                     engagement_id:    engagementId,
@@ -5085,9 +5104,9 @@ if (!empty($_SESSION['name'])) {
                     eng_audit_type:   selectedAuditTypes,
                     eng_soc_type:     selectedSocType,
                     eng_scope:        document.getElementById('edit_eng_scope').value,
-                    eng_as_of_date:   document.getElementById('edit_soc_as_of_date')?.value || '',
-                    eng_start_period: document.getElementById('edit_soc_start_period')?.value || '',
-                    eng_end_period:   document.getElementById('edit_soc_end_period')?.value || '',
+                    eng_as_of_date:   isRA ? '' : (document.getElementById('edit_soc_as_of_date')?.value || ''),
+                    eng_start_period: isRA ? '' : (document.getElementById('edit_soc_start_period')?.value || ''),
+                    eng_end_period:   isRA ? '' : (document.getElementById('edit_soc_end_period')?.value || ''),
                     eng_repeat:       document.getElementById('edit_eng_repeat').checked ? 'Y' : 'N',
                     // only meaningful with PCI selected; unticking PCI clears it
                     eng_roc_delivery_date: selectedAuditTypes.split(',').includes('PCI') ? (document.getElementById('edit_roc_delivery_date').value || '') : '',

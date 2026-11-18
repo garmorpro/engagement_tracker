@@ -1653,7 +1653,7 @@ $engagementData = $engagement;
                             <div class="engagement-info-value">
                                 <?php 
                                 $socType = $engagement['eng_soc_type'];
-                                echo $socType === 'Type 1' ? 'Type I' : ($socType === 'Type 2' ? 'Type II' : htmlspecialchars($socType));
+                                echo $socType === 'Type 1' ? 'Type I' : ($socType === 'Type 2' ? 'Type II' : ($socType === 'Readiness Assessment' ? 'Readiness Assessment (RA)' : htmlspecialchars($socType)));
                                 ?>
                             </div>
                         </div>
@@ -2733,7 +2733,12 @@ $engagementData = $engagement;
                                     <input type="radio" name="soc_type" value="Type 2" ${engagementData.eng_soc_type === 'Type 2' ? 'checked' : ''}>
                                     <span style="font-size: 13px;">Type 2</span>
                                 </label>
+                                <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500; grid-column: 1 / -1;">
+                                    <input type="radio" name="soc_type" value="Readiness Assessment" ${engagementData.eng_soc_type === 'Readiness Assessment' ? 'checked' : ''}>
+                                    <span style="font-size: 13px;">Readiness Assessment (RA)</span>
+                                </label>
                             </div>
+                            <div id="soc_ra_note" style="display: none; font-size: 12px; color: var(--text-muted);">No as-of date or review period for a Readiness Assessment. Evidence is normally taken from the last 90 days.</div>
 
                             <div id="soc_type1_dates" style="display: none;">
                                 <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase;">As Of Date</label>
@@ -2790,6 +2795,7 @@ $engagementData = $engagement;
                 const socTypeRadios   = document.querySelectorAll('input[name="soc_type"]');
                 const socType1Dates   = document.getElementById('soc_type1_dates');
                 const socType2Dates   = document.getElementById('soc_type2_dates');
+                const socRaNote       = document.getElementById('soc_ra_note');
                 
                 function updateFormVisibility() {
                     const selectedTypes = Array.from(auditCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
@@ -2806,7 +2812,11 @@ $engagementData = $engagement;
                     } else if (selectedSocType === 'Type 2') {
                         socType1Dates.style.display = 'none';
                         socType2Dates.style.display = 'block';
+                    } else if (selectedSocType === 'Readiness Assessment') {
+                        socType1Dates.style.display = 'none';
+                        socType2Dates.style.display = 'none';
                     }
+                    socRaNote.style.display = selectedSocType === 'Readiness Assessment' ? 'block' : 'none';
                 }
                 
                 auditCheckboxes.forEach(checkbox => {
@@ -2822,6 +2832,7 @@ $engagementData = $engagement;
                 const selectedAuditTypes = Array.from(document.querySelectorAll('.audit-type-checkbox'))
                     .filter(cb => cb.checked).map(cb => cb.value).join(',');
                 const selectedSocType = document.querySelector('input[name="soc_type"]:checked')?.value || '';
+                const isRA = selectedSocType === 'Readiness Assessment';
 
                 const updatedData = {
                     engagement_id:    '<?php echo $engagementId; ?>',
@@ -2833,9 +2844,9 @@ $engagementData = $engagement;
                     eng_audit_type:   selectedAuditTypes,
                     eng_soc_type:     selectedSocType,
                     eng_scope:        document.getElementById('edit_eng_scope').value,
-                    eng_as_of_date:   document.getElementById('edit_soc_as_of_date')?.value || '',
-                    eng_start_period: document.getElementById('edit_soc_start_period')?.value || '',
-                    eng_end_period:   document.getElementById('edit_soc_end_period')?.value || '',
+                    eng_as_of_date:   isRA ? '' : (document.getElementById('edit_soc_as_of_date')?.value || ''),
+                    eng_start_period: isRA ? '' : (document.getElementById('edit_soc_start_period')?.value || ''),
+                    eng_end_period:   isRA ? '' : (document.getElementById('edit_soc_end_period')?.value || ''),
                     eng_repeat:       document.getElementById('edit_eng_repeat').checked ? 'Y' : 'N',
                     eng_notes:        document.getElementById('edit_eng_notes').value
                 };
