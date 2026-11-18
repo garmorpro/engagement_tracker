@@ -1117,6 +1117,10 @@ if (!empty($_SESSION['name'])) {
         .drawer-info-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.2rem; }
         .drawer-info-value { font-size: 13.5px; font-weight: 600; color: var(--text); overflow-wrap: anywhere; }
         .drawer-info-sub { font-size: 11px; font-weight: 500; color: var(--text-muted); margin-top: 0.15rem; }
+        .drawer-tz-now { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 0.5rem; margin-top: 0.3rem; }
+        .drawer-tz-time { font-size: 12px; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .drawer-tz-rel { font-size: 10.5px; font-weight: 600; padding: 1px 7px; border-radius: 999px; background: rgba(100,116,139,.14); color: var(--text-muted); white-space: nowrap; }
+        .drawer-tz-rel.same { background: rgba(16,185,129,.14); color: #059669; }
         .drawer-info-value.muted { font-weight: 500; color: var(--text-muted); }
         .drawer-detail-scope { grid-column: 1 / -1; }
         .drawer-detail-scope .drawer-info-value { line-height: 1.5; font-weight: 500; font-size: 13px; color: var(--text-muted); white-space: pre-line; }
@@ -2917,27 +2921,28 @@ if (!empty($_SESSION['name'])) {
             .formatToParts(now).forEach(x => { p[x.type] = x.value; });
         return Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour % 24, +p.minute);
     }
-    // "Now 3:42 PM CST there · 1 hr ahead of you", or '' if the zone can't be read.
-    function tzNowNote(tz) {
+    // The client's current time and how it relates to yours: { time: "3:42 PM CST", rel: "1 hr ahead", diff: 60 }, or null if the zone can't be read.
+    function tzNowParts(tz) {
         try {
             const now = new Date();
             const time = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', timeZoneName: 'short' }).format(now);
             const mine = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            const diffMin = Math.round((tzWallMs(tz, now) - tzWallMs(mine, now)) / 60000);
-            let rel = 'same time as you';
-            if (diffMin !== 0) {
-                const h = Math.abs(diffMin) / 60;
-                rel = `${+h.toFixed(2)} hr${h === 1 ? '' : 's'} ${diffMin > 0 ? 'ahead of' : 'behind'} you`;
+            const diff = Math.round((tzWallMs(tz, now) - tzWallMs(mine, now)) / 60000);
+            let rel = 'Same time as you';
+            if (diff !== 0) {
+                const h = Math.abs(diff) / 60;
+                rel = `${+h.toFixed(2)} hr${h === 1 ? '' : 's'} ${diff > 0 ? 'ahead' : 'behind'}`;
             }
-            return `Now ${time} there · ${rel}`;
+            return { time, rel, diff };
         } catch (e) {
-            return '';
+            return null;
         }
     }
     function tzOverviewRow(tz) {
         if (!tz) return '';
-        const note = tzNowNote(tz);
-        return `<div class="drawer-info-item"><div class="drawer-info-label">Time Zone</div><div class="drawer-info-value">${escapeHtml(tzLabel(tz))}</div>${note ? `<div class="drawer-info-sub">${escapeHtml(note)}</div>` : ''}</div>`;
+        const n = tzNowParts(tz);
+        const extra = n ? `<div class="drawer-tz-now"><span class="drawer-tz-time">${escapeHtml(n.time)}</span><span class="drawer-tz-rel${n.diff === 0 ? ' same' : ''}">${escapeHtml(n.rel)}</span></div>` : '';
+        return `<div class="drawer-info-item"><div class="drawer-info-label">Time Zone</div><div class="drawer-info-value">${escapeHtml(tzLabel(tz))}</div>${extra}</div>`;
     }
 
     // First day of the 3-month window that ends on `raw` (YYYY-MM-DD, the as-of date), as YYYY-MM-DD.
